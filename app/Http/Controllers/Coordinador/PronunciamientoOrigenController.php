@@ -1145,7 +1145,7 @@ class PronunciamientoOrigenController extends Controller
             $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+            ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'sile.Email')
             ->where([['sile.Nro_identificacion', $num_identificacion],['sile.ID_evento', $id_evento]])
             ->get();
 
@@ -1156,10 +1156,11 @@ class PronunciamientoOrigenController extends Controller
             }
             $direccion_empleador = $datos_empleador[0]->Direccion;
             $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
+            $email_empleador = $datos_empleador[0]->Email;
             $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
             $municipio_empleador = $datos_empleador[0]->Nombre_municipio;
 
-            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
+            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$email_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
         }
 
         if (isset($copia_eps)) {
@@ -1167,13 +1168,14 @@ class PronunciamientoOrigenController extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+            ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email', 
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
             ->get();
 
             $nombre_eps = $datos_eps[0]->Nombre_eps;
             $direccion_eps = $datos_eps[0]->Direccion;
+            $email_eps = $datos_eps[0]->Email;
             if ($datos_eps[0]->Otros_Telefonos != "") {
                 $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
             } else {
@@ -1182,7 +1184,7 @@ class PronunciamientoOrigenController extends Controller
             $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
             $minucipio_eps = $datos_eps[0]->Nombre_municipio;
 
-            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
+            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$email_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
         }
 
         if (isset($copia_afp)) {
@@ -1190,13 +1192,14 @@ class PronunciamientoOrigenController extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+            ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email', 
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
             ->get();
 
             $nombre_afp = $datos_afp[0]->Nombre_afp;
             $direccion_afp = $datos_afp[0]->Direccion;
+            $email_afp = $datos_afp[0]->Email;
             if ($datos_afp[0]->Otros_Telefonos != "") {
                 $telefonos_afp = $datos_afp[0]->Telefonos.",".$datos_afp[0]->Otros_Telefonos;
             } else {
@@ -1205,7 +1208,7 @@ class PronunciamientoOrigenController extends Controller
             $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
             $minucipio_afp = $datos_afp[0]->Nombre_municipio;
 
-            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
+            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$email_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
         }
 
         if(isset($copia_arl)){
@@ -1213,13 +1216,14 @@ class PronunciamientoOrigenController extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+            ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email',
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
             ->get();
 
             $nombre_arl = $datos_arl[0]->Nombre_arl;
             $direccion_arl = $datos_arl[0]->Direccion;
+            $email_arl = $datos_arl[0]->Email;
             if ($datos_arl[0]->Otros_Telefonos != "") {
                 $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
             } else {
@@ -1229,7 +1233,7 @@ class PronunciamientoOrigenController extends Controller
             $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
             $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
-            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
         }
 
         if(isset($copia_jrci)){
@@ -1258,11 +1262,11 @@ class PronunciamientoOrigenController extends Controller
             } else {
                 $telefonos_jrci = $datos_jrci[0]->Telefonos;
             }
-
+            $email_jrci = $datos_jrci[0]->Emails;
             $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
             $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
                 
-            $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+            $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$email_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
 
         }
         
@@ -1292,11 +1296,11 @@ class PronunciamientoOrigenController extends Controller
             } else {
                 $telefonos_jnci = $datos_jnci[0]->Telefonos;
             }
-
+            $email_jnci = $datos_jnci[0]->Emails;
             $ciudad_jnci = $datos_jnci[0]->Nombre_ciudad;
             $departamento_jnci = $datos_jnci[0]->Nombre_departamento;
 
-            $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
+            $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$email_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
 
         }
 
