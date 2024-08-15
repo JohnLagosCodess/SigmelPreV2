@@ -1672,12 +1672,13 @@ $(document).ready(function(){
 
         var nombre_entidad = $("#nom_entidad_califi").val();
         var direccion_entidad = $("#dir_calificador").val();
+        var email_entidad = $("#mail_calificador").val();
         var telefono_entidad = $("#telefono_calificador").val();
         var ciudad_entidad = $("#ciudad_calificador").val();
         var departamento_entidad = $("#depar_calificador").val();
         var nro_dictamen_pri_cali = $("#dictamen_calificador").val();
         var fecha_dictamen_pri_cali = $("#fecha_calificador").val();
-
+        var N_siniestro = $('#n_siniestro').val();
         var datos_generacion_proforma = {
             '_token': token,
             'bandera_tipo_proforma': bandera_tipo_proforma,
@@ -1709,6 +1710,7 @@ $(document).ready(function(){
             'Id_cliente_firma': Id_cliente_firma,
             'nro_anexos': nro_anexos,
             'nombre_entidad': nombre_entidad,
+            'email_entidad': email_entidad,
             'direccion_entidad': direccion_entidad,
             'telefono_entidad': telefono_entidad,
             'ciudad_entidad': ciudad_entidad,
@@ -1716,6 +1718,7 @@ $(document).ready(function(){
             'nro_dictamen_pri_cali': nro_dictamen_pri_cali,
             'fecha_dictamen_pri_cali': fecha_dictamen_pri_cali,
             'id_comunicado': comunicado.Id_Comunicado,
+            'N_siniestro' : N_siniestro
         }
         if(comunicado.Reemplazado == 1){
             var nombre_doc = comunicado.Nombre_documento;

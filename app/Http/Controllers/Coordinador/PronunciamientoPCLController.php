@@ -164,7 +164,6 @@ class PronunciamientoPCLController extends Controller
         if(count($array_caso_notificado) > 0){
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
         }
-
         return view('coordinador.pronunciamientoPCL', compact('user','array_datos_pronunciamientoPcl','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo', 'array_comunicados','caso_notificado'));
     
     }
@@ -1501,9 +1500,9 @@ class PronunciamientoPCLController extends Controller
             $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
             $textRun1->addText('Señores: ',array('bold' => true));
             $textRun1->addTextBreak();
-            $textRun1->addText($Email_calificador);
-            $textRun1->addTextBreak();
             $textRun1->addText($Entidad_calificador);
+            $textRun1->addTextBreak();
+            $textRun1->addText($Email_calificador);
             $textRun1->addTextBreak();
             $textRun1->addText($Dir_calificador);
             $textRun1->addTextBreak();
