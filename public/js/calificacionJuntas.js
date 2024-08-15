@@ -2966,7 +2966,12 @@ $(document).ready(function(){
             var comunicadoNradico = '';  
             /** @var select2 Config. del select2 */
             let select2 = [];
-            for (let i = 0; i < data.hitorialAgregarComunicado.length; i++) { 
+            for (let i = 0; i < data.hitorialAgregarComunicado.length; i++) {
+                
+                let estado_correspondencia = {
+                    deshabilitar_selector : data.hitorialAgregarComunicado[i].Estado_correspondencia == '0' ? true : false,
+                    deshabilitar_edicion: data.hitorialAgregarComunicado[i].Estado_correspondencia == '0' ? 'pointer-events: none; color: gray;' : '',
+                }
                 if (data.hitorialAgregarComunicado[i].N_radicado != '' && data.hitorialAgregarComunicado[i].Tipo_descarga != 'Manual'){
                     let comunicadoNradico = '<div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center">';
                     if (!data.hitorialAgregarComunicado[i].Correspondencia) {
@@ -3025,8 +3030,7 @@ $(document).ready(function(){
                             ><i class="fas fa-sync-alt text-info"></i></a>';
                     }
 
-                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>';
-
+                    comunicadoNradico += `<a href="javascript:void(0);" id="editar_comunicado" data-radicado="${data.hitorialAgregarComunicado[i].N_radicado}" style="display: flex; justify-content: center; ${estado_correspondencia.deshabilitar_edicion}"><i class="fa fa-sm fa-check text-success"></i></a>`;
                     comunicadoNradico += '</div>';
                     data.hitorialAgregarComunicado[i].Editarcomunicado = comunicadoNradico;
                     
@@ -3069,7 +3073,7 @@ $(document).ready(function(){
                     if(data.hitorialAgregarComunicado[i].Asunto.includes('Lista_chequeo')){
                         comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalCrearExpediente" title="Editar expediente" id="editarExpediente"><i style="cursor:pointer" class="fa fa-pen text-info"></i></a>';
                     }
-                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>';
+                    comunicadoNradico += `<a href="javascript:void(0);" id="editar_comunicado" data-radicado="${data.hitorialAgregarComunicado[i].N_radicado}" style="display: flex; justify-content: center; ${estado_correspondencia.deshabilitar_edicion}"><i class="fa fa-sm fa-check text-success"></i></a>`;
                     comunicadoNradico += '</div>';
                     data.hitorialAgregarComunicado[i].Editarcomunicado = comunicadoNradico;
                 }
@@ -3090,8 +3094,10 @@ $(document).ready(function(){
                     selector: `#status_notificacion_${data.hitorialAgregarComunicado[i].N_radicado}`,
                     default:  data.hitorialAgregarComunicado[i].Estado_Notificacion, //Opcion a selecionar
                     data: opciones_Notificacion, // Opciones disponibles para seleccionar
+                    enable:  estado_correspondencia.deshabilitar_selector
                 };
 
+                console.log(data.hitorialAgregarComunicado[i].Estado_correspondencia);
                 select2.push(select2Config);
 
             }
@@ -3101,10 +3107,18 @@ $(document).ready(function(){
 
             //Se inicializa configuracion de select2 con los estilos definidos
             select2.forEach(function(item) {
+                if (item.enable) {
+                    console.log(1);
+                    $(item.selector).prop('disabled', true);
+                } else {
+                    console.log(2);
+                    $(item.selector).prop('disabled', false);
+                }
                 $(item.selector).select2({
                     placeholder: "Seleccione una opción",
                     allowClear: false,
                     data: item.data,
+                    enable: data.enable,
                     templateResult: function(data){
                         if(data.color != undefined){
                             return $(`<span style="color: ${data.color}">${data.texto}</span>`); //Opciones disponibles
@@ -3268,11 +3282,9 @@ $(document).ready(function(){
             $("#modalCorrespondencia #check_copia").prop('disabled', false);
             $("#modalCorrespondencia #check_copia").prop('checked', false);
         }
-        if(correspondencia && $(id).data("estado_correspondencia") != 1){
-            console.log('Esto es correspondencia ', correspondencia);
+        if(correspondencia){
             array_temp = correspondencia.split(",").map(item => item.trim());
             correspondencia_array = array_temp;
-            console.log('Array ',correspondencia_array)
         }
         $("#modalCorrespondencia #tipo_correspondencia").val(tipo_correspondencia);
         $("#modalCorrespondencia #id_asignacion").val(id_asignacion);
@@ -7018,13 +7030,13 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     let Destinatario = data_comunicado['Destinatario'];
     let Copias = data_comunicado['Agregar_copia'];
     let Correspondencia = data_comunicado['Correspondencia'];
-    data_comunicado['Correspondencia'] = data_comunicado['Correspondencia'] == null ? '1' : '0';
+    data_comunicado['Estado_correspondencia'] = data_comunicado['Estado_correspondencia'] == null ||  data_comunicado['Estado_correspondencia'] == '1' ? '1' : '0';
     if(Copias){
         Copias = Copias.split(',').map(copia => copia.trim().toLowerCase());
     }
     // La copia del empleador y el destinanario empleador tienen valores distintos, por ende, se realiza la siguiente validación:
     // este dato finalmente irá en donde se construye los elementos a subrayados
-    if (Copias.includes('empleador')) {
+    if (Copias != null && Copias.includes('empleador')) {
         var dato_empleador = 'empleador';
         var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
     }else{
