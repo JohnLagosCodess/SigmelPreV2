@@ -299,7 +299,7 @@ class BandejaNotifiController extends Controller
         
         $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->from('sigmel_informacion_asignacion_eventos as siaev')
         ->select('siaev.Notificacion','sicoe.Estado_correspondencia')
-        ->leftjoin('sigmel_gestiones.sigmel_informacion_correspondencia_eventos as sicoe','sicoe.Id_Asignacion','siaev.Id_Asignacion')->where([
+        ->leftjoin('sigmel_gestiones.sigmel_informacion_correspondencia_eventos as sicoe','sicoe.Id_Asignacion','siaev.Id_Asignacion')->where([            
             ['siaev.Id_Asignacion',$id_asignacion],
             ['siaev.ID_evento',$id_evento],
         ])->get()->map(function($item){
