@@ -199,7 +199,7 @@
                                 <input type="submit" id="ActualizarPronuncia" name="ActualizarPronuncia" class="btn btn-info" value="Actualizar">
                                 <button type="submit" class="btn btn-info guardar_correspondencia" id="btn-guardar-correspondencia" data-accion='Guardar'>Guardar</button> --}}
                                 <input type="submit" id="btn_guardar_actualizar_correspondencia" name="btn_guardar_actualizar_correspondencia" class="btn btn-info" value="Guardar">
-                                <x-adminlte-button theme="danger" label="Cerrar" data-dismiss="modal" />
+                                <x-adminlte-button theme="danger" label="Cerrar" id="cerar_modalCorrespondencia" data-dismiss="modal" />
                             </div>
                         </form>
 

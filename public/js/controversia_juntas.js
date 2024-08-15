@@ -3717,6 +3717,13 @@ $(document).ready(function(){
         let correspondencia = $(id).data('correspondencia');
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
+
+        //Desactiva el formulario en caso de que la correspodencia este inactiva.
+        if($(id).data("estado_correspondencia") != 1){
+            $("#btn_guardar_actualizar_correspondencia").remove();
+            $("#form_correspondencia *").prop('disabled',true);
+            $("#cerar_modalCorrespondencia").prop('disabled',false);
+        }
         //Información superior del modal 
         if(tipo_descarga === 'Manual' || tipo_descarga === 'Dictamen'){
             $("#modalCorrespondencia #nombre_afiliado").val($("#nombre_afiliado").val());
@@ -3728,13 +3735,13 @@ $(document).ready(function(){
         }
         $("#modalCorrespondencia #id_evento").val($(id).data('id_evento'));
         $("#modalCorrespondencia #enlace_ed_evento").text($(id).data('id_evento'));
-        // console.log(tipo_correspondencia);
+       // console.log(tipo_correspondencia);
         if(tipo_descarga === 'Manual'){
             $("#modalCorrespondencia #check_principal").prop('checked', false);
             $("#modalCorrespondencia #check_principal").prop('disabled', false);
             $("#modalCorrespondencia #check_copia").prop('disabled', false);
             $("#modalCorrespondencia #check_copia").prop('checked', false);
-        }
+        } 
         if(correspondencia){
             array_temp = correspondencia.split(",").map(item => item.trim());
             correspondencia_array = array_temp;

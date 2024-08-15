@@ -1334,6 +1334,11 @@ class CoordinadorController extends Controller
                     $info_array_asignacion[0]['Id_Asignacion'], 
                     $info_array_asignacion[0]['ID_evento']
                 ];
+
+                //Habilita edicion del proceso de correspodencia para el proceso de notificacion.
+                if(isset($estado_acorde_a_parametrica[0]->enviarA)){
+                    BandejaNotifiController::finalizarNotificacion($info_array_asignacion[0]['ID_evento'], $info_array_asignacion[0]['Id_Asignacion'],false);
+                }
             }
 
         }        

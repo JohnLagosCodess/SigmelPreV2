@@ -13,7 +13,7 @@ use App\Models\cndatos_bandeja_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
 use App\Models\sigmel_informacion_alertas_automaticas_eventos;
-
+use App\Models\sigmel_informacion_correspondencia_eventos;
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
 
@@ -104,71 +104,7 @@ class BandejaNotifiController extends Controller
                 ->get();
 
             }
-            // $bandejaNotifisin_Pro_ant = cndatos_bandeja_eventos::on('sigmel_gestiones')
-            // ->where([
-            //     ['Enviar_bd_Notificacion', '=', 'Si'],
-            // ])
-            // ->whereNull('Nombre_proceso_anterior');
 
-            // $bandejaNotifi = cndatos_bandeja_eventos::on('sigmel_gestiones')
-            // ->where([
-            //     ['Enviar_bd_Notificacion', '=', 'Si'],,
-            //     ['Id_proceso_anterior', '<>', 4]
-            // ])
-            // ->union($bandejaNotifisin_Pro_ant)
-            // ->get();
-
-            // $Ids_Nombre_proceso_anterior = response()->json([]);
-            
-            // foreach ($bandejaOrigen as $item) {
-            //     // Accede a cada propiedad del objeto dentro del bucle
-            //     $Id_Asignacion_bandeja = $item->Id_Asignacion;
-            //     $ID_evento_bandeja = $item->ID_evento;
-            //     $Id_proceso_bandeja = $item->Id_proceso;
-
-            //     $validar_proceso_anterior = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            //     ->select('Id_proceso')
-            //     ->where([['ID_evento', $ID_evento_bandeja], ['Id_Asignacion', '<', $Id_Asignacion_bandeja]])
-            //     ->orderBy('Id_Asignacion', 'desc')
-            //     ->limit(1)
-            //     ->get();
-            //     //echo $validar_proceso_anterior[0]->Id_proceso;
-            //     if (count($validar_proceso_anterior) > 0) {
-            //         $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
-            //         ->select('Nombre_proceso')->where([['Id_proceso', $validar_proceso_anterior[0]->Id_proceso]])
-            //         ->limit(1)->get();    
-            //         //echo $validar_Nombre_proceso_anterior[0]->Nombre_proceso;    
-            //         $Ids_Nombre_proceso_anterior = response()->json([
-            //             'Id_Proceso_anterior' => $validar_proceso_anterior[0]->Id_proceso,
-            //             'Nombre_proceso_anterior' => $validar_Nombre_proceso_anterior[0]->Nombre_proceso,
-            //         ]);
-    
-            //         $Ids_Nombre_proceso_anterior_array = json_decode($Ids_Nombre_proceso_anterior->getContent(), true);
-                    
-            //         $arraybandejaNotifi = json_decode(json_encode($bandejaOrigen, true));
-    
-            //         $arraybandejaNotifi[0]->Id_Proceso_anterior = $Ids_Nombre_proceso_anterior_array['Id_Proceso_anterior'];
-            //         $arraybandejaNotifi[0]->Nombre_proceso_anterior = $Ids_Nombre_proceso_anterior_array['Nombre_proceso_anterior'];
-                    
-            //     } else {
-            //         $validar_Nombre_proceso_anterior = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
-            //         ->select('Nombre_proceso')->where([['Id_proceso', $Id_proceso_bandeja]])
-            //         ->limit(1)->get(); 
-
-            //         $Ids_Nombre_proceso_anterior = response()->json([
-            //             'Id_Proceso_anterior' => $Id_proceso_bandeja,
-            //             'Nombre_proceso_anterior' => $validar_Nombre_proceso_anterior[0]->Nombre_proceso,
-            //         ]);
-    
-            //         $Ids_Nombre_proceso_anterior_array = json_decode($Ids_Nombre_proceso_anterior->getContent(), true);
-                    
-            //         $arraybandejaNotifi = json_decode(json_encode($bandejaOrigen, true));
-    
-            //         $arraybandejaNotifi[0]->Id_Proceso_anterior = $Ids_Nombre_proceso_anterior_array['Id_Proceso_anterior'];
-            //         $arraybandejaNotifi[0]->Nombre_proceso_anterior = $Ids_Nombre_proceso_anterior_array['Nombre_proceso_anterior'];
-                    
-            //     }
-            // }
             $arraybandejaNotifi = json_decode(json_encode($bandejaNotifi, true));
             return response()->json($bandejaNotifi);
 
@@ -204,18 +140,7 @@ class BandejaNotifiController extends Controller
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 }
-                    // ->whereNull('Nombre_proceso_anterior')
-                    // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
-                    
-                    // $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    // ->where([
-                    //         ['Enviar_bd_Notificacion', '=', 'Si'],,
-                    //         ['Id_proceso_anterior', '<>', 4],
-                    //         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                    //     ])            
-                    // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    // ->union($bandejaNotifisin_Pro_ant)
-                    // ->get();
+
             
                     $arraybandejaNotifiFiltros = json_decode(json_encode($bandejaNotifiFiltros, true));
                     if (count($arraybandejaNotifiFiltros)>0) {
@@ -245,18 +170,6 @@ class BandejaNotifiController extends Controller
                     ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 }
-
-                    // ->whereNull('Nombre_proceso_anterior')
-                    // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta]);
-
-                    // $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    // ->where([
-                    //         ['Enviar_bd_Notificacion', '=', 'Si'],,
-                    //         ['Id_proceso_anterior', '<>', 4],
-                    //     ])            
-                    // ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
-                    // ->union($bandejaNotifisin_Pro_ant)
-                    // ->get();                    
 
                     $arraybandejaNotifiFiltros = json_decode(json_encode($bandejaNotifiFiltros, true));
                     if (count($arraybandejaNotifiFiltros)>0) {
@@ -289,16 +202,7 @@ class BandejaNotifiController extends Controller
                     ->get();
 
                 }
-                    // ->whereNull('Nombre_proceso_anterior');
-                    
-                    // $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
-                    // ->where([
-                    //         ['Enviar_bd_Notificacion', '=', 'Si'],,
-                    //         ['Id_proceso_anterior', '<>', 4],
-                    //         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
-                    //     ])            
-                    // ->union($bandejaNotifisin_Pro_ant)
-                    // ->get();
+
                 
                     $arraybandejaNotifiFiltros = json_decode(json_encode($bandejaNotifiFiltros, true));
                     if (count($arraybandejaNotifiFiltros)>0) {
@@ -351,188 +255,6 @@ class BandejaNotifiController extends Controller
         
     }
 
-    //No se esta usando actualmente
-    public function actualizarBandejaNotifi(Request $request){
-
-        if(!Auth::check()){
-            return redirect('/');
-        }
-        $usuario = Auth::user()->name;        
-        $time = time();
-        $date_con_hora = date("Y-m-d h:i:s", $time);
-
-        $IdEventoBandejaNotifi = $request->array;
-        $Id_proceso = $request->json['proceso_parametrizado'];
-        $Id_Servicio_redireccionar = $request->json['redireccionar'];
-        $Id_accion = $request->json['accion'];
-        $Id_profesional = $request->json['profesional'];
-
-        // Paso N°1: Extraemos el id estado de la tabla de parametrizaciones dependiendo del
-        // id proceso, id servicio, id accion. Este id irá como estado  en el evento
-        $estado_acorde_a_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
-        ->select('sipc.Estado')
-        ->where([
-            // ['sipc.Id_cliente', '=', $request->cliente],
-            ['sipc.Id_proceso', '=', $Id_proceso],
-            ['sipc.Servicio_asociado', '=', $Id_Servicio_redireccionar],
-            ['sipc.Accion_ejecutar','=',  $Id_accion]
-        ])->get();
-
-        if(count($estado_acorde_a_parametrica)>0){
-            $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
-        }else{
-            $Id_Estado_evento = 223;
-        }
-        
-        // Paso N°2: Obtenemos los id del proceso y servicio anteriores dependiendo del o los id de asignacion
-        $array_id_procesos = [];
-        $array_id_servicios = [];
-        for ($a=0; $a < count($IdEventoBandejaNotifi); $a++) { 
-            $array_ids = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->select('Id_proceso', 'Id_servicio')
-            ->where('Id_Asignacion', $IdEventoBandejaNotifi[$a])->get();
-
-            $info_array_ids = json_decode(json_encode($array_ids, true));
-
-            array_push($array_id_procesos, $info_array_ids[0]->Id_proceso);
-            array_push($array_id_servicios, $info_array_ids[0]->Id_servicio);
-        }
-
-        // Paso N°3: Obtenemos el nombre del profesional y se setea el dato de F_asignacion_calificacion
-        if (!empty($Id_profesional)) {
-            $profesional = DB::table('users')
-            ->select('name')->where('id',$Id_profesional)
-            ->get();
-
-            $nombre = json_decode(json_encode($profesional));
-            $nombre_profesional= $nombre[0]->name;
-            $F_asignacion_calificacion = $date_con_hora;
-        }else{
-            $Id_profesional = null;
-            $nombre_profesional = null;
-            $F_asignacion_calificacion = null;
-        }
-
-        // Paso N°4: Armado de datos
-        $array_datos_finales_actualizar = [];
-        for ($m=0; $m < count($IdEventoBandejaNotifi); $m++) {
-            switch (true) {
-                // CASO 1: Id asignacion no es vacio y id profesional no es vacio y id servicio no es vacio
-                case (!empty($IdEventoBandejaNotifi) and !empty($Id_profesional) and !empty($Id_Servicio_redireccionar)):
-            
-                    $actualizar_bandejaNotifi = [
-                        'Id_proceso' => $Id_proceso,
-                        'Id_servicio' => $Id_Servicio_redireccionar,
-                        'Id_accion' => $Id_accion,
-                        'Id_estado_evento' => $Id_Estado_evento,
-                        'Id_proceso_anterior' => $array_id_procesos[$m],
-                        'Id_servicio_anterior' => $array_id_servicios[$m],
-                        'F_asignacion_calificacion' => $F_asignacion_calificacion,
-                        'Id_profesional' =>  $Id_profesional,
-                        'Nombre_profesional' => $nombre_profesional,
-                        'Nombre_usuario' => $usuario
-                    ];
-
-                    // Insertamos los datos en un array para luego realizar la actualización
-                    array_push($array_datos_finales_actualizar, $actualizar_bandejaNotifi);
-            
-                    $mensajes = array(
-                        "parametro" => 'actualizado_B_Notifi',
-                        "mensaje" => 'Se realizó la actualizacion satisfactoriamente'
-                    );
-            
-                    // return json_decode(json_encode($mensajes, true));
-                    
-                break;
-                // CASO 2: Id asignacion no es vacio y id profesional es vacio y id servicio no es vacio
-                case (!empty($IdEventoBandejaNotifi) and empty($Id_profesional) and !empty($Id_Servicio_redireccionar)):
-    
-                    $actualizar_bandejaNotifi_Servicio = [
-                        'Id_proceso' => $Id_proceso,
-                        'Id_servicio' => $Id_Servicio_redireccionar,
-                        'Id_accion' => $Id_accion,
-                        'Id_estado_evento' => $Id_Estado_evento,
-                        'Id_proceso_anterior' => $array_id_procesos[$m],
-                        'Id_servicio_anterior' => $array_id_servicios[$m],
-                        'Nombre_usuario' => $usuario,
-                    ]; 
-
-                    // Insertamos los datos en un array para luego realizar la actualización
-                    array_push($array_datos_finales_actualizar, $actualizar_bandejaNotifi_Servicio);
-    
-                    $mensajes = array(
-                        "parametro" => 'actualizado_B_Notifi',
-                        "mensaje" => 'Se realizó la actualizacion satisfactoriamente'
-                    );
-    
-                    // return json_decode(json_encode($mensajes, true));
-    
-                break;
-                // CASO 3: Id asignacion no es vacio y id profesional no es vacio y id servicio es vacio
-                case (!empty($IdEventoBandejaNotifi) and !empty($Id_profesional) and empty($Id_Servicio_redireccionar)):
-    
-                    $actualizar_bandejaNotifi_Profesional = [
-                        'Id_proceso' => $Id_proceso,
-                        'Id_servicio' => $Id_Servicio_redireccionar,
-                        'Id_accion' => $Id_accion,
-                        'Id_estado_evento' => $Id_Estado_evento,
-                        'Id_proceso_anterior' => $array_id_procesos[$m],
-                        'Id_servicio_anterior' => $array_id_servicios[$m],
-                        'F_asignacion_calificacion' => $F_asignacion_calificacion,
-                        'Id_profesional' =>  $Id_profesional,
-                        'Nombre_profesional' => $nombre_profesional,
-                        'Nombre_usuario' => $usuario
-                    ];
-
-                    // Insertamos los datos en un array para luego realizar la actualización
-                    array_push($array_datos_finales_actualizar, $actualizar_bandejaNotifi_Profesional);
-
-                    $mensajes = array(
-                        "parametro" => 'actualizado_B_Notifi',
-                        "mensaje" => 'Se realizó la actualizacion satisfactoriamente'
-                    );
-
-                    // return json_decode(json_encode($mensajes, true));
-    
-                break;
-                // CASO 4: Id asignacion no es vacio y id profesional es vacio y id servicio es vacio
-                case (!empty($IdEventoBandejaNotifi) and empty($Id_profesional) and empty($Id_Servicio_redireccionar)):
-                    $mensajes = array(
-                        "parametro" => 'NOactualizado_B_Notifi',
-                        "mensaje" => 'Debe seleccionar el Profesional o Redireccionar a, para Actualizar'
-                    );
-
-                    // return json_decode(json_encode($mensajes, true));
-                break;
-                
-                default:                
-                break;
-            }
-        };
-
-        // Paso N° 5: Actualización de la información
-        for ($b=0; $b < count($array_datos_finales_actualizar); $b++) { 
-            sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->where('Id_Asignacion', $IdEventoBandejaNotifi[$b])
-            ->update($array_datos_finales_actualizar[$b]);
-        }
-        $array_datos_finales_actualizar = [];
-        return json_decode(json_encode($mensajes, true));
-
-        // $profesional = DB::table('users')
-        // ->select('name')->where('id',$Id_profesional)
-        // ->get();
-        // if (count($profesional) > 0) {
-        //     $nombre = json_decode(json_encode($profesional));
-        //     $nombre_profesional= $nombre[0]->name; 
-            
-        // }else{
-            
-        // }
-        
-        
-        
-    }
 
     public function alertaNaranjasRojasOrigen(Request $request) {
         $alertas = sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')
@@ -551,13 +273,38 @@ class BandejaNotifiController extends Controller
                 'evento' => 'required'
             ]);
 
-            $info_evento = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->select('Notificacion')->where([
-                ['Id_Asignacion',$request->id_asignacion],
-                ['ID_evento',$request->evento]
-            ])->get();
-
+            $info_evento = BandejaNotifiController::evento_en_notificaciones($request->evento,$request->id_asignacion);
             $info_evento = json_decode(json_encode($info_evento, true));
             return response()->json($info_evento);
         }
+    }
+
+    public static function finalizarNotificacion(string $evento,int $id_asignacion,bool $estado){
+        if(!$estado){
+            sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')->where([
+                ['ID_evento',$evento],
+                ['Id_Asignacion',$id_asignacion]
+            ])->update(['Estado_correspondencia' => '1']);
+        }else{
+            sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')->where([
+                ['ID_evento',$evento],
+                ['Id_Asignacion',$id_asignacion]
+            ])->update(['Estado_correspondencia' => '0']); //desactiva la correspondencia para ediccion
+        }
+    }
+
+    public static function evento_en_notificaciones($id_evento,$id_asignacion){
+        $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->from('sigmel_informacion_asignacion_eventos as siaev')
+        ->select('siaev.Notificacion','sicoe.Estado_correspondencia')
+        ->leftjoin('sigmel_gestiones.sigmel_informacion_correspondencia_eventos as sicoe','sicoe.Id_Asignacion','siaev.Id_Asignacion')->where([            
+            ['siaev.Id_Asignacion',$id_asignacion],
+            ['siaev.ID_evento',$id_evento],
+        ])->get()->map(function($item){
+            //1 - Activo 0 - Inactivo: Siempre y el evento no tenga alguna correspondencia y/o su estado sea 1 la se mostrara la correspodencia 
+            $item->Notificacion = $item->Estado_Correspondencia == '1'|| is_null($item->Estado_Correspondencia) ? 'Si' : 'No';
+            return $item;
+        });
+
+        return $enviar_notificacion;
     }
 }
