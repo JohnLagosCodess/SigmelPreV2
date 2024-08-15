@@ -6680,7 +6680,7 @@ $(document).ready(function(){
         url:'/historialComunicadoJuntas',
         data: get_comunicados,
         success:function(data){
-            crear_Expediente(data);
+            crear_Expediente(data.hitorialAgregarComunicado);
         }
     });
 
