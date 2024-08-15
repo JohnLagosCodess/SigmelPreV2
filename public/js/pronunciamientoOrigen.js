@@ -477,8 +477,8 @@ $(document).ready(function(){
 
 
     /* Validación mostrar item correspondencia pero cuando carga inicialmente la página */
-    var opt_predeterminada = $("[name='decision_pr']").filter(":checked").val();
-
+    var opt_predeterminada = $("[name^='decision_pr']").filter(":checked").val();
+    
     if(opt_predeterminada == "Acuerdo"){
         $("#mostrar_mensaje_importante").addClass('d-none');
         $("#mostrar_mensaje_importante1").addClass('d-none');
@@ -494,8 +494,12 @@ $(document).ready(function(){
         var seteo_nro_anexos = 0;
         $("#n_anexos").val(seteo_nro_anexos);
 
-        // Selección automática del checkbox firmar
-        $("#firmar").prop('checked', true);
+        // Selección automática del checkbox firmar siempre y cuando el dato sea firmar y no undefined
+        if($('#bd_check_firmar').val() == 'firmar'){
+            $("#firmar").prop('checked', true);
+        }else{
+            $("#firmar").prop('checked', false);
+        }
 
     }else if(opt_predeterminada == "Desacuerdo") {
         $("#mostrar_mensaje_importante").removeClass('d-none');
@@ -515,8 +519,13 @@ $(document).ready(function(){
         // Selección automática de las copias a partes interesadas: Afiliado
         $("#copia_afiliado").prop('checked', true);
 
-        // Selección automática del checkbox firmar
-        $("#firmar").prop('checked', false);
+
+        // Selección automática del checkbox firmar siempre y cuando el dato sea firmar y no undefined
+        if($('#bd_check_firmar').val() == 'firmar'){
+            $("#firmar").prop('checked', true);
+        }else{
+            $("#firmar").prop('checked', false);
+        }
 
     }else if(opt_predeterminada == "Silencio"){
         $("#mostrar_mensaje_importante").addClass('d-none');
@@ -572,6 +581,10 @@ $(document).ready(function(){
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', true);
+
+            // Habilitar obligatoriedad del campo asunto
+            $("#asunto_cali").prop("required",true);
+            $("#label_asunto_cali span").removeClass('d-none');
             
         } else if(opt_correspondencia == "Desacuerdo") {
 
@@ -599,6 +612,10 @@ $(document).ready(function(){
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
 
+            // Habilitar obligatoriedad del campo asunto
+            $("#asunto_cali").prop("required",true);
+            $("#label_asunto_cali span").removeClass('d-none');
+
         }else if(opt_correspondencia == "Silencio"){
             $("#mostrar_mensaje_importante").addClass('d-none');
             $("#mostrar_mensaje_importante1").addClass('d-none');
@@ -622,6 +639,11 @@ $(document).ready(function(){
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
+
+            // Deshabilitar obligatoriedad del campo asunto
+            $("#asunto_cali").prop("required",false);
+            $("#label_asunto_cali span").addClass('d-none');
+
         }
         iniciarIntervalo_correspon();
     });
@@ -1679,12 +1701,13 @@ $(document).ready(function(){
 
         var nombre_entidad = $("#nom_entidad_califi").val();
         var direccion_entidad = $("#dir_calificador").val();
+        var email_entidad = $("#mail_calificador").val();
         var telefono_entidad = $("#telefono_calificador").val();
         var ciudad_entidad = $("#ciudad_calificador").val();
         var departamento_entidad = $("#depar_calificador").val();
         var nro_dictamen_pri_cali = $("#dictamen_calificador").val();
         var fecha_dictamen_pri_cali = $("#fecha_calificador").val();
-
+        var N_siniestro = $('#n_siniestro').val();
         var datos_generacion_proforma = {
             '_token': token,
             'bandera_tipo_proforma': bandera_tipo_proforma,
@@ -1716,6 +1739,7 @@ $(document).ready(function(){
             'Id_cliente_firma': Id_cliente_firma,
             'nro_anexos': nro_anexos,
             'nombre_entidad': nombre_entidad,
+            'email_entidad': email_entidad,
             'direccion_entidad': direccion_entidad,
             'telefono_entidad': telefono_entidad,
             'ciudad_entidad': ciudad_entidad,
@@ -1723,6 +1747,7 @@ $(document).ready(function(){
             'nro_dictamen_pri_cali': nro_dictamen_pri_cali,
             'fecha_dictamen_pri_cali': fecha_dictamen_pri_cali,
             'id_comunicado': comunicado.Id_Comunicado,
+            'N_siniestro' : N_siniestro
         }
         if(comunicado.Reemplazado == 1){
             var nombre_doc = comunicado.Nombre_documento;

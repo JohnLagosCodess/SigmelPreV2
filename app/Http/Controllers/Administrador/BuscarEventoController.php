@@ -2809,7 +2809,7 @@ class BuscarEventoController extends Controller
                     /* Validamos el decreto de calificacion para determinar cuando enviar el valor del rol ocupacional dependiendo
                         de los decretos 1507 de 2014 (id 1), 1507 de 2014 cero (id 2), 917 de 999 (id 3)
                     */
-                    if(count($informacionComite) > 0){
+                    if(!empty($informacionComite) > 0){
                         if ($informacionComite->Decreto_calificacion == 1 || $informacionComite->Decreto_calificacion == 3) {
                             $Total_rol_ocupacional = optional($informacionComite)->Total_laboral_otras_areas;
                         }else{

@@ -250,7 +250,7 @@ class ControversiaJuntasController extends Controller
         }
 
         // Consultamos si el caso está en la bandeja de Notificaciones
-        $array_caso_notificado = BandejaNotifiController::evento_en_notificaciones($request->evento,$request->id_asignacion);
+        $array_caso_notificado = BandejaNotifiController::evento_en_notificaciones($Id_evento_juntas,$Id_asignacion_juntas);
         if(count($array_caso_notificado) > 0){
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
         }
@@ -260,6 +260,7 @@ class ControversiaJuntasController extends Controller
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
         'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado'));
+    
     }
 
         /**
