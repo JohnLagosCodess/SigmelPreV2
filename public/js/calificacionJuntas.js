@@ -6692,7 +6692,7 @@ $(document).ready(function(){
         url:'/historialComunicadoJuntas',
         data: get_comunicados,
         success:function(data){
-            crear_Expediente(data);
+            crear_Expediente(data.hitorialAgregarComunicado);
         }
     });
 
@@ -7036,7 +7036,7 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     }
     // La copia del empleador y el destinanario empleador tienen valores distintos, por ende, se realiza la siguiente validación:
     // este dato finalmente irá en donde se construye los elementos a subrayados
-    if (Copias.includes('empleador')) {
+    if (Copias != null && Copias.includes('empleador')) {
         var dato_empleador = 'empleador';
         var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
     }else{

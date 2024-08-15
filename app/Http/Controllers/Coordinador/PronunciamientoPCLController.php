@@ -153,7 +153,7 @@ class PronunciamientoPCLController extends Controller
         }
 
         // Consultamos si el caso está en la bandeja de Notificaciones
-        $array_caso_notificado = BandejaNotifiController::evento_en_notificaciones($request->evento,$request->id_asignacion);
+        $array_caso_notificado = BandejaNotifiController::evento_en_notificaciones($Id_evento_calitec,$Id_asignacion_calitec);
 
         if(count($array_caso_notificado) > 0){
             $caso_notificado = $array_caso_notificado[0]->Notificacion;

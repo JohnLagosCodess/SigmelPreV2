@@ -295,17 +295,8 @@ class BandejaNotifiController extends Controller
         }
     }
 
-    public static function evento_en_notificaciones($id_evento,$id_asignacion){
-
-        if(empty($id_evento) || empty($id_asignacion) ){
-            $error = ValidationException::withMessages([
-                'id_evento' => 'Evento no suministrado',
-                'id_asignacion' => 'Id de asignacion no suministrado'
-            ]);
-
-            throw $error;
-        }
-
+    public static function evento_en_notificaciones(string $id_evento,int $id_asignacion){
+        
         $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->from('sigmel_informacion_asignacion_eventos as siaev')
         ->select('siaev.Notificacion','sicoe.Estado_correspondencia')
         ->leftjoin('sigmel_gestiones.sigmel_informacion_correspondencia_eventos as sicoe','sicoe.Id_Asignacion','siaev.Id_Asignacion')->where([

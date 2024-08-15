@@ -2034,7 +2034,7 @@
                                                                                 </form>
                                                                             @endif
                                                                         @endif
-                                                                @endforeach
+                                                                    @endforeach
                                                                 <a href="javascript:void(0);" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
                                                                 </td>
                                                             @endif

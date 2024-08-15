@@ -295,7 +295,7 @@ class DeterminacionOrigenATEL extends Controller
         ->get();
 
         // Consultamos si el caso está en la bandeja de Notificaciones
-        $array_caso_notificado = BandejaNotifiController::evento_en_notificaciones($request->evento,$request->id_asignacion);
+        $array_caso_notificado = BandejaNotifiController::evento_en_notificaciones($Id_evento_dto_atel,$Id_asignacion_dto_atel);
 
         if(count($array_caso_notificado) > 0){
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
