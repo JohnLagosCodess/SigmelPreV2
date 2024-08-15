@@ -295,14 +295,17 @@ class BandejaNotifiController extends Controller
         }
     }
 
-    public static function evento_en_notificaciones(string $id_evento,int $id_asignacion){
-        
+    public static function evento_en_notificaciones(string $id_evento,int $id_asignacion,$comunicado = null){
+        $condiciones = array(['siaev.Id_Asignacion',$id_asignacion],
+        ['siaev.ID_evento',$id_evento]);
+        if($comunicado != null){
+            array_push($condiciones,['Id_comunicado',$comunicado]);
+        }
+
         $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->from('sigmel_informacion_asignacion_eventos as siaev')
         ->select('siaev.Notificacion','sicoe.Estado_correspondencia')
-        ->leftjoin('sigmel_gestiones.sigmel_informacion_correspondencia_eventos as sicoe','sicoe.Id_Asignacion','siaev.Id_Asignacion')->where([            
-            ['siaev.Id_Asignacion',$id_asignacion],
-            ['siaev.ID_evento',$id_evento],
-        ])->get()->map(function($item){
+        ->leftjoin('sigmel_gestiones.sigmel_informacion_correspondencia_eventos as sicoe','sicoe.Id_Asignacion','siaev.Id_Asignacion')
+        ->where($condiciones)->get()->map(function($item){
             //1 - Activo 0 - Inactivo: Siempre y el evento no tenga alguna correspondencia y/o su estado sea 1 la se mostrara la correspodencia 
             $item->Notificacion = $item->Notificacion == 'No'  && is_null($item->Estado_correspondencia) ? 'No' : 'Si';
             return $item;
