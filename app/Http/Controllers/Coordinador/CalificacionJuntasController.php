@@ -191,13 +191,7 @@ class CalificacionJuntasController extends Controller
         }
 
         // Validar si la accion ejecutada tiene enviar a notificaciones            
-        $enviar_notificaciones = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-        ->select('Notificacion')
-        ->where([
-            ['ID_evento', $newIdEvento],
-            ['Id_Asignacion', $newIdAsignacion]
-        ])
-        ->get();
+        $enviar_notificaciones = BandejaNotifiController::evento_en_notificaciones($newIdEvento,$newIdAsignacion);
 
         return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos','arrayinfo_afiliado',
         'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs',
@@ -659,14 +653,16 @@ class CalificacionJuntasController extends Controller
             ])->get();
 
             //Asignamos #n de orden cuado se envie un caso a notificaciones
-            if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
                 //Trae El numero de orden actual
                 $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
                 ->select('Numero_orden')
                 ->get();
 
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
                 $N_orden_evento=$n_orden[0]->Numero_orden;
             }else{
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
                 $N_orden_evento=null;
             }
 
@@ -1209,15 +1205,18 @@ class CalificacionJuntasController extends Controller
                 ['sipc.Accion_ejecutar','=',  $request->accion]
             ])->get();
 
-            //Asignamos #n de orden cuado se envie un caso a notificaciones
-            if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            //Asignamos #n de orden cuado se envie un caso a notificaciones, y habilitamos edicion de correspondencia en funcion de este
+            if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
                 //Trae El numero de orden actual
                 $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
                 ->select('Numero_orden')
                 ->get();
 
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
                 $N_orden_evento=$n_orden[0]->Numero_orden;
             }else{
+
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
                 $N_orden_evento=null;
             }
 
@@ -2681,13 +2680,7 @@ class CalificacionJuntasController extends Controller
 
             // Validar si la accion ejecutada tiene enviar a notificaciones
             
-            $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->select('Notificacion')
-            ->where([
-                ['ID_evento', $newId_evento],
-                ['Id_Asignacion', $newId_asignacion]
-            ])
-            ->get();
+            $enviar_notificacion = BandejaNotifiController::evento_en_notificaciones($newId_evento,$newId_asignacion);
 
             foreach ($hitorialAgregarComunicado as &$comunicado) {
                 if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {

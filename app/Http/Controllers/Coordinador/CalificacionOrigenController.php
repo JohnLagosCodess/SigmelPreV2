@@ -221,14 +221,7 @@ class CalificacionOrigenController extends Controller
        ->get();
 
         // Validar si la accion ejecutada tiene enviar a notificaciones            
-        $enviar_notificaciones = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-        ->select('Notificacion')
-        ->where([
-            ['ID_evento', $newIdEvento],
-            ['Id_Asignacion', $newIdAsignacion]
-        ])
-        ->get();
-
+        $enviar_notificaciones = BandejaNotifiController::evento_en_notificaciones($newIdEvento,$newIdAsignacion);
         return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos',
         'arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc',
         'dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados',
@@ -315,9 +308,11 @@ class CalificacionOrigenController extends Controller
             ->get();
 
             //Asignamos #n de orden cuado se envie un caso a notificaciones
-            if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
                 $N_orden_evento=$n_orden[0]->Numero_orden;
             }else{
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
                 $N_orden_evento=null;
             }
 
@@ -873,9 +868,11 @@ class CalificacionOrigenController extends Controller
             ->get();
 
             //Asignamos #n de orden cuado se envie un caso a notificaciones
-            if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
                 $N_orden_evento=$n_orden[0]->Numero_orden;
             }else{
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
                 $N_orden_evento=null;
             }
 

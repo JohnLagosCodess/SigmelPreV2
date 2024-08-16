@@ -23,6 +23,7 @@ use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Models\sigmel_informacion_correspondencia_eventos;
 
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
@@ -220,6 +221,11 @@ class ControversiaJuntasController extends Controller
             else{
                 $comunicado['Existe'] = false;
             }
+
+           $estadoCorrespondencia = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')->select('Estado_correspondencia')
+            ->where('Id_Comunicado',$comunicado["Id_Comunicado"])->get()->first();
+           // $evento_en_notificacion = BandejaNotifiController::evento_en_notificaciones($Id_evento_juntas,$Id_asignacion_juntas);
+            $comunicado['Estado_correspondencia'] =  $estadoCorrespondencia == null  ? '1' : $estadoCorrespondencia->Estado_correspondencia;
         }
         //Obtenemos las secciones a mostrar
         $array_control = $this->controlJuntas($Id_evento_juntas, $Id_asignacion_juntas,  $array_datos_controversiaJuntas[0]->Nombre_servicio);
@@ -250,13 +256,7 @@ class ControversiaJuntasController extends Controller
         }
 
         // Consultamos si el caso está en la bandeja de Notificaciones
-        $array_caso_notificado = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-        ->select('Notificacion')
-        ->where([
-            ['Id_Asignacion', $Id_asignacion_juntas],
-            ['ID_evento', $Id_evento_juntas]
-        ])
-        ->get();
+        $array_caso_notificado = BandejaNotifiController::evento_en_notificaciones($Id_evento_juntas,$Id_asignacion_juntas);
         if(count($array_caso_notificado) > 0){
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
         }
@@ -266,6 +266,7 @@ class ControversiaJuntasController extends Controller
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
         'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado'));
+    
     }
 
         /**

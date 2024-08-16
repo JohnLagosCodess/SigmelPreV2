@@ -1388,6 +1388,13 @@ $(document).ready(function(){
         let correspondencia = $(id).data('correspondencia');
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
+
+        //Desactiva el formulario en caso de que la correspodencia este inactiva.
+        if($(id).data("estado_correspondencia") != 1){
+            $("#btn_guardar_actualizar_correspondencia").remove();
+            $("#form_correspondencia *").prop('disabled',true);
+            $("#cerar_modalCorrespondencia").prop('disabled',false);
+        }
         //Información superior del modal 
         if(tipo_descarga === 'Manual' || tipo_descarga === 'Dictamen'){
             $("#modalCorrespondencia #nombre_afiliado").val($("#nombre_afiliado").val());

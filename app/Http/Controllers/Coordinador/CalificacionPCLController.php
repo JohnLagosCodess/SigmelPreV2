@@ -613,9 +613,12 @@ class CalificacionPCLController extends Controller
             ->get();
 
             //Asignamos #n de orden cuado se envie un caso a notificaciones
-            if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
                 $N_orden_evento=$n_orden[0]->Numero_orden;
             }else{
+
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
                 $N_orden_evento=null;
             }
 
@@ -1168,9 +1171,11 @@ class CalificacionPCLController extends Controller
             ->get();
 
             //Asignamos #n de orden cuado se envie un caso a notificaciones
-            if(!empty($estado_acorde_a_parametrica[0]->enviarA)){
+            if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
                 $N_orden_evento=$n_orden[0]->Numero_orden;
             }else{
+                BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
                 $N_orden_evento=null;
             }
 
@@ -2381,17 +2386,9 @@ class CalificacionPCLController extends Controller
                 ['Id_proceso', '2']
             ])
             ->get();
-
             // Validar si la accion ejecutada tiene enviar a notificaciones
+            $enviar_notificacion =  BandejaNotifiController::evento_en_notificaciones($newId_evento,$newId_asignacion);
             
-            $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->select('Notificacion')
-            ->where([
-                ['ID_evento', $newId_evento],
-                ['Id_Asignacion', $newId_asignacion]
-            ])
-            ->get();
-
             foreach ($hitorialAgregarComunicado as &$comunicado) {
                 if ($comunicado['Tipo_descarga'] === 'Documento_PCL') {
                     $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
@@ -2415,11 +2412,12 @@ class CalificacionPCLController extends Controller
                     $comunicado['Existe'] = false;
                 }
             }
-
+            $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
             return response()->json([
                 'hitorialAgregarComunicado' => $hitorialAgregarComunicado,
                 'enviar_notificacion' => $enviar_notificacion
             ]);
+
 
         }
 
@@ -5683,6 +5681,9 @@ class CalificacionPCLController extends Controller
                 }
                 $descripcion_otros = $request->descripcion_otros;
                 $descripcion_enfermedad = $request->descripcion_enfermedad;
+                $dominancia = $request->dominancia;
+                $id_afiliado = $request->id_afiliado;
+
                 $datos_info_decreto_eventos = [
                     'ID_Evento' => $id_Evento_decreto,
                     'Id_proceso' => $id_Proceso_decreto,
@@ -5702,13 +5703,23 @@ class CalificacionPCLController extends Controller
                 $dato_info_pericial_eventos = [
                     'Id_motivo_solicitud' => $motivo_solicitud,
                 ];
+
+                $dato_info_dominancia_afiliado = [
+                    'Id_dominancia' => $dominancia
+                ];
         
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')->insert($datos_info_decreto_eventos);
                 sleep(2);
                 sigmel_informacion_pericial_eventos::on('sigmel_gestiones')
-                ->where([
+                ->where([                    
                     ['ID_evento', $id_Evento_decreto]
                 ])->update($dato_info_pericial_eventos);
+
+                sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Id_Afiliado', $id_afiliado],
+                    ['ID_evento', $id_Evento_decreto]
+                ])->update($dato_info_dominancia_afiliado);
                 
                 $mensajes = array(
                     "parametro" => 'agregar_decreto_parte',
@@ -5733,6 +5744,9 @@ class CalificacionPCLController extends Controller
                 }
                 $descripcion_otros = $request->descripcion_otros;
                 $descripcion_enfermedad = $request->descripcion_enfermedad;
+                $dominancia = $request->dominancia;
+                $id_afiliado = $request->id_afiliado;
+                
                 $datos_info_decreto_eventos = [
                     'ID_Evento' => $id_Evento_decreto,
                     'Id_proceso' => $id_Proceso_decreto,
@@ -5751,6 +5765,10 @@ class CalificacionPCLController extends Controller
                 $dato_info_pericial_eventos = [
                     'Id_motivo_solicitud' => $motivo_solicitud,
                 ];
+
+                $dato_info_dominancia_afiliado = [
+                    'Id_dominancia' => $dominancia
+                ];
         
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
                 ->where('ID_Evento', $id_Evento_decreto)->update($datos_info_decreto_eventos);
@@ -5760,6 +5778,12 @@ class CalificacionPCLController extends Controller
                     ['ID_evento', $id_Evento_decreto]
                 ])->update($dato_info_pericial_eventos);
         
+                sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+                ->where([
+                    ['Id_Afiliado', $id_afiliado],
+                    ['ID_evento', $id_Evento_decreto]
+                ])->update($dato_info_dominancia_afiliado);
+
                 $mensajes = array(
                     "parametro" => 'update_decreto_parte',
                     "mensaje2" => 'Actualizado satisfactoriamente.'

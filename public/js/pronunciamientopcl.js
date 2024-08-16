@@ -90,11 +90,14 @@ $(document).ready(function(){
     });
 
     var info_pronuncia = $('#info_pronuncia').val();
+    // Si la pronuncia tiene como decisión Silencio, no genera proforma y deja visible el cuadro de correspondencia.
     if(info_pronuncia){
         var info_pronunciamiento = JSON.parse(info_pronuncia)[0];
         if(info_pronunciamiento.Decision == 'Silencio'){
             $("#div_pronu_califi").removeClass('d-none');
         } 
+        /* Si la decisión es distinta a pronunciamiento entonces significa que es un desacuerdo o acuerdo por 
+        ende ocultara todo y la unica forma de habilitarlo es dandole en editar en la tabla de comunicados */
         else{
             $("#ActualizarPronuncia").addClass('d-none');
             $("#div_pronu_califi").addClass('d-none');
@@ -1419,6 +1422,13 @@ $(document).ready(function(){
         $("#modalCorrespondencia #enlace_ed_evento").text($(id).data('id_evento'));
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
+
+        //Desactiva el formulario en caso de que la correspodencia este inactiva.
+        if($(id).data("estado_correspondencia") != 1){
+            $("#btn_guardar_actualizar_correspondencia").remove();
+            $("#form_correspondencia *").prop('disabled',true);
+            $("#cerar_modalCorrespondencia").prop('disabled',false);
+        }
         // console.log(tipo_correspondencia);
         if(tipo_descarga === 'Manual'){
             $("#modalCorrespondencia #check_principal").prop('checked', false);

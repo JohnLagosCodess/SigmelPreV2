@@ -247,7 +247,7 @@
                 </tr>
                 <tr>
                     <td>
-                        SINIESTRO: {{$ID_evento}}
+                        SINIESTRO: {{$N_siniestro}}
                     </td>
                 </tr>
                 <tr>

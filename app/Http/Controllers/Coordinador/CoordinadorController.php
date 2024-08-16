@@ -1334,6 +1334,11 @@ class CoordinadorController extends Controller
                     $info_array_asignacion[0]['Id_Asignacion'], 
                     $info_array_asignacion[0]['ID_evento']
                 ];
+
+                //Habilita edicion del proceso de correspodencia para el proceso de notificacion.
+                if(isset($estado_acorde_a_parametrica[0]->enviarA)){
+                    BandejaNotifiController::finalizarNotificacion($info_array_asignacion[0]['ID_evento'], $info_array_asignacion[0]['Id_Asignacion'],false);
+                }
             }
 
         }        
@@ -1635,6 +1640,7 @@ class CoordinadorController extends Controller
                         $response['datos'] = count($datos_afp_conocimiento) > 0 ? $datos_afp_conocimiento[0] : null;
                     }
                 }
+                dd("Response : ",$response);
                 return response()->json($response);
             }
         }
@@ -1642,6 +1648,7 @@ class CoordinadorController extends Controller
             $info_correspondencia = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')
             ->where([['Id_comunicado', $Id_comunicado],['Tipo_correspondencia', $Tipo_correspondencia]])
             ->get();
+            dd("info_correspondencia ",$info_correspondencia);
             return response()->json($info_correspondencia);
         }
     }

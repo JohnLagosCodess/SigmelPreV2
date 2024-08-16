@@ -295,13 +295,7 @@ class DeterminacionOrigenATEL extends Controller
         ->get();
 
         // Consultamos si el caso está en la bandeja de Notificaciones
-        $array_caso_notificado = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-        ->select('Notificacion')
-        ->where([
-            ['Id_Asignacion', $Id_asignacion_dto_atel],
-            ['ID_evento', $Id_evento_dto_atel]
-        ])
-        ->get();
+        $array_caso_notificado = BandejaNotifiController::evento_en_notificaciones($Id_evento_dto_atel,$Id_asignacion_dto_atel);
 
         if(count($array_caso_notificado) > 0){
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
