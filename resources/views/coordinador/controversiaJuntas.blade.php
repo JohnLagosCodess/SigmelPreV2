@@ -1856,21 +1856,22 @@
                                                         <th>Elaboró</th>
                                                         <th>Fecha de comunicado</th>
                                                         <th>Documento</th>
-                                                        <th>Destinatarios</th>
+                                                        @if ($caso_notificado == "Si")
+                                                            <th>Destinatarios</th>
+                                                        @endif
                                                         <th>Estado general de la Notificación</th>
                                                         <th>Nota</th>
                                                         <th>Acción</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    
                                                     @foreach ($array_comunicados_correspondencia as $key => $comunicados)
                                                         <tr>
                                                             <td>{{$comunicados->N_radicado}}</td>
                                                             <td>{{$comunicados->Elaboro}}</td>
                                                             <td>{{$comunicados->F_comunicado}}</td>
                                                             <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
-                                                            
+                                                            @if ($caso_notificado == "Si")
                                                                 <td>
                                                                     <?php
                                                                         $destinatario = strtolower($comunicados->Destinatario);
@@ -1971,7 +1972,7 @@
                                                                     data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('afp_conocimiento', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >AFP Conocimiento</a>
                                                                 </td>
-                                                           
+                                                           @endif
                                                             <td><select class="custom-select" id="status_notificacion_{{$comunicados->N_radicado}}" style="width:100%;" data-default={{$comunicados->Estado_Notificacion}}></select></td>
                                                             <td><textarea class="form-control nota-col" name="nota_comunicado_{{$comunicados->N_radicado}}" id="nota_comunicado_{{$comunicados->N_radicado}}" cols="70" rows="3" style="resize:none; width:200px;">{{$comunicados->Nota}}</textarea></td> {{-- campo Nota--}}
                                                             @if ($comunicados->Tipo_descarga == "Manual") 

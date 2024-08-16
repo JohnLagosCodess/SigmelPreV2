@@ -3270,7 +3270,7 @@ $(document).ready(function(){
         let tipo_descarga = $(id).data('tipo_descarga');
         
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
-        if($(id).data("estado_correspondencia") != 1){
+        if($(id).data("estado_correspondencia") == '0'){
             $("#btn_guardar_actualizar_correspondencia").remove();
             $("#form_correspondencia *").prop('disabled',true);
             $("#cerar_modalCorrespondencia").prop('disabled',false);

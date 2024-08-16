@@ -446,13 +446,11 @@ $(document).ready(function () {
         if (!Number.isInteger(Number(value))) {
           $(input).val("");
         }
-    }
-
+    }    
     
-    
-    $(document).on("input", '[id^="deficienciadecreto3_"]', function() {
-        NumerosEnteros(this);
-    });   
+    // $(document).on("input", '[id^="deficienciadecreto3_"]', function() {
+    //     NumerosEnteros(this);
+    // });   
     
     function Maximo2Decimales(idinput){
         $('#'+idinput).on('input', function(){
@@ -473,6 +471,11 @@ $(document).ready(function () {
             }
         });
     }
+
+    $(document).on("input", '[id^="deficienciadecreto3_"]', function() {
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
 
     $(document).on("input", '[id^="pcl_anterior"]', function() {
         var inputId = this.id;
