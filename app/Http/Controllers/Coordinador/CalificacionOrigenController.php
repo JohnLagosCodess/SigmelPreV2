@@ -2230,13 +2230,7 @@ class CalificacionOrigenController extends Controller
 
             // Validar si la accion ejecutada tiene enviar a notificaciones
             
-            $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->select('Notificacion')
-            ->where([
-                ['ID_evento', $newId_evento],
-                ['Id_Asignacion', $newId_asignacion]
-            ])
-            ->get();
+            $enviar_notificacion = BandejaNotifiController::evento_en_notificaciones($newId_evento,$newId_asignacion);
 
             foreach ($hitorialAgregarComunicado as &$comunicado) {
                 if ($comunicado['Tipo_descarga'] === 'Documento_Origen') {

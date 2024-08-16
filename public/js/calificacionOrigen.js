@@ -1854,7 +1854,7 @@ $(document).ready(function(){
                             ><i class="fas fa-sync-alt text-info"></i></a>';
                     }
 
-                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>';
+                    comunicadoNradico += `<a href="javascript:void(0);" id="editar_comunicado" data-radicado="${data.hitorialAgregarComunicado[i].N_radicado}" style="display: flex; justify-content: center; ${estado_correspondencia.deshabilitar_edicion}"><i class="fa fa-sm fa-check text-success"></i></a></div>`;
 
                     comunicadoNradico += '</div>';
                     data.hitorialAgregarComunicado[i].Editarcomunicado = comunicadoNradico;
@@ -1898,14 +1898,13 @@ $(document).ready(function(){
                     if(data.hitorialAgregarComunicado[i].Asunto.includes('Lista_chequeo')){
                         comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalCrearExpediente" title="Editar expediente" id="editarExpediente"><i style="cursor:pointer" class="fa fa-pen text-info"></i></a>';
                     }
-                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>';
+                    comunicadoNradico += `<a href="javascript:void(0);" id="editar_comunicado" data-radicado="${data.hitorialAgregarComunicado[i].N_radicado}" style="display: flex; justify-content: center;  ${estado_correspondencia.deshabilitar_edicion}"><i class="fa fa-sm fa-check text-success"></i></a></div>`;
                     comunicadoNradico += '</div>';
                     data.hitorialAgregarComunicado[i].Editarcomunicado = comunicadoNradico;
                 }
                 else{
                     data.hitorialAgregarComunicado[i].Editarcomunicado = "";
                 }
-
                 //Obtenemos los datos de los campos 'Destinatarios','Estado_general','Nota' para mostrar en la tabla de comunicados y expedientes
                 let info_notificacion = getHistorialNotificacion(data.hitorialAgregarComunicado[i].N_radicado,data.hitorialAgregarComunicado[i].Nota,opciones_Notificacion,data.hitorialAgregarComunicado[i]);
                 if (data.enviar_notificacion[0].Notificacion == 'Si') {
@@ -1919,7 +1918,7 @@ $(document).ready(function(){
                     selector: `#status_notificacion_${data.hitorialAgregarComunicado[i].N_radicado}`,
                     default:  data.hitorialAgregarComunicado[i].Estado_Notificacion, //Opcion a selecionar
                     data: opciones_Notificacion, // Opciones disponibles para seleccionar
-                    enabled: estado_correspondencia.deshabilitar_selector
+                    enable: estado_correspondencia.deshabilitar_selector
                 };
 
                 select2.push(select2Config);
@@ -1931,6 +1930,11 @@ $(document).ready(function(){
 
 
             select2.forEach(function(item) {
+                if (item.enable) {
+                    $(item.selector).prop('disabled', true);
+                } else {
+                    $(item.selector).prop('disabled', false);
+                }
                 $(item.selector).select2({
                     placeholder: "Seleccione una opción",
                     allowClear: false,
@@ -3729,6 +3733,9 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     let Destinatario = data_comunicado['Destinatario'];
     let Copias = data_comunicado['Agregar_copia'];
     let Correspondencia = data_comunicado['Correspondencia'];
+    console.log('antes',data_comunicado['enviar_notificacion']);
+    data_comunicado['Estado_correspondencia'] = data_comunicado['Estado_correspondencia'] == null ||  data_comunicado['Estado_correspondencia'] == '1' ? '1' : '0';
+    console.log('despues',data_comunicado['Estado_correspondencia']);
     if(Copias){
         Copias = Copias.split(',').map(copia => copia.trim().toLowerCase());
     }

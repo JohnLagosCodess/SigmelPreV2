@@ -3108,10 +3108,8 @@ $(document).ready(function(){
             //Se inicializa configuracion de select2 con los estilos definidos
             select2.forEach(function(item) {
                 if (item.enable) {
-                    console.log(1);
                     $(item.selector).prop('disabled', true);
                 } else {
-                    console.log(2);
                     $(item.selector).prop('disabled', false);
                 }
                 $(item.selector).select2({

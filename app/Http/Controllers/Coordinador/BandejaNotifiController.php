@@ -298,6 +298,7 @@ class BandejaNotifiController extends Controller
     public static function evento_en_notificaciones(string $id_evento,int $id_asignacion,$comunicado = null){
         $condiciones = array(['siaev.Id_Asignacion',$id_asignacion],
         ['siaev.ID_evento',$id_evento]);
+        
         if($comunicado != null){
             array_push($condiciones,['Id_comunicado',$comunicado]);
         }
