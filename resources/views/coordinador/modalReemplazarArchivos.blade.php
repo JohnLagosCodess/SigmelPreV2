@@ -11,7 +11,7 @@
             <div class="alerta_externa_comunicado_modal alert alert-success mt-2 mr-auto d-none" role="alert"></div>
             <div style="display: flex; justify-content:center;">
                 <input style="width:100%%" type="file" class="form-control select-doc" name="cargue_comunicados_modal" id="cargue_comunicados_modal" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
-                <button type="submit" class="btn-info" id="cargarComunicadoModal">Cargar</button>
+                <button type="submit" class="btn btn-sm btn-info" id="cargarComunicadoModal">Cargar</button>
             </div>
         </form>
     </x-adminlte-modal>
