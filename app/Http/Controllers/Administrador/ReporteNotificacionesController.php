@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Administrador;
 
 use App\Http\Controllers\Controller;
+use App\Imports\CargueNotificaciones;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Response;
 
 use App\Models\sigmel_numero_orden_eventos;
 use App\Models\cndatos_reportes_notificaciones;
+use Maatwebsite\Excel\Facades\Excel;
 
 use ZipArchive;
 
@@ -274,6 +276,30 @@ class ReporteNotificacionesController extends Controller
         // Eliminar el archivo
         if (File::exists(public_path($nom_archivo))) {
             File::delete(public_path($nom_archivo));
+        }
+    }
+
+    // Cargue correspondecias o notificaciones
+
+    public function cargueCorrespondencias(Request $request)
+    {
+        $request->validate([
+            'cargue_corres' => 'required|mimes:csv,xlsx,xls|max:20480'
+        ], [
+            'cargue_corres.required' => 'Debe seleccionar un archivo.',
+            'cargue_corres.mimes' => 'El archivo debe ser un archivo de tipo: csv, xlsx, xls.',
+            'cargue_corres.max' => 'El archivo no debe superar los 20 MB.',
+        ]);
+    
+        $file = $request->file('cargue_corres');
+    
+        // Procesar el archivo aquí              
+
+        try {
+            Excel::import(new CargueNotificaciones, $file);
+            return back()->with('success', 'Archivo procesado exitosamente.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al procesar el archivo: ' . $e->getMessage());
         }
     }
 }
