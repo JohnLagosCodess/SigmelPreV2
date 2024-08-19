@@ -1391,22 +1391,6 @@ class CoordinadorController extends Controller
         $numero_identificacion = $request->numero_identificacion;
         $n_radicado = $request->n_radicado;
         $nombre_doc_anterior = $request->nombre_anterior;
-        if($tipo_descarga === 'Manual'){
-            $datos_comunicado_actualizar=[
-                'F_comunicado' => $date,
-                'Elaboro' => $nombre_usuario,
-                'Nombre_documento' => $request->nombre_documento,
-                'Asunto' => $request->asunto,
-                'Reemplazado' => 1,
-            ];
-        }
-        else{
-            $datos_comunicado_actualizar=[
-                'F_comunicado' => $date,
-                'Elaboro' => $nombre_usuario,
-                'Reemplazado' => 1,
-            ];
-        }
 
         if($request->hasFile('doc_de_reemplazo')){
             $archivo = $request->file('doc_de_reemplazo');
@@ -1423,12 +1407,49 @@ class CoordinadorController extends Controller
                 if($nombre_doc_anterior !== '' && $nombre_doc_anterior !== $nombre_final_documento){
                     File::delete($path.'/'.$nombre_doc_anterior);
                 }
+
+                // echo $nombre_final_documento."<br>";
+                // echo $nombre_doc_anterior;
+
+                // Obtenemos el nombre original del archivo (incluyendo la extensión)
+                $documentName = $archivo->getClientOriginalName();
+                // Obtenemos la extensión del archivo
+                $extension = $archivo->getClientOriginalExtension();
+                // Obtenemos el nombre del archivo sin la extensión
+                $nameWithoutExtension = pathinfo($documentName, PATHINFO_FILENAME);
+
+                /* Agregamos el indicativo */
+                $indicativo = time();
+
+                // el nuevo nombre del documento será:
+                $nombre_final_documento = "{$nameWithoutExtension}_{$indicativo}.{$extension}";
+
             }
             else {
                 $nombre_final_documento = $request -> nombre_documento;
             }
             Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
         } 
+
+        if($tipo_descarga === 'Manual'){
+            $datos_comunicado_actualizar=[
+                'F_comunicado' => $date,
+                'Elaboro' => $nombre_usuario,
+                'Nombre_documento' => $request->nombre_documento,
+                // 'Asunto' => $request->asunto,
+                'Asunto' => $nombre_final_documento,
+                'Reemplazado' => 1,
+            ];
+        }
+        else{
+            $datos_comunicado_actualizar=[
+                'F_comunicado' => $date,
+                'Elaboro' => $nombre_usuario,
+                'Reemplazado' => 1,
+            ];
+        }
+
+        
 
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
         ->update($datos_comunicado_actualizar);

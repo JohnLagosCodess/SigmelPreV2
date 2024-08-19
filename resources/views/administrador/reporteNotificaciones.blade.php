@@ -21,6 +21,12 @@
                             <h5>Correspondencia</h5>
                         </div>
                         <div class="card-body">
+
+                            {{-- <form action="{{route('generarZipReporteNotificaciones')}}" method="POST">
+                                @csrf
+                                <input type="submit" id="btn_generar_zip_reporte_notificaciones" class="btn btn-info" value="Descargar Zip">
+                            </form> --}}
+                            <p>Los campos marcados con <span style="color:red;">(*)</span> son obligatorios.</p>
                             <form id="form_consulta_reporte_notificaciones" method="POST">
                                 @csrf
                                 <div class="row">
@@ -44,11 +50,11 @@
                                     </div>
                                 </div>
                             </form>
+
                             {{-- DESDE AQUI SE MUESTRA LA INFORMACIÓN DEL REPORTE --}}
                             {{-- Validaciones --}}
                             <div class="col-12">
                                 <div class="resultado_validacion alert mt-1 d-none" id="llenar_mensaje_validacion" role="alert">
-                                    <strong></strong>
                                 </div>
                             </div>
 
@@ -63,30 +69,35 @@
                             <div class="row d-none">
                                 <div class="col-12">
                                     <div class="table table-responsive">
+                                        <input type="text" id="nro_orden">
                                         <table id="datos_reporte_notificaciones" class="table table-striped table-bordered" style="width:100%">
                                             <thead>
                                                 <tr class="bg-info">
-                                                    <th>Cons</th>
-                                                    <th>Fecha de Envío</th>
-                                                    <th>No. de Identificación</th>
-                                                    <th>No. de Guía Asignado</th>
-                                                    <th>Orden de Impresión	</th>
-                                                    <th>Proceso</th>
-                                                    <th>Servicio</th>
-                                                    <th>Última Acción</th>
-                                                    <th>Estado</th>
-                                                    <th>No. de OIP	</th>
-                                                    <th>Tipo de Destinatario</th>
-                                                    <th>Nombre de Destinatario	</th>
-                                                    <th>Dirección</th>
-                                                    <th>Teléfono</th>
-                                                    <th>Departamento</th>
-                                                    <th>Ciudad</th>
-                                                    <th>Folios Entregados</th>
-                                                    <th>Medio de Notificación</th>
-                                                    <th>Correo Electrónico</th>
-                                                    <th>Archivo 1</th>
-                                                    <th>Archivo 2</th>
+                                                    <th>CONS</th>
+                                                    <th>FECHA COMUNICADO</th>
+                                                    <th>N° RADICADO</th>
+                                                    <th>DOCUMENTO</th>
+                                                    <th>CARPETA DE IMPRESIÓN</th>
+                                                    <th>OBSERVACIONES</th>
+                                                    <th>N° DE IDENTIFICACIÓN</th>
+                                                    <th>DESTINATARIO</th>
+                                                    <th>NOMBRE DESTINATARIO</th>
+                                                    <th>DIRECCION</th>
+                                                    <th>TELÉFONO</th>	
+                                                    <th>CIUDAD</th>
+                                                    <th>DEPTO</th>	
+                                                    <th>CORREO ELECTRONICO</th>
+                                                    <th>PROCESO</th>
+                                                    <th>SERVICIO</th>
+                                                    <th>ULTIMA ACCION</th>
+                                                    <th>ESTADO</th>
+                                                    <th>N° DE ORDEN</th>
+                                                    <th>TIPO DESTINATARIO</th>
+                                                    <th>N° DE GUÍA</th>
+                                                    <th>FOLIOS</th>
+                                                    <th>FECHA DE ENVÍO</th>
+                                                    <th>FECHA DE NOTIFICACIÓN</th>
+                                                    <th>ESTADO DE NOTIFICACIÓN</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="vaciar_tabla_reporte_notificaciones">
@@ -110,6 +121,32 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card-info">
+                        <div class="card-header text-center" style="border: 1.5px solid black;">
+                            <h5>Cargue Correspondencia</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <form action="{{route('subirCorrespondencia')}}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="form-group">
+                                            <label for="cargue_corres" class="col-form-label">Seleccione el archivo</label>
+                                            <input style="padding: unset; height: auto;" type="file" name="cargue_corres" class="form-control" required>
+                                        </div>
+                                        <input type="submit" class="btn btn-info" value="Cargar">
+                                    </form>
+                                    @if ($errors->has('cargue_corres'))
+                                        <span class="text-danger">{{ $errors->first('cargue_corres') }}</span>
+                                    @endif
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+            </div>                         
         </div>
     </div>
 @stop

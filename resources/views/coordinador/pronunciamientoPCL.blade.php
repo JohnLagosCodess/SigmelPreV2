@@ -873,7 +873,7 @@
                                             <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                             <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
                                                 <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
-                                                <button class="btn-info" id="cargarComunicado">Cargar</button>
+                                                <button class="btn btn-sm btn-info" id="cargarComunicado">Cargar</button>
                                             </div>
                                         </div>
                                     </div>

@@ -1274,20 +1274,57 @@ $(document).ready(function(){
                 type:'POST',
                 url:'/generarPdfProformaspro',
                 data:datos_proforma_pro,
-                xhrFields: {
-                    responseType: 'blob' // Indica que la respuesta es un blob
-                },
+                // xhrFields: {
+                //     responseType: 'blob' // Indica que la respuesta es un blob
+                // },
                 beforeSend:  function() {
                     $("#btn_generar_proforma").addClass("descarga-deshabilitada");
                 },
                 success: function (response, status, xhr) {
-                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+                    
+                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
             
+                    var indicativo = response.indicativo;
+
                     // Crear un enlace de descarga similar al ejemplo anterior
                     if (desicion_proforma == "proforma_acuerdo") {
-                        var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".pdf";
+
+                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                        var base64Pdf = response.pdf;
+
+                        // Decodificar base64 en un array de bytes
+                        var binaryString = atob(base64Pdf);
+                        var len = binaryString.length;
+                        var bytes = new Uint8Array(len);
+
+                        for (var i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+
+                        // Crear un Blob a partir del array de bytes
+                        var blob = new Blob([bytes], { type: 'application/pdf' });
+                    
+                        // var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".pdf";
+                        var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+"_"+indicativo+".pdf";
+
                     }else{
-                        var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".docx";
+
+                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                        var base64Word = response.word;
+                
+                        // Decodificar base64 en un array de bytes
+                        var binaryString = atob(base64Word);
+                        var len = binaryString.length;
+                        var bytes = new Uint8Array(len);
+                
+                        for (var i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+
+                        var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+
+                        // var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".docx";
+                        var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+"_"+indicativo+".docx";
                     }
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);

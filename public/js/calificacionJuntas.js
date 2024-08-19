@@ -3762,15 +3762,36 @@ $(document).ready(function(){
                     type:'POST',
                     url:'/generarPdf',
                     data: datos_comunicado,
-                    xhrFields: {
-                        responseType: 'blob' // Indica que la respuesta es un blob
-                    },
+                    // xhrFields: {
+                    //     responseType: 'blob' // Indica que la respuesta es un blob
+                    // },
                     beforeSend:  function() {
                         verDocumento.addClass("descarga-deshabilitada");
                     },
                     success: function (response, status, xhr) {
-                        var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-                        var nombre_pdf = "Comunicado_"+Id_comunicado+"_"+Nradicado+".pdf";
+
+                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                        var base64Pdf = response.pdf;
+
+                        // Decodificar base64 en un array de bytes
+                        var binaryString = atob(base64Pdf);
+                        var len = binaryString.length;
+                        var bytes = new Uint8Array(len);
+
+                        for (var i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+
+                        // Crear un Blob a partir del array de bytes
+                        var blob = new Blob([bytes], { type: 'application/pdf' });
+
+                        // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+
+                        var indicativo = response.indicativo;
+                        
+                        // var nombre_pdf = "Comunicado_"+Id_comunicado+"_"+Nradicado+".pdf";
+                        var nombre_pdf = "Comunicado_"+Id_comunicado+"_"+Nradicado+"_"+indicativo+".pdf";
+
                         // Crear un enlace de descarga similar al ejemplo anterior
                         var link = document.createElement('a');
                         link.href = window.URL.createObjectURL(blob);
@@ -3800,28 +3821,109 @@ $(document).ready(function(){
                     type:'POST',
                     url:'/DescargarProformasJuntas',
                     data: datos_comunicado,
-                    xhrFields: {
-                        responseType: 'blob' // Indica que la respuesta es un blob
-                    },
+                    // xhrFields: {
+                    //     responseType: 'blob' // Indica que la respuesta es un blob
+                    // },
                     beforeSend:  function() {
                         verDocumento.addClass("descarga-deshabilitada");
                     },
                     success: function (response, status, xhr) {
-                        var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+                        
+                        // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+                        var indicativo = response.indicativo;
+
                         if(TipoDescarga === 'Oficio_Afiliado'){
-                            var nombre_documento = "JUN_OFICIO_AFILIADO_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                            var base64Pdf = response.pdf;
+
+                            // Decodificar base64 en un array de bytes
+                            var binaryString = atob(base64Pdf);
+                            var len = binaryString.length;
+                            var bytes = new Uint8Array(len);
+
+                            for (var i = 0; i < len; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+
+                            // Crear un Blob a partir del array de bytes
+                            var blob = new Blob([bytes], { type: 'application/pdf' });
+
+                            // var nombre_documento = "JUN_OFICIO_AFILIADO_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                            var nombre_documento = "JUN_OFICIO_AFILIADO_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
                         }
                         else if(TipoDescarga === 'Oficio_Juntas_JRCI'){
-                            var nombre_documento = "JUN_OFICIO_JRCI_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                            var base64Pdf = response.pdf;
+
+                            // Decodificar base64 en un array de bytes
+                            var binaryString = atob(base64Pdf);
+                            var len = binaryString.length;
+                            var bytes = new Uint8Array(len);
+
+                            for (var i = 0; i < len; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+
+                            // Crear un Blob a partir del array de bytes
+                            var blob = new Blob([bytes], { type: 'application/pdf' });
+
+                            // var nombre_documento = "JUN_OFICIO_JRCI_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                            var nombre_documento = "JUN_OFICIO_JRCI_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
                         }
                         else if(TipoDescarga === 'Remision_Expediente_JRCI'){
-                            var nombre_documento = "JUN_REM_EXPEDIENTE_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                            var base64Pdf = response.pdf;
+
+                            // Decodificar base64 en un array de bytes
+                            var binaryString = atob(base64Pdf);
+                            var len = binaryString.length;
+                            var bytes = new Uint8Array(len);
+
+                            for (var i = 0; i < len; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+
+                            // Crear un Blob a partir del array de bytes
+                            var blob = new Blob([bytes], { type: 'application/pdf' });
+
+                            // var nombre_documento = "JUN_REM_EXPEDIENTE_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                            var nombre_documento = "JUN_REM_EXPEDIENTE_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
                         }
                         else if(TipoDescarga === 'Devolucion_Expediente_JRCI'){
-                            var nombre_documento = "JUN_DEV_EXPEDIENTE_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+".docx";
+                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                            var base64Word = response.word;
+                
+                            // Decodificar base64 en un array de bytes
+                            var binaryString = atob(base64Word);
+                            var len = binaryString.length;
+                            var bytes = new Uint8Array(len);
+                    
+                            for (var i = 0; i < len; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+
+                            var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+
+                            // var nombre_documento = "JUN_DEV_EXPEDIENTE_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+".docx";
+                            var nombre_documento = "JUN_DEV_EXPEDIENTE_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+"_"+indicativo+".docx";
                         }
                         else if(TipoDescarga === 'Solicitud_Dictamen_JRCI'){
-                            var nombre_documento = "JUN_SOL_DICTAMEN_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+".docx";
+                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                            var base64Word = response.word;
+                
+                            // Decodificar base64 en un array de bytes
+                            var binaryString = atob(base64Word);
+                            var len = binaryString.length;
+                            var bytes = new Uint8Array(len);
+                    
+                            for (var i = 0; i < len; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+
+                            var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+
+                            // var nombre_documento = "JUN_SOL_DICTAMEN_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+".docx";
+                            var nombre_documento = "JUN_SOL_DICTAMEN_"+Id_comunicado+"_"+Id_Asignacion+"_"+num_identificacion+"_"+indicativo+".docx";
                         }
                         // Crear un enlace de descarga similar al ejemplo anterior
                         var link = document.createElement('a');
