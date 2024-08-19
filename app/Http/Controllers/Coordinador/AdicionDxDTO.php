@@ -1921,7 +1921,7 @@ class AdicionDxDTO extends Controller
                 break;
 
                 case '5':
-                    $Destinatario = 'Empresa';
+                    $Destinatario = 'Empleador';
                 break;
                 
                 default:
@@ -2004,6 +2004,7 @@ class AdicionDxDTO extends Controller
                 'Tipo_descarga' => 'Comunicado',
                 'Modulo_creacion' => 'adicionDxDtoOrigen',
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -2092,6 +2093,7 @@ class AdicionDxDTO extends Controller
                 'Tipo_descarga' => 'Comunicado',
                 'Modulo_creacion' => 'adicionDxDtoOrigen',
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];

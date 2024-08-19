@@ -3717,7 +3717,7 @@ $(document).ready(function(){
         let correspondencia = $(id).data('correspondencia');
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
-
+        console.log('Info : ', this)
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
             $("#btn_guardar_actualizar_correspondencia").remove();
@@ -3889,7 +3889,7 @@ $(document).ready(function(){
                         $("#modalCorrespondencia #folios").val(anexos);
                         $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
                         $("#modalCorrespondencia #radicado").val(N_radicado);
-                        
+                        console.log(tipo_correspondencia, destinatarioPrincipal)
                         if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
                             $("#modalCorrespondencia #check_principal").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);

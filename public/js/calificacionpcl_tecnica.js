@@ -3485,7 +3485,7 @@ $(document).ready(function(){
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'afp' || tipo_correspondencia.toLowerCase() === 'arl')){
+                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'afp' || tipo_correspondencia.toLowerCase() === 'arl' || tipo_correspondencia.toLowerCase() === 'afp_conocimiento')){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -5724,7 +5724,6 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     if(Copias){
         Copias = Copias.split(',').map(copia => copia.trim().toLowerCase());
     }
-    
     if(Correspondencia){
         Correspondencia = Correspondencia.split(',').map(correspondencia => correspondencia.trim().toLowerCase());
     }
@@ -5775,7 +5774,7 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('afp_conocimiento')}">AFP Conocimiento</a>`,
+                style="${getUnderlineStyle('afp_conocimiento',data_comunicado['Tipo_descarga'])}">AFP Conocimiento</a>`,
 
         'Nota_Comunicados': `<textarea class="form-control nota-col" name="nota_comunicado_${n_radicado}" id="nota_comunicado_${n_radicado}" cols="70" rows="5" style="resize:none; width:200px;">${nota == null ? "" : nota}</textarea>`,
     };

@@ -2563,6 +2563,7 @@ class CalificacionJuntasController extends Controller
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => $request->modulo_creacion,
                 'Nombre_usuario' => $nombre_usuario,
+                'Otro_destinatario' => 0,
                 'F_registro' => $date,
                 'N_siniestro' => $request->N_siniestro,
             ];
@@ -2618,6 +2619,7 @@ class CalificacionJuntasController extends Controller
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => $request->modulo_creacion,
                 'Nombre_documento' => $request->Nombre_documento,
+                'Otro_destinatario' => 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];

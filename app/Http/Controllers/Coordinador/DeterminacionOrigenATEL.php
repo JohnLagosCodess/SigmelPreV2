@@ -1132,7 +1132,7 @@ class DeterminacionOrigenATEL extends Controller
                 break;
 
                 case '5':
-                    $Destinatario = 'Empresa';
+                    $Destinatario = 'Empleador';
                 break;
                 
                 default:
@@ -1140,7 +1140,6 @@ class DeterminacionOrigenATEL extends Controller
                 break;
             }
         }
-        
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
                 'Oficio_Origen' => $oficio_origen,
@@ -1215,6 +1214,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Tipo_descarga' => 'Comunicado',
                 'Modulo_creacion' => 'determinacionOrigenATEL',
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -1303,6 +1303,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Tipo_descarga' => 'Comunicado',
                 'Modulo_creacion' => 'determinacionOrigenATEL',
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];

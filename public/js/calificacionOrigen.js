@@ -1226,6 +1226,7 @@ $(document).ready(function(){
     });
     // Abrir modal de agregar seguimiento despues de guardar 
     if (localStorage.getItem("#guardar_datos_tabla")) {
+        console.log('ENTRE A REMOVER EL LOCALSTORAGE')
         // Simular el clic en la etiqueta a después de recargar la página
         localStorage.removeItem("#guardar_datos_tabla");
         document.querySelector("#clicGuardado").click();
@@ -3627,12 +3628,14 @@ $(document).ready(function(){
     
     // Abrir modal de agregar seguimiento despues de guardar historial seguimiento
     if (localStorage.getItem("#guardar_datos_seguimiento")) {
+        console.log('ENTRE A REMOVER EL LOCALSTORAGE')
         // Simular el clic en la etiqueta a después de recargar la página
         localStorage.removeItem("#guardar_datos_seguimiento");
         document.querySelector("#clicGuardado").click();
     }
     // Abrir modal de agregar seguimiento despues de eliminar historial seguimiento
     if (localStorage.getItem("#eliminar_datos_seguimiento")) {
+        console.log('ENTRE A REMOVER EL LOCALSTORAGE')
         // Simular el clic en la etiqueta a después de recargar la página
         localStorage.removeItem("#eliminar_datos_seguimiento");
         document.querySelector("#clicGuardado").click();
@@ -3734,12 +3737,20 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     }
     // La copia del empleador y el destinanario empleador tienen valores distintos, por ende, se realiza la siguiente validación:
     // este dato finalmente irá en donde se construye los elementos a subrayados
-    if (Copias.includes('empleador')) {
+    if (Copias != null && Copias.includes('empleador')) {
         var dato_empleador = 'empleador';
         var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
+        if(Destinatario.toLowerCase() === 'empresa'){
+            dato_empleador_form = Destinatario;
+            dato_empleador = Destinatario.toLowerCase();
+        }
     }else{
         var dato_empleador = 'empresa';
         var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
+        if(Destinatario.toLowerCase() === 'empleador'){
+            dato_empleador_form = Destinatario;
+            dato_empleador = Destinatario.toLowerCase();
+        }
     }
     if(Correspondencia){
         Correspondencia = Correspondencia.split(',').map(correspondencia => correspondencia.trim().toLowerCase());
@@ -3758,12 +3769,12 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
                 style="${getUnderlineStyle('afiliado',data_comunicado['Tipo_descarga'])}">Afiliado</a>
-            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Empleador" \
+            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="${dato_empleador_form}" \
                 data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('empleador')}">Empleador</a>
+                style="${getUnderlineStyle(dato_empleador)}">Empleador</a>
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps" \
                 data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \

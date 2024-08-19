@@ -2371,12 +2371,12 @@ $(document).ready(function(){
                         $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
                         $("#modalCorrespondencia #radicado").val(N_radicado);
                         
-                        if(tipo_descarga === 'Dictamen' && tipo_correspondencia.toLowerCase() === 'afiliado'){
+                        if(tipo_descarga === 'Dictamen' && tipo_correspondencia.toLowerCase() === 'afp'){
                             $("#modalCorrespondencia #check_principal").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'afp')){
+                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'afiliado' || tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'arl' || tipo_correspondencia.toLowerCase() === 'afp_conocimiento')){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -2865,7 +2865,7 @@ $(document).ready(function(){
                 complete:  function() {
                     $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
                     if(infoComunicado.Nombre_documento == null){
-                        // location.reload();
+                        location.reload();
                     }
                 },       
             });

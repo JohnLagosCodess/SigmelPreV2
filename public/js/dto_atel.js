@@ -1548,7 +1548,6 @@ $(document).ready(function(){
                     showLoading();
                 },
                 success: function(response){
-                    
                     if(response && response.datos){
                         $("#modalCorrespondencia #n_orden").val(response?.nro_orden);
                         $("#modalCorrespondencia #nombre_destinatario").val(response?.datos?.Nombre_destinatario);
@@ -1567,17 +1566,17 @@ $(document).ready(function(){
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'afiliado' || tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'arl')){
+                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'afiliado' || tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'arl' || tipo_correspondencia.toLowerCase() === 'afp_conocimiento')){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
+                        else if((tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen') && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
                             $("#modalCorrespondencia #check_principal").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.includes(tipo_correspondencia.toLowerCase())){
+                        else if((tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen') && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.includes(tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);

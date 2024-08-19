@@ -2697,8 +2697,8 @@ $(document).ready(function(){
                     setTimeout(function(){
                         $('.alerta_externa_comunicado').addClass('d-none');
                         $('.alerta_externa_comunicado').empty();
-                        localStorage.setItem("#Generar_comunicados", true);
-                        location.reload();
+                        // localStorage.setItem("#Generar_comunicados", true);
+                        location.reload()
                     }, 3000);
                 }
             },
@@ -3300,7 +3300,6 @@ $(document).ready(function(){
                 tipo_correspondencia: tipo_correspondencia,
                 previous_saved: true 
             }
-            
             $.ajax({
                 type:'POST',
                 url:'/getInformacionCorrespondencia',
@@ -3425,7 +3424,6 @@ $(document).ready(function(){
                         $("#modalCorrespondencia #folios").val(anexos);
                         $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
                         $("#modalCorrespondencia #radicado").val(N_radicado);
-                        console.log("tipo_correspondencia.toLowerCase() ", tipo_correspondencia.toLowerCase(), " destinatarioPrincipal.toLowerCase() ", destinatarioPrincipal.toLowerCase());
                         if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
                             $("#modalCorrespondencia #check_principal").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
@@ -6355,7 +6353,7 @@ $(document).ready(function(){
         var N_siniestro = $("#n_siniestro_proforma_editar").val();
        //Copias Interesadas Origen
        var EditComunicadoTotal = [];
-
+       cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
        $('input[type="checkbox"]').each(function() {
             var copiaComunicado2 = $(this).attr('id');            
             if (copiaComunicado2 === 'edit_copia_afiliado' || copiaComunicado2 === 'edit_copia_empleador' || 
@@ -7039,9 +7037,17 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     if (Copias != null && Copias.includes('empleador')) {
         var dato_empleador = 'empleador';
         var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
+        if(Destinatario.toLowerCase() === 'empresa'){
+            dato_empleador_form = Destinatario;
+            dato_empleador = Destinatario.toLowerCase();
+        }
     }else{
         var dato_empleador = 'empresa';
         var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
+        if(Destinatario.toLowerCase() === 'empleador'){
+            dato_empleador_form = Destinatario;
+            dato_empleador = Destinatario.toLowerCase();
+        }
     }
     if(Correspondencia){
         Correspondencia = Correspondencia.split(',').map(correspondencia => correspondencia.trim().toLowerCase());
@@ -7060,12 +7066,12 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
                 style="${getUnderlineStyle('afiliado',data_comunicado['Tipo_descarga'])}">Afiliado</a>
-            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Empleador" \
+            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="${dato_empleador_form}" \
                 data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle('empleador')}">Empleador</a>
+                style="${getUnderlineStyle(dato_empleador)}">Empleador</a>
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps" \
                 data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
