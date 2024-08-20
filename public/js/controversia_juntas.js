@@ -523,7 +523,7 @@ $(document).ready(function(){
 
     // Ejecutamos la función iniciarIntervalo_pPCL cuando cargue la vista para cuando ya el formulario traiga datos
     if($("#total_deficiencia").val() != ''){
-        total_deficiencia =$(this).val();
+        total_deficiencia = $("#total_deficiencia").val();
         iniciarIntervalo_pPCL();
     };
 
