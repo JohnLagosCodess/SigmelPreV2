@@ -2563,6 +2563,7 @@ class CalificacionJuntasController extends Controller
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => $request->modulo_creacion,
                 'Nombre_usuario' => $nombre_usuario,
+                'Otro_destinatario' => 0,
                 'F_registro' => $date,
                 'N_siniestro' => $request->N_siniestro,
             ];
@@ -2651,6 +2652,7 @@ class CalificacionJuntasController extends Controller
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => $request->modulo_creacion,
                 // 'Nombre_documento' => $request->Nombre_documento,
+                'Otro_destinatario' => 0,
                 'Nombre_documento' => $nombre_final_documento,
                 'Descripcion' => $nombre_final_documento,
                 'Nombre_usuario' => $nombre_usuario,
@@ -2720,6 +2722,9 @@ class CalificacionJuntasController extends Controller
                 }
                 else{
                     $comunicado['Existe'] = false;
+                }
+                if($comunicado["Id_Comunicado"]){
+                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($newId_evento,$newId_asignacion,$comunicado["Id_Comunicado"]);
                 }
             }
             

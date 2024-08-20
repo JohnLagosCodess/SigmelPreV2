@@ -280,6 +280,10 @@ class DeterminacionOrigenATEL extends Controller
             else{
                 $comunicado['Existe'] = false;
             }
+            if($comunicado["Id_Comunicado"]){
+                $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_dto_atel,$Id_asignacion_dto_atel,$comunicado["Id_Comunicado"]);
+            }
+
         }
         /* Nombre Afp */
         $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
@@ -1132,7 +1136,7 @@ class DeterminacionOrigenATEL extends Controller
                 break;
 
                 case '5':
-                    $Destinatario = 'Empresa';
+                    $Destinatario = 'Empleador';
                 break;
                 
                 default:
@@ -1140,7 +1144,6 @@ class DeterminacionOrigenATEL extends Controller
                 break;
             }
         }
-        
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
                 'Oficio_Origen' => $oficio_origen,
@@ -1215,6 +1218,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Tipo_descarga' => 'Comunicado',
                 'Modulo_creacion' => 'determinacionOrigenATEL',
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -1303,6 +1307,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Tipo_descarga' => 'Comunicado',
                 'Modulo_creacion' => 'determinacionOrigenATEL',
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
