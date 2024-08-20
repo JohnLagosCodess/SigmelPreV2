@@ -2563,6 +2563,7 @@ class CalificacionJuntasController extends Controller
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => $request->modulo_creacion,
                 'Nombre_usuario' => $nombre_usuario,
+                'Otro_destinatario' => 0,
                 'F_registro' => $date,
                 'N_siniestro' => $request->N_siniestro,
             ];
@@ -2588,6 +2589,38 @@ class CalificacionJuntasController extends Controller
                 $modulo = '';
             }
 
+            if($request->hasFile('cargue_comunicados')){
+                $archivo = $request->file('cargue_comunicados');
+                $path = public_path('Documentos_Eventos/'.$Id_evento);
+                $mode = 777;
+
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, $mode, true, true);
+                    chmod($path, $mode);
+                }
+
+                // $nombre_final_documento = $nombre_documento."_IdEvento_".$Id_evento.".".$archivo->extension();
+                // $nombre_final_documento = $request->asunto;
+
+                // Obtenemos el nombre original del archivo (incluyendo la extensión)
+                $documentName = $archivo->getClientOriginalName();
+                // Obtenemos la extensión del archivo
+                $extension = $archivo->getClientOriginalExtension();
+                // Obtenemos el nombre del archivo sin la extensión
+                $nameWithoutExtension = pathinfo($documentName, PATHINFO_FILENAME);
+
+                /* Agregamos el indicativo */
+                $indicativo = time();
+
+                // el nuevo nombre del documento será:
+                $nombre_final_documento = "{$nameWithoutExtension}_{$indicativo}.{$extension}";
+
+                Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
+
+            }else{
+                $nombre_final_documento='N/A';            
+            }  
+
             $datos_info_registrarComunicadoJuntas=[
                 'ID_evento' => $Id_evento,
                 'Id_Asignacion' => $Id_asignacion,
@@ -2607,7 +2640,8 @@ class CalificacionJuntasController extends Controller
                 'Email_destinatario' => $request->email_destinatario,
                 'Id_departamento' => $request->departamento_destinatario,
                 'Id_municipio' => $request->ciudad_destinatario,
-                'Asunto' => $request->asunto,
+                // 'Asunto' => $request->asunto,
+                'Asunto' => $nombre_final_documento,
                 'Cuerpo_comunicado' => $request->cuerpo_comunicado,
                 'Anexos' => $request->anexos,
                 'Forma_envio' => $request->forma_envio,
@@ -2617,28 +2651,13 @@ class CalificacionJuntasController extends Controller
                 'Firmar_Comunicado' => $request->firmarcomunicado,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => $request->modulo_creacion,
-                'Nombre_documento' => $request->Nombre_documento,
+                // 'Nombre_documento' => $request->Nombre_documento,
+                'Otro_destinatario' => 0,
+                'Nombre_documento' => $nombre_final_documento,
+                'Descripcion' => $nombre_final_documento,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
-
-            if($request->hasFile('cargue_comunicados')){
-                $archivo = $request->file('cargue_comunicados');
-                $path = public_path('Documentos_Eventos/'.$Id_evento);
-                $mode = 777;
-
-                if (!File::exists($path)) {
-                    File::makeDirectory($path, $mode, true, true);
-                    chmod($path, $mode);
-                }
-
-                // $nombre_final_documento = $nombre_documento."_IdEvento_".$Id_evento.".".$archivo->extension();
-                $nombre_final_documento = $request->asunto;
-                Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
-                
-            }else{
-                $nombre_final_documento='N/A';            
-            }     
 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoJuntas);
 
@@ -2703,6 +2722,9 @@ class CalificacionJuntasController extends Controller
                 }
                 else{
                     $comunicado['Existe'] = false;
+                }
+                if($comunicado["Id_Comunicado"]){
+                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($newId_evento,$newId_asignacion,$comunicado["Id_Comunicado"]);
                 }
             }
             
@@ -2954,6 +2976,8 @@ class CalificacionJuntasController extends Controller
         /* DATOS VARIABLES */
         $tipo_de_preforma = $request->tipo_de_preforma_editar;
         $detinatario_principal = $request->afiliado_comunicado_act;
+
+        $indicativo = time();
         
         switch (true) {
             case ($tipo_de_preforma == "Oficio_Afiliado"):
@@ -3324,93 +3348,105 @@ class CalificacionJuntasController extends Controller
                 $pdf = app('dompdf.wrapper');
                 $pdf->loadView($ruta_proforma, $data);
                 
-                $nombre_pdf = "{$nombre_documento}_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.{$extension_proforma}";
+                // $nombre_pdf = "{$nombre_documento}_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.{$extension_proforma}";
+                $nombre_pdf = "{$nombre_documento}_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}_{$indicativo}.{$extension_proforma}";
 
                 //Obtener el contenido del PDF
                 $output = $pdf->output();
+
                 //Guardar el PDF en un archivo
                 file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
+
                 $actualizar_nombre_documento = [
                     'Nombre_documento' => $nombre_pdf
                 ];
+                
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
                 ->update($actualizar_nombre_documento);
+
                 /* Inserción del registro de que fue descargado */
-                // Extraemos el id del servicio asociado
-                $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
-                ->select('siae.Id_servicio')
-                ->where([
-                    ['siae.Id_Asignacion', $Id_Asignacion],
-                    ['siae.ID_evento', $ID_evento],
-                    ['siae.Id_proceso', $Id_proceso],
-                ])->get();
+                // // Extraemos el id del servicio asociado
+                // $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+                // ->select('siae.Id_servicio')
+                // ->where([
+                //     ['siae.Id_Asignacion', $Id_Asignacion],
+                //     ['siae.ID_evento', $ID_evento],
+                //     ['siae.Id_proceso', $Id_proceso],
+                // ])->get();
 
-                $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+                // $Id_servicio = $dato_id_servicio[0]->Id_servicio;
 
-                // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-                $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                ->select('Nombre_documento')
-                ->where([
-                    ['Nombre_documento', $nombre_pdf],
-                ])->get();
+                // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+                // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                // ->select('Nombre_documento')
+                // ->where([
+                //     ['Nombre_documento', $nombre_pdf],
+                // ])->get();
                 
-                if(count($verficar_documento) == 0){
+                // if(count($verficar_documento) == 0){
 
-                    // Se valida si antes de insertar la info del doc de Oficio_Afiliado ya hay un documento de Oficio_Juntas_JRCI
-                    // o Remision_Expediente_JRCI o Devolucion_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
-                    $nombre_docu_oficio_juntas = "JUN_OFICIO_JRCI_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                    $nombre_docu_remision_expediente = "JUN_REM_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                    $nombre_docu_devolucion_expediente = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
-                    $nombre_docu_solicitud_dictamen = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
-                    $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado_documento}.pdf";
+                //     // Se valida si antes de insertar la info del doc de Oficio_Afiliado ya hay un documento de Oficio_Juntas_JRCI
+                //     // o Remision_Expediente_JRCI o Devolucion_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
+                //     $nombre_docu_oficio_juntas = "JUN_OFICIO_JRCI_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                //     $nombre_docu_remision_expediente = "JUN_REM_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                //     $nombre_docu_devolucion_expediente = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
+                //     $nombre_docu_solicitud_dictamen = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
+                //     $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado_documento}.pdf";
 
-                    $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                    ->select('Nombre_documento')
-                    ->whereIN('Nombre_documento', [$nombre_docu_oficio_juntas, $nombre_docu_remision_expediente, $nombre_docu_devolucion_expediente,
-                        $nombre_docu_solicitud_dictamen, $nombre_docu_otro
-                    ]
-                    )->get();
+                //     $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                //     ->select('Nombre_documento')
+                //     ->whereIN('Nombre_documento', [$nombre_docu_oficio_juntas, $nombre_docu_remision_expediente, $nombre_docu_devolucion_expediente,
+                //         $nombre_docu_solicitud_dictamen, $nombre_docu_otro
+                //     ]
+                //     )->get();
 
-                    // Si no existe info del documento de Oficio_Juntas_JRCI o Remision_Expediente_JRCI o Devolucion_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
-                    // inserta la info del documento de Oficio_Afiliado, De lo contrario hace una actualización de la info
-                    if (count($verificar_docu_otro) == 0) {
-                        $info_descarga_documento = [
-                            'Id_Asignacion' => $Id_Asignacion,
-                            'Id_proceso' => $Id_proceso,
-                            'Id_servicio' => $Id_servicio,
-                            'ID_evento' => $ID_evento,
-                            'Nombre_documento' => $nombre_pdf,
-                            'N_radicado_documento' => $N_radicado_documento,
-                            'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                            'F_descarga_documento' => $date,
-                            'Nombre_usuario' => $nombre_usuario,
-                        ];
+                //     // Si no existe info del documento de Oficio_Juntas_JRCI o Remision_Expediente_JRCI o Devolucion_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
+                //     // inserta la info del documento de Oficio_Afiliado, De lo contrario hace una actualización de la info
+                //     if (count($verificar_docu_otro) == 0) {
+                //         $info_descarga_documento = [
+                //             'Id_Asignacion' => $Id_Asignacion,
+                //             'Id_proceso' => $Id_proceso,
+                //             'Id_servicio' => $Id_servicio,
+                //             'ID_evento' => $ID_evento,
+                //             'Nombre_documento' => $nombre_pdf,
+                //             'N_radicado_documento' => $N_radicado_documento,
+                //             'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                //             'F_descarga_documento' => $date,
+                //             'Nombre_usuario' => $nombre_usuario,
+                //         ];
                         
-                        sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-                    }else{
-                        $info_descarga_documento = [
-                            'Id_Asignacion' => $Id_Asignacion,
-                            'Id_proceso' => $Id_proceso,
-                            'Id_servicio' => $Id_servicio,
-                            'ID_evento' => $ID_evento,
-                            'Nombre_documento' => $nombre_pdf,
-                            'N_radicado_documento' => $N_radicado_documento,
-                            'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                            'F_descarga_documento' => $date,
-                            'Nombre_usuario' => $nombre_usuario,
-                        ];
+                //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                //     }else{
+                //         $info_descarga_documento = [
+                //             'Id_Asignacion' => $Id_Asignacion,
+                //             'Id_proceso' => $Id_proceso,
+                //             'Id_servicio' => $Id_servicio,
+                //             'ID_evento' => $ID_evento,
+                //             'Nombre_documento' => $nombre_pdf,
+                //             'N_radicado_documento' => $N_radicado_documento,
+                //             'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                //             'F_descarga_documento' => $date,
+                //             'Nombre_usuario' => $nombre_usuario,
+                //         ];
                         
-                        sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                        ->where([
-                            ['Id_Asignacion', $Id_Asignacion],
-                            ['N_radicado_documento', $N_radicado_documento],
-                            ['ID_evento', $ID_evento]
-                        ])
-                        ->update($info_descarga_documento);
-                    }
-                }
+                //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                //         ->where([
+                //             ['Id_Asignacion', $Id_Asignacion],
+                //             ['N_radicado_documento', $N_radicado_documento],
+                //             ['ID_evento', $ID_evento]
+                //         ])
+                //         ->update($info_descarga_documento);
+                //     }
+                // }
 
-                return $pdf->download($nombre_pdf); 
+                // return $pdf->download($nombre_pdf);
+
+                $datos = [
+                    'indicativo' => $indicativo,
+                    'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
+                ];
+                
+                return response()->json($datos);
 
             break;
 
@@ -3653,96 +3689,106 @@ class CalificacionJuntasController extends Controller
                 $pdf = app('dompdf.wrapper');
                 $pdf->loadView($ruta_proforma, $data);
                 
-                $nombre_pdf = "{$nombre_documento}_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}.{$extension_proforma}";
+                // $nombre_pdf = "{$nombre_documento}_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}.{$extension_proforma}";
+                $nombre_pdf = "{$nombre_documento}_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}_{$indicativo}.{$extension_proforma}";
 
                 //Obtener el contenido del PDF
                 $output = $pdf->output();
+
                 //Guardar el PDF en un archivo
                 file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_pdf}"), $output);
 
                 $actualizar_nombre_documento = [
                     'Nombre_documento' => $nombre_pdf
                 ];
+
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
                 ->update($actualizar_nombre_documento);
 
                 /* Inserción del registro de que fue descargado */
-                // Extraemos el id del servicio asociado
-                $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
-                ->select('siae.Id_servicio')
-                ->where([
-                    ['siae.Id_Asignacion', $Id_Asignacion],
-                    ['siae.ID_evento', $ID_evento],
-                    ['siae.Id_proceso', $Id_proceso],
-                ])->get();
+                // // Extraemos el id del servicio asociado
+                // $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+                // ->select('siae.Id_servicio')
+                // ->where([
+                //     ['siae.Id_Asignacion', $Id_Asignacion],
+                //     ['siae.ID_evento', $ID_evento],
+                //     ['siae.Id_proceso', $Id_proceso],
+                // ])->get();
 
-                $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+                // $Id_servicio = $dato_id_servicio[0]->Id_servicio;
 
-                // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-                $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                ->select('Nombre_documento')
-                ->where([
-                    ['Nombre_documento', $nombre_pdf],
-                ])->get();
+                // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+                // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                // ->select('Nombre_documento')
+                // ->where([
+                //     ['Nombre_documento', $nombre_pdf],
+                // ])->get();
                 
-                if(count($verficar_documento) == 0){
+                // if(count($verficar_documento) == 0){
 
-                    // Se valida si antes de insertar la info del doc de Oficio_Juntas_JRCI ya hay un documento de Oficio_Afiliado
-                    // o Remision_Expediente_JRCI o Devolucion_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
-                    $nombre_docu_oficio_afiliado = "JUN_OFICIOA_AFILIADO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                    $nombre_docu_remision_expediente = "JUN_REM_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                    $nombre_docu_devolucion_expediente = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
-                    $nombre_docu_solicitud_dictamen = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
-                    $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado_documento}.pdf";
+                //     // Se valida si antes de insertar la info del doc de Oficio_Juntas_JRCI ya hay un documento de Oficio_Afiliado
+                //     // o Remision_Expediente_JRCI o Devolucion_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
+                //     $nombre_docu_oficio_afiliado = "JUN_OFICIOA_AFILIADO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                //     $nombre_docu_remision_expediente = "JUN_REM_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                //     $nombre_docu_devolucion_expediente = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
+                //     $nombre_docu_solicitud_dictamen = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
+                //     $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado_documento}.pdf";
 
-                    $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                    ->select('Nombre_documento')
-                    ->whereIN('Nombre_documento', [$nombre_docu_oficio_afiliado, $nombre_docu_remision_expediente, $nombre_docu_devolucion_expediente,
-                        $nombre_docu_solicitud_dictamen, $nombre_docu_otro
-                    ]
-                    )->get();
+                //     $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                //     ->select('Nombre_documento')
+                //     ->whereIN('Nombre_documento', [$nombre_docu_oficio_afiliado, $nombre_docu_remision_expediente, $nombre_docu_devolucion_expediente,
+                //         $nombre_docu_solicitud_dictamen, $nombre_docu_otro
+                //     ]
+                //     )->get();
 
-                    // Si no existe info del documento de Oficio_Afiliado o Remision_Expediente_JRCI o Devolucion_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
-                    // inserta la info del documento de Oficio_Juntas_JRCI, De lo contrario hace una actualización de la info
-                    if (count($verificar_docu_otro) == 0) {
-                        $info_descarga_documento = [
-                            'Id_Asignacion' => $Id_Asignacion,
-                            'Id_proceso' => $Id_proceso,
-                            'Id_servicio' => $Id_servicio,
-                            'ID_evento' => $ID_evento,
-                            'Nombre_documento' => $nombre_pdf,
-                            'N_radicado_documento' => $N_radicado_documento,
-                            'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                            'F_descarga_documento' => $date,
-                            'Nombre_usuario' => $nombre_usuario,
-                        ];
+                //     // Si no existe info del documento de Oficio_Afiliado o Remision_Expediente_JRCI o Devolucion_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
+                //     // inserta la info del documento de Oficio_Juntas_JRCI, De lo contrario hace una actualización de la info
+                //     if (count($verificar_docu_otro) == 0) {
+                //         $info_descarga_documento = [
+                //             'Id_Asignacion' => $Id_Asignacion,
+                //             'Id_proceso' => $Id_proceso,
+                //             'Id_servicio' => $Id_servicio,
+                //             'ID_evento' => $ID_evento,
+                //             'Nombre_documento' => $nombre_pdf,
+                //             'N_radicado_documento' => $N_radicado_documento,
+                //             'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                //             'F_descarga_documento' => $date,
+                //             'Nombre_usuario' => $nombre_usuario,
+                //         ];
                         
-                        sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-                    }else{
-                        $info_descarga_documento = [
-                            'Id_Asignacion' => $Id_Asignacion,
-                            'Id_proceso' => $Id_proceso,
-                            'Id_servicio' => $Id_servicio,
-                            'ID_evento' => $ID_evento,
-                            'Nombre_documento' => $nombre_pdf,
-                            'N_radicado_documento' => $N_radicado_documento,
-                            'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                            'F_descarga_documento' => $date,
-                            'Nombre_usuario' => $nombre_usuario,
-                        ];
+                //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                //     }else{
+                //         $info_descarga_documento = [
+                //             'Id_Asignacion' => $Id_Asignacion,
+                //             'Id_proceso' => $Id_proceso,
+                //             'Id_servicio' => $Id_servicio,
+                //             'ID_evento' => $ID_evento,
+                //             'Nombre_documento' => $nombre_pdf,
+                //             'N_radicado_documento' => $N_radicado_documento,
+                //             'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                //             'F_descarga_documento' => $date,
+                //             'Nombre_usuario' => $nombre_usuario,
+                //         ];
                         
-                        sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                        ->where([
-                            ['Id_Asignacion', $Id_Asignacion],
-                            ['N_radicado_documento', $N_radicado_documento],
-                            ['ID_evento', $ID_evento]
-                        ])
-                        ->update($info_descarga_documento);
-                    }
+                //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                //         ->where([
+                //             ['Id_Asignacion', $Id_Asignacion],
+                //             ['N_radicado_documento', $N_radicado_documento],
+                //             ['ID_evento', $ID_evento]
+                //         ])
+                //         ->update($info_descarga_documento);
+                //     }
 
-                }
+                // }
 
-                return $pdf->download($nombre_pdf); 
+                // return $pdf->download($nombre_pdf); 
+                $datos = [
+                    'indicativo' => $indicativo,
+                    'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
+                ];
+                
+                return response()->json($datos);
+
             break;
 
             case ($tipo_de_preforma == "Remision_Expediente_JRCI"):
@@ -4285,7 +4331,8 @@ class CalificacionJuntasController extends Controller
                 $pdf = app('dompdf.wrapper');
                 $pdf->loadView($ruta_proforma, $data);
                 
-                $nombre_pdf = "{$nombre_documento}_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.{$extension_proforma}";
+                // $nombre_pdf = "{$nombre_documento}_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.{$extension_proforma}";
+                $nombre_pdf = "{$nombre_documento}_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}_{$indicativo}.{$extension_proforma}";
 
                 //Obtener el contenido del PDF
                 $output = $pdf->output();
@@ -4295,85 +4342,92 @@ class CalificacionJuntasController extends Controller
                 $actualizar_nombre_documento = [
                     'Nombre_documento' => $nombre_pdf
                 ];
+
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
                 ->update($actualizar_nombre_documento);
 
                 /* Inserción del registro de que fue descargado */
                 // Extraemos el id del servicio asociado
-                $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
-                ->select('siae.Id_servicio')
-                ->where([
-                    ['siae.Id_Asignacion', $Id_Asignacion],
-                    ['siae.ID_evento', $ID_evento],
-                    ['siae.Id_proceso', $Id_proceso],
-                ])->get();
+                // $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+                // ->select('siae.Id_servicio')
+                // ->where([
+                //     ['siae.Id_Asignacion', $Id_Asignacion],
+                //     ['siae.ID_evento', $ID_evento],
+                //     ['siae.Id_proceso', $Id_proceso],
+                // ])->get();
 
-                $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+                // $Id_servicio = $dato_id_servicio[0]->Id_servicio;
 
-                // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-                $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                ->select('Nombre_documento')
-                ->where([
-                    ['Nombre_documento', $nombre_pdf],
-                ])->get();
+                // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+                // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                // ->select('Nombre_documento')
+                // ->where([
+                //     ['Nombre_documento', $nombre_pdf],
+                // ])->get();
                 
-                if(count($verficar_documento) == 0){
+                // if(count($verficar_documento) == 0){
 
-                    // Se valida si antes de insertar la info del doc de Remision_Expediente_JRCI ya hay un documento de Oficio_Afiliado
-                    // o Oficio_Juntas_JRCI o Devolucion_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
-                    $nombre_docu_oficio_afiliado = "JUN_OFICIOA_AFILIADO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                    $nombre_docu_oficio_juntas = "JUN_OFICIO_JRCI_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                    $nombre_docu_devolucion_expediente = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
-                    $nombre_docu_solicitud_dictamen = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
-                    $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado_documento}.pdf";
+                //     // Se valida si antes de insertar la info del doc de Remision_Expediente_JRCI ya hay un documento de Oficio_Afiliado
+                //     // o Oficio_Juntas_JRCI o Devolucion_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
+                //     $nombre_docu_oficio_afiliado = "JUN_OFICIOA_AFILIADO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                //     $nombre_docu_oficio_juntas = "JUN_OFICIO_JRCI_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                //     $nombre_docu_devolucion_expediente = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
+                //     $nombre_docu_solicitud_dictamen = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
+                //     $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado_documento}.pdf";
 
-                    $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                    ->select('Nombre_documento')
-                    ->whereIN('Nombre_documento', [$nombre_docu_oficio_afiliado, $nombre_docu_oficio_juntas, $nombre_docu_devolucion_expediente,
-                        $nombre_docu_solicitud_dictamen, $nombre_docu_otro
-                    ]
-                    )->get();
+                //     $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                //     ->select('Nombre_documento')
+                //     ->whereIN('Nombre_documento', [$nombre_docu_oficio_afiliado, $nombre_docu_oficio_juntas, $nombre_docu_devolucion_expediente,
+                //         $nombre_docu_solicitud_dictamen, $nombre_docu_otro
+                //     ]
+                //     )->get();
 
-                    // Si no existe info del documento de Oficio_Afiliado, Oficio_Juntas_JRCI o Devolucion_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
-                    // inserta la info del documento de Remision_Expediente_JRCI, De lo contrario hace una actualización de la info
-                    if (count($verificar_docu_otro) == 0) {
-                        $info_descarga_documento = [
-                            'Id_Asignacion' => $Id_Asignacion,
-                            'Id_proceso' => $Id_proceso,
-                            'Id_servicio' => $Id_servicio,
-                            'ID_evento' => $ID_evento,
-                            'Nombre_documento' => $nombre_pdf,
-                            'N_radicado_documento' => $N_radicado_documento,
-                            'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                            'F_descarga_documento' => $date,
-                            'Nombre_usuario' => $nombre_usuario,
-                        ];
+                //     // Si no existe info del documento de Oficio_Afiliado, Oficio_Juntas_JRCI o Devolucion_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
+                //     // inserta la info del documento de Remision_Expediente_JRCI, De lo contrario hace una actualización de la info
+                //     if (count($verificar_docu_otro) == 0) {
+                //         $info_descarga_documento = [
+                //             'Id_Asignacion' => $Id_Asignacion,
+                //             'Id_proceso' => $Id_proceso,
+                //             'Id_servicio' => $Id_servicio,
+                //             'ID_evento' => $ID_evento,
+                //             'Nombre_documento' => $nombre_pdf,
+                //             'N_radicado_documento' => $N_radicado_documento,
+                //             'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                //             'F_descarga_documento' => $date,
+                //             'Nombre_usuario' => $nombre_usuario,
+                //         ];
                         
-                        sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-                    }else{
-                        $info_descarga_documento = [
-                            'Id_Asignacion' => $Id_Asignacion,
-                            'Id_proceso' => $Id_proceso,
-                            'Id_servicio' => $Id_servicio,
-                            'ID_evento' => $ID_evento,
-                            'Nombre_documento' => $nombre_pdf,
-                            'N_radicado_documento' => $N_radicado_documento,
-                            'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                            'F_descarga_documento' => $date,
-                            'Nombre_usuario' => $nombre_usuario,
-                        ];
+                //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                //     }else{
+                //         $info_descarga_documento = [
+                //             'Id_Asignacion' => $Id_Asignacion,
+                //             'Id_proceso' => $Id_proceso,
+                //             'Id_servicio' => $Id_servicio,
+                //             'ID_evento' => $ID_evento,
+                //             'Nombre_documento' => $nombre_pdf,
+                //             'N_radicado_documento' => $N_radicado_documento,
+                //             'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                //             'F_descarga_documento' => $date,
+                //             'Nombre_usuario' => $nombre_usuario,
+                //         ];
                         
-                        sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                        ->where([
-                            ['Id_Asignacion', $Id_Asignacion],
-                            ['N_radicado_documento', $N_radicado_documento],
-                            ['ID_evento', $ID_evento]
-                        ])
-                        ->update($info_descarga_documento);
-                    }
-                }
+                //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                //         ->where([
+                //             ['Id_Asignacion', $Id_Asignacion],
+                //             ['N_radicado_documento', $N_radicado_documento],
+                //             ['ID_evento', $ID_evento]
+                //         ])
+                //         ->update($info_descarga_documento);
+                //     }
+                // }
 
-                return $pdf->download($nombre_pdf); 
+                // return $pdf->download($nombre_pdf); 
+                $datos = [
+                    'indicativo' => $indicativo,
+                    'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
+                ];
+                
+                return response()->json($datos);
             break;
             
             case ($tipo_de_preforma == "Devolucion_Expediente_JRCI"):
@@ -4971,90 +5025,106 @@ class CalificacionJuntasController extends Controller
 
                     // Generamos el documento y luego se guarda
                     $writer = new Word2007($phpWord);
-                    $nombre_docx = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}.docx";
+
+                    // $nombre_docx = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}.docx";
+                    $nombre_docx = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}_{$indicativo}.docx";
+
                     $writer->save(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
 
                     $actualizar_nombre_documento = [
                         'Nombre_documento' => $nombre_docx
                     ];
+
                     sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
                     ->update($actualizar_nombre_documento);
+
                     /* Inserción del registro de que fue descargado */
-                    // Extraemos el id del servicio asociado
-                    $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
-                    ->select('siae.Id_servicio')
-                    ->where([
-                        ['siae.Id_Asignacion', $Id_Asignacion],
-                        ['siae.ID_evento', $ID_evento],
-                        ['siae.Id_proceso', $Id_proceso],
-                    ])->get();
+                    // // Extraemos el id del servicio asociado
+                    // $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+                    // ->select('siae.Id_servicio')
+                    // ->where([
+                    //     ['siae.Id_Asignacion', $Id_Asignacion],
+                    //     ['siae.ID_evento', $ID_evento],
+                    //     ['siae.Id_proceso', $Id_proceso],
+                    // ])->get();
 
-                    $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+                    // $Id_servicio = $dato_id_servicio[0]->Id_servicio;
 
-                    // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-                    $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                    ->select('Nombre_documento')
-                    ->where([
-                        ['Nombre_documento', $nombre_docx],
-                    ])->get();
+                    // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+                    // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    // ->select('Nombre_documento')
+                    // ->where([
+                    //     ['Nombre_documento', $nombre_docx],
+                    // ])->get();
                     
-                    if(count($verficar_documento) == 0){
+                    // if(count($verficar_documento) == 0){
 
-                        // Se valida si antes de insertar la info del doc de Devolucion_Expediente_JRCI ya hay un documento de Oficio_Afiliado
-                        // o Oficio_Juntas_JRCI o Remision_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
-                        $nombre_docu_oficio_afiliado = "JUN_OFICIOA_AFILIADO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                        $nombre_docu_oficio_juntas = "JUN_OFICIO_JRCI_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                        $nombre_docu_remision_expediente = "JUN_REM_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                        $nombre_docu_solicitud_dictamen = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
-                        $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado_documento}.pdf";
+                    //     // Se valida si antes de insertar la info del doc de Devolucion_Expediente_JRCI ya hay un documento de Oficio_Afiliado
+                    //     // o Oficio_Juntas_JRCI o Remision_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
+                    //     $nombre_docu_oficio_afiliado = "JUN_OFICIOA_AFILIADO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                    //     $nombre_docu_oficio_juntas = "JUN_OFICIO_JRCI_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                    //     $nombre_docu_remision_expediente = "JUN_REM_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                    //     $nombre_docu_solicitud_dictamen = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
+                    //     $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado_documento}.pdf";
 
-                        $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                        ->select('Nombre_documento')
-                        ->whereIN('Nombre_documento', [$nombre_docu_oficio_afiliado, $nombre_docu_oficio_juntas, $nombre_docu_remision_expediente,
-                            $nombre_docu_solicitud_dictamen, $nombre_docu_otro
-                        ]
-                        )->get();
+                    //     $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    //     ->select('Nombre_documento')
+                    //     ->whereIN('Nombre_documento', [$nombre_docu_oficio_afiliado, $nombre_docu_oficio_juntas, $nombre_docu_remision_expediente,
+                    //         $nombre_docu_solicitud_dictamen, $nombre_docu_otro
+                    //     ]
+                    //     )->get();
 
-                        // Si no existe info del documento de Oficio_Afiliado o Oficio_Juntas_JRCI o Remision_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
-                        // inserta la info del documento de Devolucion_Expediente_JRCI, De lo contrario hace una actualización de la info
-                        if (count($verificar_docu_otro) == 0) {
-                            $info_descarga_documento = [
-                                'Id_Asignacion' => $Id_Asignacion,
-                                'Id_proceso' => $Id_proceso,
-                                'Id_servicio' => $Id_servicio,
-                                'ID_evento' => $ID_evento,
-                                'Nombre_documento' => $nombre_docx,
-                                'N_radicado_documento' => $N_radicado_documento,
-                                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                                'F_descarga_documento' => $date,
-                                'Nombre_usuario' => $nombre_usuario,
-                            ];
+                    //     // Si no existe info del documento de Oficio_Afiliado o Oficio_Juntas_JRCI o Remision_Expediente_JRCI o Solicitud_Dictamen_JRCI o de tipo otro
+                    //     // inserta la info del documento de Devolucion_Expediente_JRCI, De lo contrario hace una actualización de la info
+                    //     if (count($verificar_docu_otro) == 0) {
+                    //         $info_descarga_documento = [
+                    //             'Id_Asignacion' => $Id_Asignacion,
+                    //             'Id_proceso' => $Id_proceso,
+                    //             'Id_servicio' => $Id_servicio,
+                    //             'ID_evento' => $ID_evento,
+                    //             'Nombre_documento' => $nombre_docx,
+                    //             'N_radicado_documento' => $N_radicado_documento,
+                    //             'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                    //             'F_descarga_documento' => $date,
+                    //             'Nombre_usuario' => $nombre_usuario,
+                    //         ];
                             
-                            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-                        }else{
-                            $info_descarga_documento = [
-                                'Id_Asignacion' => $Id_Asignacion,
-                                'Id_proceso' => $Id_proceso,
-                                'Id_servicio' => $Id_servicio,
-                                'ID_evento' => $ID_evento,
-                                'Nombre_documento' => $nombre_docx,
-                                'N_radicado_documento' => $N_radicado_documento,
-                                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                                'F_descarga_documento' => $date,
-                                'Nombre_usuario' => $nombre_usuario,
-                            ];
+                    //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                    //     }else{
+                    //         $info_descarga_documento = [
+                    //             'Id_Asignacion' => $Id_Asignacion,
+                    //             'Id_proceso' => $Id_proceso,
+                    //             'Id_servicio' => $Id_servicio,
+                    //             'ID_evento' => $ID_evento,
+                    //             'Nombre_documento' => $nombre_docx,
+                    //             'N_radicado_documento' => $N_radicado_documento,
+                    //             'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                    //             'F_descarga_documento' => $date,
+                    //             'Nombre_usuario' => $nombre_usuario,
+                    //         ];
                             
-                            sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                            ->where([
-                                ['Id_Asignacion', $Id_Asignacion],
-                                ['N_radicado_documento', $N_radicado_documento],
-                                ['ID_evento', $ID_evento]
-                            ])
-                            ->update($info_descarga_documento);
-                        }
-                    }
+                    //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    //         ->where([
+                    //             ['Id_Asignacion', $Id_Asignacion],
+                    //             ['N_radicado_documento', $N_radicado_documento],
+                    //             ['ID_evento', $ID_evento]
+                    //         ])
+                    //         ->update($info_descarga_documento);
+                    //     }
+                    // }
 
-                    return response()->download(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
+                    // return response()->download(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
+
+                    // Leer el contenido del archivo guardado y codificarlo en base64
+                    $contenidoWord = File::get(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+
+                    $datos = [
+                        'indicativo' => $indicativo,
+                        'word' => base64_encode($contenidoWord)
+                    ];
+                    
+                    return response()->json($datos);
+
             break;
 
             case($tipo_de_preforma == "Solicitud_Dictamen_JRCI"):
@@ -5676,90 +5746,105 @@ class CalificacionJuntasController extends Controller
 
                     // Generamos el documento y luego se guarda
                     $writer = new Word2007($phpWord);
+
                     $nombre_docx = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}.docx";
+                    $nombre_docx = "JUN_SOL_DICTAMEN_{$Id_comunicado}_{$Id_Asignacion}_{$num_identificacion_afiliado}_{$indicativo}.docx";
+
                     $writer->save(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
                     
                     $actualizar_nombre_documento = [
                         'Nombre_documento' => $nombre_docx
                     ];
+
                     sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
                     ->update($actualizar_nombre_documento);
+
                     /* Inserción del registro de que fue descargado */
-                    // Extraemos el id del servicio asociado
-                    $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
-                    ->select('siae.Id_servicio')
-                    ->where([
-                        ['siae.Id_Asignacion', $Id_Asignacion],
-                        ['siae.ID_evento', $ID_evento],
-                        ['siae.Id_proceso', $Id_proceso],
-                    ])->get();
+                    // // Extraemos el id del servicio asociado
+                    // $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+                    // ->select('siae.Id_servicio')
+                    // ->where([
+                    //     ['siae.Id_Asignacion', $Id_Asignacion],
+                    //     ['siae.ID_evento', $ID_evento],
+                    //     ['siae.Id_proceso', $Id_proceso],
+                    // ])->get();
 
-                    $Id_servicio = $dato_id_servicio[0]->Id_servicio;
+                    // $Id_servicio = $dato_id_servicio[0]->Id_servicio;
 
-                    // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-                    $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                    ->select('Nombre_documento')
-                    ->where([
-                        ['Nombre_documento', $nombre_docx],
-                    ])->get();
+                    // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+                    // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    // ->select('Nombre_documento')
+                    // ->where([
+                    //     ['Nombre_documento', $nombre_docx],
+                    // ])->get();
                     
-                    if(count($verficar_documento) == 0){
+                    // if(count($verficar_documento) == 0){
 
-                        // Se valida si antes de insertar la info del doc de Solicitud_Dictamen_JRCI ya hay un documento de Oficio_Afiliado
-                        // o Oficio_Juntas_JRCI o Remision_Expediente_JRCI o Devolucion_Expediente_JRCI o de tipo otro
-                        $nombre_docu_oficio_afiliado = "JUN_OFICIOA_AFILIADO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                        $nombre_docu_oficio_juntas = "JUN_OFICIO_JRCI_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                        $nombre_docu_remision_expediente = "JUN_REM_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
-                        $nombre_docu_devolucion_expediente = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
-                        $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado_documento}.pdf";
+                    //     // Se valida si antes de insertar la info del doc de Solicitud_Dictamen_JRCI ya hay un documento de Oficio_Afiliado
+                    //     // o Oficio_Juntas_JRCI o Remision_Expediente_JRCI o Devolucion_Expediente_JRCI o de tipo otro
+                    //     $nombre_docu_oficio_afiliado = "JUN_OFICIOA_AFILIADO_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                    //     $nombre_docu_oficio_juntas = "JUN_OFICIO_JRCI_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                    //     $nombre_docu_remision_expediente = "JUN_REM_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.pdf";
+                    //     $nombre_docu_devolucion_expediente = "JUN_DEV_EXPEDIENTE_{$Id_comunicado}_{$Id_Asignacion}_{$N_identificacion}.docx";
+                    //     $nombre_docu_otro = "Comunicado_{$Id_comunicado}_{$N_radicado_documento}.pdf";
 
-                        $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                        ->select('Nombre_documento')
-                        ->whereIN('Nombre_documento', [$nombre_docu_oficio_afiliado, $nombre_docu_oficio_juntas, $nombre_docu_remision_expediente,
-                            $nombre_docu_devolucion_expediente, $nombre_docu_otro
-                        ]
-                        )->get();
+                    //     $verificar_docu_otro = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    //     ->select('Nombre_documento')
+                    //     ->whereIN('Nombre_documento', [$nombre_docu_oficio_afiliado, $nombre_docu_oficio_juntas, $nombre_docu_remision_expediente,
+                    //         $nombre_docu_devolucion_expediente, $nombre_docu_otro
+                    //     ]
+                    //     )->get();
                     
-                        // Si no existe info del documento de Oficio_Afiliado o Oficio_Juntas_JRCI o Remision_Expediente_JRCI o Devolucion_Expediente_JRCI o  de tipo otro
-                        // inserta la info del documento de Solicitud_Dictamen_JRCI, De lo contrario hace una actualización de la info
-                        if (count($verificar_docu_otro) == 0) {
-                            $info_descarga_documento = [
-                                'Id_Asignacion' => $Id_Asignacion,
-                                'Id_proceso' => $Id_proceso,
-                                'Id_servicio' => $Id_servicio,
-                                'ID_evento' => $ID_evento,
-                                'Nombre_documento' => $nombre_docx,
-                                'N_radicado_documento' => $N_radicado_documento,
-                                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                                'F_descarga_documento' => $date,
-                                'Nombre_usuario' => $nombre_usuario,
-                            ];
+                    //     // Si no existe info del documento de Oficio_Afiliado o Oficio_Juntas_JRCI o Remision_Expediente_JRCI o Devolucion_Expediente_JRCI o  de tipo otro
+                    //     // inserta la info del documento de Solicitud_Dictamen_JRCI, De lo contrario hace una actualización de la info
+                    //     if (count($verificar_docu_otro) == 0) {
+                    //         $info_descarga_documento = [
+                    //             'Id_Asignacion' => $Id_Asignacion,
+                    //             'Id_proceso' => $Id_proceso,
+                    //             'Id_servicio' => $Id_servicio,
+                    //             'ID_evento' => $ID_evento,
+                    //             'Nombre_documento' => $nombre_docx,
+                    //             'N_radicado_documento' => $N_radicado_documento,
+                    //             'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                    //             'F_descarga_documento' => $date,
+                    //             'Nombre_usuario' => $nombre_usuario,
+                    //         ];
                             
-                            sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-                        }else{
-                            $info_descarga_documento = [
-                                'Id_Asignacion' => $Id_Asignacion,
-                                'Id_proceso' => $Id_proceso,
-                                'Id_servicio' => $Id_servicio,
-                                'ID_evento' => $ID_evento,
-                                'Nombre_documento' => $nombre_docx,
-                                'N_radicado_documento' => $N_radicado_documento,
-                                'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                                'F_descarga_documento' => $date,
-                                'Nombre_usuario' => $nombre_usuario,
-                            ];
+                    //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+                    //     }else{
+                    //         $info_descarga_documento = [
+                    //             'Id_Asignacion' => $Id_Asignacion,
+                    //             'Id_proceso' => $Id_proceso,
+                    //             'Id_servicio' => $Id_servicio,
+                    //             'ID_evento' => $ID_evento,
+                    //             'Nombre_documento' => $nombre_docx,
+                    //             'N_radicado_documento' => $N_radicado_documento,
+                    //             'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+                    //             'F_descarga_documento' => $date,
+                    //             'Nombre_usuario' => $nombre_usuario,
+                    //         ];
                             
-                            sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                            ->where([
-                                ['Id_Asignacion', $Id_Asignacion],
-                                ['N_radicado_documento', $N_radicado_documento],
-                                ['ID_evento', $ID_evento]
-                            ])
-                            ->update($info_descarga_documento);
-                        }
-                    }
+                    //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+                    //         ->where([
+                    //             ['Id_Asignacion', $Id_Asignacion],
+                    //             ['N_radicado_documento', $N_radicado_documento],
+                    //             ['ID_evento', $ID_evento]
+                    //         ])
+                    //         ->update($info_descarga_documento);
+                    //     }
+                    // }
 
-                    return response()->download(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
+                    // return response()->download(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
+
+                    // Leer el contenido del archivo guardado y codificarlo en base64
+                    $contenidoWord = File::get(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+
+                    $datos = [
+                        'indicativo' => $indicativo,
+                        'word' => base64_encode($contenidoWord)
+                    ];
+                    
+                    return response()->json($datos);
             break;
             
             default:

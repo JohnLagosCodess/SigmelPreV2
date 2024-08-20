@@ -851,6 +851,9 @@ Route::post('/consultaReporteNotificaciones', [ReporteNotificacionesController::
 Route::post('/generarZipReporteNotificaciones', [ReporteNotificacionesController::class, 'generarZipReporteNotificaciones']);
 // Acción: Eliminaar zip de Reporte de Notificaciones
 Route::post('/eliminarZipReporteNotificaciones', [ReporteNotificacionesController::class, 'eliminarZipReporteNotificaciones']);
+// Acción: Cargue de correspondecias o notificaciones
+Route::post('/Sigmel/CargueCorrespondencia', [ReporteNotificacionesController::class, 'cargueCorrespondencias'])->name('subirCorrespondencia');
+
 
 // Creación Vista Módulo reporte facturación PCL
 // 31/05/2024 Vista Reporte Facturación PCL

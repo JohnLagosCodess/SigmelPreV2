@@ -1391,10 +1391,32 @@ $(document).ready(function(){
 
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
-            $("#btn_guardar_actualizar_correspondencia").remove();
+            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
             $("#form_correspondencia *").prop('disabled',true);
             $("#cerar_modalCorrespondencia").prop('disabled',false);
+        }else{
+            $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
         }
+
+        let estado_general = $("#status_notificacion_" + N_radicado).find(":selected").text();
+        if((estado_general == 'Notificado efectivamente' || estado_general == 'Devuelto' || estado_general == 'No notificar') 
+            && ($(id).data("estado_correspondencia") == 0 || $(id).data("estado_correspondencia") == 1 )){
+
+            $(".alerta_advertencia").removeClass('d-none');
+            $(".alerta_advertencia").empty();
+            $(".alerta_advertencia").append(`La correspondencia no se puede guardar y/o actualizar ya que el estado del comunicado es <strong>${estado_general}</strong>,por favor cambielo para pode editar la correspondencia.`)
+            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
+        
+         setTimeout(function(){
+            $(".alerta_advertencia").addClass('d-none');
+            $(".alerta_advertencia").empty();
+        },3000); 
+        }else{
+             $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
+             $(".alerta_advertencia").empty();
+             $(".alerta_advertencia").addClass('d-none');
+         }
+
         //Información superior del modal 
         if(tipo_descarga === 'Manual' || tipo_descarga === 'Dictamen'){
             $("#modalCorrespondencia #nombre_afiliado").val($("#nombre_afiliado").val());
@@ -1414,7 +1436,7 @@ $(document).ready(function(){
             $("#modalCorrespondencia #check_copia").prop('disabled', false);
             $("#modalCorrespondencia #check_copia").prop('checked', false);
         }
-        if(correspondencia){
+        if(correspondencia && correspondencia.length >0){
             array_temp = correspondencia.split(",").map(item => item.trim());
             correspondencia_array = array_temp;
         }
@@ -1548,7 +1570,6 @@ $(document).ready(function(){
                     showLoading();
                 },
                 success: function(response){
-                    
                     if(response && response.datos){
                         $("#modalCorrespondencia #n_orden").val(response?.nro_orden);
                         $("#modalCorrespondencia #nombre_destinatario").val(response?.datos?.Nombre_destinatario);
@@ -1567,17 +1588,17 @@ $(document).ready(function(){
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'afiliado' || tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'arl')){
+                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'afiliado' || tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'arl' || tipo_correspondencia.toLowerCase() === 'afp_conocimiento')){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
+                        else if((tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen') && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
                             $("#modalCorrespondencia #check_principal").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.includes(tipo_correspondencia.toLowerCase())){
+                        else if((tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen') && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.includes(tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -1715,12 +1736,13 @@ $(document).ready(function(){
     }
 
     let opciones_Notificacion = [];
-
+    
     //Selectores estados de notificacion
     $("[id^='status_notificacion_']").each(function() {
         let $selector = $(this);
- 
+
         let opocionSeleccionada = $selector.data('default');
+        let desactivar = $selector.data('deshabilitar') == '1' ? false: true;
 
         $.ajax({
             type: 'POST',
@@ -1753,12 +1775,16 @@ $(document).ready(function(){
                         color: color
                     });
                 });
-    
+
+
                 //Cargamos la configuracion del select2
                 $selector.select2({
                     placeholder: "Seleccione una opción",
                     allowClear: false,
                     data: opciones_Notificacion,
+                    disabled: () => {
+                        return opocionSeleccionada == 359 ||  opocionSeleccionada == 358 ? false : desactivar;
+                    },
                     templateResult: function(data) {
                         return $('<span>', {
                             style: `color: ${data.color}`,
@@ -1774,6 +1800,7 @@ $(document).ready(function(){
                 }).val(opocionSeleccionada);
 
                 $selector.trigger('change');
+
             },
         });
     }); 
@@ -3055,17 +3082,37 @@ $(document).ready(function(){
                 type:'POST',
                 url:'/DescargaProformaDMLPrev',
                 data: datos_generacion_proforma_dml_previsional,
-                xhrFields: {
-                    responseType: 'blob' // Indica que la respuesta es un blob
-                },
+                // xhrFields: {
+                //     responseType: 'blob' // Indica que la respuesta es un blob
+                // },
                 beforeSend:  function() {
                     $("#btn_enviar_dictamen_previsional").addClass("descarga-deshabilitada");
                 },
                 success: function (response, status, xhr) {
-                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+
+                    // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                    var base64Pdf = response.pdf;
+
+                    // Decodificar base64 en un array de bytes
+                    var binaryString = atob(base64Pdf);
+                    var len = binaryString.length;
+                    var bytes = new Uint8Array(len);
+
+                    for (var i = 0; i < len; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+ 
+                    // Crear un Blob a partir del array de bytes
+                    var blob = new Blob([bytes], { type: 'application/pdf' });
+
+                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
             
+                    var indicativo = response.indicativo;
+
+                    // var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                    var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
+                    
                     // Crear un enlace de descarga similar al ejemplo anterior
-                    var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
                     link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
@@ -3188,17 +3235,38 @@ $(document).ready(function(){
                 type:'POST',
                 url:'/DescargaProformaNotiDMLPrev',
                 data: datos_pdf_noti_dml_previsional,
-                xhrFields: {
-                    responseType: 'blob' // Indica que la respuesta es un blob
-                },
+                // xhrFields: {
+                //     responseType: 'blob' // Indica que la respuesta es un blob
+                // },
                 beforeSend:  function() {
                     $("#enviar_form_noti_previsional").addClass("descarga-deshabilitada");
                 },
                 success: function (response, status, xhr) {
-                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+
+                    // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                    var base64Pdf = response.pdf;
+
+                    // Decodificar base64 en un array de bytes
+                    var binaryString = atob(base64Pdf);
+                    var len = binaryString.length;
+                    var bytes = new Uint8Array(len);
+
+                    for (var i = 0; i < len; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+
+                    // Crear un Blob a partir del array de bytes
+                    var blob = new Blob([bytes], { type: 'application/pdf' });
+                     
+                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
             
+                    var indicativo = response.indicativo;
+
+                    // var nombre_pdf = "ORI_OFICIO_"+Id_asignacion+"_"+num_identificacion+".pdf";
+                    var nombre_pdf = "ORI_OFICIO_"+Id_asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
+
+
                     // Crear un enlace de descarga similar al ejemplo anterior
-                    var nombre_pdf = "ORI_OFICIO_"+Id_asignacion+"_"+num_identificacion+".pdf";
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
                     link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF

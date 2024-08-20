@@ -38,14 +38,16 @@ $(document).ready(function () {
             buttons:[
                 {
                     extend:"excel",
-                    title: fechaActual+" Correspondencia SIGMEL",
+                    title: function(){
+                        return fechaActual + "_" + $('#nro_orden').val();
+                    },
                     text:'Exportar datos',
                     className: 'btn btn-success',
                     "excelStyles": [                      // Add an excelStyles definition
                                                  
                     ],
                     exportOptions: {
-                        columns: [ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+                        columns: [ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,23,23,]
                     }
                 }
             ]
@@ -90,69 +92,99 @@ $(document).ready(function () {
         // Mostrando mensajes
         $('.resultado_validacion').removeClass('d-none');
         $('.resultado_validacion').addClass('alert-info');
-        var string_texto = '<span>Generando Archivo .zip. Por favor espere ... </span>';
+        $('#llenar_mensaje_validacion').empty();
+        var string_texto = '<span>Generando Archivo .zip, Por favor espere ... </span>';
         $('#llenar_mensaje_validacion').append(string_texto);
 
         // Deshabilitar el botón del zip para que no den clic muchas veces
         $("#btn_generar_zip_reporte_notificaciones").prop('disabled', true);
         
-        /* Captura de variables del formulario */
-        var fecha_desde = $('#fecha_desde').val();
-        var fecha_hasta = $('#fecha_hasta').val();
-
-        var datos_generar_zip_reporte_notifi = {
-            '_token': token,
-            'fecha_desde': fecha_desde,
-            'fecha_hasta': fecha_hasta,
-        };
-
-        $.ajax({
-            type:'POST',
-            url:'/generarZipReporteNotificaciones',
-            data: datos_generar_zip_reporte_notifi,
-            success:function(data){ 
-                if (data.parametro == "error") {
-                    /* Mostrar contenedor mensaje de que no hay información */
-                    $('.resultado_validacion').removeClass('d-none');
-                    $('.resultado_validacion').addClass('alert-danger');
-                    $('#llenar_mensaje_validacion').append(data.mensaje);
-                    setTimeout(() => {
-                        $('.resultado_validacion').addClass('d-none');
-                        $('.resultado_validacion').removeClass('alert-danger');
-                        $('#llenar_mensaje_validacion').empty();
-                    }, 4000);
-
-                }else{
-                    // Descarga del Archivo
-                    window.location.href = data.url;
-                    // Eliminando mensajes
-                    $('.resultado_validacion').addClass('d-none');
-                    $('.resultado_validacion').removeClass('alert-info');
-                    $('#llenar_mensaje_validacion').append('');
-
-                    // habilitar el botón del zip nuevamente
-                    $("#btn_generar_zip_reporte_notificaciones").prop('disabled', false);
-
-                    // Eliminar el archivo después de un tiempo de espera (por ejemplo, 10 segundos)
-                    setTimeout(function() {
-                        var datos_eliminar_reporte = {
-                            '_token': token,
-                            'nom_archivo': data.nom_archivo
-                        };
+        setTimeout(() => {
+            /* Captura de variables del formulario */
+            var fecha_desde = $('#fecha_desde').val();
+            var fecha_hasta = $('#fecha_hasta').val();
+    
+            var datos_generar_zip_reporte_notifi = {
+                '_token': token,
+                'fecha_desde': fecha_desde,
+                'fecha_hasta': fecha_hasta,
+                'nro_orden': $('#nro_orden').val()
+            };
+    
+    
+            $.ajax({
+                type:'POST',
+                url:'/generarZipReporteNotificaciones',
+                data: datos_generar_zip_reporte_notifi,
+                success:function(data){ 
+                    if (data.parametro == "error") {
+                        /* Mostrar contenedor mensaje de que no hay información */
                         
-                        $.ajax({
-                            type: 'POST',
-                            url: '/eliminarZipReporteNotificaciones',
-                            data: datos_eliminar_reporte,
-                            success: function(response) {
-                            }
-                        });
-                    }, 10000);
-                    
+                        /* En caso de que el zip que genera es vacio muestra este error si 
+                        no los otros errores aparecerán */
+                        if (data.vacio == "zip_vacio") {
+                            $('.resultado_validacion').removeClass('alert-info');
+                            $('#llenar_mensaje_validacion').empty();
+                            $('.resultado_validacion').addClass('alert-danger');
+                            $('#llenar_mensaje_validacion').append(data.mensaje);
+
+                            // habilitar el botón del zip nuevamente
+                            $("#btn_generar_zip_reporte_notificaciones").prop('disabled', false);
+
+                        }else{
+                            $('.resultado_validacion').removeClass('d-none');
+                            $('.resultado_validacion').addClass('alert-danger');
+                            $('#llenar_mensaje_validacion').append(data.mensaje);
+                        }
+
+                        setTimeout(() => {
+                            $('.resultado_validacion').addClass('d-none');
+                            $('.resultado_validacion').removeClass('alert-danger');
+                            $('#llenar_mensaje_validacion').empty();
+                        }, 6000);
+    
+                    }else{
+                        // Descarga del Archivo
+                        window.location.href = data.url;
+                        // Eliminando mensajes
+                        $('.resultado_validacion').addClass('d-none');
+                        $('.resultado_validacion').removeClass('alert-info');
+                        $('#llenar_mensaje_validacion').append('');
+    
+                        // habilitar el botón del zip nuevamente
+                        $("#btn_generar_zip_reporte_notificaciones").prop('disabled', false);
+    
+                        // Eliminar el archivo después de un tiempo de espera (por ejemplo, 10 segundos)
+                        setTimeout(function() {
+                            var datos_eliminar_reporte = {
+                                '_token': token,
+                                'nom_archivo': data.nom_archivo
+                            };
+                            
+                            $.ajax({
+                                type: 'POST',
+                                url: '/eliminarZipReporteNotificaciones',
+                                data: datos_eliminar_reporte,
+                                success: function(response) {
+                                }
+                            });
+                        }, 10000);
+                        
+                    }
                 }
-            }
-        });
+            });
+            
+        }, 3500);
+
     });
+
+    $('#cargar_Correspondencia').click(function () {
+        setTimeout(() => {
+            $(this).prop('disabled', true);            
+        }, 500);
+        $('#mostrar_barra_cargar_correspondencia').removeClass('d-none');        
+    });
+
 });
 
 
@@ -162,26 +194,30 @@ function renderizarRegistros(data, inicio, fin, reporteNotificacionesTable) {
 
         var datos = [
             data[a].Cons,
-            data[a].Fecha_envio,
-            data[a].No_identificacion,
-            data[a].No_guia_asignado,
-            data[a].Orden_impresion,
+            data[a].F_comunicado,
+            data[a].N_radicado,
+            data[a].Nombre_documento,
+            data[a].Carpeta_impresion,
+            data[a].Observaciones,
+            data[a].N_identificacion,
+            data[a].Destinatario,
+            data[a].Nombre_destinatario,
+            data[a].Direccion_destinatario,
+            data[a].Telefono_destinatario,
+            data[a].Ciudad,
+            data[a].Departamento,
+            data[a].Email_destinatario,
             data[a].Proceso,
             data[a].Servicio,
-            data[a].Ultima_Accion,
+            data[a].Accion,
             data[a].Estado,
-            data[a].No_OIP,
+            data[a].N_orden,
             data[a].Tipo_destinatario,
-            data[a].Nombre_destinatario,
-            data[a].Direccion,
-            data[a].Telefono,
-            data[a].Departamento,
-            data[a].Ciudad,
-            data[a].Folios_entregados,
-            data[a].Medio_Notificacion,
-            data[a].Correo_electronico,
-            data[a].Archivo_1,
-            data[a].Archivo_2,
+            data[a].N_guia,
+            data[a].Folios,
+            data[a].F_envio,
+            data[a].F_notificacion,
+            data[a].Estado_correspondencia
         ];
         
         reporteNotificacionesTable.row.add(datos).draw(false).node();
@@ -221,52 +257,59 @@ function llenar_informacion_reporte_notificaciones(reporteNotificacionesTable, f
                 // Mostrando mensajes
                 $('.resultado_validacion').removeClass('d-none');
                 $('.resultado_validacion').addClass('alert-info');
-                var string_texto = '<span>Se encontraron <b>'+data.length+'</b> registros, esto tardará un tiempo en cargar los resultados. Por favor espere.</span>';
+                var string_texto = '<span>Se encontraron <b>'+data.reporte.length+'</b> registros, esto tardará un tiempo en cargar los resultados. Por favor espere.</span>';
                 $('#llenar_mensaje_validacion').append(string_texto);
 
-                // Ocultando el label de conteo de registros
-                $('#div_info_numero_registros').addClass('d-none');
-                $("#total_registros_reporte_notificaciones").empty();
-                // Se oculta los botones para descarga del excel y el .zip
-                $('#botones_reporte_notificaciones').addClass('d-none');
+                setTimeout(() => {
+                    
+                    // Ocultando el label de conteo de registros
+                    $('#div_info_numero_registros').addClass('d-none');
+                    $("#total_registros_reporte_notificaciones").empty();
+                    // Se oculta los botones para descarga del excel y el .zip
+                    $('#botones_reporte_notificaciones').addClass('d-none');
 
-                // Creacion del contador para añadirlo a los registros
-                for (let i = 0; i < data.length; i++) {
-                    data[i]['Cons'] = i+1;                        
-                }
-
-                // Vaciado del datatable
-                reporteNotificacionesTable.clear();
-
-                // Inserción del contenido cada 100 registros
-                var inicio = 0;
-                var fin = Math.min(100, data.length);
-                function renderizarSiguienteBloque() {
-                    if (inicio < data.length) {
-                        renderizarRegistros(data, inicio, fin, reporteNotificacionesTable);
-                        inicio = fin;
-                        fin += Math.min(fin + 100, data.length) - fin;
-                        
-                        if (inicio >= data.length) {
-                            // LLenado del label de conteo de registros
-                            $('#div_info_numero_registros').removeClass('d-none');
-                            $("#total_registros_reporte_notificaciones").empty();
-                            $("#total_registros_reporte_notificaciones").append(data.length);
-                            // Se muestra los botones para descarga del excel y el .zip
-                            $('#botones_reporte_notificaciones').removeClass('d-none');
-
-                            // ocultando mensaje
-                            $('.resultado_validacion').addClass('d-none');
-                            $('.resultado_validacion').removeClass('alert-info');
-                            $('#llenar_mensaje_validacion').empty();
-                        } else {
-                            setTimeout(renderizarSiguienteBloque, 2000); // Pausa de 2 segundos
-                        }
-                        
-                    }
-                }
+                    // seteamos el input de nro de orden
+                    $('#nro_orden').val(data.n_orden);
     
-                renderizarSiguienteBloque();
+                    // Creacion del contador para añadirlo a los registros
+                    for (let i = 0; i < data.reporte.length; i++) {
+                        data.reporte[i]['Cons'] = i+1;                        
+                    }
+    
+                    // Vaciado del datatable
+                    reporteNotificacionesTable.clear();
+    
+                    // Inserción del contenido cada 100 registros
+                    var inicio = 0;
+                    var fin = Math.min(100, data.reporte.length);
+                    function renderizarSiguienteBloque() {
+                        if (inicio < data.reporte.length) {
+                            renderizarRegistros(data.reporte, inicio, fin, reporteNotificacionesTable);
+                            inicio = fin;
+                            fin += Math.min(fin + 100, data.reporte.length) - fin;
+                            
+                            if (inicio >= data.reporte.length) {
+                                // LLenado del label de conteo de registros
+                                $('#div_info_numero_registros').removeClass('d-none');
+                                $("#total_registros_reporte_notificaciones").empty();
+                                $("#total_registros_reporte_notificaciones").append(data.reporte.length);
+                                // Se muestra los botones para descarga del excel y el .zip
+                                $('#botones_reporte_notificaciones').removeClass('d-none');
+    
+                                // ocultando mensaje
+                                $('.resultado_validacion').addClass('d-none');
+                                $('.resultado_validacion').removeClass('alert-info');
+                                $('#llenar_mensaje_validacion').empty();
+                            } else {
+                                setTimeout(renderizarSiguienteBloque, 2000); // Pausa de 2 segundos
+                            }
+                            
+                        }
+                    }
+        
+                    renderizarSiguienteBloque();
+                }, 3500);
+                
             }
         }
     });

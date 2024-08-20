@@ -752,7 +752,8 @@ $(document).ready(function(){
         let $selector = $(this);
         console.log($(this));
         let opocionSeleccionada = $selector.data('default');
-
+        let desactivar = $selector.data('deshabilitar') == '1' ? false: true;
+        
         $.ajax({
             type: 'POST',
             url: '/cargarselectores',
@@ -790,6 +791,9 @@ $(document).ready(function(){
                     placeholder: "Seleccione una opción",
                     allowClear: false,
                     data: opciones_Notificacion,
+                    disabled: () => {
+                        return opocionSeleccionada == 359 ||  opocionSeleccionada == 358 ? false : desactivar;
+                    },
                     templateResult: function(data) {
                         return $('<span>', {
                             style: `color: ${data.color}`,
@@ -1274,20 +1278,57 @@ $(document).ready(function(){
                 type:'POST',
                 url:'/generarPdfProformaspro',
                 data:datos_proforma_pro,
-                xhrFields: {
-                    responseType: 'blob' // Indica que la respuesta es un blob
-                },
+                // xhrFields: {
+                //     responseType: 'blob' // Indica que la respuesta es un blob
+                // },
                 beforeSend:  function() {
                     $("#btn_generar_proforma").addClass("descarga-deshabilitada");
                 },
                 success: function (response, status, xhr) {
-                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+                    
+                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
             
+                    var indicativo = response.indicativo;
+
                     // Crear un enlace de descarga similar al ejemplo anterior
                     if (desicion_proforma == "proforma_acuerdo") {
-                        var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".pdf";
+
+                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                        var base64Pdf = response.pdf;
+
+                        // Decodificar base64 en un array de bytes
+                        var binaryString = atob(base64Pdf);
+                        var len = binaryString.length;
+                        var bytes = new Uint8Array(len);
+
+                        for (var i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+
+                        // Crear un Blob a partir del array de bytes
+                        var blob = new Blob([bytes], { type: 'application/pdf' });
+                    
+                        // var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".pdf";
+                        var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+"_"+indicativo+".pdf";
+
                     }else{
-                        var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".docx";
+
+                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                        var base64Word = response.word;
+                
+                        // Decodificar base64 en un array de bytes
+                        var binaryString = atob(base64Word);
+                        var len = binaryString.length;
+                        var bytes = new Uint8Array(len);
+                
+                        for (var i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+
+                        var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+
+                        // var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".docx";
+                        var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+"_"+indicativo+".docx";
                     }
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
@@ -1429,6 +1470,25 @@ $(document).ready(function(){
             $("#form_correspondencia *").prop('disabled',true);
             $("#cerar_modalCorrespondencia").prop('disabled',false);
         }
+
+        let estado_general = $("#status_notificacion_" + N_radicado).find(":selected").text();
+        if((estado_general == 'Notificado efectivamente' || estado_general == 'Devuelto' || estado_general == 'No notificar') 
+            && ($(id).data("estado_correspondencia") == 0 || $(id).data("estado_correspondencia") == 1 )){
+
+            $(".alerta_advertencia").removeClass('d-none');
+            $(".alerta_advertencia").empty();
+            $(".alerta_advertencia").append(`La correspondencia no se puede guardar y/o actualizar ya que el estado del comunicado es <strong>${estado_general}</strong>,por favor cambielo para pode editar la correspondencia.`)
+            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
+        
+         setTimeout(function(){
+            $(".alerta_advertencia").addClass('d-none');
+            $(".alerta_advertencia").empty();
+        },3000); 
+        }else{
+             $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
+             $(".alerta_advertencia").empty();
+             $(".alerta_advertencia").addClass('d-none');
+         }
         // console.log(tipo_correspondencia);
         if(tipo_descarga === 'Manual'){
             $("#modalCorrespondencia #check_principal").prop('checked', false);
@@ -1436,7 +1496,7 @@ $(document).ready(function(){
             $("#modalCorrespondencia #check_copia").prop('disabled', false);
             $("#modalCorrespondencia #check_copia").prop('checked', false);
         }
-        if(correspondencia){
+        if(correspondencia && correspondencia.length >0){
             array_temp = correspondencia.split(",").map(item => item.trim());
             correspondencia_array = array_temp;
         }

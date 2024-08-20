@@ -944,7 +944,7 @@ $(document).ready(function(){
             $("#modalCorrespondencia #check_copia").prop('disabled', false);
             $("#modalCorrespondencia #check_copia").prop('checked', false);
         }
-        if(correspondencia){
+        if(correspondencia && correspondencia.length >0){
             array_temp = correspondencia.split(",").map(item => item.trim());
             correspondencia_array = array_temp;
         }
@@ -1766,20 +1766,55 @@ $(document).ready(function(){
                 type:'POST',
                 url:'/DescargarProformaPronunciamiento',
                 data: datos_generacion_proforma,
-                xhrFields: {
-                    responseType: 'blob' // Indica que la respuesta es un blob
-                },
+                // xhrFields: {
+                //     responseType: 'blob' // Indica que la respuesta es un blob
+                // },
                 beforeSend:  function() {
                     $("#btn_generar_proforma").addClass("descarga-deshabilitada");
                 },
                 success: function (response, status, xhr) {
-                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+
+                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
             
+                    var indicativo = response.indicativo;
                     // Crear un enlace de descarga similar al ejemplo anterior
                     if (bandera_tipo_proforma == "proforma_acuerdo") {
-                        var nombre_documento = "ORI_ACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
+                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                        var base64Pdf = response.pdf;
+
+                        // Decodificar base64 en un array de bytes
+                        var binaryString = atob(base64Pdf);
+                        var len = binaryString.length;
+                        var bytes = new Uint8Array(len);
+
+                        for (var i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+
+                        // Crear un Blob a partir del array de bytes
+                        var blob = new Blob([bytes], { type: 'application/pdf' });
+
+                        // var nombre_documento = "ORI_ACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
+                        var nombre_documento = "ORI_ACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+"_"+indicativo+".pdf";
+
                     } else {
-                        var nombre_documento = "ORI_DESACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".docx";                    
+                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                        var base64Word = response.word;
+                
+                        // Decodificar base64 en un array de bytes
+                        var binaryString = atob(base64Word);
+                        var len = binaryString.length;
+                        var bytes = new Uint8Array(len);
+                
+                        for (var i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+
+                        var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+
+                        // var nombre_documento = "ORI_DESACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".docx";              
+                        var nombre_documento = "ORI_DESACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+"_"+indicativo+".docx";
+                                      
                     }
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);

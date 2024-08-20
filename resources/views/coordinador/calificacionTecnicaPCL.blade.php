@@ -7698,7 +7698,7 @@
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)
                                                             <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
                                                             <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}">                                                        
-                                                            <input type="hidden" id="Estado_Correspondencia_{{$comunicados['Estado_Correspondencia']}}" value="{{$comunicados['Estado_Correspondencia']}}">
+                                                            <input type="hidden" id="Estado_Correspondencia_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_correspondencia'] ?? '0'}}">
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 1507 --}}
@@ -7721,7 +7721,7 @@
                                                                             </form> 
                                                                             @if ($comunicados['Existe'])
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
                                                                                     </button>
                                                                                 </form>
@@ -7736,7 +7736,7 @@
                                                                             </form>
                                                                             @if ($comunicados['Existe'])
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
                                                                                     </button>
                                                                                 </form>
@@ -7782,7 +7782,7 @@
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)
                                                             <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
                                                             <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}">         
-                                                            <input type="hidden" id="Estado_Correspondencia_{{$comunicados['Estado_Correspondencia']}}" value="{{$comunicados['Estado_Correspondencia']}}">
+                                                            <input type="hidden" id="Estado_Correspondencia_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_correspondencia'] ?? '0'}}">
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL Cero --}}
@@ -7805,7 +7805,7 @@
                                                                             </form>
                                                                             @if ($comunicados['Existe'])
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
                                                                                     </button>
                                                                                 </form>
@@ -7820,7 +7820,7 @@
                                                                             </form>
                                                                             @if ($comunicados['Existe'])
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
                                                                                     </button>
                                                                                 </form>
@@ -7866,7 +7866,7 @@
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)
                                                             <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
                                                             <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}"> 
-                                                            <input type="hidden" id="Estado_Correspondencia_{{$comunicados['Estado_Correspondencia']}}" value="{{$comunicados['Estado_Correspondencia']}}">
+                                                            <input type="hidden" id="Estado_Correspondencia_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_correspondencia'] ?? '0'}}">
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 917 --}}
@@ -7889,7 +7889,7 @@
                                                                             </form>
                                                                             @if ($comunicados['Existe'])
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
                                                                                     </button>
                                                                                 </form>
@@ -7904,7 +7904,7 @@
                                                                             </form>
                                                                             @if ($comunicados['Existe'])
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
                                                                                     </button>
                                                                                 </form>
@@ -7950,7 +7950,7 @@
                                                         @foreach ($array_comunicados_correspondencia as $index => $comunicados)
                                                         <input type="hidden" id="status_default_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_Notificacion']}}">
                                                         <input type="hidden" id="Nota_comunicado_{{$comunicados['N_radicado']}}" value="{{$comunicados['Nota']}}"> 
-                                                        <input type="hidden" id="Estado_Correspondencia_{{$comunicados['Estado_Correspondencia']}}" value="{{$comunicados['Estado_Correspondencia']}}">
+                                                        <input type="hidden" id="Estado_Correspondencia_{{$comunicados['N_radicado']}}" value="{{$comunicados['Estado_correspondencia'] ?? '0'}}">
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Documentos cargados manualmente  --}}
@@ -7967,7 +7967,7 @@
                                                                             </form>
                                                                             @if ($comunicados['Existe'])
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                                    <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
                                                                                     </button>
                                                                                 </form>
@@ -7986,7 +7986,7 @@
                                             <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                             <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
                                                 <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
-                                                <button class="btn-info" id="cargarComunicado">Cargar</button>
+                                                <button class="btn btn-sm btn-info" id="cargarComunicado">Cargar</button>
                                             </div>
                                         </div>  
                                     </div>

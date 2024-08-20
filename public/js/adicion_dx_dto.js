@@ -2203,7 +2203,24 @@ $(document).ready(function(){
             $("#form_correspondencia *").prop('disabled',true);
             $("#cerar_modalCorrespondencia").prop('disabled',false);
         }
+        let estado_general = $("#status_notificacion_" + N_radicado).find(":selected").text();
+        if((estado_general == 'Notificado efectivamente' || estado_general == 'Devuelto' || estado_general == 'No notificar') 
+            && ($(id).data("estado_correspondencia") == 0 || $(id).data("estado_correspondencia") == 1 )){
 
+            $(".alerta_advertencia").removeClass('d-none');
+            $(".alerta_advertencia").empty();
+            $(".alerta_advertencia").append(`La correspondencia no se puede guardar y/o actualizar ya que el estado del comunicado es <strong>${estado_general}</strong>,por favor cambielo para pode editar la correspondencia.`)
+            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
+        
+         setTimeout(function(){
+            $(".alerta_advertencia").addClass('d-none');
+            $(".alerta_advertencia").empty();
+        },3000); 
+        }else{
+             $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
+             $(".alerta_advertencia").empty();
+             $(".alerta_advertencia").addClass('d-none');
+         }
         //Información superior del modal 
         if(tipo_descarga === 'Manual' || tipo_descarga === 'Dictamen'){
             $("#modalCorrespondencia #nombre_afiliado").val($("#nombre_afiliado").val());
@@ -2223,7 +2240,7 @@ $(document).ready(function(){
             $("#modalCorrespondencia #check_copia").prop('disabled', false);
             $("#modalCorrespondencia #check_copia").prop('checked', false);
         }
-        if(correspondencia){
+        if(correspondencia && correspondencia.length >0){
             array_temp = correspondencia.split(",").map(item => item.trim());
             correspondencia_array = array_temp;
         }
@@ -2371,12 +2388,12 @@ $(document).ready(function(){
                         $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
                         $("#modalCorrespondencia #radicado").val(N_radicado);
                         
-                        if(tipo_descarga === 'Dictamen' && tipo_correspondencia.toLowerCase() === 'afiliado'){
+                        if(tipo_descarga === 'Dictamen' && tipo_correspondencia.toLowerCase() === 'afp'){
                             $("#modalCorrespondencia #check_principal").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'afp')){
+                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'afiliado' || tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'arl' || tipo_correspondencia.toLowerCase() === 'afp_conocimiento')){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -2528,9 +2545,8 @@ $(document).ready(function(){
     //Selectores estados de notificacion
     $("[id^='status_notificacion_']").each(function() {
         let $selector = $(this);
-        console.log($(this));
         let opocionSeleccionada = $selector.data('default');
-
+        let desactivar = $selector.data('deshabilitar') == '1' ? false: true;
         $.ajax({
             type: 'POST',
             url: '/cargarselectores',
@@ -2568,6 +2584,9 @@ $(document).ready(function(){
                     placeholder: "Seleccione una opción",
                     allowClear: false,
                     data: opciones_Notificacion,
+                    disabled: () => {
+                        return opocionSeleccionada == 359 ||  opocionSeleccionada == 358 ? false : desactivar;
+                    },
                     templateResult: function(data) {
                         return $('<span>', {
                             style: `color: ${data.color}`,
@@ -2817,7 +2836,7 @@ $(document).ready(function(){
             'id_comunicado': infoComunicado.Id_Comunicado,
             'N_siniestro': N_siniestro,
         };
-        console.log("datos_generacion_proforma_dml_previsional : ",datos_generacion_proforma_dml_previsional);
+        
         if(infoComunicado.Reemplazado == 1){
             var nombre_doc = infoComunicado.Nombre_documento;
             var idEvento = infoComunicado.ID_evento;
@@ -2836,17 +2855,37 @@ $(document).ready(function(){
                 type:'POST',
                 url:'/ADescargaProformaDMLPrev',
                 data: datos_generacion_proforma_dml_previsional,
-                xhrFields: {
-                    responseType: 'blob' // Indica que la respuesta es un blob
-                },
+                // xhrFields: {
+                //     responseType: 'blob' // Indica que la respuesta es un blob
+                // },
                 beforeSend:  function() {
                     $("#btn_enviar_dictamen_previsional").addClass("descarga-deshabilitada");
                 },
                 success: function (response, status, xhr) {
-                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+
+                    // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                    var base64Pdf = response.pdf;
+
+                    // Decodificar base64 en un array de bytes
+                    var binaryString = atob(base64Pdf);
+                    var len = binaryString.length;
+                    var bytes = new Uint8Array(len);
+
+                    for (var i = 0; i < len; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+
+                    // Crear un Blob a partir del array de bytes
+                    var blob = new Blob([bytes], { type: 'application/pdf' });
+                     
+                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
             
+                    var indicativo = response.indicativo;
+
+                    // var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                    var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
+
                     // Crear un enlace de descarga similar al ejemplo anterior
-                    var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
                     link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
@@ -2865,7 +2904,7 @@ $(document).ready(function(){
                 complete:  function() {
                     $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
                     if(infoComunicado.Nombre_documento == null){
-                        // location.reload();
+                        location.reload();
                     }
                 },       
             });
@@ -2973,17 +3012,35 @@ $(document).ready(function(){
                 type:'POST',
                 url:'/ADescargaProformaNotiDMLPrev',
                 data: datos_pdf_noti_dml_previsional,
-                xhrFields: {
-                    responseType: 'blob' // Indica que la respuesta es un blob
-                },
+                // xhrFields: {
+                //     responseType: 'blob' // Indica que la respuesta es un blob
+                // },
                 beforeSend:  function() {
                     $("#enviar_form_noti_previsional").addClass("descarga-deshabilitada");
                 },
                 success: function (response, status, xhr) {
-                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+
+                    // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                    var base64Pdf = response.pdf;
+
+                    // Decodificar base64 en un array de bytes
+                    var binaryString = atob(base64Pdf);
+                    var len = binaryString.length;
+                    var bytes = new Uint8Array(len);
+
+                    for (var i = 0; i < len; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+
+                    // Crear un Blob a partir del array de bytes
+                    var blob = new Blob([bytes], { type: 'application/pdf' });
+
+                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
             
+                    var indicativo = response.indicativo;
+                    var nombre_pdf = "ORI_OFICIO_"+Id_asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
+
                     // Crear un enlace de descarga similar al ejemplo anterior
-                    var nombre_pdf = "ORI_OFICIO_"+Id_asignacion+"_"+num_identificacion+".pdf";
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
                     link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF

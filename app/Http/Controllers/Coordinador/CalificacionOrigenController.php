@@ -2063,6 +2063,7 @@ class CalificacionOrigenController extends Controller
         $Id_asignacion = $request->Id_asignacion;
         $Id_procesos = $request->Id_procesos;
         $tipo_descarga = $request->tipo_descarga;
+
         if($tipo_descarga != 'Manual'){
             $radioafiliado_comunicado = $request->radioafiliado_comunicado;
             $radioempresa_comunicado = $request->radioempresa_comunicado;
@@ -2137,6 +2138,38 @@ class CalificacionOrigenController extends Controller
                 $modulo = '';
             }
 
+            if($request->hasFile('cargue_comunicados')){
+                $archivo = $request->file('cargue_comunicados');
+                $path = public_path('Documentos_Eventos/'.$Id_evento);
+                $mode = 777;
+
+                if (!File::exists($path)) {
+                    File::makeDirectory($path, $mode, true, true);
+                    chmod($path, $mode);
+                }
+
+                // $nombre_final_documento = $nombre_documento."_IdEvento_".$Id_evento.".".$archivo->extension();
+                // $nombre_final_documento = $request->asunto;
+
+                // Obtenemos el nombre original del archivo (incluyendo la extensión)
+                $documentName = $archivo->getClientOriginalName();
+                // Obtenemos la extensión del archivo
+                $extension = $archivo->getClientOriginalExtension();
+                // Obtenemos el nombre del archivo sin la extensión
+                $nameWithoutExtension = pathinfo($documentName, PATHINFO_FILENAME);
+
+                /* Agregamos el indicativo */
+                $indicativo = time();
+
+                // el nuevo nombre del documento será:
+                $nombre_final_documento = "{$nameWithoutExtension}_{$indicativo}.{$extension}";
+
+                Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
+
+            }else{
+                $nombre_final_documento='N/A';            
+            }  
+
             $datos_info_registrarComunicadoPcl=[
                 'ID_evento' => $Id_evento,
                 'Id_Asignacion' => $Id_asignacion,
@@ -2156,7 +2189,8 @@ class CalificacionOrigenController extends Controller
                 'Email_destinatario' => $request->email_destinatario,
                 'Id_departamento' => $request->departamento_destinatario,
                 'Id_municipio' => $request->ciudad_destinatario,
-                'Asunto' => $request->asunto,
+                // 'Asunto' => $request->asunto,
+                'Asunto' => $nombre_final_documento,
                 'Cuerpo_comunicado' => $request->cuerpo_comunicado,
                 'Anexos' => $request->anexos,
                 'Forma_envio' => $request->forma_envio,
@@ -2166,28 +2200,11 @@ class CalificacionOrigenController extends Controller
                 'Firmar_Comunicado' => $request->firmarcomunicado,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => $request->modulo_creacion,
-                'Nombre_documento' => $request->Nombre_documento,
+                // 'Nombre_documento' => $request->Nombre_documento,
+                'Nombre_documento' => $nombre_final_documento,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
-
-            if($request->hasFile('cargue_comunicados')){
-                $archivo = $request->file('cargue_comunicados');
-                $path = public_path('Documentos_Eventos/'.$Id_evento);
-                $mode = 777;
-
-                if (!File::exists($path)) {
-                    File::makeDirectory($path, $mode, true, true);
-                    chmod($path, $mode);
-                }
-
-                // $nombre_final_documento = $nombre_documento."_IdEvento_".$Id_evento.".".$archivo->extension();
-                $nombre_final_documento = $request->asunto;
-                Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
-                
-            }else{
-                $nombre_final_documento='N/A';            
-            }     
 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
 
@@ -2197,7 +2214,8 @@ class CalificacionOrigenController extends Controller
                 'F_accion' => $date,
                 'Nombre_usuario' => $nombre_usuario,
                 'Accion_realizada' => "Se genera comunicado de forma manual en $modulo.",
-                'Descripcion' => $request->asunto,
+                // 'Descripcion' => $request->asunto,
+                'Descripcion' => $nombre_final_documento,
             ];
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
@@ -2230,13 +2248,7 @@ class CalificacionOrigenController extends Controller
 
             // Validar si la accion ejecutada tiene enviar a notificaciones
             
-            $enviar_notificacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-            ->select('Notificacion')
-            ->where([
-                ['ID_evento', $newId_evento],
-                ['Id_Asignacion', $newId_asignacion]
-            ])
-            ->get();
+            $enviar_notificacion = BandejaNotifiController::evento_en_notificaciones($newId_evento,$newId_asignacion);
 
             foreach ($hitorialAgregarComunicado as &$comunicado) {
                 if ($comunicado['Tipo_descarga'] === 'Documento_Origen') {
@@ -2260,6 +2272,12 @@ class CalificacionOrigenController extends Controller
                 else{
                     $comunicado['Existe'] = false;
                 }
+
+                if($comunicado["Id_Comunicado"]){
+                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($newId_evento,$newId_asignacion,$comunicado["Id_Comunicado"]);
+                }
+                
+
             }
             
             return response()->json([

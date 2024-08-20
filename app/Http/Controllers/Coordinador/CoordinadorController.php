@@ -1391,22 +1391,6 @@ class CoordinadorController extends Controller
         $numero_identificacion = $request->numero_identificacion;
         $n_radicado = $request->n_radicado;
         $nombre_doc_anterior = $request->nombre_anterior;
-        if($tipo_descarga === 'Manual'){
-            $datos_comunicado_actualizar=[
-                'F_comunicado' => $date,
-                'Elaboro' => $nombre_usuario,
-                'Nombre_documento' => $request->nombre_documento,
-                'Asunto' => $request->asunto,
-                'Reemplazado' => 1,
-            ];
-        }
-        else{
-            $datos_comunicado_actualizar=[
-                'F_comunicado' => $date,
-                'Elaboro' => $nombre_usuario,
-                'Reemplazado' => 1,
-            ];
-        }
 
         if($request->hasFile('doc_de_reemplazo')){
             $archivo = $request->file('doc_de_reemplazo');
@@ -1423,12 +1407,49 @@ class CoordinadorController extends Controller
                 if($nombre_doc_anterior !== '' && $nombre_doc_anterior !== $nombre_final_documento){
                     File::delete($path.'/'.$nombre_doc_anterior);
                 }
+
+                // echo $nombre_final_documento."<br>";
+                // echo $nombre_doc_anterior;
+
+                // Obtenemos el nombre original del archivo (incluyendo la extensión)
+                $documentName = $archivo->getClientOriginalName();
+                // Obtenemos la extensión del archivo
+                $extension = $archivo->getClientOriginalExtension();
+                // Obtenemos el nombre del archivo sin la extensión
+                $nameWithoutExtension = pathinfo($documentName, PATHINFO_FILENAME);
+
+                /* Agregamos el indicativo */
+                $indicativo = time();
+
+                // el nuevo nombre del documento será:
+                $nombre_final_documento = "{$nameWithoutExtension}_{$indicativo}.{$extension}";
+
             }
             else {
                 $nombre_final_documento = $request -> nombre_documento;
             }
             Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
         } 
+
+        if($tipo_descarga === 'Manual'){
+            $datos_comunicado_actualizar=[
+                'F_comunicado' => $date,
+                'Elaboro' => $nombre_usuario,
+                'Nombre_documento' => $request->nombre_documento,
+                // 'Asunto' => $request->asunto,
+                'Asunto' => $nombre_final_documento,
+                'Reemplazado' => 1,
+            ];
+        }
+        else{
+            $datos_comunicado_actualizar=[
+                'F_comunicado' => $date,
+                'Elaboro' => $nombre_usuario,
+                'Reemplazado' => 1,
+            ];
+        }
+
+        
 
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
         ->update($datos_comunicado_actualizar);
@@ -1467,9 +1488,8 @@ class CoordinadorController extends Controller
         $Id_proceso = $request->id_proceso;
         $Tipo_correspondencia = $request->tipo_correspondencia;
         $Previous_saved = $request->previous_saved;
-
         $info_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-            ->select('Destinatario','Nombre_destinatario')
+            ->select('Destinatario','Nombre_destinatario','Otro_destinatario')
             ->where([['Id_Comunicado', $Id_comunicado]])
             ->get();
 
@@ -1495,8 +1515,13 @@ class CoordinadorController extends Controller
                 $Tipo_correspondencia = strtolower($Tipo_correspondencia);
                 if($Tipo_correspondencia === 'afiliado' && !empty($infoAfiliado)){
                     $response['datos'] = count($infoAfiliado) > 0 ? $infoAfiliado[0] : null;
+                    if(!empty($info_comunicado) && strtolower($info_comunicado[0]->Otro_destinatario === 1)){
+                        if($info_comunicado[0]->Destinatario === $Tipo_correspondencia){
+                            $response['datos'] = count($infoAfiliado) > 0 ? $infoAfiliado[0] : null;
+                        }
+                    }
                 }
-                else if($Tipo_correspondencia === 'empresa' && !empty($infoAfiliado)){
+                else if(($Tipo_correspondencia === 'empresa' || $Tipo_correspondencia === 'empleador') && !empty($infoAfiliado)){
                     $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
@@ -1506,17 +1531,12 @@ class CoordinadorController extends Controller
                     ->where([['sile.Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['sile.ID_evento', $Id_evento]])
                     ->get();
                     $response['datos'] = count($datos_empleador) > 0 ? $datos_empleador[0] : null;
-                }
-                else if($Tipo_correspondencia === 'empleador' && !empty($infoAfiliado)){
-                    $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
-                    ->select('sile.Empresa as Nombre_destinatario', 'sile.Direccion as Direccion_destinatario', 'sile.Telefono_empresa as Telefono_destinatario',
-                    'sile.Email as Email_destinatario', 'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario',
-                    'sile.Medio_notificacion as Medio_notificacion_destinatario')
-                    ->where([['sile.Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['sile.ID_evento', $Id_evento]])
-                    ->get();
-                    $response['datos'] = count($datos_empleador) > 0 ? $datos_empleador[0] : null;
+                    if(!empty($info_comunicado) && strtolower($info_comunicado[0]->Otro_destinatario === 1)){
+                        
+                        if($info_comunicado[0]->Destinatario === $Tipo_correspondencia){
+                            $response['datos'] = count($datos_empleador) > 0 ? $datos_empleador[0] : null;
+                        }
+                    }
                 }
                 else if($Tipo_correspondencia === 'eps' && !empty($infoAfiliado)){
                     $datos_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
@@ -1529,7 +1549,7 @@ class CoordinadorController extends Controller
                     ->where([['Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['ID_evento', $Id_evento]])
                     ->get();
                     $response['datos'] = count($datos_eps) > 0 ? $datos_eps[0] : null;
-                    if(!empty($info_comunicado)){
+                    if(!empty($info_comunicado) && $info_comunicado[0]->Otro_destinatario === 1){
                         if(strtolower($info_comunicado[0]->Destinatario) === $Tipo_correspondencia && $info_comunicado[0]->Nombre_destinatario != 'N/A'){
                             $datos_eps_otro_destinatario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
                             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
@@ -1541,8 +1561,7 @@ class CoordinadorController extends Controller
                             ->get();
                             $response['datos'] = count($datos_eps_otro_destinatario) > 0 ? $datos_eps_otro_destinatario[0] : null;
                         }
-                    }
-                    
+                    }                    
                 }
                 else if($Tipo_correspondencia === 'afp' && !empty($infoAfiliado)){
                     $datos_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
@@ -1555,7 +1574,7 @@ class CoordinadorController extends Controller
                     ->where([['Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['ID_evento', $Id_evento]])
                     ->get();
                     $response['datos'] = count($datos_afp) > 0 ? $datos_afp[0] : null;
-                    if(!empty($info_comunicado)){
+                    if(!empty($info_comunicado) && $info_comunicado[0]->Otro_destinatario === 1){
                         if(strtolower($info_comunicado[0]->Destinatario) === $Tipo_correspondencia && $info_comunicado[0]->Nombre_destinatario != 'N/A'){
                             $datos_afp_otro_destinatario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
                             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
@@ -1580,7 +1599,7 @@ class CoordinadorController extends Controller
                     ->where([['Nro_identificacion', $infoAfiliado[0]->Documento_destinatario],['ID_evento', $Id_evento]])
                     ->get();
                     $response['datos'] = count($datos_arl) > 0 ? $datos_arl[0] : null;
-                    if(!empty($info_comunicado)){
+                    if(!empty($info_comunicado) && $info_comunicado[0]->Otro_destinatario === 1){
                         if(strtolower($info_comunicado[0]->Destinatario) === $Tipo_correspondencia && $info_comunicado[0]->Nombre_destinatario != 'N/A'){
                             $datos_arl_otro_destinatario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
                             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
@@ -1640,7 +1659,7 @@ class CoordinadorController extends Controller
                         $response['datos'] = count($datos_afp_conocimiento) > 0 ? $datos_afp_conocimiento[0] : null;
                     }
                 }
-                dd("Response : ",$response);
+                
                 return response()->json($response);
             }
         }
@@ -1648,7 +1667,7 @@ class CoordinadorController extends Controller
             $info_correspondencia = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')
             ->where([['Id_comunicado', $Id_comunicado],['Tipo_correspondencia', $Tipo_correspondencia]])
             ->get();
-            dd("info_correspondencia ",$info_correspondencia);
+
             return response()->json($info_correspondencia);
         }
     }

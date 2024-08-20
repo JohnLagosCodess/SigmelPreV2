@@ -925,6 +925,10 @@ class RecalificacionPCLController extends Controller
                     else{
                         $comunicado['Existe'] = false;
                     }
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    }
+                    
                 }
                 // $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                 // ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
@@ -950,6 +954,10 @@ class RecalificacionPCLController extends Controller
                     }
                     else{
                         $comunicado_inter->Existe = false;
+                    }
+
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
                     }
                 }  
                 
@@ -1552,6 +1560,10 @@ class RecalificacionPCLController extends Controller
                     else{
                         $comunicado['Existe'] = false;
                     }
+
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    }
                 }
                 // $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                 // ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
@@ -1576,6 +1588,9 @@ class RecalificacionPCLController extends Controller
                     }
                     else{
                         $comunicado_inter->Existe = false;
+                    }
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
                     }
                 }                
                 
@@ -2378,7 +2393,7 @@ class RecalificacionPCLController extends Controller
                         }
                         else{
                             $comunicado['Existe'] = false;
-                        }
+                        }                        
                     }
                     else if($comunicado['Tipo_descarga'] === 'Manual'){
                         $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
@@ -2391,6 +2406,9 @@ class RecalificacionPCLController extends Controller
                     }
                     else{
                         $comunicado['Existe'] = false;
+                    }
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
                     }
                 }
                 // $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
@@ -2416,6 +2434,9 @@ class RecalificacionPCLController extends Controller
                     }
                     else{
                         $comunicado_inter->Existe = false;
+                    }
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
                     }
                 }  
 
@@ -5335,10 +5356,11 @@ class RecalificacionPCLController extends Controller
                 'Anexos' => $anexos,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => 'recalificacionPCL',
+                'N_siniestro' => $N_siniestro,
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'N_siniestro' => $N_siniestro
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -5427,10 +5449,11 @@ class RecalificacionPCLController extends Controller
                 'Anexos' => $anexos,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => 'recalificacionPCL',
+                'N_siniestro' => $N_siniestro,
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'N_siniestro' => $N_siniestro
             ];  
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')

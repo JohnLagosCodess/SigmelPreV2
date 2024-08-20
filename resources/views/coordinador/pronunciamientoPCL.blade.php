@@ -487,7 +487,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-4 d-none">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                     <input class="custom-control-input" type="checkbox" id="junta_regional" name="junta_regional" value="junta_regi" @if (!empty($info_pronuncia[0]->Copia_junta_regional) && $info_pronuncia[0]->Copia_junta_regional=='junta_regi') checked @endif>
@@ -495,7 +495,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-4" id="div_cual">
+                                    <div class="col-4 d-none" id="div_cual">
                                         <div class="form-group">
                                             <label for="junta_regional_cual">¿Cuál?<span style="color: red;">(*)</span></label>
                                             <select class="junta_regional_cual custom-select" name="junta_regional_cual" id="junta_regional_cual">
@@ -507,7 +507,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-4 d-none">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                     <input class="custom-control-input" type="checkbox" id="junta_nacional" name="junta_nacional" value="junta_naci" @if (!empty($info_pronuncia[0]->Copia_junta_nacional) && $info_pronuncia[0]->Copia_junta_nacional=='junta_naci') checked @endif>
@@ -677,6 +677,10 @@
                                                                     $destinatario = strtolower($comunicados->Destinatario);
                                                                     $copias = $comunicados->Agregar_copia;
                                                                     $correspondencia = $comunicados->Correspondencia;
+                                                                    $comunicados->Estado_correspondencia = $comunicados->Estado_correspondencia ?? '1';
+                                                                    $deshabilitarSelector = $comunicados->Estado_correspondencia == '1' ?  '1' : '0';
+                                                                    $deshabilitaredicion = $comunicados->Estado_correspondencia == '1' || ($comunicados->Estado_Notificacion == 359 || $comunicados->Estado_Notificacion == 358) ?  '' : 'pointer-events: none; color: gray;';
+                                                                    $deshabilitarRemplazar = $comunicados->Estado_correspondencia == '1' || ($comunicados->Estado_Notificacion == 359 || $comunicados->Estado_Notificacion == 358) ? '' : 'disabled';
 
                                                                     $array_copias = array();
                                                                     $array_correspondencia = array();
@@ -749,7 +753,7 @@
                                                                 data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('arl', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                 >ARL</a>
                                                                 
-                                                                <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jrci"
+                                                                {{-- <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jrci"
                                                                 data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
                                                                 data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                 data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
@@ -763,7 +767,7 @@
                                                                 data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                 data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
                                                                 data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('jnci', $destinatario, $array_copias, $array_correspondencia); ?>"
-                                                                >JNCI</a>
+                                                                >JNCI</a> --}}
 
                                                                 <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp_conocimiento"
                                                                 data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
@@ -774,7 +778,7 @@
                                                                 >AFP Conocimiento</a>
                                                             </td>
                                                         @endif
-                                                            <td><select class="custom-select" id="status_notificacion_{{$comunicados->N_radicado}}" style="width:100%;" data-default={{$comunicados->Estado_Notificacion}}></select></td>
+                                                            <td><select class="custom-select" id="status_notificacion_{{$comunicados->N_radicado}}" data-deshabilitar={{$deshabilitarSelector ?? '1'}} style="width:100%;" data-deshabilitar={{$deshabilitarSelector ?? '1'}} data-default={{$comunicados->Estado_Notificacion}}></select></td>
                                                             <td><textarea class="form-control nota-col" name="nota_comunicado_{{$comunicados->N_radicado}}" id="nota_comunicado_{{$comunicados->N_radicado}}" cols="70" rows="3" style="resize:none; width:200px;">{{$comunicados->Nota}}</textarea></td> {{-- campo Nota--}}
                                                             <td style="display: flex; flex-direction:row; justify-content:space-around;">
                                                                 @if ($comunicados->Tipo_descarga == "Acuerdo" || $comunicados->Tipo_descarga == "Desacuerdo")
@@ -838,7 +842,7 @@
                                                                     </form>
                                                                     @if ($comunicados['Existe'])
                                                                         <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                            <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                            <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" {{$deshabilitarRemplazar ?? ''}}>
                                                                                 <i class="fas fa-sync-alt text-info"></i>
                                                                             </button>
                                                                         </form>
@@ -852,7 +856,7 @@
                                                                     </form>
                                                                     @if ($comunicados['Existe'])
                                                                         <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                            <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                            <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" {{$deshabilitarRemplazar ?? ''}}>
                                                                                 <i class="fas fa-sync-alt text-info"></i>
                                                                             </button>
                                                                         </form>
@@ -861,7 +865,7 @@
                                                                 {{-- <button id="replace_file" style="border: none; background:transparent;">
                                                                     <i class="fas fa-sync-alt text-info"></i>
                                                                 </button> --}}
-                                                                <a href="javascript:void(0);" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
+                                                                <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" style="{{$deshabilitaredicion ?? ''}}"><i class="fa fa-sm fa-check text-success"></i></a>
                                                             </td>
                                                         </tr>                                                      
                                                     @endforeach
@@ -873,7 +877,7 @@
                                             <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                             <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
                                                 <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
-                                                <button class="btn-info" id="cargarComunicado">Cargar</button>
+                                                <button class="btn btn-sm btn-info" id="cargarComunicado">Cargar</button>
                                             </div>
                                         </div>
                                     </div>
