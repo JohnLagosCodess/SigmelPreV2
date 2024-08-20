@@ -487,7 +487,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-4 d-none">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                     <input class="custom-control-input" type="checkbox" id="junta_regional" name="junta_regional" value="junta_regi" @if (!empty($info_pronuncia[0]->Copia_junta_regional) && $info_pronuncia[0]->Copia_junta_regional=='junta_regi') checked @endif>
@@ -495,7 +495,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-4" id="div_cual">
+                                    <div class="col-4 d-none" id="div_cual">
                                         <div class="form-group">
                                             <label for="junta_regional_cual">¿Cuál?<span style="color: red;">(*)</span></label>
                                             <select class="junta_regional_cual custom-select" name="junta_regional_cual" id="junta_regional_cual">
@@ -507,7 +507,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-4 d-none">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                     <input class="custom-control-input" type="checkbox" id="junta_nacional" name="junta_nacional" value="junta_naci" @if (!empty($info_pronuncia[0]->Copia_junta_nacional) && $info_pronuncia[0]->Copia_junta_nacional=='junta_naci') checked @endif>
@@ -753,7 +753,7 @@
                                                                 data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('arl', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                 >ARL</a>
                                                                 
-                                                                <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jrci"
+                                                                {{-- <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jrci"
                                                                 data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
                                                                 data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                 data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
@@ -767,7 +767,7 @@
                                                                 data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                 data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
                                                                 data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('jnci', $destinatario, $array_copias, $array_correspondencia); ?>"
-                                                                >JNCI</a>
+                                                                >JNCI</a> --}}
 
                                                                 <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp_conocimiento"
                                                                 data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
@@ -877,7 +877,7 @@
                                             <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                             <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
                                                 <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
-                                                <button class="btn-info" id="cargarComunicado">Cargar</button>
+                                                <button class="btn btn-sm btn-info" id="cargarComunicado">Cargar</button>
                                             </div>
                                         </div>
                                     </div>

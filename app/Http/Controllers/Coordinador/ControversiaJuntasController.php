@@ -1848,8 +1848,6 @@ class ControversiaJuntasController extends Controller
             // Si el array está vacío, asignamos una cadena vacía
             $Agregar_copias = '';
         }
-
-
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
                 'ID_evento' => $newId_evento,
@@ -1924,6 +1922,7 @@ class ControversiaJuntasController extends Controller
                 'Tipo_descarga' => 'Controversia',
                 'Modulo_creacion' => 'controversiaJuntas',
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];

@@ -2388,12 +2388,12 @@ $(document).ready(function(){
                         $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
                         $("#modalCorrespondencia #radicado").val(N_radicado);
                         
-                        if(tipo_descarga === 'Dictamen' && tipo_correspondencia.toLowerCase() === 'afiliado'){
+                        if(tipo_descarga === 'Dictamen' && tipo_correspondencia.toLowerCase() === 'afp'){
                             $("#modalCorrespondencia #check_principal").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'afp')){
+                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'afiliado' || tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'arl' || tipo_correspondencia.toLowerCase() === 'afp_conocimiento')){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -2836,7 +2836,7 @@ $(document).ready(function(){
             'id_comunicado': infoComunicado.Id_Comunicado,
             'N_siniestro': N_siniestro,
         };
-        console.log("datos_generacion_proforma_dml_previsional : ",datos_generacion_proforma_dml_previsional);
+        
         if(infoComunicado.Reemplazado == 1){
             var nombre_doc = infoComunicado.Nombre_documento;
             var idEvento = infoComunicado.ID_evento;
@@ -2855,17 +2855,37 @@ $(document).ready(function(){
                 type:'POST',
                 url:'/ADescargaProformaDMLPrev',
                 data: datos_generacion_proforma_dml_previsional,
-                xhrFields: {
-                    responseType: 'blob' // Indica que la respuesta es un blob
-                },
+                // xhrFields: {
+                //     responseType: 'blob' // Indica que la respuesta es un blob
+                // },
                 beforeSend:  function() {
                     $("#btn_enviar_dictamen_previsional").addClass("descarga-deshabilitada");
                 },
                 success: function (response, status, xhr) {
-                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+
+                    // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                    var base64Pdf = response.pdf;
+
+                    // Decodificar base64 en un array de bytes
+                    var binaryString = atob(base64Pdf);
+                    var len = binaryString.length;
+                    var bytes = new Uint8Array(len);
+
+                    for (var i = 0; i < len; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+
+                    // Crear un Blob a partir del array de bytes
+                    var blob = new Blob([bytes], { type: 'application/pdf' });
+                     
+                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
             
+                    var indicativo = response.indicativo;
+
+                    // var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                    var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
+
                     // Crear un enlace de descarga similar al ejemplo anterior
-                    var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
                     link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
@@ -2884,7 +2904,7 @@ $(document).ready(function(){
                 complete:  function() {
                     $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
                     if(infoComunicado.Nombre_documento == null){
-                        // location.reload();
+                        location.reload();
                     }
                 },       
             });
@@ -2992,17 +3012,35 @@ $(document).ready(function(){
                 type:'POST',
                 url:'/ADescargaProformaNotiDMLPrev',
                 data: datos_pdf_noti_dml_previsional,
-                xhrFields: {
-                    responseType: 'blob' // Indica que la respuesta es un blob
-                },
+                // xhrFields: {
+                //     responseType: 'blob' // Indica que la respuesta es un blob
+                // },
                 beforeSend:  function() {
                     $("#enviar_form_noti_previsional").addClass("descarga-deshabilitada");
                 },
                 success: function (response, status, xhr) {
-                    var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+
+                    // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                    var base64Pdf = response.pdf;
+
+                    // Decodificar base64 en un array de bytes
+                    var binaryString = atob(base64Pdf);
+                    var len = binaryString.length;
+                    var bytes = new Uint8Array(len);
+
+                    for (var i = 0; i < len; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+
+                    // Crear un Blob a partir del array de bytes
+                    var blob = new Blob([bytes], { type: 'application/pdf' });
+
+                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
             
+                    var indicativo = response.indicativo;
+                    var nombre_pdf = "ORI_OFICIO_"+Id_asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
+
                     // Crear un enlace de descarga similar al ejemplo anterior
-                    var nombre_pdf = "ORI_OFICIO_"+Id_asignacion+"_"+num_identificacion+".pdf";
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
                     link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF

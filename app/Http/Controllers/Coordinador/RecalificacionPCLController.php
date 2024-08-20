@@ -5344,10 +5344,11 @@ class RecalificacionPCLController extends Controller
                 'Anexos' => $anexos,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => 'recalificacionPCL',
+                'N_siniestro' => $N_siniestro,
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'N_siniestro' => $N_siniestro
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -5436,10 +5437,11 @@ class RecalificacionPCLController extends Controller
                 'Anexos' => $anexos,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => 'recalificacionPCL',
+                'N_siniestro' => $N_siniestro,
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'N_siniestro' => $N_siniestro
             ];  
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
