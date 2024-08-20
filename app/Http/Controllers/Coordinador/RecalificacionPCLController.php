@@ -925,8 +925,10 @@ class RecalificacionPCLController extends Controller
                     else{
                         $comunicado['Existe'] = false;
                     }
-                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
-
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    }
+                    
                 }
                 // $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                 // ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
@@ -954,7 +956,9 @@ class RecalificacionPCLController extends Controller
                         $comunicado_inter->Existe = false;
                     }
 
-                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    }
                 }  
                 
                 return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'eventoAsigancion_Recalifi', 'eventoAsigancion_Recalifi_estadoDecreto', 'validar_estado_decreto', 'eventoAsigancion_RecalifiPCL', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento'));
@@ -1557,7 +1561,9 @@ class RecalificacionPCLController extends Controller
                         $comunicado['Existe'] = false;
                     }
 
-                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    }
                 }
                 // $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                 // ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
@@ -1583,7 +1589,9 @@ class RecalificacionPCLController extends Controller
                     else{
                         $comunicado_inter->Existe = false;
                     }
-                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    }
                 }                
                 
                 return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'validar_estado_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditivare', 'hay_agudeza_visualre', 'array_laboralmente_Activore', 'array_rol_ocupacionalre', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento'));
@@ -2399,7 +2407,9 @@ class RecalificacionPCLController extends Controller
                     else{
                         $comunicado['Existe'] = false;
                     }
-                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado->Id_Comunicado);
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    }
                 }
                 // $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                 // ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
@@ -2425,7 +2435,9 @@ class RecalificacionPCLController extends Controller
                     else{
                         $comunicado_inter->Existe = false;
                     }
-                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    }
                 }  
 
                 return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'validar_estado_decreto', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento'));

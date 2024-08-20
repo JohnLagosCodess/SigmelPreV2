@@ -2425,9 +2425,10 @@ class CalificacionPCLController extends Controller
                 else{
                     $comunicado['Existe'] = false;
                 }
-
-                $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($newId_evento,$newId_asignacion,$comunicado["Id_Comunicado"]);
-
+                if($comunicado["Id_Comunicado"]){
+                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($newId_evento,$newId_asignacion,$comunicado["Id_Comunicado"]);
+                }
+                
             }
             $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
             return response()->json([
@@ -5386,7 +5387,10 @@ class CalificacionPCLController extends Controller
             else{
                 $comunicado['Existe'] = false;
             }
-            $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_calitec,$Id_asignacion_calitec,$comunicado->Id_Comunicado);
+            if($comunicado->Id_Comunicado){
+                $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_calitec,$Id_asignacion_calitec,$comunicado->Id_Comunicado);
+            }
+            
         } 
         $array_comunicados_comite_inter = DB::table('sigmel_gestiones.sigmel_informacion_comite_interdisciplinario_eventos as sicie')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_comunicado_eventos as sice', function ($join) {
@@ -5412,7 +5416,9 @@ class CalificacionPCLController extends Controller
                 $comunicado_inter->Existe = false;
             }
 
-            $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_calitec,$Id_asignacion_calitec,$comunicado_inter->Id_Comunicado);
+            if($comunicado_inter->Id_Comunicado){
+                $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_calitec,$Id_asignacion_calitec,$comunicado_inter->Id_Comunicado);
+            }
         } 
         /* Traer datos de la AFP de Conocimiento */
         $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')

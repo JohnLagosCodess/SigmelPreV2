@@ -147,7 +147,9 @@ class PronunciamientoOrigenController extends Controller
             else{
                 $comunicado['Existe'] = false;
             }
-            $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_calitec,$Id_asignacion_calitec,$comunicado["Id_Comunicado"]);
+            if($comunicado["Id_Comunicado"]){
+                $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_calitec,$Id_asignacion_calitec,$comunicado["Id_Comunicado"]);
+            }
 
         }
 

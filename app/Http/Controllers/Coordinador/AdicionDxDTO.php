@@ -510,7 +510,10 @@ class AdicionDxDTO extends Controller
                 else{
                     $comunicado['Existe'] = false;
                 }
-                $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento,$info_adicion_dx[0]->Id_Asignacion,$comunicado["Id_Comunicado"]);
+                if($comunicado["Id_Comunicado"]){
+                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento,$info_adicion_dx[0]->Id_Asignacion,$comunicado["Id_Comunicado"]);
+                }
+                
 
             };
 
@@ -629,8 +632,10 @@ class AdicionDxDTO extends Controller
                     else{
                         $comunicado['Existe'] = false;
                     }
-
-                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento,$Id_asignacion_actual,$comunicado["Id_Comunicado"]);
+                    if($comunicado["Id_Comunicado"]){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento,$Id_asignacion_actual,$comunicado["Id_Comunicado"]); 
+                    }
+                    
                 };
 
                 $info_adicion_dx = array();
@@ -756,8 +761,10 @@ class AdicionDxDTO extends Controller
                     else{
                         $comunicado['Existe'] = false;
                     }
-
-                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento,$Id_asignacion_actual,$comunicado["Id_Comunicado"]);
+                    if($comunicado["Id_Comunicado"]){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento,$Id_asignacion_actual,$comunicado["Id_Comunicado"]);
+                    }
+                    
                 };
                 // $datos_bd_DTO_ATEL = array();
                 $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_actual));

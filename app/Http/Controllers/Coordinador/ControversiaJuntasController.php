@@ -222,8 +222,10 @@ class ControversiaJuntasController extends Controller
                 $comunicado['Existe'] = false;
             }
 
-            $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_juntas,$Id_asignacion_juntas,$comunicado["Id_Comunicado"]);
-
+            if($comunicado["Id_Comunicado"]){
+                $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_juntas,$Id_asignacion_juntas,$comunicado["Id_Comunicado"]);
+            }
+            
         }
         //Obtenemos las secciones a mostrar
         $array_control = $this->controlJuntas($Id_evento_juntas, $Id_asignacion_juntas,  $array_datos_controversiaJuntas[0]->Nombre_servicio);
