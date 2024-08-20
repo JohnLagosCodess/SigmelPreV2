@@ -682,7 +682,11 @@
                                                                         $destinatario = strtolower($comunicados->Destinatario);
                                                                         $copias = $comunicados->Agregar_copia;
                                                                         $correspondencia = $comunicados->Correspondencia;
-
+                                                                        $comunicados->Estado_correspondencia = $comunicados->Estado_correspondencia ?? '1';
+                                                                        $deshabilitarSelector = $comunicados->Estado_correspondencia == '1' ?  '1' : '0';
+                                                                        $deshabilitaredicion = $comunicados->Estado_correspondencia == '1' || ($comunicados->Estado_Notificacion == 359 || $comunicados->Estado_Notificacion == 358) ?  '' : 'pointer-events: none; color: gray;';
+                                                                        $deshabilitarRemplazar = $comunicados->Estado_correspondencia == '1' || ($comunicados->Estado_Notificacion == 359 || $comunicados->Estado_Notificacion == 358) ? '' : 'disabled';
+                                                                
                                                                         $array_copias = array();
                                                                         $array_correspondencia = array();
 
@@ -779,7 +783,7 @@
                                                                     >AFP Conocimiento</a>
                                                                 </td>
                                                             @endif
-                                                            <td><select class="custom-select" id="status_notificacion_{{$comunicados->N_radicado}}" style="width:100%;" data-default={{$comunicados->Estado_Notificacion}}></select></td>
+                                                            <td><select class="custom-select" id="status_notificacion_{{$comunicados->N_radicado}}" style="width:100%;" data-deshabilitar={{$deshabilitarSelector ?? '1'}} data-default={{$comunicados->Estado_Notificacion}}></select></td>
                                                             <td><textarea class="form-control nota-col" name="nota_comunicado_{{$comunicados->N_radicado}}" id="nota_comunicado_{{$comunicados->N_radicado}}" cols="70" rows="3" style="resize:none; width:200px;">{{$comunicados->Nota}}</textarea></td> {{-- campo Nota--}}
                                                             <td style="display: flex; flex-direction:row; justify-content:space-around;">
                                                                 @if ($comunicados->Tipo_descarga == "Acuerdo" || $comunicados->Tipo_descarga == "Desacuerdo")
@@ -845,12 +849,12 @@
                                                                     @endif
                                                                     @if ($comunicados['Existe'])
                                                                         <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                            <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                            <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" {{$deshabilitarRemplazar ?? ''}}>
                                                                                 <i class="fas fa-sync-alt text-info"></i>
                                                                             </button>
                                                                         </form>
                                                                     @endif
-                                                                    <a href="javascript:void(0);" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
+                                                                    <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" style="{{$deshabilitaredicion ?? ''}}"><i class="fa fa-sm fa-check text-success"></i></a>
                                                                 {{-- </td> --}}
                                                                 @else {{--  if ($comunicados->Tipo_descarga == "Manual") --}}
                                                                     <form id="form_descargar_archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{$comunicados}}" method="POST">
@@ -860,12 +864,12 @@
                                                                     </form>
                                                                     @if ($comunicados['Existe'])
                                                                         <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
-                                                                            <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;">
+                                                                            <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" {{$deshabilitarRemplazar ?? ''}}>
                                                                                 <i class="fas fa-sync-alt text-info"></i>
                                                                             </button>
                                                                         </form>
                                                                     @endif
-                                                                    <a href="javascript:void(0);" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
+                                                                    <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" style="{{$deshabilitaredicion ?? ''}}"><i class="fa fa-sm fa-check text-success"></i></a>
                                                                 @endif
                                                                 {{-- <button id="replace_file" style="border: none; background:transparent;">
                                                                     <i class="fas fa-sync-alt text-info"></i>

@@ -2254,6 +2254,9 @@ class CalificacionOrigenController extends Controller
                 else{
                     $comunicado['Existe'] = false;
                 }
+
+                $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($newId_evento,$newId_asignacion,$comunicado["Id_Comunicado"]);
+
             }
             
             return response()->json([

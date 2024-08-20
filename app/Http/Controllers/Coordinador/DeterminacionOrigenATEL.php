@@ -280,6 +280,8 @@ class DeterminacionOrigenATEL extends Controller
             else{
                 $comunicado['Existe'] = false;
             }
+            $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_dto_atel,$Id_asignacion_dto_atel,$comunicado["Id_Comunicado"]);
+
         }
         /* Nombre Afp */
         $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')

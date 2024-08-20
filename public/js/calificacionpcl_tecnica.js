@@ -3200,7 +3200,7 @@ $(document).ready(function(){
                 });
             });
 
-        },
+        }
     });
 
     //pbs014
@@ -3240,6 +3240,11 @@ $(document).ready(function(){
                     Estado_correspondencia: estado_correspondencia,
                 }
 
+                let controlComunicados = {
+                    deshabilitar_selector: estado_correspondencia == '1' || (StatusSeleccionado == 359 || StatusSeleccionado == 358) ? false: true,
+                    deshabilitar_edicion: estado_correspondencia == '1' || (StatusSeleccionado == 359 || StatusSeleccionado == 358) ? '' : 'pointer-events: none; color: gray;'
+                }
+
                 // Extraer el contenido de la columna de acciones y limpiar la columna
                 let acciones = $tableComunicados.find("td").eq(4).html();
                 
@@ -3253,45 +3258,39 @@ $(document).ready(function(){
                 $tableComunicados.append(`
                     <td>${camposNotificacion.Estado_General}</td>
                     <td >${camposNotificacion.Nota_Comunicados}</td>
-                    <td>${acciones}<a href="javascript:void(0);" id="editar_comunicado" data-radicado="${radicado}"><i class="fa fa-sm fa-check text-success"></i></a></td>`
+                    <td>${acciones}<a href="javascript:void(0);" id="editar_comunicado" data-radicado="${radicado}" style="${controlComunicados.deshabilitar_edicion}"><i class="fa fa-sm fa-check text-success"></i></a></td>`
                 );
-                
+                // Estilo de la columna de acciones
+                $tableComunicados.find("td").eq(7).css({
+                        'display': 'flex',
+                        'padding': '2px',
+                        'flex-direction': 'row',
+                        'justify-content': 'space-around'
+                });
+
                 //Si el evento no se encuentra en la bandeja de notificaciones ocultamos la columna destinatarios
                 ubicacionEvento().then(status => {
                     if(!status){
                         $("#listado_comunicados_clpcl thead th").eq(4).hide(); //cabecera
                         $tableComunicados.find("td").eq(4).hide(); // fila
+                    }else{
+                        console.log('sssw2');
+                        if(estado_correspondencia == '1' || (StatusSeleccionado == 359 || StatusSeleccionado == 358)){
+                            $("#btn_reemplazar_archivo_"+data_comunicado.Id_Comunicado).prop('disabled',false);
+                        }else{
+                            $("#btn_reemplazar_archivo_"+data_comunicado.Id_Comunicado).prop('disabled',true);
+                        }
                     }
                 });
-
-                $(`#status_notificacion_${radicado}`).select2({
-                        placeholder: "Seleccione una opción",
-                        allowClear: false,
-                        data: opciones_Notificacion, // Opciones disponibles para seleccionar
-                        templateResult: function(data){
-                            if(data.color != undefined){
-                                return $(`<span style="color: ${data.color}">${data.texto}</span>`); //Opciones disponibles
-                            }
-                        },
-                        templateSelection: function(data){
-                            if(data.color != undefined){
-                                return $(`<span style="color: ${data.color}">${data.texto}</span>`); //Opcion selecionada
-                            }
-                        }
-                }).val(StatusSeleccionado);
-    
-                $(`#status_notificacion_${radicado}`).trigger('change'); 
-
-                // Estilo de la columna de acciones
-                $tableComunicados.find("td").eq(7).css({
-                        'display': 'flex',
-                        'align-items': 'center',
-                        'flex-direction': 'row',
-                        'justify-content': 'space-around',
-                        'border': 'none'
-                });
-            }
-        })
+                
+                $(`#status_notificacion_${radicado}`).select2();
+                setTimeout(() => {
+                    config_Select2(radicado, controlComunicados, opciones_Notificacion, StatusSeleccionado);
+                }, 0);
+                
+            },
+        });
+        
     });
 
     let correspondencia_array = [];
@@ -3679,7 +3678,7 @@ $(document).ready(function(){
                 setTimeout(()=>{
                     localStorage.setItem("#Generar_comunicados", true);
                     location.reload();
-                },2000);
+                },1500);
 
             }
         });
@@ -5826,4 +5825,26 @@ function hideLoading() {
     $('#loading').removeClass('loading');
     $('#loading-content').removeClass('loading-content');
     
+}
+
+function config_Select2(radicado,controlComunicados,opciones_Notificacion,StatusSeleccionado){
+    return new Promise((resolve,reject) => {
+        $(`#status_notificacion_${radicado}`).select2('destroy').select2({
+            placeholder: "Seleccione una opción",
+            allowClear: false,
+            disabled: controlComunicados.deshabilitar_selector,
+            data: opciones_Notificacion,
+            templateResult: function(data) {
+                if (data.color != undefined) {
+                    return $(`<span style="color: ${data.color}">${data.texto}</span>`);
+                }
+            },
+            templateSelection: function(data) {
+                if (data.color != undefined) {
+                    return $(`<span style="color: ${data.color}">${data.texto}</span>`);
+                }
+            }
+        }).val(StatusSeleccionado).trigger('change');
+        resolve();
+    });
 }

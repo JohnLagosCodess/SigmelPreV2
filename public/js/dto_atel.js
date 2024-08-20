@@ -1391,10 +1391,32 @@ $(document).ready(function(){
 
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
-            $("#btn_guardar_actualizar_correspondencia").remove();
+            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
             $("#form_correspondencia *").prop('disabled',true);
             $("#cerar_modalCorrespondencia").prop('disabled',false);
+        }else{
+            $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
         }
+
+        let estado_general = $("#status_notificacion_" + N_radicado).find(":selected").text();
+        if((estado_general == 'Notificado efectivamente' || estado_general == 'Devuelto' || estado_general == 'No notificar') 
+            && ($(id).data("estado_correspondencia") == 0 || $(id).data("estado_correspondencia") == 1 )){
+
+            $(".alerta_advertencia").removeClass('d-none');
+            $(".alerta_advertencia").empty();
+            $(".alerta_advertencia").append(`La correspondencia no se puede guardar y/o actualizar ya que el estado del comunicado es <strong>${estado_general}</strong>,por favor cambielo para pode editar la correspondencia.`)
+            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
+        
+         setTimeout(function(){
+            $(".alerta_advertencia").addClass('d-none');
+            $(".alerta_advertencia").empty();
+        },3000); 
+        }else{
+             $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
+             $(".alerta_advertencia").empty();
+             $(".alerta_advertencia").addClass('d-none');
+         }
+
         //Información superior del modal 
         if(tipo_descarga === 'Manual' || tipo_descarga === 'Dictamen'){
             $("#modalCorrespondencia #nombre_afiliado").val($("#nombre_afiliado").val());
@@ -1715,12 +1737,13 @@ $(document).ready(function(){
     }
 
     let opciones_Notificacion = [];
-
+    
     //Selectores estados de notificacion
     $("[id^='status_notificacion_']").each(function() {
         let $selector = $(this);
- 
+
         let opocionSeleccionada = $selector.data('default');
+        let desactivar = $selector.data('deshabilitar') == '1' ? false: true;
 
         $.ajax({
             type: 'POST',
@@ -1753,12 +1776,16 @@ $(document).ready(function(){
                         color: color
                     });
                 });
-    
+
+
                 //Cargamos la configuracion del select2
                 $selector.select2({
                     placeholder: "Seleccione una opción",
                     allowClear: false,
                     data: opciones_Notificacion,
+                    disabled: () => {
+                        return opocionSeleccionada == 359 ||  opocionSeleccionada == 358 ? false : desactivar;
+                    },
                     templateResult: function(data) {
                         return $('<span>', {
                             style: `color: ${data.color}`,
@@ -1774,6 +1801,7 @@ $(document).ready(function(){
                 }).val(opocionSeleccionada);
 
                 $selector.trigger('change');
+
             },
         });
     }); 

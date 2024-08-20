@@ -150,6 +150,9 @@ class PronunciamientoPCLController extends Controller
             else{
                 $comunicado['Existe'] = false;
             }
+
+            $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_calitec,$Id_asignacion_calitec,$comunicado["Id_Comunicado"]);
+
         }
 
         // Consultamos si el caso está en la bandeja de Notificaciones

@@ -222,16 +222,8 @@ class ControversiaJuntasController extends Controller
                 $comunicado['Existe'] = false;
             }
 
-           $estadoCorrespondencia = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')->select('Estado_correspondencia')
-            ->where('Id_Comunicado',$comunicado["Id_Comunicado"])->get()->first();
-            $evento_en_notificacion = BandejaNotifiController::evento_en_notificaciones($Id_evento_juntas,$Id_asignacion_juntas);
-            
-            if(is_null($estadoCorrespondencia) && $evento_en_notificacion  == 'No' ){
-                $comunicado['Estado_correspondencia'] = '0';
-            }else{
-                $comunicado['Estado_correspondencia'] = $estadoCorrespondencia;
-            }
-            //$comunicado['Estado_correspondencia'] =  $estadoCorrespondencia == null  ? '1' : ;
+            $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_juntas,$Id_asignacion_juntas,$comunicado["Id_Comunicado"]);
+
         }
         //Obtenemos las secciones a mostrar
         $array_control = $this->controlJuntas($Id_evento_juntas, $Id_asignacion_juntas,  $array_datos_controversiaJuntas[0]->Nombre_servicio);

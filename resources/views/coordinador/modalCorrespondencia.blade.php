@@ -194,6 +194,7 @@
                             </div>
                             <div class="alerta_correspondencia alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                             <div class="alerta_error alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
+                            <div class="alerta_advertencia alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
                             <div style="display: flex; justify-content: flex-end; gap:10px;">                                
                                 {{-- <button type="submit" class="btn d-none btn-info actualizar_correspondencia" id="btn_actualizar_correspondencia" data-accion='Actualizar'>Actualizar</button>
                                 <input type="submit" id="ActualizarPronuncia" name="ActualizarPronuncia" class="btn btn-info" value="Actualizar">

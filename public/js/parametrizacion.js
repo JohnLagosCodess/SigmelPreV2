@@ -1354,7 +1354,7 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
 
             let datos_bandeja_trabajo_destino_origen_atel = {
                 '_token': token,
-                'parametro': "bandeja_trabajo_destino_proceso_origen_atel",
+                'parametro': "bandeja_trabajo_destino_notificaciones",
                 'Id_cliente': Id_cliente,
             };
             $.ajax({
@@ -1363,11 +1363,7 @@ function funciones_elementos_fila_parametrizar_origen_atel(num_consecutivo){
                 data: datos_bandeja_trabajo_destino_origen_atel,
                 success:function(data){
                     $('#bandeja_trabajo_destino_origen_atel_'+num_consecutivo).empty();
-                    $('#bandeja_trabajo_destino_origen_atel_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
-                    let claves = Object.keys(data);
-                    for (let i = 0; i < claves.length; i++) {
-                        $("#bandeja_trabajo_destino_origen_atel_"+num_consecutivo).append('<option value="'+data[claves[i]]["Id_proceso"]+'">'+data[claves[i]]["Nombre_proceso"]+'</option>');
-                    }
+                    $('#bandeja_trabajo_destino_origen_atel_'+num_consecutivo).append(`<option value="${data.Id_proceso}" selected>${data.Nombre_proceso}</option>`);
                 }
             });
 
