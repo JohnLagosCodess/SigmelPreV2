@@ -2475,7 +2475,7 @@ $(document).ready(function(){
             $("#modalCorrespondencia #check_copia").prop('disabled', false);
             $("#modalCorrespondencia #check_copia").prop('checked', false);
         }
-        if(correspondencia){
+        if(correspondencia && correspondencia.length >0){
             array_temp = correspondencia.split(",").map(item => item.trim());
             correspondencia_array = array_temp;
         }
