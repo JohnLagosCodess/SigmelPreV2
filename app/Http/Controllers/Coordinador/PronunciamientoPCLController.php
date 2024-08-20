@@ -150,6 +150,11 @@ class PronunciamientoPCLController extends Controller
             else{
                 $comunicado['Existe'] = false;
             }
+
+            if($comunicado["Id_Comunicado"]){
+                $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_calitec,$Id_asignacion_calitec,$comunicado["Id_Comunicado"]);
+            }
+            
         }
 
         // Consultamos si el caso está en la bandeja de Notificaciones
@@ -536,9 +541,10 @@ class PronunciamientoPCLController extends Controller
 
             default: $Destinatario = 'N/A'; break;
         }
-
-        $id_dest_principal = $request->nombre_calificador;
-        if($request->tipo_entidad != null && $request->nombre_entidad !== "null"){
+        if(!$nombre_entidad){
+            $id_dest_principal = $request->nombre_calificador;
+        }
+        else{
             switch ($request->tipo_entidad) {
                 case '1':
                     $Destinatario = 'Arl';
@@ -556,9 +562,8 @@ class PronunciamientoPCLController extends Controller
                     $Destinatario = 'N/A';
                 break;
             }
-            $id_dest_principal = $request->nombre_entidad;
+            $id_dest_principal = $nombre_entidad;
         }
-
         //valida la acción del botón
         if ($request->bandera_pronuncia_guardar_actualizar == 'Guardar') {
         
@@ -635,11 +640,12 @@ class PronunciamientoPCLController extends Controller
                 'Reviso' => '0',
                 'Agregar_copia' => $agregar_copias_comu,
                 'Anexos' => $request->n_anexos,
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
                 'Tipo_descarga' => $request->decision_pr,
                 'Reemplazado' => 0,
+                'Otro_destinatario' => 1,
                 'Modulo_creacion' => 'pronunciamientoPCL',
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
             ];
             sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->insert($datos_info_pronunciamiento_eventos);
             sleep(2);
@@ -807,11 +813,12 @@ class PronunciamientoPCLController extends Controller
                 'Elaboro' => $request->elaboro,
                 'Reviso' => '0',
                 'Anexos' => $request->n_anexos,
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
                 'Tipo_descarga' => $request->decision_pr,
                 'Modulo_creacion' => 'pronunciamientoPCL',
                 'Reemplazado' => 0,
+                'Otro_destinatario' => 1,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
             ];
             // dd($request->decision_pr);
             if($request->decision_pr != 'Silencio' && $request->Id_Comunicado){

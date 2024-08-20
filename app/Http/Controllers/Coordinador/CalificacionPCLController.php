@@ -190,13 +190,8 @@ class CalificacionPCLController extends Controller
         ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion]])->get();
 
         // Validar si la accion ejecutada tiene enviar a notificaciones            
-        $enviar_notificaciones = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-        ->select('Notificacion')
-        ->where([
-            ['ID_evento', $newIdEvento],
-            ['Id_Asignacion', $newIdAsignacion]
-        ])
-        ->get();
+        $enviar_notificaciones = BandejaNotifiController::evento_en_notificaciones($newIdEvento,$newIdAsignacion);
+        
         
         return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 
         'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado', 
@@ -2430,6 +2425,10 @@ class CalificacionPCLController extends Controller
                 else{
                     $comunicado['Existe'] = false;
                 }
+                if($comunicado["Id_Comunicado"]){
+                    $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($newId_evento,$newId_asignacion,$comunicado["Id_Comunicado"]);
+                }
+                
             }
             $arrayhitorialAgregarComunicado = json_decode(json_encode($hitorialAgregarComunicado, true));
             return response()->json([
@@ -5388,6 +5387,10 @@ class CalificacionPCLController extends Controller
             else{
                 $comunicado['Existe'] = false;
             }
+            if($comunicado->Id_Comunicado){
+                $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_calitec,$Id_asignacion_calitec,$comunicado->Id_Comunicado);
+            }
+            
         } 
         $array_comunicados_comite_inter = DB::table('sigmel_gestiones.sigmel_informacion_comite_interdisciplinario_eventos as sicie')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_comunicado_eventos as sice', function ($join) {
@@ -5411,6 +5414,10 @@ class CalificacionPCLController extends Controller
             }
             else{
                 $comunicado_inter->Existe = false;
+            }
+
+            if($comunicado_inter->Id_Comunicado){
+                $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_calitec,$Id_asignacion_calitec,$comunicado_inter->Id_Comunicado);
             }
         } 
         /* Traer datos de la AFP de Conocimiento */
@@ -7723,10 +7730,11 @@ class CalificacionPCLController extends Controller
                 'Anexos' => $anexos,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => 'calificacionTecnicaPCL',
+                'N_siniestro' => $N_siniestro,
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'N_siniestro' => $N_siniestro
             ];
     
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -7812,10 +7820,11 @@ class CalificacionPCLController extends Controller
                 'Anexos' => $anexos,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => 'calificacionTecnicaPCL',
+                'N_siniestro' => $N_siniestro,
                 'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'N_siniestro' => $N_siniestro
             ];  
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')

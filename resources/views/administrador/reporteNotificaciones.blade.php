@@ -120,7 +120,45 @@
                         </div>
                     </div>
                 </div>
-            </div>                        
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card-info">
+                        <div class="card-header text-center" style="border: 1.5px solid black;">
+                            <h5>Cargue Correspondencia</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <form action="{{route('subirCorrespondencia')}}" method="POST" enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="form-group">
+                                            <label for="cargue_corres" class="col-form-label">Seleccione el archivo</label>
+                                            <input style="padding: unset; height: auto;" type="file" name="cargue_corres" class="form-control" required>
+                                        </div>
+                                        <input type="submit" class="btn btn-info" value="Cargar">
+                                    </form>
+                                    @if ($errors->has('cargue_corres'))
+                                        <span class="text-danger">{{ $errors->first('cargue_corres') }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                            <br>                            
+                            <div class="text-center d-none" id="mostrar_barra_cargar_correspondencia">                                
+                                <button class="btn btn-info" type="button" disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Cargando Correspondencias...
+                                </button>
+                            </div>
+                            @if(session('success'))
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif  
+                        </div>
+                    </div>
+                </div>
+            </div>                         
         </div>
     </div>
 @stop

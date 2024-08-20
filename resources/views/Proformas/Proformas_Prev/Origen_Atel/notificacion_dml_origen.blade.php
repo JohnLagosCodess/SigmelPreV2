@@ -82,6 +82,8 @@
         .fuente_todo_texto{
             font-family: sans-serif; 
             font-size: 12px;
+            margin: 0;
+            padding: 0;
         }
         .tabla1{
             width: 80%;
@@ -164,15 +166,19 @@
         @endfor --}}
 
         <p class="fuente_todo_texto"><span class="negrita">{{$ciudad}}, {{$fecha}}</span></p>
+        <br>
         <table class="tabla2">
             <tbody>
                 <tr>
                     <td style="width:100%;">
-                        <span class="fuente_todo_texto"><span class="negrita">Señores: </span><br>{{$nombre_destinatario_principal}}</span><br>
-                        <span class="fuente_todo_texto">{{$email_destinatario_principal}}</span><br>
-                        <span class="fuente_todo_texto">{{$direccion_destinatario_principal}}</span><br>
-                        <span class="fuente_todo_texto">{{$telefono_destinatario_principal}}</span><br>
-                        <span class="fuente_todo_texto">{{$ciudad_destinatario_principal}}</span>
+                        <div class="fuente_todo_texto">
+                            <span class="negrita">Señores:</span><br>
+                            {{$nombre_destinatario_principal}}
+                        </div>
+                        <div class="fuente_todo_texto">{{$email_destinatario_principal}}</div>
+                        <div class="fuente_todo_texto">{{$direccion_destinatario_principal}}</div>
+                        <div class="fuente_todo_texto">{{$telefono_destinatario_principal}}</div>
+                        <div class="fuente_todo_texto">{{$ciudad_destinatario_principal}}</div>
                     </td>
                     <td>
                         <div class="cuadro">
@@ -320,7 +326,7 @@
         if ( isset($pdf) ) {
             $pdf->page_script('
                 $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $pdf->text(485, 75, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+                $pdf->text(485, 70, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
             ');
         }
 	</script>

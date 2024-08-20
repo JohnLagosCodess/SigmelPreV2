@@ -298,6 +298,7 @@ class BandejaNotifiController extends Controller
     public static function evento_en_notificaciones(string $id_evento,int $id_asignacion,$comunicado = null){
         $condiciones = array(['siaev.Id_Asignacion',$id_asignacion],
         ['siaev.ID_evento',$id_evento]);
+        
         if($comunicado != null){
             array_push($condiciones,['Id_comunicado',$comunicado]);
         }
@@ -308,9 +309,25 @@ class BandejaNotifiController extends Controller
         ->where($condiciones)->get()->map(function($item){
             //1 - Activo 0 - Inactivo: Siempre y el evento no tenga alguna correspondencia y/o su estado sea 1 la se mostrara la correspodencia 
             $item->Notificacion = $item->Notificacion == 'No'  && is_null($item->Estado_correspondencia) ? 'No' : 'Si';
+            $item->Estado_correspondencia =  $item->Notificacion == 'No'  && is_null($item->Estado_correspondencia) ? '0' :
+                ($item->Notificacion == 'Si'  && is_null($item->Estado_correspondencia) ? '1' : $item->Estado_correspondencia);
             return $item;
         });
 
         return $enviar_notificacion;
+    }
+
+    public static function estado_Correspondencia(string $id_evento,int $id_asignacion,int $id_comunicado){
+        $estadoCorrespondencia = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')->select('Estado_correspondencia')
+        ->where('Id_Comunicado',$id_comunicado)->first();
+
+        $evento_en_notificacion  = self::evento_en_notificaciones($id_evento,$id_asignacion);
+
+        //Caso cuando la notificacion esta en la bd de notificacion y/o los destinarios estan visibles afuera de la bd
+        if ($estadoCorrespondencia === null && $evento_en_notificacion[0]->Notificacion = 'Si') {
+            return $evento_en_notificacion[0]->Estado_correspondencia;
+        } else {
+            return $estadoCorrespondencia->Estado_correspondencia;
+        }
     }
 }
