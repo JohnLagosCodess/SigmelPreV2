@@ -178,6 +178,13 @@ $(document).ready(function () {
 
     });
 
+    $('#cargar_Correspondencia').click(function () {
+        setTimeout(() => {
+            $(this).prop('disabled', true);            
+        }, 500);
+        $('#mostrar_barra_cargar_correspondencia').removeClass('d-none');        
+    });
+
 });
 
 

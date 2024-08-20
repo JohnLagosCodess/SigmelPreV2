@@ -52,8 +52,8 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
         // Validar los datos de la fila
         $validaciones = Validator::make($row, [
             'id_correspondencia' => 'required|numeric',
-            'id_asignacion' => 'required|numeric',
             'id_comunicado' => 'required|numeric',
+            'id_asignacion' => 'required|numeric',
             'n_radicado' => 'required|string',
             'nombre_documento' => 'required|string',
             'carpeta_impresion' => 'required|string',

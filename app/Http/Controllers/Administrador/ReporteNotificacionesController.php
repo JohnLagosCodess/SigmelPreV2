@@ -297,7 +297,7 @@ class ReporteNotificacionesController extends Controller
 
         try {
             Excel::import(new CargueNotificaciones, $file);
-            return back()->with('success', 'Archivo procesado exitosamente.');
+            return back()->with('success', 'Cargue correspondencias realizado exitosamente.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error al procesar el archivo: ' . $e->getMessage());
         }

@@ -142,7 +142,19 @@
                                         <span class="text-danger">{{ $errors->first('cargue_corres') }}</span>
                                     @endif
                                 </div>
-                            </div>  
+                            </div>
+                            <br>                            
+                            <div class="text-center d-none" id="mostrar_barra_cargar_correspondencia">                                
+                                <button class="btn btn-info" type="button" disabled>
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Cargando Correspondencias...
+                                </button>
+                            </div>
+                            @if(session('success'))
+                                <div class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif  
                         </div>
                     </div>
                 </div>
