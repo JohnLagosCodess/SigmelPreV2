@@ -380,7 +380,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="n_dictamen_jrci_emitido">N° Dictamen (JRCI) <span style="color: red;">(*)</span></label>
-                                                <input type="number" class="form-control soloNumeros" name="n_dictamen_jrci_emitido" id="n_dictamen_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_jrci_emitido)) { echo $arrayinfo_controvertido[0]->N_dictamen_jrci_emitido;} ?>" required>
+                                                <input type="text" class="form-control" name="n_dictamen_jrci_emitido" id="n_dictamen_jrci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_jrci_emitido)) { echo $arrayinfo_controvertido[0]->N_dictamen_jrci_emitido;} ?>" required>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -855,7 +855,7 @@
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="n_dictamen_reposicion_jrci">N° Dictamen (Reposición JRCI) <span style="color: red;">(*)</span></label>
-                                                <input type="number" class="form-control soloNumeros" name="n_dictamen_reposicion_jrci" id="n_dictamen_reposicion_jrci" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_reposicion_jrci)) { echo $arrayinfo_controvertido[0]->N_dictamen_reposicion_jrci;} ?>" required>
+                                                <input type="text" class="form-control" name="n_dictamen_reposicion_jrci" id="n_dictamen_reposicion_jrci" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_reposicion_jrci)) { echo $arrayinfo_controvertido[0]->N_dictamen_reposicion_jrci;} ?>" required>
                                             </div>
                                         </div>
                                         <div class="col-3">
@@ -1233,7 +1233,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="n_dictamen_jnci_emitido">N° Dictamen (JNCI) <span style="color: red;">(*)</span></label>
-                                                <input type="number" class="form-control soloNumeros" name="n_dictamen_jnci_emitido" id="n_dictamen_jnci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_jnci_emitido)) { echo $arrayinfo_controvertido[0]->N_dictamen_jnci_emitido;} ?>" required>
+                                                <input type="text" class="form-control" name="n_dictamen_jnci_emitido" id="n_dictamen_jnci_emitido" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_jnci_emitido)) { echo $arrayinfo_controvertido[0]->N_dictamen_jnci_emitido;} ?>" required>
                                             </div>
                                         </div>
                                         <div class="col-4">
