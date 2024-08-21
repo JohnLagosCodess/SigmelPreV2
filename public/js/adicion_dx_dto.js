@@ -1411,11 +1411,15 @@ $(document).ready(function(){
             // Validación de id_asignacion_dx para saber si toca actualizar la información
             var id_adicion_dx = $("#id_adicion_dx").val();
 
-            // if (id_adicion_dx == "" || id_adicion_dx == undefined) {
-            if( $("#btn_guardar_info_evento").val() == "Guardar" && 
-                $("#btn_guardar_relacion_docs").val() == "Guardar" && 
-                $("#btn_guardar_diagnosticos_adicionados").val() == "Guardar" && 
-                $("#GuardarAdicionDx").val() == "Guardar"){
+            /* En caso de que se vuelvan a habilitar los demás botones de inserción o actualizacion en la adicion dx 
+                Descomentariar este if y comentariar el el que está activo.
+            */
+            // if( $("#btn_guardar_info_evento").val() == "Guardar" && 
+            //     $("#btn_guardar_relacion_docs").val() == "Guardar" && 
+            //     $("#btn_guardar_diagnosticos_adicionados").val() == "Guardar" && 
+            //     $("#GuardarAdicionDx").val() == "Guardar"){
+            
+            if( $("#GuardarAdicionDx").val() == "Guardar"){
                 // console.log('guardar');
                 // Registrar Información
                 var informacion_formulario = {
