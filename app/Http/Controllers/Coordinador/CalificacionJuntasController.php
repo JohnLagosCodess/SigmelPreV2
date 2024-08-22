@@ -2654,7 +2654,6 @@ class CalificacionJuntasController extends Controller
                 // 'Nombre_documento' => $request->Nombre_documento,
                 'Otro_destinatario' => 0,
                 'Nombre_documento' => $nombre_final_documento,
-                'Descripcion' => $nombre_final_documento,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];

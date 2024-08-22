@@ -1063,6 +1063,8 @@ $(document).ready(function(){
         opt_concepto_jrci = $(this).val();
         $(this).val(opt_concepto_jrci);
         iniciarIntervalo_concepto_jrci();
+        $("#GuardarCorrespondencia").prop('disabled',false);
+        $("#bandera_correspondecia_guardar_actualizar").prop('disabled',false);
 
         // Insertar textos predeterminados en la sección de correspondencia
         if (opt_concepto_jrci == "Desacuerdo") {
@@ -1166,6 +1168,9 @@ $(document).ready(function(){
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
+
+            $("#GuardarCorrespondencia").prop('disabled',true);
+            $("#bandera_correspondecia_guardar_actualizar").prop('disabled',true);
         }
     });
     // Función para validar items a mostrar
@@ -1342,7 +1347,7 @@ $(document).ready(function(){
         iniciarIntervalo_concepto_repo_jrci();
 
         // Insertar textos predeterminados en la sección de correspondencia
-        if (opt_concepto_repo_jrci == "Desacuerdo") {
+        /*if (opt_concepto_repo_jrci == "Desacuerdo") {
             // Aplica para Controversia Pcl (id servicio 13) y Controversia Origen (id servicio 12)
             $("#tipo_descarga").html('');
             $("#tipo_descarga").html('(dentro del word)');
@@ -1443,7 +1448,7 @@ $(document).ready(function(){
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
-        }
+        }*/
     });
 
     //Cargar comunicado
@@ -1681,30 +1686,7 @@ $(document).ready(function(){
             '.row_f_sustenta_reposicion_jrci',
             '.activa_boton_repo_g'
         ];
-        // Mostrar Selector de acuerdo a la revision
-        /** Se cambia a texto segun solicitud PSB024 if(opt_concepto_repo_jrci=='Acuerdo' || opt_concepto_repo_jrci=='Desacuerdo'){
-            //Listado causales
-            let datos_lista_causales = {
-            '_token': token,
-            'parametro': "lista_causales_jrci",
-            'causal': opt_concepto_repo_jrci
-            };
-            $.ajax({
-                type:'POST',
-                url:'/selectoresJuntasControversia',
-                data: datos_lista_causales,
-                success:function(data) {
-                    $("#causal_decision_repo").empty();
-                    let Ncausal2 = $('select[name=causal_decision_repo]').val();
-                    let licausal2 = Object.keys(data);
-                    for (let i = 0; i < licausal2.length; i++) {
-                        if (data[licausal2[i]]['Id_Parametro'] != Ncausal2) {  
-                            $('#causal_decision_repo').append('<option value="'+data[licausal2[i]]["Id_Parametro"]+'">'+data[licausal2[i]]["Nombre_parametro"]+'</option>');
-                        }
-                    }
-                }
-            });
-        } **/
+
         intervaloRe = setInterval(() => {
             switch (opt_concepto_repo_jrci) {
                 case "Acuerdo":
