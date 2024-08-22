@@ -1411,11 +1411,15 @@ $(document).ready(function(){
             // Validación de id_asignacion_dx para saber si toca actualizar la información
             var id_adicion_dx = $("#id_adicion_dx").val();
 
-            // if (id_adicion_dx == "" || id_adicion_dx == undefined) {
-            if( $("#btn_guardar_info_evento").val() == "Guardar" && 
-                $("#btn_guardar_relacion_docs").val() == "Guardar" && 
-                $("#btn_guardar_diagnosticos_adicionados").val() == "Guardar" && 
-                $("#GuardarAdicionDx").val() == "Guardar"){
+            /* En caso de que se vuelvan a habilitar los demás botones de inserción o actualizacion en la adicion dx 
+                Descomentariar este if y comentariar el el que está activo.
+            */
+            // if( $("#btn_guardar_info_evento").val() == "Guardar" && 
+            //     $("#btn_guardar_relacion_docs").val() == "Guardar" && 
+            //     $("#btn_guardar_diagnosticos_adicionados").val() == "Guardar" && 
+            //     $("#GuardarAdicionDx").val() == "Guardar"){
+            
+            if( $("#GuardarAdicionDx").val() == "Guardar"){
                 // console.log('guardar');
                 // Registrar Información
                 var informacion_formulario = {
@@ -2203,7 +2207,24 @@ $(document).ready(function(){
             $("#form_correspondencia *").prop('disabled',true);
             $("#cerar_modalCorrespondencia").prop('disabled',false);
         }
+        let estado_general = $("#status_notificacion_" + N_radicado).find(":selected").text();
+        if((estado_general == 'Notificado efectivamente' || estado_general == 'Devuelto' || estado_general == 'No notificar') 
+            && ($(id).data("estado_correspondencia") == 0 || $(id).data("estado_correspondencia") == 1 )){
 
+            $(".alerta_advertencia").removeClass('d-none');
+            $(".alerta_advertencia").empty();
+            $(".alerta_advertencia").append(`La correspondencia no se puede guardar y/o actualizar ya que el estado del comunicado es <strong>${estado_general}</strong>,por favor cambielo para pode editar la correspondencia.`)
+            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
+        
+         setTimeout(function(){
+            $(".alerta_advertencia").addClass('d-none');
+            $(".alerta_advertencia").empty();
+        },3000); 
+        }else{
+             $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
+             $(".alerta_advertencia").empty();
+             $(".alerta_advertencia").addClass('d-none');
+         }
         //Información superior del modal 
         if(tipo_descarga === 'Manual' || tipo_descarga === 'Dictamen'){
             $("#modalCorrespondencia #nombre_afiliado").val($("#nombre_afiliado").val());
@@ -2223,7 +2244,7 @@ $(document).ready(function(){
             $("#modalCorrespondencia #check_copia").prop('disabled', false);
             $("#modalCorrespondencia #check_copia").prop('checked', false);
         }
-        if(correspondencia){
+        if(correspondencia && correspondencia.length >0){
             array_temp = correspondencia.split(",").map(item => item.trim());
             correspondencia_array = array_temp;
         }
@@ -2528,9 +2549,8 @@ $(document).ready(function(){
     //Selectores estados de notificacion
     $("[id^='status_notificacion_']").each(function() {
         let $selector = $(this);
-        console.log($(this));
         let opocionSeleccionada = $selector.data('default');
-
+        let desactivar = $selector.data('deshabilitar') == '1' ? false: true;
         $.ajax({
             type: 'POST',
             url: '/cargarselectores',
@@ -2568,6 +2588,9 @@ $(document).ready(function(){
                     placeholder: "Seleccione una opción",
                     allowClear: false,
                     data: opciones_Notificacion,
+                    disabled: () => {
+                        return opocionSeleccionada == 359 ||  opocionSeleccionada == 358 ? false : desactivar;
+                    },
                     templateResult: function(data) {
                         return $('<span>', {
                             style: `color: ${data.color}`,

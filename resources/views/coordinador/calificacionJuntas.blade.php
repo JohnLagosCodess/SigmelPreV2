@@ -530,7 +530,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="N_dictamen_controvertido">N° Dictamen controvertido<span style="color: red;">(*)</span></label>
-                                                <input type="number" class="form-control soloNumeros" name="N_dictamen_controvertido" id="N_dictamen_controvertido" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->N_dictamen_controvertido;} ?>" required>
+                                                <input type="text" class="form-control" name="N_dictamen_controvertido" id="N_dictamen_controvertido" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->N_dictamen_controvertido;} ?>" required>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -655,8 +655,8 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="f_contro_radi_califi">Fecha de radicación controversia primera calificación <span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_contro_radi_califi" id="f_contro_radi_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>" required>
+                                                <label for="f_contro_radi_califi">Fecha de radicación controversia primera calificación</label>
+                                                <input type="date" class="form-control" name="f_contro_radi_califi" id="f_contro_radi_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4">

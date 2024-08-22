@@ -925,6 +925,10 @@ class RecalificacionPCLController extends Controller
                     else{
                         $comunicado['Existe'] = false;
                     }
+                    if($comunicado->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado->Id_Comunicado);
+                    }
+                    
                 }
                 // $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                 // ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
@@ -950,6 +954,10 @@ class RecalificacionPCLController extends Controller
                     }
                     else{
                         $comunicado_inter->Existe = false;
+                    }
+
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
                     }
                 }  
                 
@@ -1552,6 +1560,10 @@ class RecalificacionPCLController extends Controller
                     else{
                         $comunicado['Existe'] = false;
                     }
+
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    }
                 }
                 // $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
                 // ->where([['ID_evento',$Id_evento_recali], ['Id_Asignacion',$Id_asignacion_recali]])->get();  
@@ -1576,6 +1588,9 @@ class RecalificacionPCLController extends Controller
                     }
                     else{
                         $comunicado_inter->Existe = false;
+                    }
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
                     }
                 }                
                 
@@ -2378,7 +2393,7 @@ class RecalificacionPCLController extends Controller
                         }
                         else{
                             $comunicado['Existe'] = false;
-                        }
+                        }                        
                     }
                     else if($comunicado['Tipo_descarga'] === 'Manual'){
                         $filePath = public_path('Documentos_Eventos/'.$comunicado['ID_evento'].'/'.$comunicado['Asunto']);
@@ -2391,6 +2406,9 @@ class RecalificacionPCLController extends Controller
                     }
                     else{
                         $comunicado['Existe'] = false;
+                    }
+                    if($comunicado->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado->Id_Comunicado);
                     }
                 }
                 // $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
@@ -2416,6 +2434,9 @@ class RecalificacionPCLController extends Controller
                     }
                     else{
                         $comunicado_inter->Existe = false;
+                    }
+                    if($comunicado_inter->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
                     }
                 }  
 

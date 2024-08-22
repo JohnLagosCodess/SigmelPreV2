@@ -892,6 +892,17 @@ $(document).ready(function(){
             /** @var select2 Config. del select2 */
             let select2 = [];
             for (let i = 0; i < data.hitorialAgregarComunicado.length; i++) { 
+                let estado_correspondencia = {}
+                let estado_notificacion = data.hitorialAgregarComunicado[i].Estado_Notificacion;
+                
+                if (data.enviar_notificacion[0].Notificacion == 'Si') {
+                    estado_correspondencia ={
+                        deshabilitar_selector : data.hitorialAgregarComunicado[i].Estado_correspondencia == '1' ||(estado_notificacion == 359 ||  estado_notificacion == 358) ? false : true,
+                        deshabilitar_edicion: data.hitorialAgregarComunicado[i].Estado_correspondencia == '1' ||(estado_notificacion == 359 ||  estado_notificacion == 358) ? '' : 'pointer-events: none; color: gray;',
+                        deshabilitar_remplazar: data.hitorialAgregarComunicado[i].Estado_correspondencia == '1' ||(estado_notificacion == 359 ||  estado_notificacion == 358) ? '' : 'pointer-events: none; color: gray;'
+                    };
+                }
+
                 if (data.hitorialAgregarComunicado[i].N_radicado != '' && data.hitorialAgregarComunicado[i].Tipo_descarga != 'Manual'){
                     let comunicadoNradico = '<div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center">';
                     if (!data.hitorialAgregarComunicado[i].Correspondencia) {
@@ -941,7 +952,7 @@ $(document).ready(function(){
                         modulo_creacion="'+data.hitorialAgregarComunicado[i].Modulo_creacion+'" reemplazado="'+data.hitorialAgregarComunicado[i].Reemplazado+'" nombre_documento="'+data.hitorialAgregarComunicado[i].Nombre_documento + '"\
                         numero_siniestro="'+data.hitorialAgregarComunicado[i].N_siniestro+'"><i style="cursor:pointer; display: flex; justify-content: center; align-items:center;" class="far fa-eye text-info"></i></a>';
                     if(data.hitorialAgregarComunicado[i].Existe && data.hitorialAgregarComunicado[i].Nombre_documento != null){
-                        comunicadoNradico += '<a href="javascript:void(0);" id="replace_file" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalReemplazarArchivos"\
+                        comunicadoNradico += '<a href="javascript:void(0);" id="replace_file" style="'+estado_correspondencia.deshabilitar_remplazar+'" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalReemplazarArchivos"\
                             data-id_evento="' + data.hitorialAgregarComunicado[i].ID_evento + '" data-id_comunicado="'+ data.hitorialAgregarComunicado[i].Id_Comunicado + '"\
                             data-numero_radicado="'+ data.hitorialAgregarComunicado[i].N_radicado + '" data-fecha_comunicado="' + data.hitorialAgregarComunicado[i].F_comunicado + '"\
                             data-tipo_descarga="'+ data.hitorialAgregarComunicado[i].Tipo_descarga + '" data-asunto_comunicado="' + data.hitorialAgregarComunicado[i].Asunto + '"\
@@ -950,7 +961,7 @@ $(document).ready(function(){
                             ><i class="fas fa-sync-alt text-info"></i></a>';
                     }
 
-                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>';
+                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" style="display: flex; justify-content: center;  '+estado_correspondencia.deshabilitar_edicion+'"><i class="fa fa-sm fa-check text-success"></i></a></div>';
 
                     comunicadoNradico += '</div>';
                     data.hitorialAgregarComunicado[i].Editarcomunicado = comunicadoNradico;
@@ -981,7 +992,7 @@ $(document).ready(function(){
                     modulo_creacion="'+data.hitorialAgregarComunicado[i].Modulo_creacion+'" reemplazado="'+data.hitorialAgregarComunicado[i].Reemplazado+'" nombre_documento="'+data.hitorialAgregarComunicado[i].Nombre_documento + '"\
                     ><i style="cursor:pointer" id="comunicado_manual_boton" class="far fa-eye text-info"></i></a>';
                     if(data.hitorialAgregarComunicado[i].Existe  && !data.hitorialAgregarComunicado[i].Asunto.includes('Lista_chequeo')){
-                        comunicadoNradico += '<a href="javascript:void(0);" id="replace_file" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalReemplazarArchivos"\
+                        comunicadoNradico += '<a href="javascript:void(0);" id="replace_file" style="'+estado_correspondencia.deshabilitar_remplazar+'" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalReemplazarArchivos"\
                             data-id_evento="' + data.hitorialAgregarComunicado[i].ID_evento + '" data-id_comunicado="'+ data.hitorialAgregarComunicado[i].Id_Comunicado + '"\
                             data-numero_radicado="'+ data.hitorialAgregarComunicado[i].N_radicado + '" data-fecha_comunicado="' + data.hitorialAgregarComunicado[i].F_comunicado + '"\
                             data-tipo_descarga="'+ data.hitorialAgregarComunicado[i].Tipo_descarga + '" data-asunto_comunicado="' + data.hitorialAgregarComunicado[i].Asunto + '"\
@@ -994,7 +1005,7 @@ $(document).ready(function(){
                     if(data.hitorialAgregarComunicado[i].Asunto.includes('Lista_chequeo')){
                         comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalCrearExpediente" title="Editar expediente" id="editarExpediente"><i style="cursor:pointer" class="fa fa-pen text-info"></i></a>';
                     }
-                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>';
+                    comunicadoNradico += '<a href="javascript:void(0);" id="editar_comunicado" data-radicado="'+data.hitorialAgregarComunicado[i].N_radicado+'" style="display: flex; justify-content: center;  '+estado_correspondencia.deshabilitar_edicion+'"><i class="fa fa-sm fa-check text-success"></i></a></div>';
                     comunicadoNradico += '</div>';
                     data.hitorialAgregarComunicado[i].Editarcomunicado = comunicadoNradico;
                 }
@@ -1015,6 +1026,7 @@ $(document).ready(function(){
                     selector: `#status_notificacion_${data.hitorialAgregarComunicado[i].N_radicado}`,
                     default:  data.hitorialAgregarComunicado[i].Estado_Notificacion, //Opcion a selecionar
                     data: opciones_Notificacion, // Opciones disponibles para seleccionar
+                    enable: estado_correspondencia.deshabilitar_selector
                 };
 
                 select2.push(select2Config);
@@ -1029,6 +1041,7 @@ $(document).ready(function(){
                     placeholder: "Seleccione una opción",
                     allowClear: false,
                     data: item.data,
+                    disabled:item.enable,
                     templateResult: function(data){
                         if(data.color != undefined){
                             return $(`<span style="color: ${data.color}">${data.texto}</span>`); //Opciones disponibles
@@ -1534,6 +1547,24 @@ $(document).ready(function(){
             $("#form_correspondencia *").prop('disabled',true);
             $("#cerar_modalCorrespondencia").prop('disabled',false);
         }
+        let estado_general = $("#status_notificacion_" + N_radicado).find(":selected").text();
+        if((estado_general == 'Notificado efectivamente' || estado_general == 'Devuelto' || estado_general == 'No notificar') 
+            && ($(id).data("estado_correspondencia") == 0 || $(id).data("estado_correspondencia") == 1 )){
+
+            $(".alerta_advertencia").removeClass('d-none');
+            $(".alerta_advertencia").empty();
+            $(".alerta_advertencia").append(`La correspondencia no se puede guardar y/o actualizar ya que el estado del comunicado es <strong>${estado_general}</strong>,por favor cambielo para pode editar la correspondencia.`)
+            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
+        
+         setTimeout(function(){
+            $(".alerta_advertencia").addClass('d-none');
+            $(".alerta_advertencia").empty();
+        },3000); 
+        }else{
+             $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
+             $(".alerta_advertencia").empty();
+             $(".alerta_advertencia").addClass('d-none');
+         }
 
         if(tipo_descarga === 'Manual'){
             $("#modalCorrespondencia #check_principal").prop('checked', false);
@@ -1541,7 +1572,7 @@ $(document).ready(function(){
             $("#modalCorrespondencia #check_copia").prop('disabled', false);
             $("#modalCorrespondencia #check_copia").prop('checked', false);
         }
-        if(correspondencia){
+        if(correspondencia && correspondencia.length >0){
             array_temp = correspondencia.split(",").map(item => item.trim());
             correspondencia_array = array_temp;
         }

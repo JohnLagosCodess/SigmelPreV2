@@ -523,7 +523,7 @@ $(document).ready(function(){
 
     // Ejecutamos la función iniciarIntervalo_pPCL cuando cargue la vista para cuando ya el formulario traiga datos
     if($("#total_deficiencia").val() != ''){
-        total_deficiencia =$(this).val();
+        total_deficiencia = $("#total_deficiencia").val();
         iniciarIntervalo_pPCL();
     };
 
@@ -1063,6 +1063,8 @@ $(document).ready(function(){
         opt_concepto_jrci = $(this).val();
         $(this).val(opt_concepto_jrci);
         iniciarIntervalo_concepto_jrci();
+        $("#GuardarCorrespondencia").prop('disabled',false);
+        $("#bandera_correspondecia_guardar_actualizar").prop('disabled',false);
 
         // Insertar textos predeterminados en la sección de correspondencia
         if (opt_concepto_jrci == "Desacuerdo") {
@@ -1166,6 +1168,9 @@ $(document).ready(function(){
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
+
+            $("#GuardarCorrespondencia").prop('disabled',true);
+            $("#bandera_correspondecia_guardar_actualizar").prop('disabled',true);
         }
     });
     // Función para validar items a mostrar
@@ -1342,7 +1347,7 @@ $(document).ready(function(){
         iniciarIntervalo_concepto_repo_jrci();
 
         // Insertar textos predeterminados en la sección de correspondencia
-        if (opt_concepto_repo_jrci == "Desacuerdo") {
+        /*if (opt_concepto_repo_jrci == "Desacuerdo") {
             // Aplica para Controversia Pcl (id servicio 13) y Controversia Origen (id servicio 12)
             $("#tipo_descarga").html('');
             $("#tipo_descarga").html('(dentro del word)');
@@ -1443,7 +1448,7 @@ $(document).ready(function(){
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
-        }
+        }*/
     });
 
     //Cargar comunicado
@@ -1700,30 +1705,7 @@ $(document).ready(function(){
             '.row_f_sustenta_reposicion_jrci',
             '.activa_boton_repo_g'
         ];
-        // Mostrar Selector de acuerdo a la revision
-        /** Se cambia a texto segun solicitud PSB024 if(opt_concepto_repo_jrci=='Acuerdo' || opt_concepto_repo_jrci=='Desacuerdo'){
-            //Listado causales
-            let datos_lista_causales = {
-            '_token': token,
-            'parametro': "lista_causales_jrci",
-            'causal': opt_concepto_repo_jrci
-            };
-            $.ajax({
-                type:'POST',
-                url:'/selectoresJuntasControversia',
-                data: datos_lista_causales,
-                success:function(data) {
-                    $("#causal_decision_repo").empty();
-                    let Ncausal2 = $('select[name=causal_decision_repo]').val();
-                    let licausal2 = Object.keys(data);
-                    for (let i = 0; i < licausal2.length; i++) {
-                        if (data[licausal2[i]]['Id_Parametro'] != Ncausal2) {  
-                            $('#causal_decision_repo').append('<option value="'+data[licausal2[i]]["Id_Parametro"]+'">'+data[licausal2[i]]["Nombre_parametro"]+'</option>');
-                        }
-                    }
-                }
-            });
-        } **/
+
         intervaloRe = setInterval(() => {
             switch (opt_concepto_repo_jrci) {
                 case "Acuerdo":
@@ -3096,11 +3078,13 @@ $(document).ready(function(){
 
     let opciones_Notificacion = [];
     
+
     //Selectores estados de notificacion
     $("[id^='status_notificacion_']").each(function() {
         let $selector = $(this);
         let opocionSeleccionada = $selector.data('default');
-
+        let desactivar = $selector.data('deshabilitar') == '1' ? false: true;
+        
         $.ajax({
             type: 'POST',
             url: '/cargarselectores',
@@ -3138,6 +3122,9 @@ $(document).ready(function(){
                     placeholder: "Seleccione una opción",
                     allowClear: false,
                     data: opciones_Notificacion,
+                    disabled: () => {
+                        return opocionSeleccionada == 359 ||  opocionSeleccionada == 358 ? false : desactivar;
+                    },
                     templateResult: function(data) {
                         return $('<span>', {
                             style: `color: ${data.color}`,
@@ -3743,6 +3730,26 @@ $(document).ready(function(){
             $("#form_correspondencia *").prop('disabled',true);
             $("#cerar_modalCorrespondencia").prop('disabled',false);
         }
+
+        let estado_general = $("#status_notificacion_" + N_radicado).find(":selected").text();
+        if((estado_general == 'Notificado efectivamente' || estado_general == 'Devuelto' || estado_general == 'No notificar') 
+            && ($(id).data("estado_correspondencia") == 0 || $(id).data("estado_correspondencia") == 1 )){
+
+            $(".alerta_advertencia").removeClass('d-none');
+            $(".alerta_advertencia").empty();
+            $(".alerta_advertencia").append(`La correspondencia no se puede guardar y/o actualizar ya que el estado del comunicado es <strong>${estado_general}</strong>,por favor cambielo para pode editar la correspondencia.`)
+            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
+        
+         setTimeout(function(){
+            $(".alerta_advertencia").addClass('d-none');
+            $(".alerta_advertencia").empty();
+        },3000); 
+        }else{
+             $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
+             $(".alerta_advertencia").empty();
+             $(".alerta_advertencia").addClass('d-none');
+         }
+         
         //Información superior del modal 
         if(tipo_descarga === 'Manual' || tipo_descarga === 'Dictamen'){
             $("#modalCorrespondencia #nombre_afiliado").val($("#nombre_afiliado").val());
@@ -3761,7 +3768,7 @@ $(document).ready(function(){
             $("#modalCorrespondencia #check_copia").prop('disabled', false);
             $("#modalCorrespondencia #check_copia").prop('checked', false);
         } 
-        if(correspondencia){
+        if(correspondencia && correspondencia.length >0){
             array_temp = correspondencia.split(",").map(item => item.trim());
             correspondencia_array = array_temp;
         }

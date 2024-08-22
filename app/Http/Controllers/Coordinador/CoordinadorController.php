@@ -1670,6 +1670,7 @@ class CoordinadorController extends Controller
                         $response['datos'] = count($datos_afp_conocimiento) > 0 ? $datos_afp_conocimiento[0] : null;
                     }
                 }
+                
                 return response()->json($response);
             }
         }
@@ -1677,6 +1678,7 @@ class CoordinadorController extends Controller
             $info_correspondencia = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')
             ->where([['Id_comunicado', $Id_comunicado],['Tipo_correspondencia', $Tipo_correspondencia]])
             ->get();
+
             return response()->json($info_correspondencia);
         }
     }

@@ -222,14 +222,13 @@ class ControversiaJuntasController extends Controller
                 $comunicado['Existe'] = false;
             }
 
-           $estadoCorrespondencia = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')->select('Estado_correspondencia')
-            ->where('Id_Comunicado',$comunicado["Id_Comunicado"])->get()->first();
-           // $evento_en_notificacion = BandejaNotifiController::evento_en_notificaciones($Id_evento_juntas,$Id_asignacion_juntas);
-            $comunicado['Estado_correspondencia'] =  $estadoCorrespondencia == null  ? '1' : $estadoCorrespondencia->Estado_correspondencia;
+            if($comunicado["Id_Comunicado"]){
+                $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_juntas,$Id_asignacion_juntas,$comunicado["Id_Comunicado"]);
+            }
+            
         }
         //Obtenemos las secciones a mostrar
         $array_control = $this->controlJuntas($Id_evento_juntas, $Id_asignacion_juntas,  $array_datos_controversiaJuntas[0]->Nombre_servicio);
-
         // Extraemos el id de asignacion con el que fue creado la controversia
         // En caso de que tenga el dato se procede a analizar si el servicio que tiene asociado ese id asignacion es una calitec, recalificación, revision pension
         // Si tiene, mandamos una bandera a la vista para inhabilitar el selector manual calificación de la sección Diagnósticos del Dictamen Controvertido
