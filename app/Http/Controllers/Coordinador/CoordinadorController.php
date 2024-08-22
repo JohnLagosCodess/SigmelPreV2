@@ -1474,6 +1474,17 @@ class CoordinadorController extends Controller
         return json_decode(json_encode($mensajes, true));
     }
 
+    public function getInfoComunicado(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $id_comunicado = $request->id_comunicado;
+        $info_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([['Id_comunicado',$id_comunicado]])
+            ->get();
+
+        return response()->json($info_comunicado);
+    }
 
     public function getInformacionCorrespondencia(Request $request){
         if (!Auth::check()) {

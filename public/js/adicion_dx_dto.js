@@ -2625,15 +2625,35 @@ $(document).ready(function(){
         $(".extensionInvalidaModal").addClass('d-none');
         $('#cargue_comunicados_modal').val('');
         comunicado_reemplazar = $(this).data('archivo');
-        let nombre_doc = comunicado_reemplazar.Nombre_documento;
-        if(nombre_doc != null && nombre_doc != "null" && comunicado_reemplazar.Tipo_descarga !== 'Manual'){
-            extensionDoc = `.${ nombre_doc.split('.').pop()}`;
-            document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+        data_comunicado = {
+            '_token': $('input[name=_token]').val(),
+            'id_comunicado': comunicado_reemplazar.Id_Comunicado
         }
-        else if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
-            extensionDocManual = ['.pdf','.doc','.docx','.xlsx']
-            document.getElementById('cargue_comunicados_modal').setAttribute('accept', '.pdf, .doc, .docx, .xlsx');
-        }
+        $.ajax({
+            type:'POST',
+            url:'/getInfoComunicado',
+            data: data_comunicado,
+            beforeSend:  function() {
+                $("#cargarComunicadoModal").addClass("descarga-deshabilitada");
+            },
+            success:function(response){
+                if(response && response[0]){
+                    comunicado_reemplazar = response[0];
+                    let nombre_doc = comunicado_reemplazar.Nombre_documento;
+                    if(nombre_doc != null && nombre_doc != "null" && comunicado_reemplazar.Tipo_descarga !== 'Manual'){
+                        extensionDoc = `.${ nombre_doc.split('.').pop()}`;
+                        document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+                    }
+                    else if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
+                        extensionDocManual = ['.pdf','.doc','.docx','.xlsx']
+                        document.getElementById('cargue_comunicados_modal').setAttribute('accept', '.pdf, .doc, .docx, .xlsx');
+                    }
+                }
+            },
+            complete:function(){
+                $("#cargarComunicadoModal").removeClass("descarga-deshabilitada");
+            }
+        });
     });
 
     const initValueExtension = document.getElementById('extensionInvalidaMensaje')?.textContent;

@@ -3964,21 +3964,21 @@ $(document).ready(function(){
         $(".extensionInvalidaModal").addClass('d-none');
         var archivo = $('#cargue_comunicados_modal')[0].files[0];
         extensionDocCargado = `.${archivo.name.split('.').pop()}`;
-        if($(comunicado_reemplazar).data('tipo_descarga') === 'Manual' && extensionDocManual.includes(extensionDocCargado)){
+        if(comunicado_reemplazar.Tipo_descarga === 'Manual' && extensionDocManual?.includes(extensionDocCargado)){
             var formData = new FormData($('form')[0]);
             formData.append('doc_de_reemplazo', archivo);
             formData.append('token', $('input[name=_token]').val());
-            formData.append('id_comunicado', $(comunicado_reemplazar).data('id_comunicado'));
-            formData.append('tipo_descarga', $(comunicado_reemplazar).data('tipo_descarga'));
-            formData.append('id_asignacion', $(comunicado_reemplazar).data('id_asignacion'));
-            formData.append('id_proceso', $(comunicado_reemplazar).data('id_proceso'));
-            formData.append('id_evento', $(comunicado_reemplazar).data('id_evento'));
-            formData.append('n_radicado', $(comunicado_reemplazar).data('numero_radicado'));
-            formData.append('numero_identificacion', $(comunicado_reemplazar).data('numero_identificacion'))
-            formData.append('modulo_creacion', 'calificacionOrigen');
+            formData.append('id_comunicado', comunicado_reemplazar.Id_Comunicado);
+            formData.append('tipo_descarga', comunicado_reemplazar.Tipo_descarga);
+            formData.append('id_asignacion', comunicado_reemplazar.Id_Asignacion);
+            formData.append('id_proceso', comunicado_reemplazar.Id_proceso);
+            formData.append('id_evento', comunicado_reemplazar.ID_evento);
+            formData.append('n_radicado', comunicado_reemplazar.N_radicado);
+            formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion)
+            formData.append('modulo_creacion', 'calificacionJuntas');
             formData.append('nombre_documento', archivo.name);
             formData.append('asunto', archivo.name);
-            formData.append('nombre_anterior', $(comunicado_reemplazar).data('nombre_documento'));
+            formData.append('nombre_anterior', comunicado_reemplazar.Nombre_documento);
             $.ajax({
                 type:'POST',
                 url:'/reemplazarDocumento',
@@ -4006,20 +4006,20 @@ $(document).ready(function(){
                 }
             });
         }
-        else if($(comunicado_reemplazar).data('tipo_descarga') !== 'Manual' && extensionDoc === extensionDocCargado){
+        else if(comunicado_reemplazar.Tipo_descarga !== 'Manual' && extensionDoc === extensionDocCargado){
             var formData = new FormData($('form')[0]);
             formData.append('doc_de_reemplazo', archivo);
             formData.append('token', $('input[name=_token]').val());
-            formData.append('id_comunicado', $(comunicado_reemplazar).data('id_comunicado'));
-            formData.append('tipo_descarga', $(comunicado_reemplazar).data('tipo_descarga'));
-            formData.append('id_asignacion', $(comunicado_reemplazar).data('id_asignacion'));
-            formData.append('id_proceso', $(comunicado_reemplazar).data('id_proceso'));
-            formData.append('id_evento', $(comunicado_reemplazar).data('id_evento'));
-            formData.append('n_radicado', $(comunicado_reemplazar).data('numero_radicado'));
-            formData.append('numero_identificacion', $(comunicado_reemplazar).data('numero_identificacion'))
-            formData.append('modulo_creacion', 'calificacionOrigen');
-            formData.append('nombre_documento', $(comunicado_reemplazar).data('nombre_documento'));
-            formData.append('asunto', $(comunicado_reemplazar).data('asunto_comunicado'));
+            formData.append('id_comunicado', comunicado_reemplazar.Id_Comunicado);
+            formData.append('tipo_descarga', comunicado_reemplazar.Tipo_descarga);
+            formData.append('id_asignacion', comunicado_reemplazar.Id_Asignacion);
+            formData.append('id_proceso', comunicado_reemplazar.Id_proceso);
+            formData.append('id_evento', comunicado_reemplazar.ID_evento);
+            formData.append('n_radicado', comunicado_reemplazar.N_radicado);
+            formData.append('numero_identificacion', comunicado_reemplazar.N_identificacion)
+            formData.append('modulo_creacion', 'calificacionJuntas');
+            formData.append('nombre_documento', comunicado_reemplazar.Nombre_documento);
+            formData.append('asunto', comunicado_reemplazar.Asunto);
             formData.append('nombre_anterior', '');
             $.ajax({
                 type:'POST',
@@ -4050,7 +4050,7 @@ $(document).ready(function(){
         }
         else{
             document.getElementById('extensionInvalidaMensaje').textContent = initValueExtension;
-            if($(comunicado_reemplazar).data('tipo_descarga') !== 'Manual'){
+            if(comunicado_reemplazar.Tipo_descarga !== 'Manual'){
                 if (!document.getElementById('extensionInvalidaMensaje').textContent.includes(extensionDoc)) {
                     document.getElementById('extensionInvalidaMensaje').textContent += extensionDoc;
                 }
@@ -4068,16 +4068,35 @@ $(document).ready(function(){
         $(".cargueundocumentoprimeromodal").addClass('d-none');
         $(".extensionInvalidaModal").addClass('d-none');
         $('#cargue_comunicados_modal').val('');
-        let nombre_doc = this.getAttribute('data-nombre_documento');
-        if(nombre_doc != null && nombre_doc != "null" && this.getAttribute('data-tipo_descarga') !== 'Manual'){
-            extensionDoc = `.${ nombre_doc.split('.').pop()}`;
-            document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+        data_comunicado = {
+            '_token': $('input[name=_token]').val(),
+            'id_comunicado': this.getAttribute('data-id_comunicado')
         }
-        else if(this.getAttribute('data-tipo_descarga') === 'Manual'){
-            extensionDocManual = ['.pdf','.doc','.docx','.xlsx']
-            document.getElementById('cargue_comunicados_modal').setAttribute('accept', '.pdf, .doc, .docx, .xlsx');
-        }
-        comunicado_reemplazar = this;
+        $.ajax({
+            type:'POST',
+            url:'/getInfoComunicado',
+            data: data_comunicado,
+            beforeSend:  function() {
+                $("#cargarComunicadoModal").addClass("descarga-deshabilitada");
+            },
+            success:function(response){
+                if(response && response[0]){
+                    comunicado_reemplazar = response[0];
+                    let nombre_doc = comunicado_reemplazar.Nombre_documento;
+                    if(nombre_doc != null && nombre_doc != "null" && comunicado_reemplazar.Tipo_descarga !== 'Manual'){
+                        extensionDoc = `.${ nombre_doc.split('.').pop()}`;
+                        document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
+                    }
+                    else if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
+                        extensionDocManual = ['.pdf','.doc','.docx','.xlsx']
+                        document.getElementById('cargue_comunicados_modal').setAttribute('accept', '.pdf, .doc, .docx, .xlsx');
+                    }
+                }
+            },
+            complete:function(){
+                $("#cargarComunicadoModal").removeClass("descarga-deshabilitada");
+            }
+        });
     });
 
     //Asignar ruta del formulario de actualizar el comunicado

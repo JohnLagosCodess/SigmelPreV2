@@ -311,6 +311,8 @@ Route::post('/alertasNaranjasRojasPCL', [CoordinadorController::class, 'alertaNa
 Route::post('/actualizarProfesionalServicio', [CoordinadorController::class, 'actualizarBandejaPCL']);
 // Acción: Reemplazar Documentos
 Route::post('/reemplazarDocumento', [CoordinadorController::class, 'reemplazarDocumento']);
+// Acción: Obtener información comunicado
+Route::post('/getInfoComunicado', [CoordinadorController::class, 'getInfoComunicado']);
 // Acción: Traer la información necesaria para la correspondencia PBS014
 Route::post('/getInformacionCorrespondencia', [CoordinadorController::class, 'getInformacionCorrespondencia']);
 // Acción: Guardar la información de la correspondencia PBS014
