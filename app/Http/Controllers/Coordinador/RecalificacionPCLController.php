@@ -41,11 +41,15 @@ use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_lista_tablas_1507_decretos;
 use App\Models\sigmel_lista_tipo_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Traits\GenerarRadicados;
+
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 
 class RecalificacionPCLController extends Controller
 {
+    use GenerarRadicados;
+
     public function mostrarVistaRecalificacionPCL(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -849,47 +853,8 @@ class RecalificacionPCLController extends Controller
                 ->get(); 
         
                 // creación de consecutivo para el comunicado
-                $radicadocomunicadore = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-                ->select('N_radicado')
-                ->where([
-                    ['ID_evento',$Id_evento_recali],
-                    ['F_comunicado',$date],
-                    ['Id_proceso','2']
-                ])
-                ->orderBy('N_radicado', 'desc')
-                ->limit(1)
-                ->get();
-                    
-                if(count($radicadocomunicadore)==0){
-                    $fechaActual = date("Ymd");
-                    // Obtener el último valor de la base de datos o archivo
-                    $consecutivoP1 = "SAL-PCL";
-                    $consecutivoP2 = $fechaActual;
-                    $consecutivoP3 = '000000';
-                    $ultimoDigito = substr($consecutivoP3, -6);
-                    $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
-                    $nuevoConsecutivo = $ultimoDigito + 1;
-                    // Reiniciar el consecutivo si es un nuevo día
-                    if (date("Ymd") != $fechaActual) {
-                        $nuevoConsecutivo = 0;
-                    }
-                    // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-                    $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-                    $consecutivore = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;            
-                }else{
-                    $fechaActual = date("Ymd");
-                    $ultimoConsecutivo = $radicadocomunicadore[0]->N_radicado;
-                    $ultimoDigito = substr($ultimoConsecutivo, -6);
-                    $nuevoConsecutivo = $ultimoDigito + 1;
-                    // Reiniciar el consecutivo si es un nuevo día
-                    if (date("Ymd") != $fechaActual) {
-                        $nuevoConsecutivo = 0;
-                    }
-                    // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-                    $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-                    $consecutivore = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;
-                }
-        
+                $consecutivore = $this->getRadicado('pcl',$Id_evento_recali);
+
                 $array_dictamen_pericialre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
@@ -1484,46 +1449,7 @@ class RecalificacionPCLController extends Controller
                 ->get(); 
         
                 // creación de consecutivo para el comunicado
-                $radicadocomunicadore = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-                ->select('N_radicado')
-                ->where([
-                    ['ID_evento',$Id_evento_recali],
-                    ['F_comunicado',$date],
-                    ['Id_proceso','2']
-                ])
-                ->orderBy('N_radicado', 'desc')
-                ->limit(1)
-                ->get();
-                    
-                if(count($radicadocomunicadore)==0){
-                    $fechaActual = date("Ymd");
-                    // Obtener el último valor de la base de datos o archivo
-                    $consecutivoP1 = "SAL-PCL";
-                    $consecutivoP2 = $fechaActual;
-                    $consecutivoP3 = '000000';
-                    $ultimoDigito = substr($consecutivoP3, -6);
-                    $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
-                    $nuevoConsecutivo = $ultimoDigito + 1;
-                    // Reiniciar el consecutivo si es un nuevo día
-                    if (date("Ymd") != $fechaActual) {
-                        $nuevoConsecutivo = 0;
-                    }
-                    // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-                    $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-                    $consecutivore = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;            
-                }else{
-                    $fechaActual = date("Ymd");
-                    $ultimoConsecutivo = $radicadocomunicadore[0]->N_radicado;
-                    $ultimoDigito = substr($ultimoConsecutivo, -6);
-                    $nuevoConsecutivo = $ultimoDigito + 1;
-                    // Reiniciar el consecutivo si es un nuevo día
-                    if (date("Ymd") != $fechaActual) {
-                        $nuevoConsecutivo = 0;
-                    }
-                    // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-                    $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-                    $consecutivore = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;
-                }
+                $consecutivore = $this->getRadicado('pcl',$Id_evento_recali);
         
                 $array_dictamen_pericialre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
@@ -2331,46 +2257,7 @@ class RecalificacionPCLController extends Controller
                 ->get(); 
         
                 // creación de consecutivo para el comunicado
-                $radicadocomunicadore = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-                ->select('N_radicado')
-                ->where([
-                    ['ID_evento',$Id_evento_recali],
-                    ['F_comunicado',$date],
-                    ['Id_proceso','2']
-                ])
-                ->orderBy('N_radicado', 'desc')
-                ->limit(1)
-                ->get();
-                    
-                if(count($radicadocomunicadore)==0){
-                    $fechaActual = date("Ymd");
-                    // Obtener el último valor de la base de datos o archivo
-                    $consecutivoP1 = "SAL-PCL";
-                    $consecutivoP2 = $fechaActual;
-                    $consecutivoP3 = '000000';
-                    $ultimoDigito = substr($consecutivoP3, -6);
-                    $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
-                    $nuevoConsecutivo = $ultimoDigito + 1;
-                    // Reiniciar el consecutivo si es un nuevo día
-                    if (date("Ymd") != $fechaActual) {
-                        $nuevoConsecutivo = 0;
-                    }
-                    // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-                    $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-                    $consecutivore = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;            
-                }else{
-                    $fechaActual = date("Ymd");
-                    $ultimoConsecutivo = $radicadocomunicadore[0]->N_radicado;
-                    $ultimoDigito = substr($ultimoConsecutivo, -6);
-                    $nuevoConsecutivo = $ultimoDigito + 1;
-                    // Reiniciar el consecutivo si es un nuevo día
-                    if (date("Ymd") != $fechaActual) {
-                        $nuevoConsecutivo = 0;
-                    }
-                    // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-                    $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-                    $consecutivore = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;
-                }
+                $consecutivore = $this->getRadicado('pcl',$Id_evento_recali);
         
                 $array_dictamen_pericialre =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'side.Tipo_evento')
@@ -5228,7 +5115,8 @@ class RecalificacionPCLController extends Controller
         $firmar = $request->firmar;
         $ciudad = $request->ciudad;
         $f_correspondencia = $request->f_correspondencia;
-        $radicado = $request->radicado;
+        $radicado = $this->disponible($request->radicado,$Id_EventoDecreto)->getRadicado('pcl',$Id_EventoDecreto);
+        
         $bandera_correspondecia_guardar_actualizar = $request->bandera_correspondecia_guardar_actualizar;
 
         /* Se completan los siguientes datos para lo del tema del pbs 014 */
@@ -5409,7 +5297,7 @@ class RecalificacionPCLController extends Controller
                 'Firmar' => $firmar,
                 'Ciudad' => $ciudad,
                 'F_correspondecia' => $f_correspondencia,
-                'N_radicado' => $radicado,
+                //'N_radicado' => $radicado,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];
@@ -5426,7 +5314,7 @@ class RecalificacionPCLController extends Controller
                 'Id_Asignacion' => $Id_Asignacion_Dcreto,
                 'Ciudad' => $ciudad,
                 'F_comunicado' => $date,
-                'N_radicado' => $radicado,
+                //'N_radicado' => $radicado,
                 'Cliente' => 'N/A',
                 'Nombre_afiliado' => $destinatario_principal,
                 'T_documento' => 'N/A',

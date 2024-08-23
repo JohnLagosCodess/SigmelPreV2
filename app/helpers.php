@@ -24,36 +24,4 @@ use Illuminate\Support\Facades\DB;
        $fecha = DB::select("SELECT sigmel_gestiones.fnCalcularDiasHabilesV2(?,?) as Fecha",[$FechaInicio,$Secuencia]);
        return $fecha[0]->Fecha;
     }
-
-    /**
-     * Funcion para para obtener un numero de radicado en funcion de un proceso en especifico
-     * @param string $proceso Proceso al que pertenece la secuencia
-     * @return string numero de radicado
-     */
-    function getRadicado($proceso){
-        switch($proceso){
-            case 'Juntas': 
-                $p1 = 'SAL-JUN';
-                $p2 = date('Ymd'); //fecha actual
-                $consecutivo = DB::table(getDatabaseName('sigmel_gestiones') . 'cndatos_info_comunicado_eventos')
-                ->select('N_radicado')
-                ->where('Id_proceso',3)->max('N_radicado');
-
-                $consecutivo = $consecutivo ? substr($consecutivo,-6) : 0;
-                 
-                if (date("Ymd") != $p2) {
-                    $nuevoConsecutivo = 0;
-                }
-
-                //Obtenemos los ultimos 6 digitos del ultimo radicado y =le sumamos 1
-                $consecutivo = sprintf("%06d",$consecutivo + 1);
-
-                $radicado = sprintf("%s%s%s", $p1,$p2,$consecutivo);
-            break;
-            default: '';
-        }
-        
-        return $radicado;
-
-    }
 ?>

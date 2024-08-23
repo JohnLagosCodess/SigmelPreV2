@@ -530,7 +530,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="N_dictamen_controvertido">N° Dictamen controvertido<span style="color: red;">(*)</span></label>
-                                                <input type="number" class="form-control soloNumeros" name="N_dictamen_controvertido" id="N_dictamen_controvertido" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->N_dictamen_controvertido;} ?>" required>
+                                                <input type="text" class="form-control" name="N_dictamen_controvertido" id="N_dictamen_controvertido" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->N_dictamen_controvertido;} ?>" required>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -655,8 +655,8 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="f_contro_radi_califi">Fecha de radicación controversia primera calificación <span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_contro_radi_califi" id="f_contro_radi_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>" required>
+                                                <label for="f_contro_radi_califi">Fecha de radicación controversia primera calificación</label>
+                                                <input type="date" class="form-control" name="f_contro_radi_califi" id="f_contro_radi_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -908,6 +908,13 @@
                                 <h5>Historial de comunicados y expedientes</h5>
                             </div>
                             <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">                                               
+                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Recuerde que despues de generar o actualizar un archivo debe descargarlo y recargar la pagina para poder reemplazarlo
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="table-responsive">
                                     <table id="listado_agregar_comunicados" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
                                         <thead>
