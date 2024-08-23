@@ -74,6 +74,12 @@
                                             <thead>
                                                 <tr class="bg-info">
                                                     <th>CONS</th>
+                                                    <th>Id_correspondencia</th>
+                                                    <th>Id_comunicado</th>
+                                                    <th>Id_asignacion</th>
+                                                    <th>Id_proceso</th>
+                                                    <th>Id_servicio</th>
+                                                    <th>Id_evento</th>
                                                     <th>FECHA COMUNICADO</th>
                                                     <th>N° RADICADO</th>
                                                     <th>DOCUMENTO</th>
