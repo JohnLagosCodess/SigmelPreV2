@@ -40,6 +40,7 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_auditorias_informacion_accion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
+use App\Traits\GenerarRadicados;
 
 use DateTime;
 use PhpOffice\PhpWord\PhpWord;
@@ -48,6 +49,8 @@ use PhpOffice\PhpWord\Shared\Html;
 
 class CalificacionJuntasController extends Controller
 {
+    use GenerarRadicados;
+
     public function mostrarVistaCalificacionJuntas(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -122,47 +125,8 @@ class CalificacionJuntasController extends Controller
         ->get();
 
         // creación de consecutivo para el comunicado
-       $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-       ->select('N_radicado')
-       ->where([
-           ['ID_evento',$newIdEvento],
-           ['F_comunicado',$date],
-           ['Id_proceso','3']
-       ])
-       ->orderBy('N_radicado', 'desc')
-       ->limit(1)
-       ->get();
-       
-       if(count($radicadocomunicado)==0){
-           $fechaActual = date("Ymd");
-           // Obtener el último valor de la base de datos o archivo
-           $consecutivoP1 = "SAL-JUN";
-           $consecutivoP2 = $fechaActual;
-           $consecutivoP3 = '000000';
-           $ultimoDigito = substr($consecutivoP3, -6);
-           $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
-           $nuevoConsecutivo = $ultimoDigito + 1;
-           // Reiniciar el consecutivo si es un nuevo día
-           if (date("Ymd") != $fechaActual) {
-               $nuevoConsecutivo = 0;
-           }
-           // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-           $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-           $consecutivo = "SAL-JUN" . $fechaActual . $nuevoConsecutivoFormatted; 
-           
-       }else{
-           $fechaActual = date("Ymd");
-           $ultimoConsecutivo = $radicadocomunicado[0]->N_radicado;
-           $ultimoDigito = substr($ultimoConsecutivo, -6);
-           $nuevoConsecutivo = $ultimoDigito + 1;
-           // Reiniciar el consecutivo si es un nuevo día
-           if (date("Ymd") != $fechaActual) {
-               $nuevoConsecutivo = 0;
-           }
-           // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-           $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-           $consecutivo = "SAL-JUN" . $fechaActual . $nuevoConsecutivoFormatted;
-       }
+       $consecutivo = $this->config(['prefix' => 'SAL-JUN'])->getRadicado('juntas',$newIdEvento);
+
        //Historial De Seguimientos
        $hitorialAgregarSeguimiento = sigmel_informacion_seguimientos_eventos::on('sigmel_gestiones')
             ->select('ID_evento','F_seguimiento','Causal_seguimiento','Descripcion_seguimiento','Nombre_usuario')
@@ -2480,6 +2444,9 @@ class CalificacionJuntasController extends Controller
         $Id_asignacion = $request->Id_asignacion;
         $Id_procesos = $request->Id_procesos;
         $tipo_descarga = $request->tipo_descarga;
+
+        $radicado = $this->disponible($request->radicado2,$Id_evento)->getRadicado('juntas',$Id_evento);
+
         if($tipo_descarga != 'Manual'){
             $radiojrci_comunicado = $request->radiojrci_comunicado;
             $radiojnci_comunicado = $request->radiojnci_comunicado;
@@ -2529,15 +2496,15 @@ class CalificacionJuntasController extends Controller
                 && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && !empty($radioOtro)){
                     $destinatario = 'Otro';
             }
+            
 
             $datos_info_registrarComunicadoPcl=[
-
                 'ID_evento' => $Id_evento,
                 'Id_Asignacion' => $Id_asignacion,
                 'Id_proceso' => $Id_procesos,
                 'Ciudad' => $request->ciudad,
                 'F_comunicado' => $request->fecha_comunicado2,
-                'N_radicado' => $request->radicado2,
+                'N_radicado' => $radicado,
                 'Cliente' => $request->cliente_comunicado2,
                 'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
                 'T_documento' => $request->tipo_documento_comunicado2,
@@ -2627,7 +2594,7 @@ class CalificacionJuntasController extends Controller
                 'Id_proceso' => $Id_procesos,
                 'Ciudad' => $request->ciudad,
                 'F_comunicado' => $date,
-                'N_radicado' => $request->radicado2,
+                'N_radicado' => $radicado,
                 'Cliente' => $request->cliente_comunicado2,
                 'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
                 'T_documento' => $request->tipo_documento_comunicado2,
@@ -5962,7 +5929,7 @@ class CalificacionJuntasController extends Controller
             ['Asunto','LIKE','Lista_chequeo%']
         ])->first();
         
-        $n_radicado = !empty($radicado_comunicado) ? $radicado_comunicado->N_radicado  : getRadicado('Juntas'); //Para cada lista de chequeo se le debe generar un radicado
+        $n_radicado = !empty($radicado_comunicado) ? $radicado_comunicado->N_radicado  :$this->getRadicado('juntas',$request->Id_evento); //Para cada lista de chequeo se le debe generar un radicado
 
 
         $extension_proforma = "pdf";
