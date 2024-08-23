@@ -2562,7 +2562,8 @@ $(document).ready(function(){
         }
     });
 
-    $("form[id^='ver_dictamentPCL']").submit(function(e){
+    $(document).on('submit',"form[id^='ver_dictamentPCL']",function (e){
+    // $("form[id^='ver_dictamentPCL']").submit(function(e){
         e.preventDefault();
         var infoComunicado = $(this).data("archivo");
         var nombre_doc = infoComunicado.Nombre_documento;
@@ -2578,7 +2579,8 @@ $(document).ready(function(){
         }, 1000);
     });
 
-    $("form[id^='verNotificacionPCL']").submit(function(e){
+    $(document).on('submit',"form[id^='verNotificacionPCL']",function (e){
+    // $("form[id^='verNotificacionPCL']").submit(function(e){
         e.preventDefault();
         var infoComunicado = $(this).data("archivo");
         var nombre_doc = infoComunicado.Nombre_documento;
