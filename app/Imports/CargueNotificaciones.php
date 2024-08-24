@@ -342,7 +342,41 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
                 } else {
                     // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
                 }
-                break;
+            break;
+            case 'AFP_CONOCIMIENTO':
+                $info_destinatario_afp_conocimiento = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones') 
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
+                'sie.Telefonos', 'sie.Emails', 'slp.Nombre_parametro')
+                ->leftJoin('sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sigmel_informacion_afiliado_eventos.Id_afp_entidad_conocimiento')
+                ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
+                ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+                ->where('sigmel_informacion_afiliado_eventos.ID_evento', $idEvento)
+                ->first();   
+                
+                 // Verificar si se encontró un registro
+                if ($info_destinatario_afp_conocimiento) {
+                    // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
+                    // Acceder a los datos del afiliado
+                    $Nombre_destinatario = $info_destinatario_afp_conocimiento->Nombre_entidad;
+                    $Direccion_destinatario = $info_destinatario_afp_conocimiento->Direccion;                      
+                    $Departamento = $info_destinatario_afp_conocimiento->Nombre_departamento;                        
+                    $Ciudad = $info_destinatario_afp_conocimiento->Nombre_municipio;                        
+                    $Telefono_destinatario = $info_destinatario_afp_conocimiento->Telefonos;                        
+                    $Email_destinatario = $info_destinatario_afp_conocimiento->Emails;
+                    $Medio_notificacion = $info_destinatario_afp_conocimiento->Nombre_parametro;
+
+                    
+                } else {
+                    $Nombre_destinatario = '';
+                    $Direccion_destinatario = '';                      
+                    $Departamento = '';                        
+                    $Ciudad = '';                        
+                    $Telefono_destinatario = '';                        
+                    $Email_destinatario = '';
+                    $Medio_notificacion = '';
+                    // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
+                }
+            break;
             default:
                 $Nombre_destinatario = '';
                 $Direccion_destinatario = '';                      
@@ -355,15 +389,15 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
         }
 
         // Verificar los valores de las variables justo antes del insert
-        // Log::info('Valores para insert: ', [
-        //     'Nombre_destinatario' => $Nombre_destinatario,
-        //     'Direccion_destinatario' => $Direccion_destinatario,
-        //     'Departamento' => $Departamento,
-        //     'Ciudad' => $Ciudad,
-        //     'Telefono_destinatario' => $Telefono_destinatario,
-        //     'Email_destinatario' => $Email_destinatario,
-        //     'Medio_notificacion' => $Medio_notificacion
-        // ]);
+        Log::info('Valores para insert: ', [
+            'Nombre_destinatario' => $Nombre_destinatario,
+            'Direccion_destinatario' => $Direccion_destinatario,
+            'Departamento' => $Departamento,
+            'Ciudad' => $Ciudad,
+            'Telefono_destinatario' => $Telefono_destinatario,
+            'Email_destinatario' => $Email_destinatario,
+            'Medio_notificacion' => $Medio_notificacion
+        ]);
 
         // Si idCorrespondencia no está presente, realizar un insert
         if (!$idCorrespondencia) {
@@ -404,7 +438,8 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
             // Si idCorrespondencia está presente, realizar un update
             // Si la junta regiona no quedo insertada hace el if para la actualizarla 
             // Y el Else es para actualizar los otros documentos
-            if ($carpetaImpresion == 'CARGADO_MANUALMENTE' && $tipoDestinatario == 'JRCI') {
+            if ($carpetaImpresion == 'CARGADO_MANUALMENTE' && $tipoDestinatario == 'JRCI' || 
+                $carpetaImpresion == 'CARGADO_MANUALMENTE' && $tipoDestinatario == 'AFP_CONOCIMIENTO') {
 
                 // Buscar  el registro en la tabla sigmel_informacion_correspondencia_eventos
                 $actualizar_correspondencia = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')
