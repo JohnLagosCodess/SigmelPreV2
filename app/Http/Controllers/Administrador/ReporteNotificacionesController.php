@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Response;
 
 use App\Models\sigmel_numero_orden_eventos;
 use App\Models\cndatos_reportes_notificaciones;
+use App\Models\cndatos_reportes_notificaciones_manuales;
 use Maatwebsite\Excel\Facades\Excel;
 
 use ZipArchive;
@@ -75,34 +76,51 @@ class ReporteNotificacionesController extends Controller
             return json_decode(json_encode($mensajes, true));
         }
         else if (!empty($fecha_desde) && !empty($fecha_hasta)){
-            $reporte_notificaciones = cndatos_reportes_notificaciones::on('sigmel_gestiones')
-            ->select(
-                'F_comunicado',
-                'N_radicado',
-                'Nombre_documento',
-                'Carpeta_impresion',
-                'Observaciones',
-                'N_identificacion',
-                'Destinatario',
-                'Nombre_destinatario',
-                'Direccion_destinatario',
-                'Telefono_destinatario',
-                'Ciudad',
-                'Departamento',
-                'Email_destinatario',
-                'Proceso',
-                'Servicio',
-                'Accion',
-                'Estado',
-                'N_orden',
-                'Tipo_destinatario',
-                'N_guia',
-                'Folios',
-                'F_envio',
-                'F_notificacion',
-                'Estado_correspondencia')
-            ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
-            // ->orderBy('ID_evento', 'desc')
+            // $reporte_notificaciones = cndatos_reportes_notificaciones::on('sigmel_gestiones')
+            // ->select(
+            //     'F_comunicado',
+            //     'N_radicado',
+            //     'Nombre_documento',
+            //     'Carpeta_impresion',
+            //     'Observaciones',
+            //     'N_identificacion',
+            //     'Destinatario',
+            //     'Nombre_destinatario',
+            //     'Direccion_destinatario',
+            //     'Telefono_destinatario',
+            //     'Ciudad',
+            //     'Departamento',
+            //     'Email_destinatario',
+            //     'Proceso',
+            //     'Servicio',
+            //     'Accion',
+            //     'Estado',
+            //     'N_orden',
+            //     'Tipo_destinatario',
+            //     'N_guia',
+            //     'Folios',
+            //     'F_envio',
+            //     'F_notificacion',
+            //     'Estado_correspondencia')
+            // ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+            // // ->orderBy('ID_evento', 'desc')
+            // ->get();
+
+            $reporte_notificaciones = DB::table('sigmel_gestiones.cndatos_reportes_notificaciones')
+            ->select('Id_Correspondencia', 'Id_comunicado', 'Id_Asignacion', 'Id_proceso', 'Id_servicio', 'ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion', 'Observaciones', 'N_identificacion',
+                     'Destinatario', 'Nombre_destinatario', 'Direccion_destinatario', 'Telefono_destinatario', 'Ciudad', 'Departamento', 'Email_destinatario', 'Proceso', 'Servicio', 'Accion', 'Estado',
+                     'N_orden', 'Tipo_destinatario', 'N_guia', 'Folios', 'F_envio', 'F_notificacion', 'Estado_correspondencia')
+                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+            ->union(
+                DB::table('sigmel_gestiones.cndatos_reportes_notificaciones_manuales')
+                    ->select('Id_Correspondencia', 'Id_comunicado', 'Id_Asignacion', 'Id_proceso', 'Id_servicio', 'ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion', 'Observaciones', 'N_identificacion',
+                             'Destinatario', 'Nombre_destinatario', 'Direccion_destinatario', 'Telefono_destinatario', 'Ciudad', 'Departamento', 'Email_destinatario', 'Proceso', 'Servicio', 'Accion', 'Estado',
+                             'N_orden', 'Tipo_destinatario', 'N_guia', 'Folios', 'F_envio', 'F_notificacion', 'Estado_correspondencia')
+                    ->where('Carpeta_impresion', 'CARGADO_MANUALMENTE')
+                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+            )
+            ->orderByDesc('F_comunicado')
+            ->orderBy('N_radicado')
             ->get();
 
             $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true)); 
@@ -175,9 +193,20 @@ class ReporteNotificacionesController extends Controller
         else if (!empty($fecha_desde) && !empty($fecha_hasta)){
 
             /* Consultamos unicamente las columnas de Nombre_documento y Carpeta_impresion y ID_evento */
-            $datos_reporte_notificaciones = cndatos_reportes_notificaciones::on('sigmel_gestiones')
+            // $datos_reporte_notificaciones = cndatos_reportes_notificaciones::on('sigmel_gestiones')
+            // ->select('ID_evento', 'Nombre_documento', 'Carpeta_impresion')
+            // ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+            // ->get();
+
+            $datos_reporte_notificaciones = DB::table('sigmel_gestiones.cndatos_reportes_notificaciones')
             ->select('ID_evento', 'Nombre_documento', 'Carpeta_impresion')
-            ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+            ->union(
+                DB::table('sigmel_gestiones.cndatos_reportes_notificaciones_manuales')
+                    ->select('ID_evento', 'Nombre_documento', 'Carpeta_impresion')
+                    ->where('Carpeta_impresion', 'CARGADO_MANUALMENTE')
+                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+            )            
             ->get();
 
             /* guardarmos los datos en un array */
@@ -281,8 +310,12 @@ class ReporteNotificacionesController extends Controller
 
     // Cargue correspondecias o notificaciones
 
-    public function cargueCorrespondencias(Request $request)
-    {
+    public function cargueCorrespondencias(Request $request){
+
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        
         $request->validate([
             'cargue_corres' => 'required|mimes:csv,xlsx,xls|max:20480'
         ], [

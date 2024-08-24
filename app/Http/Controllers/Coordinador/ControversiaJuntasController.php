@@ -24,6 +24,7 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
 use App\Models\sigmel_informacion_correspondencia_eventos;
+use App\Traits\GenerarRadicados;
 
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
@@ -31,6 +32,8 @@ use PhpOffice\PhpWord\Shared\Html;
 
 class ControversiaJuntasController extends Controller
 {
+    use GenerarRadicados;
+    
     public function mostrarVistaPronunciamientoJuntas(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -154,47 +157,10 @@ class ControversiaJuntasController extends Controller
             ['Id_Asignacion',$Id_asignacion_juntas]
         ])
         ->get(); 
+
+       
         // creación de consecutivo para el comunicado
-        $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-        ->select('N_radicado')
-        ->where([
-            ['ID_evento',$Id_evento_juntas],
-            ['F_comunicado',$date],
-            ['Id_proceso','3']
-        ])
-        ->orderBy('N_radicado', 'desc')
-        ->limit(1)
-        ->get();
-            
-        if(count($radicadocomunicado)==0){
-            $fechaActual = date("Ymd");
-            // Obtener el último valor de la base de datos o archivo
-            $consecutivoP1 = "SAL-JUN";
-            $consecutivoP2 = $fechaActual;
-            $consecutivoP3 = '000000';
-            $ultimoDigito = substr($consecutivoP3, -6);
-            $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
-            $nuevoConsecutivo = $ultimoDigito + 1;
-            // Reiniciar el consecutivo si es un nuevo día
-            if (date("Ymd") != $fechaActual) {
-                $nuevoConsecutivo = 0;
-            }
-            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-            $consecutivo = "SAL-JUN" . $fechaActual . $nuevoConsecutivoFormatted;            
-        }else{
-            $fechaActual = date("Ymd");
-            $ultimoConsecutivo = $radicadocomunicado[0]->N_radicado;
-            $ultimoDigito = substr($ultimoConsecutivo, -6);
-            $nuevoConsecutivo = $ultimoDigito + 1;
-            // Reiniciar el consecutivo si es un nuevo día
-            if (date("Ymd") != $fechaActual) {
-                $nuevoConsecutivo = 0;
-            }
-            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-            $consecutivo = "SAL-JUN" . $fechaActual . $nuevoConsecutivoFormatted;
-        }
+        $consecutivo = $this->getRadicado('juntas',$Id_evento_juntas);
 
         // traemos los comunicados
         $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
@@ -1792,7 +1758,8 @@ class ControversiaJuntasController extends Controller
         $ciudad = $request->ciudad;
         // $f_correspondencia = $request->f_correspondencia;
         $f_correspondencia = $date;
-        $radicado = $request->radicado;
+        $radicado = $this->disponible($request->radicado,$newId_evento)
+                        ->getRadicado('juntas',$newId_evento);
         $bandera_correspondecia_guardar_actualizar = $request->bandera_correspondecia_guardar_actualizar;
 
         // eL número de identificacion siempre será el del afiliado.
