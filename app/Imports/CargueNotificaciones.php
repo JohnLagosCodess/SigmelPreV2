@@ -76,9 +76,9 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
             'f_envio' => 'required|date_format:Y-m-d',
             'f_notificacion' => 'required|date_format:Y-m-d',
             'estado_correspondencia' => 'required|string',
-            'destinario_copias' => 'nullable|string',
+            'destinario_copias_subrayar' => 'required|string',
             'jrci' => 'nullable|string',
-            'correspondencia' => 'required|string',
+            'correspondencia_negrilla' => 'required|string',
                         
         ]);
 
@@ -93,13 +93,13 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
         // Cambiar el valor de estado_correspondencia basado en las condiciones de la tabla  sigmel_lista_parametros
         switch ($row['estado_correspondencia']) {
             case 'Notificado':
-                $row['estado_correspondencia'] = 359;
-            break;
-            case 'Devuelto':
                 $row['estado_correspondencia'] = 360;
             break;
-            case 'Pendiente':
+            case 'Devuelto':
                 $row['estado_correspondencia'] = 361;
+            break;
+            case 'Pendiente':
+                $row['estado_correspondencia'] = 362;
             break;
         }
 
@@ -126,9 +126,9 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
             // Log::info('Registro encontrado: ' . json_encode($actualizar_comunicado));
             // Actualizar el registro
             $actualizar_comunicado->update([
-                'Agregar_copia' => $row['destinario_copias'],                
+                'Agregar_copia' => $row['destinario_copias_subrayar'],                
                 'JRCI_copia' => $row['jrci'],
-                'Correspondencia' => $row['correspondencia'],                                
+                'Correspondencia' => $row['correspondencia_negrilla'],                                
             ]);
             // Log::info('Registro actualizado correctamente para Id_Comunicado: ' . $idComunicado);
         } else {
