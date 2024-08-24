@@ -389,15 +389,15 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
         }
 
         // Verificar los valores de las variables justo antes del insert
-        Log::info('Valores para insert: ', [
-            'Nombre_destinatario' => $Nombre_destinatario,
-            'Direccion_destinatario' => $Direccion_destinatario,
-            'Departamento' => $Departamento,
-            'Ciudad' => $Ciudad,
-            'Telefono_destinatario' => $Telefono_destinatario,
-            'Email_destinatario' => $Email_destinatario,
-            'Medio_notificacion' => $Medio_notificacion
-        ]);
+        // Log::info('Valores para insert: ', [
+        //     'Nombre_destinatario' => $Nombre_destinatario,
+        //     'Direccion_destinatario' => $Direccion_destinatario,
+        //     'Departamento' => $Departamento,
+        //     'Ciudad' => $Ciudad,
+        //     'Telefono_destinatario' => $Telefono_destinatario,
+        //     'Email_destinatario' => $Email_destinatario,
+        //     'Medio_notificacion' => $Medio_notificacion
+        // ]);
 
         // Si idCorrespondencia no está presente, realizar un insert
         if (!$idCorrespondencia) {
