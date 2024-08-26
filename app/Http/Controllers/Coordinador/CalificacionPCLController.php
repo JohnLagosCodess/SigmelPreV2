@@ -7817,6 +7817,18 @@ class CalificacionPCLController extends Controller
         }
         $bandera_dictamen_pericial = $request->bandera_dictamen_pericial;
 
+        // eL número de identificacion siempre será el del afiliado.
+        $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+        ->select('Nro_identificacion')
+        ->where([['ID_evento', $Id_EventoDecreto]])
+        ->get();
+
+        if (count($array_nro_ident_afi) > 0) {
+            $nro_identificacion = $array_nro_ident_afi[0]->Nro_identificacion;
+        }else{
+            $nro_identificacion = 'N/A';
+        }
+
         if ($bandera_dictamen_pericial == 'Guardar') {            
             if($Decreto_pericial == 3){
                 $datos_dictamenPericial =[
@@ -7868,7 +7880,7 @@ class CalificacionPCLController extends Controller
                     'Cliente' => 'N/A',
                     'Nombre_afiliado' => 'N/A',
                     'T_documento' => 'N/A',
-                    'N_identificacion' => 'N/A',
+                    'N_identificacion' => $nro_identificacion,
                     'Destinatario' => 'N/A',
                     'Nombre_destinatario' => 'N/A',
                     'Nit_cc' => 'N/A',
@@ -7944,7 +7956,7 @@ class CalificacionPCLController extends Controller
                     'Cliente' => 'N/A',
                     'Nombre_afiliado' => 'N/A',
                     'T_documento' => 'N/A',
-                    'N_identificacion' => 'N/A',
+                    'N_identificacion' => $nro_identificacion,
                     'Destinatario' => 'N/A',
                     'Nombre_destinatario' => 'N/A',
                     'Nit_cc' => 'N/A',
