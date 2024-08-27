@@ -2480,6 +2480,7 @@ class CalificacionJuntasController extends Controller
         $Id_asignacion = $request->Id_asignacion;
         $Id_procesos = $request->Id_procesos;
         $tipo_descarga = $request->tipo_descarga;
+        $otro_destinatario_jrci = is_numeric($request->JRCI_Destinatario) ? 1 : 0;
         if($tipo_descarga != 'Manual'){
             $radiojrci_comunicado = $request->radiojrci_comunicado;
             $radiojnci_comunicado = $request->radiojnci_comunicado;
@@ -2562,10 +2563,10 @@ class CalificacionJuntasController extends Controller
                 'Firmar_Comunicado' => $request->firmarcomunicado,
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => $request->modulo_creacion,
-                'Nombre_usuario' => $nombre_usuario,
-                'Otro_destinatario' => 0,
-                'F_registro' => $date,
+                'Otro_destinatario' => $otro_destinatario_jrci,
                 'N_siniestro' => $request->N_siniestro,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
             ];
             
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
@@ -2799,6 +2800,7 @@ class CalificacionJuntasController extends Controller
         $radioarl_comunicado_editar = $request->radioarl_comunicado_editar;
         $radioOtro_editar = $request->radioOtro_editar;
         $copiaComunicadoTotal = $request->agregar_copia_editar;
+        $otro_destinatario_jrci = is_numeric($request->JRCI_Destinatario_editar) ? 1 : 0;
         if (!empty($copiaComunicadoTotal)) {
             $total_copia_comunicado = implode(", ", $copiaComunicadoTotal);                
         }else{
@@ -2871,9 +2873,10 @@ class CalificacionJuntasController extends Controller
             'Tipo_descarga' => $request->tipo_descarga,
             'Modulo_creacion' => $request->modulo_creacion,
             'Reemplazado' => 0,
+            'N_siniestro' => $request->N_siniestro,
+            'Otro_destinatario' => $otro_destinatario_jrci,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
-            'N_siniestro' => $request->N_siniestro,
         ];
 
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado_editar)

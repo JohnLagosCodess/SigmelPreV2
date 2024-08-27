@@ -420,26 +420,6 @@ $(document).ready(function(){
         }
     });
 
-    //Listado de opciones de estado de notificación Correspondencia
-    let selectores_notificacion_correspondencia = {
-        '_token': $('input[name=_token]').val(),
-        'parametro': 'EstadosNotificacionCorrespondencia'
-    }
-    $.ajax({
-        type: 'POST',
-        url: '/cargueListadoSelectoresAdicionDx',
-        data: selectores_notificacion_correspondencia,
-        success: function (data) {
-            let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
-            let formaenviogenerarcomunicado = Object.keys(data);
-            for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
-                if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != SelectorModalCorrespondencia) {
-                    $('#state_notificacion').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
-                }                
-            }
-        },
-    });
-    
     // VERIFICACIÓN DEL DATO ACTIVO EN CASO DE QUE EXISTA INFORMACIÓN GUARDADA
     var verificacion_activo = $("#es_activo").val();
         
@@ -2178,11 +2158,45 @@ $(document).ready(function(){
         $("#modalCorrespondencia #id_comunicado").val('');
         
     }
+
+    function cargarSelectorModalCorrespondencia(){
+        //Listado de opciones de estado de notificación Correspondencia
+        let selectores_notificacion_correspondencia = {
+            '_token': $('input[name=_token]').val(),
+            'parametro': 'EstadosNotificacionCorrespondencia'
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/selectoresJuntas',
+            data: selectores_notificacion_correspondencia,
+            beforeSend:  function() {
+                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
+            },
+            success: function (data) {
+                let optionSelected = data.find(finder => finder.Id_Parametro === 362);
+                $("#modalCorrespondencia #state_notificacion").val(optionSelected?.Id_Parametro);
+                $('#state_notificacion').empty();
+                $('#state_notificacion').append('<option value="'+optionSelected?.Id_Parametro+'" selected>'+optionSelected?.Nombre_parametro+'</option>');
+                let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
+                let formaenviogenerarcomunicado = Object.keys(data);
+                for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
+                    if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != SelectorModalCorrespondencia) {
+                        $('#state_notificacion').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
+                    }                
+                }                                     
+            },
+            complete: function(){
+                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
+            }
+        });
+    }
     
     let correspondencia_array = [];
     $("#listado_comunicados_adx").on('click', "#CorrespondenciaNotificacion", function() {
         //Reestablecer modal
         cleanModalCorrespondencia();
+        //Cargar selectores modal con Pendiente como valor por defecto
+        cargarSelectorModalCorrespondencia();
         //Capturar información
         let id = $(this);
 

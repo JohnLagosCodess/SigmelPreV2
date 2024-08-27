@@ -1475,8 +1475,9 @@ $(document).ready(function(){
             }
             // si no, el mismo selector de jrci
             else{
-                $("#div_input_jrci_copia").addClass('d-none');
-                $("#div_select_jrci_copia").removeClass('d-none');
+                $("#div_input_jrci_copia").removeClass('d-none');
+                $("#input_jrci_seleccionado_copia").val($("#jrci_califi_invalidez_comunicado option:selected").text());
+                $("#div_select_jrci_copia").addClass('d-none');
 
                 $.ajax({
                     type:'POST',
@@ -1505,6 +1506,9 @@ $(document).ready(function(){
             }
             // Si no, eliminar el las opciones del selector y deja todo limpio.
             else{
+                $("#div_input_jrci_copia").addClass('d-none');
+                $("#input_jrci_seleccionado_copia").val('');
+
                 $("#div_select_jrci_copia").addClass('d-none');
                 $('#jrci_califi_invalidez_copia').empty();  
             }
@@ -1518,6 +1522,7 @@ $(document).ready(function(){
         $('#Pdf').prop('disabled', true);
         var destinarioPrincipal = $(this).val();
         var identificacion_comunicado_afiliado = $('#identificacion_comunicado').val();
+        $("#input_jrci_seleccionado_copia").val('');
         var newId_evento = $('#newId_evento').val();
         var newId_asignacion = $('#newId_asignacion').val();
         var Id_proceso = $('#Id_proceso').val();
@@ -1675,6 +1680,7 @@ $(document).ready(function(){
                                             reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                                         }
                                         $("#reviso").prop("selectedIndex", 1);
+                                        $("#input_jrci_seleccionado_copia").val($("#jrci_califi_invalidez_comunicado option:selected").text());
                                     }
                                 });
                             }
@@ -1744,6 +1750,7 @@ $(document).ready(function(){
                                     $("#reviso").prop("selectedIndex", 1);
                                 }
                             });
+                            $("#input_jrci_seleccionado_copia").val($("#jrci_califi_invalidez_comunicado option:selected").text());
                         });
                     }
                 }else if(data.destinatarioPrincipal == 'JNCI_comunicado'){
@@ -2928,26 +2935,6 @@ $(document).ready(function(){
         },
     });
 
-    //Listado de opciones de estado de notificación Correspondencia
-    let selectores_notificacion_correspondencia = {
-        '_token': $('input[name=_token]').val(),
-        'parametro': 'EstadosNotificacionCorrespondencia'
-    }
-    $.ajax({
-        type: 'POST',
-        url: '/selectoresJuntas',
-        data: selectores_notificacion_correspondencia,
-        success: function (data) {
-            let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
-            let formaenviogenerarcomunicado = Object.keys(data);
-            for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
-                if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != SelectorModalCorrespondencia) {
-                    $('#state_notificacion').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
-                }                
-            }
-        },
-    });
-
     // Captura de data para la tabla de Comunicados
     // data de la modal de agregar comunicados
 
@@ -3242,10 +3229,44 @@ $(document).ready(function(){
         
     }
 
+    function cargarSelectorModalCorrespondencia(){
+        //Listado de opciones de estado de notificación Correspondencia
+        let selectores_notificacion_correspondencia = {
+            '_token': $('input[name=_token]').val(),
+            'parametro': 'EstadosNotificacionCorrespondencia'
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/selectoresJuntas',
+            data: selectores_notificacion_correspondencia,
+            beforeSend:  function() {
+                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
+            },
+            success: function (data) {
+                let optionSelected = data.find(finder => finder.Id_Parametro === 362);
+                $("#modalCorrespondencia #state_notificacion").val(optionSelected?.Id_Parametro);
+                $('#state_notificacion').empty();
+                $('#state_notificacion').append('<option value="'+optionSelected?.Id_Parametro+'" selected>'+optionSelected?.Nombre_parametro+'</option>');
+                let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
+                let formaenviogenerarcomunicado = Object.keys(data);
+                for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
+                    if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != SelectorModalCorrespondencia) {
+                        $('#state_notificacion').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
+                    }                
+                }                                     
+            },
+            complete: function(){
+                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
+            }
+        });
+    }
+
     let correspondencia_array = [];
     $("#listado_agregar_comunicados").on('click', "#CorrespondenciaNotificacion", function() {
         //Reestablecer modal
         cleanModalCorrespondencia();
+        //Cargar selectores modal con Pendiente como valor por defecto
+        cargarSelectorModalCorrespondencia();
         //Capturar información
         console.log(this);
         let id = $(this);
@@ -4415,6 +4436,7 @@ $(document).ready(function(){
                                         }
                                     }
                                 });
+                                $("#input_jrci_seleccionado_copia_editar").val($("#jrci_califi_invalidez_comunicado_editar option:selected").text());
                             });
                         }else{
                             $("#div_input_jrci_editar").removeClass('d-none');
@@ -4906,6 +4928,7 @@ $(document).ready(function(){
         $('input[type="radio"]').change(function(){
             var destinarioPrincipal = $(this).val();    
             var identificacion_comunicado_afiliado = $('#identificacion_comunicado_editar').val();
+            $("#input_jrci_seleccionado_copia_editar").val('');
             var datos_destinarioPrincipal ={
                 '_token':token,
                 'destinatarioPrincipal': destinarioPrincipal,
@@ -5114,6 +5137,7 @@ $(document).ready(function(){
                                             // for (let i = 0; i < revisolider.length; i++) {
                                             //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                                             // }
+                                            $("#input_jrci_seleccionado_copia_editar").val($("#jrci_califi_invalidez_comunicado_editar option:selected").text());
                                         }
                                     });
 
@@ -6375,8 +6399,9 @@ $(document).ready(function(){
             }
             // si no, el mismo selector de jrci
             else{
-                $("#div_input_jrci_copia_editar").addClass('d-none');
-                $("#div_select_jrci_copia_editar").removeClass('d-none');
+                $("#div_input_jrci_copia_editar").removeClass('d-none');
+                $("#input_jrci_seleccionado_copia_editar").val($("#jrci_califi_invalidez_comunicado_editar option:selected").text());
+                $("#div_select_jrci_copia_editar").addClass('d-none');
 
                 $(".jrci_califi_invalidez_copia_editar").select2({
                     placeholder:"Seleccione una opción",
@@ -6407,6 +6432,10 @@ $(document).ready(function(){
             }
             // Si no, eliminar el las opciones del selector y deja todo limpio.
             else{
+                //Limpiar input de copia 
+                $("#div_input_jrci_copia_editar").addClass('d-none');
+                $("#input_jrci_seleccionado_copia_editar").val('');
+
                 $("#div_select_jrci_copia_editar").addClass('d-none');
                 $('#jrci_califi_invalidez_copia_editar').empty();  
             }

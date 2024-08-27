@@ -1500,7 +1500,7 @@ class CoordinadorController extends Controller
         $Tipo_correspondencia = $request->tipo_correspondencia;
         $Previous_saved = $request->previous_saved;
         $info_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-            ->select('Destinatario','Nombre_destinatario','Otro_destinatario')
+            ->select('Destinatario','Nombre_destinatario','Otro_destinatario','JRCI_Destinatario')
             ->where([['Id_Comunicado', $Id_comunicado]])
             ->get();
 
@@ -1635,6 +1635,19 @@ class CoordinadorController extends Controller
                     ->where([['ID_evento', $Id_evento],['Id_Asignacion', $Id_asignacion],['Id_proceso', $Id_proceso]])
                     ->get();
                     $response['datos'] = count($datos_jrci) > 0 ? $datos_jrci[0] : null;
+                    if(!empty($info_comunicado) && $info_comunicado[0]->Otro_destinatario === 1){
+                        if(strtolower($info_comunicado[0]->Destinatario) === $Tipo_correspondencia && $info_comunicado[0]->JRCI_Destinatario && is_numeric($info_comunicado[0]->JRCI_Destinatario)){
+                            $datos_jrci_otro_destinatario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+                            ->select('sie.Nombre_entidad as Nombre_destinatario', 'sie.Direccion as Direccion_destinatario', 'sie.Emails as Email_destinatario', 'sie.Telefonos as Telefono_destinatario', 
+                            'sldm.Nombre_departamento as Departamento_destinatario', 'sldm2.Nombre_municipio as Ciudad_destinatario','slp.Nombre_parametro as Medio_notificacion_destinatario')
+                            ->where([['Id_Entidad', $info_comunicado[0]->JRCI_Destinatario]])
+                            ->get();
+                            $response['datos'] = count($datos_jrci_otro_destinatario) > 0 ? $datos_jrci_otro_destinatario[0] : null;
+                        }
+                    }
                 }
                 else if($Tipo_correspondencia === 'jnci' && !empty($infoAfiliado)){
                     $datos_jnci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')

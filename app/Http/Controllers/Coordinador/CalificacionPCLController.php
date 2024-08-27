@@ -3730,6 +3730,7 @@ class CalificacionPCLController extends Controller
 
             $datos = [
                 'indicativo' => $indicativo,
+                'nombre_pdf' => $nombre_pdf,
                 'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
             ];
             
@@ -4062,6 +4063,7 @@ class CalificacionPCLController extends Controller
 
             $datos = [
                 'indicativo' => $indicativo,
+                'nombre_pdf' => $nombre_pdf,
                 'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
             ];
             
@@ -4445,6 +4447,7 @@ class CalificacionPCLController extends Controller
 
             $datos = [
                 'indicativo' => $indicativo,
+                'nombre_pdf' => $nombre_pdf,
                 'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
             ];
             
