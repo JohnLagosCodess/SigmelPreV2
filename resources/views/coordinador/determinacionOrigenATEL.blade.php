@@ -489,7 +489,7 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="descripcion_FURAT" class="col-form-label">Descripción Formato Único de Reporte de presunto Accidente de Trabajo (FURAT) <span style="color:red;">(*)</span></label>
-                                                <textarea class="form-control descripcion_FURAT" name="descripcion_FURAT" id="descripcion_FURAT" rows="2" required><?php if(!empty($datos_bd_DTO_ATEL[0]->Descripcion_FURAT)){echo $datos_bd_DTO_ATEL[0]->Descripcion_FURAT;}?></textarea>
+                                                <textarea class="form-control descripcion_FURAT" name="descripcion_FURAT" id="descripcion_FURAT" rows="2" required><?php if(!empty($datos_bd_DTO_ATEL[0]->Descripcion_FURAT)){echo $datos_bd_DTO_ATEL[0]->Descripcion_FURAT;}else{echo "N/A";}?></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -571,7 +571,7 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="justificacion_revision_origen" class="col-form-label">Justificación para revisión del Origen <span style="color:red;">(*)</span></label>
-                                                <textarea class="form-control justificacion_revision_origen" name="justificacion_revision_origen" id="justificacion_revision_origen" rows="10" required><?php if(!empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen)){echo $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen;}?></textarea>
+                                                <textarea class="form-control justificacion_revision_origen" name="justificacion_revision_origen" id="justificacion_revision_origen" rows="10" required><?php if(!empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen)){echo $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen;}else{echo "Se recibe reporte de evento como posible Accidente, el cual es revisado por el equipo interdisciplinario de medicina laboral.";}?></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -1388,7 +1388,7 @@
                                     @if(!empty($array_comite_interdisciplinario[0]->Ciudad))
                                         <input type="text" class="form-control" name="ciudad" id="ciudad" value="{{$array_comite_interdisciplinario[0]->Ciudad}}">                                                
                                     @else
-                                        <input type="text" class="form-control" name="ciudad" id="ciudad" value="Bogotá D.C">                                                
+                                        <input type="text" class="form-control" name="ciudad" id="ciudad" value="Bogotá D.C.">                                                
                                     @endif
                                 </div>
                             </div>   

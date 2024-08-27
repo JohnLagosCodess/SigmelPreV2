@@ -27,6 +27,7 @@ use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_accion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Traits\GenerarRadicados;
 
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
@@ -36,6 +37,8 @@ use Html2Text\Html2Text;
 
 class PronunciamientoOrigenController extends Controller
 {
+    use GenerarRadicados;
+
     // TODO LO REFERENTE SERVICIO PRONUNCIAMIENTO
     public function mostrarVistaPronunciamientoOrigen(Request $request){
         if(!Auth::check()){
@@ -81,47 +84,7 @@ class PronunciamientoOrigenController extends Controller
         ])
         ->get(); 
         // creación de consecutivo para el comunicado
-       $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-       ->select('N_radicado')
-       ->where([
-           ['ID_evento',$Id_evento_calitec],
-           ['F_comunicado',$date],
-           ['Id_proceso','1']
-       ])
-       ->orderBy('N_radicado', 'desc')
-       ->limit(1)
-       ->get();
-
-       if(count($radicadocomunicado)==0){
-            $fechaActual = date("Ymd");
-            // Obtener el último valor de la base de datos o archivo
-            $consecutivoP1 = "SAL-ORI";
-            $consecutivoP2 = $fechaActual;
-            $consecutivoP3 = '000000';
-            $ultimoDigito = substr($consecutivoP3, -6);
-            $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
-            $nuevoConsecutivo = $ultimoDigito + 1;
-            // Reiniciar el consecutivo si es un nuevo día
-            if (date("Ymd") != $fechaActual) {
-                $nuevoConsecutivo = 0;
-            }
-            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-            $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted; 
-        
-        }else{
-            $fechaActual = date("Ymd");
-            $ultimoConsecutivo = $radicadocomunicado[0]->N_radicado;
-            $ultimoDigito = substr($ultimoConsecutivo, -6);
-            $nuevoConsecutivo = $ultimoDigito + 1;
-            // Reiniciar el consecutivo si es un nuevo día
-            if (date("Ymd") != $fechaActual) {
-                $nuevoConsecutivo = 0;
-            }
-            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-            $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;
-        }
+        $consecutivo = $this->getRadicado('origen',$Id_evento_calitec);
 
         $array_comunicados = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec],['Modulo_creacion','pronunciamientoOrigen']])->get();  
@@ -469,7 +432,7 @@ class PronunciamientoOrigenController extends Controller
             $agregar_copias_comu = '';
         }
 
-        $radicado = $request->n_radicado;
+        $radicado = $this->disponible($request->n_radicado,$Id_EventoPronuncia)->getRadicado('origen',$Id_EventoPronuncia);
 
         /* Se completan los siguientes datos para lo del tema del pbs 014 */
 
@@ -558,7 +521,7 @@ class PronunciamientoOrigenController extends Controller
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
                 'Ciudad_correspon' => $request->ciudad_correspon,
-                'N_radicado' => $request->n_radicado,
+                'N_radicado' => $radicado,
                 'Firmar' => $request->firmar,
                 'Fecha_correspondencia' => $request->fecha_correspon,
                 'Archivo_pronuncia' => $nombre_final_documento_en_carpeta,
@@ -570,7 +533,7 @@ class PronunciamientoOrigenController extends Controller
                 'Id_Asignacion' => $Id_Asignacion_Pronuncia,
                 'Ciudad' => $request->ciudad_correspon,
                 'F_comunicado' => $date,
-                'N_radicado' => $request->n_radicado,
+                'N_radicado' => $radicado,
                 'Cliente' => $request->primer_calificador,
                 'Nombre_afiliado' => $request->nombre_afiliado,
                 'T_documento' => 'N/A',
@@ -646,7 +609,7 @@ class PronunciamientoOrigenController extends Controller
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
                 'Ciudad_correspon' => $request->ciudad_correspon,
-                'N_radicado' => $request->n_radicado,
+                'N_radicado' => $radicado,
                 'Firmar' => $request->firmar,
                 'Fecha_correspondencia' => $request->fecha_correspon,
                 'Archivo_pronuncia' => $nombre_final_documento_en_carpeta,
@@ -1100,7 +1063,8 @@ class PronunciamientoOrigenController extends Controller
         $array_datos_diagnostico_motcalifi = json_decode(json_encode($datos_diagnostico_motcalifi), true);
 
         for ($i=0; $i < count($array_datos_diagnostico_motcalifi); $i++) { 
-            $dato_concatenado = "(".$array_datos_diagnostico_motcalifi[$i]['Codigo'].")(".$array_datos_diagnostico_motcalifi[$i]['Nombre_CIE10'].")(".$array_datos_diagnostico_motcalifi[$i]['Nombre_parametro'].")";
+            // $dato_concatenado = "<b>(".$array_datos_diagnostico_motcalifi[$i]['Codigo'].")(".$array_datos_diagnostico_motcalifi[$i]['Nombre_CIE10'].")(".$array_datos_diagnostico_motcalifi[$i]['Nombre_parametro'].")";
+            $dato_concatenado = "(<b>".$array_datos_diagnostico_motcalifi[$i]['Codigo']."</b>) ".strtoupper($array_datos_diagnostico_motcalifi[$i]['Nombre_CIE10'])." de origen ".$array_datos_diagnostico_motcalifi[$i]['Nombre_parametro']."";
             array_push($diagnosticos_cie10, $dato_concatenado);
         }
 
@@ -1382,7 +1346,7 @@ class PronunciamientoOrigenController extends Controller
                 'logo_header' => $logo_header,
                 'id_cliente' => $Id_cliente_firma,
                 'ciudad' => $ciudad,
-                'fecha' => $fecha,
+                'fecha' => fechaFormateada($fecha),
                 'nro_siniestro' => $id_evento,
                 'nro_radicado' => $nro_radicado,
                 'nombre_afiliado' => $nombre_afiliado,
@@ -1515,6 +1479,7 @@ class PronunciamientoOrigenController extends Controller
             ->select('Footer_cliente')
             ->where([['Id_cliente', $Id_cliente_firma]])
             ->limit(1)->get();
+
             if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
                 $logo_footer = $dato_logo_footer[0]->Footer_cliente;
                 $ruta_logo_footer = "/footer_clientes/{$Id_cliente_firma}/{$logo_footer}";
@@ -1531,6 +1496,7 @@ class PronunciamientoOrigenController extends Controller
             $phpWord->setDefaultParagraphStyle(
                 array('align' => 'both', 'spaceAfter' => 0, 'spaceBefore' => 0)
             );
+
             // Configurar el idioma del documento a español
             $phpWord->getSettings()->setThemeFontLang(new \PhpOffice\PhpWord\Style\Language('es-ES'));
     
@@ -1545,30 +1511,24 @@ class PronunciamientoOrigenController extends Controller
             $header = $section->addHeader();
             $imagenPath_header = public_path($ruta_logo);
             $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
-            $test = $header->addTextRun(['alignment' => 'right']);
-            $test->addText('Página ');
-            $test->addField('PAGE');
-            $test->addText(' de ');
-            $test->addField('NUMPAGES');
+            $esti = array('size' => 11, 'font' => 'Arial');
+            $encabezado = $header->addTextRun(['alignment' => 'right']);
+            $encabezado->addText('Página ');
+            $encabezado->addField('PAGE');
+            $encabezado->addText(' de ');
+            $encabezado->addField('NUMPAGES');
             $header->addTextBreak();
                       
             // Creación de Contenido
-            $section->addText($ciudad.' '.$fecha, array('bold' => true));
+            $fecha_formateada = fechaFormateada($fecha);
+            $section->addText($ciudad.' '.$fecha_formateada, array('bold' => true), array('align' => 'right'));
             $section->addTextBreak();
 
             $table = $section->addTable();
 
-    
             $table->addRow();
 
-
             $cell1 = $table->addCell(6000);
-            // $imagenPath_header = public_path($ruta_logo);
-            // $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
-
-            // Creación de Contenido
-            // $section->addText($ciudad.', '.$fecha, array('bold' => true));
-            // $section->addTextBreak();
 
             $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
             $textRun1->addText('Señores: ',array('bold' => true));
@@ -1625,7 +1585,7 @@ class PronunciamientoOrigenController extends Controller
             $asuntoyafiliado->addText($asunto, array('bold' => true));
             $asuntoyafiliado->addTextBreak();
             $asuntoyafiliado->addText('Paciente: ', array('bold' => true));
-            $asuntoyafiliado->addText($nombre_afiliado." ".$tipo_identificacion." ".$num_identificacion);
+            $asuntoyafiliado->addText(strtoupper($nombre_afiliado)." ".$tipo_identificacion." ".$num_identificacion);
             $asuntoyafiliado->addTextBreak();
             $asuntoyafiliado->addText('Ramo: ', array('bold' => true));
             $asuntoyafiliado->addText($ramo);
@@ -1649,9 +1609,9 @@ class PronunciamientoOrigenController extends Controller
             if (preg_match($patron1, $sustentacion) && preg_match($patron2, $sustentacion) &&
                 preg_match($patron3, $sustentacion) && preg_match($patron4, $sustentacion)) {
                 
-                    $texto_modificado = str_replace('{{$nombre_afiliado}}', $nombre_afiliado, $sustentacion);
-                    $texto_modificado = str_replace('{{$tipo_documento}}', $tipo_identificacion, $texto_modificado);
-                    $texto_modificado = str_replace('{{$nro_identificacion}}', $num_identificacion, $texto_modificado);
+                    $texto_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.strtoupper($nombre_afiliado).'</b>', $sustentacion);
+                    $texto_modificado = str_replace('{{$tipo_documento}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $texto_modificado);
+                    $texto_modificado = str_replace('{{$nro_identificacion}}', '<b>'.$num_identificacion.'</b>', $texto_modificado);
                     $texto_modificado = str_replace('{{$cie10_nombrecie10_origencie10}}', $string_diagnosticos_cie10, $texto_modificado);
 
                     $texto_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $texto_modificado);
@@ -1857,7 +1817,7 @@ class PronunciamientoOrigenController extends Controller
             // return response()->download(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
 
             // Leer el contenido del archivo guardado y codificarlo en base64
-            $contenidoWord = File::get(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+            $contenidoWord = File::get(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
 
             $datos = [
                 'indicativo' => $indicativo,

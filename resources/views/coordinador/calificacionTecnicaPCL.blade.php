@@ -1,5 +1,5 @@
 @extends('adminlte::page')
-@section('title', 'Calificación Ténica PCL')
+@section('title', 'Calificación Técnica PCL')
 @section('css')
     <link rel="stylesheet" type="text/css" href="/plugins/summernote/summernote.min.css">
 @stop

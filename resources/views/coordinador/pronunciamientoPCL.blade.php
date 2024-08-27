@@ -553,7 +553,7 @@
                                             @if (!empty($info_pronuncia[0]->Ciudad_correspon))
                                                 <input type="text" class="form-control" name="ciudad_correspon" id="ciudad_correspon" value="{{$info_pronuncia[0]->Ciudad_correspon}}" required>
                                             @else
-                                                <input type="text" class="form-control" name="ciudad_correspon" id="ciudad_correspon" value="Bogotá D.C" required>
+                                                <input type="text" class="form-control" name="ciudad_correspon" id="ciudad_correspon" value="Bogotá D.C." required>
                                             @endif
                                         </div>
                                     </div>

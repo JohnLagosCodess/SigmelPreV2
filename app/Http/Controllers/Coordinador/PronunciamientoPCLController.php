@@ -29,6 +29,8 @@ use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Traits\GenerarRadicados;
+
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
@@ -39,6 +41,8 @@ use Mockery\Undefined;
 
 class PronunciamientoPCLController extends Controller
 {
+    use GenerarRadicados;
+
     // TODO LO REFERENTE SERVICIO PRONUNCIAMIENTO
     public function mostrarVistaPronunciamiento(Request $request){
         if(!Auth::check()){
@@ -85,47 +89,8 @@ class PronunciamientoPCLController extends Controller
         ->get(); 
 
         // creación de consecutivo para el comunicado
-       $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-       ->select('N_radicado')
-       ->where([
-           ['ID_evento',$Id_evento_calitec],
-           ['F_comunicado',$date],
-           ['Id_proceso','2']
-       ])
-       ->orderBy('N_radicado', 'desc')
-       ->limit(1)
-       ->get();
+        $consecutivo = $this->getRadicado('pcl',$Id_evento_calitec);
 
-       if(count($radicadocomunicado)==0){
-            $fechaActual = date("Ymd");
-            // Obtener el último valor de la base de datos o archivo
-            $consecutivoP1 = "SAL-PCL";
-            $consecutivoP2 = $fechaActual;
-            $consecutivoP3 = '000000';
-            $ultimoDigito = substr($consecutivoP3, -6);
-            $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
-            $nuevoConsecutivo = $ultimoDigito + 1;
-            // Reiniciar el consecutivo si es un nuevo día
-            if (date("Ymd") != $fechaActual) {
-                $nuevoConsecutivo = 0;
-            }
-            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-            $consecutivo = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted; 
-        
-        }else{
-            $fechaActual = date("Ymd");
-            $ultimoConsecutivo = $radicadocomunicado[0]->N_radicado;
-            $ultimoDigito = substr($ultimoConsecutivo, -6);
-            $nuevoConsecutivo = $ultimoDigito + 1;
-            // Reiniciar el consecutivo si es un nuevo día
-            if (date("Ymd") != $fechaActual) {
-                $nuevoConsecutivo = 0;
-            }
-            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-            $consecutivo = "SAL-PCL" . $fechaActual . $nuevoConsecutivoFormatted;
-        }
         $array_comunicados = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento_calitec], ['Id_Asignacion',$Id_asignacion_calitec], ['Modulo_creacion','pronunciamientoPCL']])->get();
         foreach ($array_comunicados as $comunicado) {
@@ -523,7 +488,7 @@ class PronunciamientoPCLController extends Controller
             $agregar_copias_comu = '';
         }
         
-        $radicado = $request->n_radicado;
+        $radicado = $this->disponible($request->n_radicado, $Id_EventoPronuncia)->getRadicado('pcl', $Id_EventoPronuncia);
 
 
         /* Se completan los siguientes datos para lo del tema del pbs 014 */
@@ -608,7 +573,7 @@ class PronunciamientoPCLController extends Controller
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
                 'Ciudad_correspon' => $request->ciudad_correspon,
-                'N_radicado' => $request->n_radicado,
+                'N_radicado' => $radicado,
                 'Firmar' => $request->firmar,
                 'Fecha_correspondencia' => $request->fecha_correspon,
                 'Archivo_pronuncia' => $nombre_final_documento_en_carpeta,
@@ -620,7 +585,7 @@ class PronunciamientoPCLController extends Controller
                 'Id_Asignacion' => $Id_Asignacion_Pronuncia,
                 'Ciudad' => $request->ciudad_correspon,
                 'F_comunicado' => $date,
-                'N_radicado' => $request->n_radicado,
+                'N_radicado' => $radicado,
                 'Cliente' => $request->primer_calificador,
                 'Nombre_afiliado' => $request->nombre_afiliado,
                 'T_documento' => 'N/A',
@@ -698,7 +663,7 @@ class PronunciamientoPCLController extends Controller
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
                 'Ciudad_correspon' => $request->ciudad_correspon,
-                'N_radicado' => $request->n_radicado,
+                'N_radicado' => $radicado,
                 'Firmar' => $request->firmar,
                 'Fecha_correspondencia' => $request->fecha_correspon,
                 'Archivo_pronuncia' => $nombre_final_documento_en_carpeta,
@@ -794,7 +759,7 @@ class PronunciamientoPCLController extends Controller
                 'Id_Asignacion' => $Id_Asignacion_Pronuncia,
                 'Ciudad' => $request->ciudad_correspon,
                 'F_comunicado' => $date,
-                'N_radicado' => $request->n_radicado,
+                'N_radicado' => $request->Id_Comunicado == "null" ? $radicado : $request->n_radicado,
                 'Cliente' => $request->primer_calificador,
                 'Nombre_afiliado' => $request->nombre_afiliado,
                 'T_documento' => 'N/A',
@@ -894,7 +859,7 @@ class PronunciamientoPCLController extends Controller
                 'Elaboro_pronuncia' => $request->elaboro,
                 'Reviso_pronuncia' => $request->reviso,
                 'Ciudad_correspon' => $request->ciudad_correspon,
-                'N_radicado' => $request->n_radicado,
+                'N_radicado' =>  $request->Id_Comunicado == "null" ? $radicado : $request->n_radicado,
                 'Firmar' => $request->firmar,
                 'Fecha_correspondencia' => $request->fecha_correspon,
                 'Archivo_pronuncia' => $nombre_final_documento_en_carpeta,
@@ -1108,7 +1073,7 @@ class PronunciamientoPCLController extends Controller
         if(count($array_diagnosticosPcl) > 0){
             // Obtener el array de nombres CIE10 y codigo cie10
             $NombresCIE10 = $array_diagnosticosPcl->map(function ($item) {
-                return '('.$item->Codigo_cie10.')('.$item->Nombre_CIE10.')('.$item->Nombre_origen.')';
+                return '(<b>'.$item->Codigo_cie10.'</b>) '.strtoupper($item->Nombre_CIE10).' de origen '.$item->Nombre_origen.'';
             })->toArray();
                 
             // Obtener el número de elementos en el array
@@ -1326,7 +1291,7 @@ class PronunciamientoPCLController extends Controller
                 'Tipo_documento_afi' => $Tipo_documento_afi,
                 'Iden_afiliado_corre' => $Iden_afiliado_corre,
                 'Ciudad_correspon' => $Ciudad_correspon,
-                'Fecha_correspondencia' => $Fecha_correspondencia,
+                'Fecha_correspondencia' => fechaFormateada($Fecha_correspondencia),
                 'N_radicado' => $N_radicado,
                 'Nombre_afiliado_corre' => $Nombre_afiliado_corre,
                 'Tipo_documento_afi' => $Tipo_documento_afi,
@@ -1500,7 +1465,8 @@ class PronunciamientoPCLController extends Controller
             $header->addTextBreak();
                       
             // Creación de Contenido
-            $section->addText($Ciudad_correspon.' '.$Fecha_correspondencia, array('bold' => true));
+            $fecha_formateada = fechaFormateada($Fecha_correspondencia);
+            $section->addText($Ciudad_correspon.' '.$fecha_formateada, array('bold' => true), array('align' => 'right'));
             $section->addTextBreak();
 
             $table = $section->addTable();
@@ -1515,7 +1481,7 @@ class PronunciamientoPCLController extends Controller
             $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
             $textRun1->addText('Señores: ',array('bold' => true));
             $textRun1->addTextBreak();
-            $textRun1->addText($Entidad_calificador);
+            $textRun1->addText($Entidad_calificador,array('bold' => true));
             $textRun1->addTextBreak();
             $textRun1->addText($Email_calificador);
             $textRun1->addTextBreak();
@@ -1578,8 +1544,8 @@ class PronunciamientoPCLController extends Controller
             $patron4 = '/\{\{\$F_estructuracionPcl\}\}/';
             if (preg_match($patron1, $Sustenta_cali) && preg_match($patron2, $Sustenta_cali) &&
             preg_match($patron3, $Sustenta_cali) && preg_match($patron4, $Sustenta_cali)) {
-                $texto_modificado = str_replace('{{$Nombre_afiliado}}', '<b>'.$Nombre_afiliado_corre.'</b>', $Sustenta_cali);
-                $texto_modificado = str_replace('{{$CIE10_Nombres_Origen}}', '<b>'.$CIE10Nombres.'</b>', $texto_modificado);
+                $texto_modificado = str_replace('{{$Nombre_afiliado}}', '<b>'.strtoupper($Nombre_afiliado_corre).'</b>, '.'<b>'.strtoupper($Tipo_documento_afi).'</b> '.'<b>'.$Iden_afiliado_corre.'</b>', $Sustenta_cali);
+                $texto_modificado = str_replace('{{$CIE10_Nombres_Origen}}', $CIE10Nombres, $texto_modificado);
                 // $texto_modificado = str_replace('{{$OrigenPcl}}', $T_origen , $texto_modificado);
                 $texto_modificado = str_replace('{{$PorcentajePcl}}', '<b>'.$Porcentaje_pcl.'</b>', $texto_modificado);
                 $texto_modificado = str_replace('{{$F_estructuracionPcl}}', '<b>'.$Fecha_estruturacion.'</b>', $texto_modificado);
@@ -1763,7 +1729,7 @@ class PronunciamientoPCLController extends Controller
             // return response()->download(public_path("Documentos_Eventos/{$Id_Evento_pronuncia_corre}/{$nombre_docx}"));
 
             // Leer el contenido del archivo guardado y codificarlo en base64
-            $contenidoWord = File::get(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+            $contenidoWord = File::get(public_path("Documentos_Eventos/{$Id_Evento_pronuncia_corre}/{$nombre_docx}"));
 
             $datos = [
                 'indicativo' => $indicativo,

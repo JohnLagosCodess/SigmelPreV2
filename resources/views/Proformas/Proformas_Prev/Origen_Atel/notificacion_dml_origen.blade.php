@@ -14,7 +14,7 @@
         #header {
             position: fixed; 
             /* esta ligado con el primer valor del margin */
-            top: -2.8cm;
+            top: -3cm;
             left: 0cm;
             width: 100%;
             text-align: right; 
@@ -29,8 +29,7 @@
             bottom: -2.4cm;
             left: 0cm;
             width: 100%;
-            height: 14%;
-
+            height: 12%;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -49,7 +48,7 @@
             text-align: center;
         }
 
-        #footer .page:after { content: counter(page, upper-decimal); }   
+        /* #footer .page:after { content: counter(page, upper-decimal); }    */
 
         #footer2 { 
             position: fixed; 
@@ -62,49 +61,55 @@
             transform: rotate(0deg); 
             top:300px;
         }
+        
         .logo_footer{
             width: auto;
             height: 150px;
         }
-        .tabla_footer{
-            width: 100%;
-            font-family: sf-pro-display-black, sans-serif;
-            font-size: 12px;
-        }
         
-        .color_letras_alfa{
-            color: #184F56;
-            font-weight: bold;
-        }
         .negrita{
             font-weight: bold;
         }
+
         .fuente_todo_texto{
             font-family: sans-serif; 
             font-size: 12px;
             margin: 0;
             padding: 0;
         }
+
         .tabla1{
             width: 80%;
             margin-left: -3.5px;
         }
+
         .tabla2{
             width: 100%;
         }
+
         section{
             text-align: justify;
         }
+
         .container{
             margin-top: -0.5cm;
             margin-left: 1.5cm;
             margin-right: 1.5cm;
         }
+
         .cuadro{
             border: 3px solid black;
             padding-left: 6px;
             width: 5cm;
             height: 2cm;
+        }
+
+        .copias{
+            font-size: 10px;
+        }
+
+        .derecha{
+            float:right;
         }
         /* .hijo{
             width: 2cm;
@@ -148,6 +153,7 @@
             ?>
             <div class="footer_content">
                 <span style="color: #3C3C3C;">{{$nombre_afiliado}} - {{$tipo_identificacion}} {{$num_identificacion}} - Siniestro: {{$N_siniestro}}</span>
+                <br><br>
                 <img src="data:image/png;base64,{{ $footer_base64 }}" class="footer_image">
             </div>
         <?php endif ?>
@@ -165,7 +171,7 @@
             <div class="hijo">{{$i}}</div>
         @endfor --}}
 
-        <p class="fuente_todo_texto"><span class="negrita">{{$ciudad}}, {{$fecha}}</span></p>
+        <p class="fuente_todo_texto derecha"><span class="negrita">{{$ciudad}} {{$fecha}}</span></p>
         <br>
         <table class="tabla2">
             <tbody>
@@ -233,7 +239,7 @@
                 <br>
                 <span class="negrita">Convenio Seguro de Vida Alfa</span>
                 <br>
-                <span class="negrita">Seguro alfa S.A. y Seguro de Vida Alfa S.A.</span>
+                <span class="negrita">Seguro Alfa S.A. y Seguro de Vida Alfa S.A.</span>
             </div>
         </section>
         <br>
@@ -261,7 +267,7 @@
                     <?php 
                         if (isset($Agregar_copia[$Beneficiario])) { ?>
                             <tr>
-                                <td>
+                                <td class="copias">
                                     <span class="negrita">Beneficiario: </span><?=$Agregar_copia['Beneficiario'];?>
                                 </td>
                             </tr>
@@ -271,7 +277,7 @@
                     <?php 
                         if (isset($Agregar_copia[$Empleador])) { ?>
                             <tr>
-                                <td>
+                                <td class="copias">
                                     <span class="negrita">Empleador: </span><?=$Agregar_copia['Empleador'];?>
                                 </td>
                             </tr>
@@ -326,7 +332,7 @@
         if ( isset($pdf) ) {
             $pdf->page_script('
                 $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $pdf->text(485, 70, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+                $pdf->text(485, 50, "Página $PAGE_NUM de $PAGE_COUNT", $font, 9);
             ');
         }
 	</script>

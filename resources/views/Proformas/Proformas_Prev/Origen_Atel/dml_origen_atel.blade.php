@@ -250,7 +250,7 @@
                         <span class="dato_dinamico">Como quiere que se trata de la emisión de un concepto sobre el presunto origen de un evento, 
                             más no un dictamen del mismo, se conceptúa con fundamento en la experticia del Equipo Interdisciplinario, 
                             siempre cumpliendo los parámetros que dispone las normas vigentes en la materia. 
-                            (Ley 100 de 1993, , decreto 776 de 2002, Ley 1562 del 2012)
+                            (Ley 100 de 1993, decreto 776 de 2002, Ley 1562 del 2012)
                         </span>
                     </td>
                 </tr>
@@ -277,7 +277,7 @@
                     <tr>
                         <td colspan="4" class="dato_dinamico" style="text-align: center;">
                             <span style="font-weight: 700;">LINA MARCELA MAYORGA CULMA</span><br>
-                            <span>Medicina Fisica Y Rehabilitación - E.S.O<br>
+                            <span>Medicina Física y Rehabilitación - E.S.O<br>
                             RM 250623/09 - LSO 16640/22</span>
                             <p class="firma_visado"><b>Fecha de firma: {{$f_visado}}</b></p>
                         </td>
@@ -296,7 +296,7 @@
                     <tr>
                         <td colspan="4" class="dato_dinamico" style="text-align: center;">
                             <span style="font-weight: 700;">JULIAN ENRIQUE CAMACHO GONZALEZ</span><br>
-                            <span>MÉDICO LABORAL<br>
+                            <span>Médico Laboral<br>
                                 RM. 04036/2010 - Lic. S.O 28239 del 13/12/2022</span>
                             <p class="firma_visado"><b>Fecha de firma: {{$f_visado}}</b></p>
                         </td>
@@ -315,7 +315,7 @@
                     <tr>
                         <td colspan="4" class="dato_dinamico" style="text-align: center;">
                             <span style="font-weight: 700;">LILIANA MONTES CASTAÑEDA</span><br>
-                            <span>FISIOTERAPEUTA<br>
+                            <span>Fisioterapeuta<br>
                             LSO Resolución 4919 del 08/05/2012</span>
                             <p class="firma_visado"><b>Fecha de firma: {{$f_visado}}</b></p>
                         </td>

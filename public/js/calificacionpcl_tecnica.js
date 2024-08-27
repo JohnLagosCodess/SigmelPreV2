@@ -3274,7 +3274,6 @@ $(document).ready(function(){
                         $("#listado_comunicados_clpcl thead th").eq(4).hide(); //cabecera
                         $tableComunicados.find("td").eq(4).hide(); // fila
                     }else{
-                        console.log('sssw2');
                         if(estado_correspondencia == '1' || (StatusSeleccionado == 359 || StatusSeleccionado == 358)){
                             $("#btn_reemplazar_archivo_"+data_comunicado.Id_Comunicado).prop('disabled',false);
                         }else{
@@ -4230,7 +4229,7 @@ $(document).ready(function(){
     oficioremisoriopcl.change(function(){
         if ($(this).prop('checked')) {
             $("#Asunto").val("Calificación de Pérdida de Capacidad Laboral al Fondo de Pensiones Porvenir S.A.");
-            var texto_insertar = "<p>Hola, {{$Nombre_afiliado}}! </p>"+
+            var texto_insertar = "<p>Hola, ¡{{$Nombre_afiliado}}! </p>"+
             "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo con tu solicitud de  "+ 
             "calificación de pérdida de capacidad laboral (PCL) en la AFP Porvenir S.A., te informamos que el historial médico ha sido revisado y "+
             "calificado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.(1).</p>"+
@@ -4241,8 +4240,9 @@ $(document).ready(function(){
             "caso, podrás iniciar tu solicitud pensional a través de a página web www.porvenir.com.co o llamando a la línea de atención al cliente "+
             "de Porvenir 018000510800, con el fin de solicitar una cita para la radicación de la documentación.</p>"+
             "<p>En caso de que no te encuentres de acuerdo con la calificación emitida por Seguros de Vida Alfa S.A., cuentas con diez (10) días "+
-            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de los siguientes aspectos te encuentras en desacuerdo: <br><br>- Pérdida de capacidad laboral <br> - Origen <br>  - Fecha de estructuración <br><br> La carta debe ser remitida por medio de correo certificado a la dirección <strong>Carrera 10 # 18-36, piso 4 edificio José María Córdoba en "+
-            "Bogotá o a inconformidad@segurosalfa.com.co.</strong> Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de localización. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación.<br> Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una comunicación donde te informaremos el estado del proceso. "
+            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de los siguientes aspectos te encuentras en desacuerdo: <br><br>- Pérdida de capacidad laboral <br> - Origen <br>  - Fecha de estructuración <br><br> La carta debe ser remitida por medio de correo certificado a la dirección <strong>Carrera 10 # 18-36, piso 4, edificio José María Córdoba en "+
+            "Bogotá o a inconformidad@segurosalfa.com.co.</strong> Ten presente que el comunicado debe venir firmado por ti, relacionando los datos de localización. Posterior a la revisión de tu carta, procederemos a remitir tu expediente a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación."+
+            "<p> Una vez realizada la solicitud, a más tardar en (15) quince días hábiles recibirás por parte de Seguros de Vida Alfa S.A. una comunicación donde te informaremos el estado del proceso. </p>"
             //"manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de"+
             //"los siguientes aspectos te encuentras en desacuerdo: </p>"+
             //"<p>- Pérdida de capacidad laboral</p>"+
@@ -4317,10 +4317,10 @@ $(document).ready(function(){
     oficioremisorioincapcl.change(function(){
         if ($(this).prop('checked')) {
             $("#Asunto").val("Calificación de Pérdida de Capacidad Laboral al Fondo de Pensiones Porvenir S.A.");
-            var texto_insertar = "<p>Respetado(a) {{$Nombre_afiliado}}, cordial saludo: </p>"+
+            var texto_insertar = "<p>Respetado (a) {{$Nombre_afiliado}}, cordial saludo: </p>"+
             "<p>Teniendo en cuenta que usted ha cumplido los términos de incapacidad temporal prolongada establecidos por la ley, la AFP Porvenir "+ 
-            "S.A. en cumplimiento de la normatividad legal vigente procede a notificarle el dictamen de calificación con respecto a las patologías "+
-            "padecidas por usted y sustentadas en las Historias Clínicas aportadas que hacen parte integra de su expediente.</p>"+
+            "S.A. en cumplimiento de la normatividad legal vigente, procede a notificarle el dictamen de calificación con respecto a las patologías "+
+            "padecidas por usted y sustentadas en las historias clínicas aportadas que hacen parte integral de su expediente.</p>"+
             "<p>Para el caso particular, es necesario resaltar el siguiente acápite legal: Literal a) del Artículo 29 del Decreto 1352 de 2013.</p>"+
             "<p>Teniendo en cuenta lo anterior nos permitimos informarle que el grupo interdisciplinario de Seguros de Vida Alfa S.A, aseguradora que "+
             "maneja el seguro previsional de los afiliados a la AFP Porvenir, emitió dictamen de calificación de origen y pérdida de la capacidad "+
@@ -4341,7 +4341,7 @@ $(document).ready(function(){
             "Vida Alfa S.A. su inconformidad dentro de los diez (10) días siguientes a partir de la fecha de recibida la notificación, evento en "+
             "el cual procederemos a remitir su caso a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación.</p>"+
             "<p>Dicha manifestación debe realizarla por escrito dirigida a Seguros de Vida Alfa, en la que debe expresar sobre cuál de los aspectos "+
-            "apela: origen, pérdida de capacidad laboral y/o fecha de estructuración. Remitirla a la Cra 10 N° 18 - 36 Piso 4 Edificio José María "+
+            "apela: origen, pérdida de capacidad laboral y/o fecha de estructuración. Remitirla a la Cra. 10 N° 18 - 36, piso 4, Edificio José María "+
             "Córdoba en Bogotá, al fax 7435333 ext.14440 0 al correo electrónico: inconformidad@segurosalfa.com.co.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
 

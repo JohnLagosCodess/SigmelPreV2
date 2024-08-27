@@ -15,7 +15,7 @@
         #header {
             position: fixed; 
             /* esta ligado con el primer valor del margin */
-            top: -2.8cm;
+            top: -3cm;
             left: 0cm;
             width: 100%;
             text-align: right;
@@ -29,11 +29,10 @@
         #footer{
             position: fixed;
             /* esta ligado con el tercer valor del margin */
-            bottom: -3cm;
+            bottom: -2.4cm;
             left: 0cm;
             width: 100%;
-            height: 14%;
-
+            height: 10%;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -134,6 +133,28 @@
             border-collapse: collapse;
             text-align: justify;
         }
+
+        .derecha{
+            float:right;
+        }
+
+        .copias{
+            font-size: 10px;
+        }
+
+        .content2 { padding-left: 1.5px; padding-right: 1.5px; }
+
+        .border_section{
+            border: 1px solid #000;
+        }
+
+        .dato_dinamico_font{
+            font-family: sans-serif;
+            text-align: justify !important;
+            font-size: 12px !important;  
+            padding-left: 2px;          
+        }
+
     </style>
 </head>
 <body>
@@ -165,6 +186,7 @@
             ?>
             <div class="footer_content">
                 <span style="color: #3C3C3C; margin-top:2px;">{{$nombre_afiliado}} - {{$tipo_identificacion}} {{$num_identificacion}} - Siniestro: {{$N_siniestro}} </span>
+                <br>
                 <img src="data:image/png;base64,{{ $footer_base64 }}" class="footer_image">
             </div>
         <?php endif ?>
@@ -181,16 +203,29 @@
         {{-- @for ($i=0; $i<50; $i++)
             <div class="hijo">{{$i}}</div>
         @endfor --}}
-        <p class="fuente_todo_texto">{{$ciudad}}, {{$fecha}}</p>
+        <p class="fuente_todo_texto derecha"><span class="negrita">{{$ciudad}} {{$fecha}}</span></p>
+        <br>
         <table class="tabla2">
             <tbody>
                 <tr>
                     <td>
-                        <span class="fuente_todo_texto"><span class="negrita">Señores: </span><br>{{$nombre_destinatario}}</span><br>
+                        {{-- <span class="fuente_todo_texto"><span class="negrita">Señores: </span>
+                        <br>
+                        <b>{{$nombre_destinatario}}</b>
+                        </span><br>
                         <span class="fuente_todo_texto">{{$email_destinatario}}</span><br>
                         <span class="fuente_todo_texto">{{$direccion_destinatario}}</span><br>
                         <span class="fuente_todo_texto">{{$telefono_destinatario}}</span><br>
-                        <span class="fuente_todo_texto">{{$ciudad_destinatario}}</span>
+                        <span class="fuente_todo_texto">{{$ciudad_destinatario}}</span> --}}
+
+                        <p class="fuente_todo_texto">
+                            <span class="negrita">Señores:</span><br>
+                            <b>{{$nombre_destinatario}}</b><br>
+                            {{$email_destinatario}}<br>
+                            {{$direccion_destinatario}} <br>
+                            {{$telefono_destinatario}} <br>
+                            {{$ciudad_destinatario}} <br>
+                        </p>
                     </td>
                     <td>
                         <div class="cuadro">
@@ -202,16 +237,16 @@
                 </tr>
             </tbody>
         </table>
-        <br>
+        {{-- <br> --}}
         <table class="tabla1">
             <tbody>
                 <tr>
                     <td class="fuente_todo_texto">
-                        <div style="margin-left: 3cm;">
+                        <div>
                             <span class="negrita">Asunto: {{$asunto}}</span><br> 
-                            <span class="negrita">Ramo:</span> {{$ramo}}<br>                        
-                            {{$tipo_identificacion.' '.$num_identificacion}}<br>
-                            <span class="negrita">Siniestro: </span>{{$N_siniestro}}
+                            <b>{{$tipo_identificacion.' '.$num_identificacion}}</b><br>
+                            <span class="negrita">Ramo: {{$ramo}}</span><br>           
+                            {{-- <span class="negrita">Siniestro: </span>{{$N_siniestro}} --}}
                         </div>
                     </td>
                 </tr>
@@ -242,12 +277,19 @@
                     <tr>
                         <td>FECHA DE ESTRUCTURACIÓN: N/A</td>
                     </tr>
-                    <tr>
-                        <td>SUSTENTACIÓN: {{$cuerpo}}</td>
-                    </tr>
                 </tbody>
             </table>
         </section>
+        <div class="content2 border_section">
+            <div class="dato_dinamico_font">
+                <span>SUSTENTACIÓN:
+                    <?php 
+                        $cuerpo_modificado = str_replace(array('<p>', '</p>'), array('<span>', '</span>'.PHP_EOL.PHP_EOL), $cuerpo);
+                        echo nl2br($cuerpo_modificado);
+                    ?>
+                </span>
+            </div>
+        </div>
         <br>
         <section class="fuente_todo_texto">
             Cordialmente,
@@ -259,7 +301,7 @@
                 <br>
                 <span class="negrita">Convenio Seguro de Vida Alfa</span>
                 <br>
-                <span class="negrita">Seguro alfa S.A. y Seguro de Vida Alfa S.A.</span>
+                <span class="negrita">Seguro Alfa S.A. y Seguro de Vida Alfa S.A.</span>
                 <br>
                 <span class="negrita">Anexo: {{$nro_anexos}}</span>
             </div>
@@ -288,7 +330,7 @@
                     <?php
                     if (isset($Agregar_copia[$Afiliado])) { ?>
                             <tr>
-                                <td>
+                                <td class="copias">
                                     <span class="negrita">Afiliado: </span><?=$Agregar_copia['Afiliado'];?>
                                 </td>
                             </tr>
@@ -298,7 +340,7 @@
                     <?php 
                         if (isset($Agregar_copia[$Empleador])) { ?>
                             <tr>
-                                <td>
+                                <td class="copias">
                                     <span class="negrita">Empleador: </span><?=$Agregar_copia['Empleador'];?>
                                 </td>
                             </tr>
@@ -364,7 +406,7 @@
         if ( isset($pdf) ) {
             $pdf->page_script('
                 $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $pdf->text(485, 70, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+                $pdf->text(485, 50, "Página $PAGE_NUM de $PAGE_COUNT", $font, 9);
             ');
         }
 	</script>

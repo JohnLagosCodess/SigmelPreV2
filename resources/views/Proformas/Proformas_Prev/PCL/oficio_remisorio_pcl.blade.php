@@ -12,7 +12,7 @@
         }
         #header {
             position: fixed; 
-            top: -2.8cm;
+            top: -3cm;
             left: 0cm;
             width: 100%;
             text-align: right; 
@@ -44,11 +44,10 @@
         #footer{
             position: fixed;
             /* esta ligado con el tercer valor del margin */
-            bottom: -3cm;
+            bottom: -2.4cm;
             left: 0cm;
             width: 100%;
-            height: 14%;
-
+            height: 10%;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -125,7 +124,14 @@
         .tabla_cuerpo, .tabla_cuerpo td, .tabla_cuerpo th {
             border: 1px solid black;
             border-collapse: collapse;
-        }  
+        } 
+        .copias{
+            font-size: 10px;
+        }
+        .derecha{
+            float:right;
+        }
+
     </style>
 </head>
 <body>
@@ -167,6 +173,7 @@
             ?>
             <div class="footer_content">
                 <span style="color: #3C3C3C; margin-top:2px;">{{$Nombre_afiliado}} - {{$T_documento_noti}} {{$NroIden_afiliado_noti}} - Siniestro: {{$N_siniestro}} </span>
+                <br>
                 <img src="data:image/png;base64,{{ $footer_base64 }}" class="footer_image">
             </div>
         <?php endif ?>
@@ -180,7 +187,8 @@
         <img src="data:image/png;base64,{{ $imagenBase64_footer }}" class="logo_footer">
     </div>
     <div class="container">
-        <p class="fuente_todo_texto">{{$Ciudad_correspondencia}}, {{$F_correspondecia}}</p>
+        <p class="fuente_todo_texto derecha">{{$Ciudad_correspondencia}} {{$F_correspondecia}}</p>
+        <br>
         <table class="tabla2">                        
             <tbody>
                 <tr>
@@ -247,7 +255,7 @@
                 <br>
                 Convenio Seguro de Vida Alfa
                 <br>
-                Seguro alfa S.A. y Seguro de Vida Alfa S.A.
+                Seguro Alfa S.A. y Seguro de Vida Alfa S.A.
             </div>
             {{-- <div class="fuente_todo_texto">
                 <b>Anexos:</b> {{$Anexos_correspondecia}}
@@ -285,7 +293,7 @@
                     <?php 
                         if (!empty($Copia_afiliado_correspondencia)) { ?>
                             <tr>
-                                <td>
+                                <td class="copias">
                                     <span class="negrita">Afiliado: </span><?php echo $Nombre_afiliado_copia.' - '.$Direccion_afiliado_copia.'; '.$Email_afiliado_noti.', Teléfono: '.$Telefono_afiliado_copia.', '.$Ciudad_departamento_afiliado_copia;?>
                                 </td>
                             </tr>
@@ -295,7 +303,7 @@
                     <?php 
                         if (!empty($Copia_empleador_correspondecia)) { ?>
                             <tr>
-                                <td>
+                                <td class="copias">
                                     <span class="negrita">Empresa: </span><?php echo $copiaNombre_empresa_noti.' - '.$copiaDireccion_empresa_noti.'; '.$copiaEmail_empresa_noti.', Teléfono: '.$copiaTelefono_empresa_noti.', '.$copiaCiudad_departamento_empresa_noti;?>
                                 </td>
                             </tr>
@@ -305,7 +313,7 @@
                     <?php 
                         if (!empty($Copia_eps_correspondecia)) { ?>
                             <tr>
-                                <td>
+                                <td class="copias">
                                     <span class="negrita">EPS: </span><?php echo $Nombre_eps.' - '.$Direccion_eps.'; '.$Email_eps.', Teléfono: '.$Telefono_eps.', '.$Ciudad_departamento_eps;?>
                                 </td>
                             </tr>
@@ -350,7 +358,7 @@
         if ( isset($pdf) ) {
             $pdf->page_script('
                 $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $pdf->text(485, 70, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+                $pdf->text(485, 50, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
             ');
         }
 	</script>

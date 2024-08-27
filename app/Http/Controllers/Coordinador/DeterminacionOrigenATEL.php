@@ -30,6 +30,7 @@ use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_accion_eventos;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Traits\GenerarRadicados;
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -38,6 +39,8 @@ use Carbon\Carbon;
 
 class DeterminacionOrigenATEL extends Controller
 {
+    use GenerarRadicados;
+
     public function mostrarVistaDtoATEL(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -215,49 +218,11 @@ class DeterminacionOrigenATEL extends Controller
         ])
         ->get();
         // creación de consecutivo para el comunicado
-        $radicadocomunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-        ->select('N_radicado')
-        ->where([
-            ['ID_evento',$Id_evento_dto_atel],
-            ['F_comunicado',$date],
-            ['Id_proceso','1']
-        ])
-        ->orderBy('N_radicado', 'desc')
-        ->limit(1)
-        ->get();
-            
-        if(count($radicadocomunicado)==0){
-            $fechaActual = date("Ymd");
-            // Obtener el último valor de la base de datos o archivo
-            $consecutivoP1 = "SAL-ORI";
-            $consecutivoP2 = $fechaActual;
-            $consecutivoP3 = '000000';
-            $ultimoDigito = substr($consecutivoP3, -6);
-            $consecutivoInicial = $consecutivoP1.$consecutivoP2.$consecutivoP3; 
-            $nuevoConsecutivo = $ultimoDigito + 1;
-            // Reiniciar el consecutivo si es un nuevo día
-            if (date("Ymd") != $fechaActual) {
-                $nuevoConsecutivo = 0;
-            }
-            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-            $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;            
-        }else{
-            $fechaActual = date("Ymd");
-            $ultimoConsecutivo = $radicadocomunicado[0]->N_radicado;
-            $ultimoDigito = substr($ultimoConsecutivo, -6);
-            $nuevoConsecutivo = $ultimoDigito + 1;
-            // Reiniciar el consecutivo si es un nuevo día
-            if (date("Ymd") != $fechaActual) {
-                $nuevoConsecutivo = 0;
-            }
-            // Poner ceros a la izquierda para llegar a una longitud de 6 dígitos
-            $nuevoConsecutivoFormatted = str_pad($nuevoConsecutivo, 6, "0", STR_PAD_LEFT);
-            $consecutivo = "SAL-ORI" . $fechaActual . $nuevoConsecutivoFormatted;
-        }
+        $consecutivo =  $this->getRadicado('origen',$Id_evento_dto_atel);
 
         $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento_dto_atel], ['Id_Asignacion',$Id_asignacion_dto_atel], ['T_documento','N/A'], ['Modulo_creacion','determinacionOrigenATEL']])->get();
+
         foreach ($array_comunicados_correspondencia as $comunicado) {
             if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
                 $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
@@ -285,12 +250,14 @@ class DeterminacionOrigenATEL extends Controller
             }
 
         }
+
         /* Nombre Afp */
         $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
         ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sie.Emails as Email')
         ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
         ->get();
+
         /* Traer datos de la AFP de Conocimiento */
         $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
@@ -1093,7 +1060,7 @@ class DeterminacionOrigenATEL extends Controller
         $ciudad = $request->ciudad;
         // $f_correspondencia = $request->f_correspondencia;
         $f_correspondencia = $date;
-        $radicado = $request->radicado;
+        $radicado = $this->disponible($request->radicado,$Id_Evento_dto_atel)->getRadicado('origen',$Id_Evento_dto_atel);
         $bandera_correspondecia_guardar_actualizar = $request->bandera_correspondecia_guardar_actualizar;
 
         /* Se completan los siguientes datos para lo del tema del pbs 014 */
@@ -1266,7 +1233,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Firmar' => $firmar,
                 'Ciudad' => $ciudad,
                 'F_correspondecia' => $f_correspondencia,
-                'N_radicado' => $radicado,
+               // 'N_radicado' => $radicado,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];
@@ -1591,12 +1558,12 @@ class DeterminacionOrigenATEL extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
-        
+
         /* Captura de variables del formulario */
         $id_tupla_comunicado = $request->id_tupla_comunicado;
         $id_com_inter = $request->id_com_inter;
         $ciudad = $request->ciudad;
-        $fecha = $request->fecha;
+        $fecha =  fechaFormateada($request->fecha);
         $asunto = strtoupper($request->asunto);
         $cuerpo = $request->cuerpo;
         $tipo_identificacion = $request->tipo_identificacion;
