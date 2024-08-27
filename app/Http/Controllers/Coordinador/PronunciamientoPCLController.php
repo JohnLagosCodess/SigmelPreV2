@@ -1108,7 +1108,7 @@ class PronunciamientoPCLController extends Controller
         if(count($array_diagnosticosPcl) > 0){
             // Obtener el array de nombres CIE10 y codigo cie10
             $NombresCIE10 = $array_diagnosticosPcl->map(function ($item) {
-                return '('.$item->Codigo_cie10.')('.$item->Nombre_CIE10.')('.$item->Nombre_origen.')';
+                return '(<b>'.$item->Codigo_cie10.'</b>) '.strtoupper($item->Nombre_CIE10).' de origen '.$item->Nombre_origen.'';
             })->toArray();
                 
             // Obtener el número de elementos en el array
@@ -1326,7 +1326,7 @@ class PronunciamientoPCLController extends Controller
                 'Tipo_documento_afi' => $Tipo_documento_afi,
                 'Iden_afiliado_corre' => $Iden_afiliado_corre,
                 'Ciudad_correspon' => $Ciudad_correspon,
-                'Fecha_correspondencia' => $Fecha_correspondencia,
+                'Fecha_correspondencia' => fechaFormateada($Fecha_correspondencia),
                 'N_radicado' => $N_radicado,
                 'Nombre_afiliado_corre' => $Nombre_afiliado_corre,
                 'Tipo_documento_afi' => $Tipo_documento_afi,
@@ -1500,7 +1500,8 @@ class PronunciamientoPCLController extends Controller
             $header->addTextBreak();
                       
             // Creación de Contenido
-            $section->addText($Ciudad_correspon.' '.$Fecha_correspondencia, array('bold' => true));
+            $fecha_formateada = fechaFormateada($Fecha_correspondencia);
+            $section->addText($Ciudad_correspon.' '.$fecha_formateada, array('bold' => true), array('align' => 'right'));
             $section->addTextBreak();
 
             $table = $section->addTable();
@@ -1515,7 +1516,7 @@ class PronunciamientoPCLController extends Controller
             $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
             $textRun1->addText('Señores: ',array('bold' => true));
             $textRun1->addTextBreak();
-            $textRun1->addText($Entidad_calificador);
+            $textRun1->addText($Entidad_calificador,array('bold' => true));
             $textRun1->addTextBreak();
             $textRun1->addText($Email_calificador);
             $textRun1->addTextBreak();
@@ -1578,8 +1579,8 @@ class PronunciamientoPCLController extends Controller
             $patron4 = '/\{\{\$F_estructuracionPcl\}\}/';
             if (preg_match($patron1, $Sustenta_cali) && preg_match($patron2, $Sustenta_cali) &&
             preg_match($patron3, $Sustenta_cali) && preg_match($patron4, $Sustenta_cali)) {
-                $texto_modificado = str_replace('{{$Nombre_afiliado}}', '<b>'.$Nombre_afiliado_corre.'</b>', $Sustenta_cali);
-                $texto_modificado = str_replace('{{$CIE10_Nombres_Origen}}', '<b>'.$CIE10Nombres.'</b>', $texto_modificado);
+                $texto_modificado = str_replace('{{$Nombre_afiliado}}', '<b>'.strtoupper($Nombre_afiliado_corre).'</b>, '.'<b>'.strtoupper($Tipo_documento_afi).'</b> '.'<b>'.$Iden_afiliado_corre.'</b>', $Sustenta_cali);
+                $texto_modificado = str_replace('{{$CIE10_Nombres_Origen}}', $CIE10Nombres, $texto_modificado);
                 // $texto_modificado = str_replace('{{$OrigenPcl}}', $T_origen , $texto_modificado);
                 $texto_modificado = str_replace('{{$PorcentajePcl}}', '<b>'.$Porcentaje_pcl.'</b>', $texto_modificado);
                 $texto_modificado = str_replace('{{$F_estructuracionPcl}}', '<b>'.$Fecha_estruturacion.'</b>', $texto_modificado);
@@ -1763,7 +1764,7 @@ class PronunciamientoPCLController extends Controller
             // return response()->download(public_path("Documentos_Eventos/{$Id_Evento_pronuncia_corre}/{$nombre_docx}"));
 
             // Leer el contenido del archivo guardado y codificarlo en base64
-            $contenidoWord = File::get(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+            $contenidoWord = File::get(public_path("Documentos_Eventos/{$Id_Evento_pronuncia_corre}/{$nombre_docx}"));
 
             $datos = [
                 'indicativo' => $indicativo,

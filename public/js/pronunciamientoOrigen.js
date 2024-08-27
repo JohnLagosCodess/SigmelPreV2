@@ -564,10 +564,10 @@ $(document).ready(function(){
             
             $("#btn_insertar_nro_dictamen_pri_cali").prop('disabled', true);
             $("#btn_insertar_fecha_dictamen_pri_cali").prop('disabled', true);
-            $("#btn_insertar_nombre_afiliado").prop('disabled', false);
-            $("#btn_insertar_tipo_doc").prop('disabled', false);
-            $("#btn_insertar_nro_identificacion").prop('disabled', false);
-            $("#btn_insertar_cie10_nombrecie10").prop('disabled', false);
+            $("#btn_insertar_nombre_afiliado").prop('disabled', true);
+            $("#btn_insertar_tipo_doc").prop('disabled', true);
+            $("#btn_insertar_nro_identificacion").prop('disabled', true);
+            $("#btn_insertar_cie10_nombrecie10").prop('disabled', true);
             
             $("#asunto_cali").val("CONCEPTO MÉDICO DE DICTAMEN ORIGEN");
             $('#sustenta_cali').summernote('code', '');
@@ -599,7 +599,7 @@ $(document).ready(function(){
             $("#btn_insertar_cie10_nombrecie10").prop('disabled', false);
 
             $("#asunto_cali").val("RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN FRENTE A DICTAMEN N° {{$nro_dictamen_pri_cali}} DEL {{$fecha_dictamen_pri_cali}}");
-            var texto_insertar = "<p>Respetados Señores,</p><p>Yo, HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. Aseguradora que expidió el seguro previsional a la AFP PORVENIR S.A., debidamente facultado para ello, en atención al dictamen de la referencia, estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN ante la Junta, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de ORIGEN dictaminada al afiliado {{$nombre_afiliado}} {{$tipo_documento}} {{$nro_identificacion}}, donde califican los diagnósticos: {{$cie10_nombrecie10_origencie10}}.</p><p>1. (Descripción de recurso)</p><p>Por lo anterior, presentamos el recurso de reposición en subsidio de apelación, contra el origen de la patología de {{$cie10_nombrecie10_origencie10}}, con el fin que la Junta dictamine el origen de la patología del paciente dando aplicación a la Ley 1562 de 2012 y Decreto 1477 de 2014 como normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C.</p><p>Cualquier Información adicional con gusto le será suministrada,</p>";
+            var texto_insertar = "<p>Respetados Señores,</p><p>Yo, HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. Aseguradora que expidió el seguro previsional a la AFP PORVENIR S.A., debidamente facultado para ello, en atención al dictamen de la referencia, estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN ante la Junta, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de ORIGEN dictaminada al afiliado {{$nombre_afiliado}} {{$tipo_documento}} {{$nro_identificacion}}, donde califican los diagnósticos: {{$cie10_nombrecie10_origencie10}}.</p><p>1. (Descripción de recurso)</p><p>Por lo anterior, presentamos el recurso de reposición en subsidio de apelación, contra el origen de la patología de {{$cie10_nombrecie10_origencie10}}, con el fin que la Junta dictamine el origen de la patología del paciente dando aplicación a la Ley 1562 de 2012 y Decreto 1477 de 2014 como normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e informarnos con el fin de consignar los honorarios respectivos.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas del paciente. En caso que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C.</p><p>Cualquier Información adicional con gusto le será suministrada,</p>";
             $('#sustenta_cali').summernote('code', texto_insertar);
 
             // Seteo automático del nro de anexos:
@@ -1387,8 +1387,11 @@ $(document).ready(function(){
                 });
             }
         });
+
+
         var sustenta_cali = $('#sustenta_cali').val();
         sustenta_cali = sustenta_cali ? sustenta_cali.replace(/"/g, "'") : '';
+
         var formData = new FormData($('form')[0]);
         formData.append('datos_finales_diagnosticos_moticalifi', JSON.stringify(datos_finales_diagnosticos_moticalifi));
         //const arrayData = JSON.parse(formData.get('datos_finales_diagnosticos_moticalifi'));
@@ -1682,7 +1685,9 @@ $(document).ready(function(){
         }else{
             var destinatario_principal = "No";
         }
+
         sustentacion = sustentacion ? sustentacion.replace(/"/g, "'") : '';
+
         var tipo_entidad_correspon = $("#tipo_entidad").val();
         var nombre_entidad_correspon = $("#nombre_entidad").val();
         

@@ -662,7 +662,7 @@
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="ciudad_comunicado">Ciudad <span style="color: red;">(*)</span></label>
-                                                <input class="form-control" type="text" name="ciudad_comunicado" id="ciudad" value="Bogotá D.C" required>
+                                                <input class="form-control" type="text" name="ciudad_comunicado" id="ciudad" value="Bogotá D.C." required>
                                                 <input hidden="hidden" type="text" class="form-control" name="Id_evento" id="Id_evento" value="{{$array_datos_calificacionPcl[0]->ID_evento}}">
                                                     <input hidden="hidden" type="text" class="form-control" name="Id_asignacion" id="Id_asignacion" value="{{$array_datos_calificacionPcl[0]->Id_Asignacion}}">
                                                     <input hidden="hidden" type="text" class="form-control" name="Id_procesos" id="Id_procesos" value="{{$array_datos_calificacionPcl[0]->Id_proceso}}">
@@ -727,14 +727,18 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-3">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documentos_pcl" value="Documento_PCL" required>
-                                                    <label class="form-check-label custom-control-label" for="documentos_pcl"><strong>Solicitud Documentos PCL</strong></label>
+                                        @if (!empty($array_datos_calificacionPcl[0]->Id_Servicio) )
+                                            @if ($array_datos_calificacionPcl[0]->Id_Servicio == 6 || $array_datos_calificacionPcl[0]->Id_Servicio == 7)
+                                                <div class="col-3">
+                                                    <div class="form-group">
+                                                        <div class="form-check custom-control custom-radio">
+                                                            <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documentos_pcl" value="Documento_PCL" required>
+                                                            <label class="form-check-label custom-control-label" for="documentos_pcl"><strong>Solicitud Documentos PCL</strong></label>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            @endif
+                                        @endif
                                         <div class="col-2">
                                             <div class="form-group">
                                                 <div class="form-check custom-control custom-radio">
@@ -748,7 +752,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="formatoB_revisionpension" value="Formato_B_Revision_pension" required>
-                                                        <label class="form-check-label custom-control-label" for="formatoB_revisionpension"><strong>Formato B</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="formatoB_revisionpension"><strong>RATIFICACIÓN (B)</strong></label>
                                                     </div>
                                                 </div>
                                             </div>   
@@ -756,7 +760,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documento_revisionpension" value="Documento_Revision_pension" required>
-                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension"><strong>Solicitud Documentos Revisión Pensión</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension"><strong>oficio solicitud de documentos complementarios</strong></label>
                                                     </div>
                                                 </div>
                                             </div>                                          
@@ -1066,14 +1070,18 @@
                                         (Afiliado y Empresa) debe seleccionar nuevamente la Forma de envio y Revisó y en (Otro) todos.
                                     </div>            
                                     <div class="row">
-                                        <div class="col-3">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="documentos_pcl_editar" value="Documento_PCL" required>
-                                                    <label class="form-check-label custom-control-label" for="documentos_pcl_editar"><strong>Solicitud Documentos PCL</strong></label>
+                                        @if (!empty($array_datos_calificacionPcl[0]->Id_Servicio) )
+                                            @if ($array_datos_calificacionPcl[0]->Id_Servicio == 6 || $array_datos_calificacionPcl[0]->Id_Servicio == 7)
+                                                <div class="col-3">
+                                                    <div class="form-group">
+                                                        <div class="form-check custom-control custom-radio">
+                                                            <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="documentos_pcl_editar" value="Documento_PCL" required>
+                                                            <label class="form-check-label custom-control-label" for="documentos_pcl_editar"><strong>Solicitud Documentos PCL</strong></label>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
+                                            @endif
+                                        @endif
                                         <div class="col-2">
                                             <div class="form-group">
                                                 <div class="form-check custom-control custom-radio">
@@ -1087,7 +1095,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="formatoB_revisionpension_editar" value="Formato_B_Revision_pension" required>
-                                                        <label class="form-check-label custom-control-label" for="formatoB_revisionpension_editar"><strong>Formato B</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="formatoB_revisionpension_editar"><strong>RATIFICACIÓN (B)</strong></label>
                                                     </div>
                                                 </div>
                                             </div>   
@@ -1095,7 +1103,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="documento_revisionpension_editar" value="Documento_Revision_pension" required>
-                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension_editar"><strong>Solicitud Documentos Revisión Pensión</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension_editar"><strong>oficio solicitud de documentos complementarios</strong></label>
                                                     </div>
                                                 </div>
                                             </div>                                          

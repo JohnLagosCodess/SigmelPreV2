@@ -2729,7 +2729,7 @@ class CalificacionPCLController extends Controller
             ->where('Nombre_cliente', $Cliente)->get();
     
             $firmaclientecompleta = sigmel_informacion_firmas_clientes::on('sigmel_gestiones')->select('Firma')
-            ->where('Id_cliente', $idcliente[0]->Id_cliente)->limit(1)->get();
+            ->where([['Id_cliente', $idcliente[0]->Id_cliente], ['Estado', '=', 'Activo']])->limit(1)->get();
 
             if(count($firmaclientecompleta) > 0){
                 $Firma_cliente = $firmaclientecompleta[0]->Firma;
@@ -3606,7 +3606,7 @@ class CalificacionPCLController extends Controller
                 'logo_header' => $logo_header,
                 'id_cliente' => $id_cliente,
                 'ciudad' => $request->ciudad_comunicado_act,
-                'fecha' => $request->fecha_comunicado2_act,
+                'fecha' => fechaFormateada($request->fecha_comunicado2_act),
                 'Nombre_afiliado' => $Nombre_afiliado,
                 'T_documento' => $T_documento,
                 'N_identificacion'  => $N_identificacion,  
@@ -3941,7 +3941,7 @@ class CalificacionPCLController extends Controller
                 'id_cliente' => $id_cliente,
                 'email_destinatario' => $email_destinatario,
                 'ciudad' => $request->ciudad_comunicado_act,
-                'fecha' => $request->fecha_comunicado2_act,
+                'fecha' => fechaFormateada($request->fecha_comunicado2_act),
                 'Nombre_afiliado' => $Nombre_afiliado,
                 'T_documento' => $T_documento,
                 'N_identificacion'  => $N_identificacion,  
@@ -4318,7 +4318,7 @@ class CalificacionPCLController extends Controller
                 'logo_header' => $logo_header,
                 'id_cliente' => $id_cliente,
                 'ciudad' => $request->ciudad_comunicado_act,
-                'fecha' => $request->fecha_comunicado2_act,
+                'fecha' => fechaFormateada($request->fecha_comunicado2_act),
                 'Nombre_afiliado' => $Nombre_afiliado,
                 'T_documento' => $T_documento,
                 'N_identificacion'  => $N_identificacion,  
@@ -8720,6 +8720,12 @@ class CalificacionPCLController extends Controller
         $Requiere_dispositivo_apoyo_dp = $array_datos_info_dictamen[0]->Requiere_dispositivo_apoyo;
         $Justificacion_dependencia_dp = $array_datos_info_dictamen[0]->Justificacion_dependencia;
 
+        /* se añade la validacion del requiere revisión pensión marcado (FICHA PBS 052) */
+        $validacion_si_req_rev_pension = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+        ->select('Requiere_Revision_Pension')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get(); 
+        $si_req_rev_pension = $validacion_si_req_rev_pension[0]->Requiere_Revision_Pension;
+
         //consulta si esta visado o no para mostrar las firmas
         
         $validacion_visado = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
@@ -8811,6 +8817,7 @@ class CalificacionPCLController extends Controller
             'Enfermedad_catastrofica_dp' => $Enfermedad_catastrofica_dp,
             'Enfermedad_congenita_dp' => $Enfermedad_congenita_dp,
             'Revision_pension_dp' => $Revision_pension_dp,
+            'si_req_rev_pension' => $si_req_rev_pension,
             'Nombre_enfermedad_dp' => $Nombre_enfermedad_dp,
             'Requiere_tercera_persona_dp' => $Requiere_tercera_persona_dp,
             'Requiere_tercera_persona_decisiones_dp' => $Requiere_tercera_persona_decisiones_dp,
@@ -9164,6 +9171,12 @@ class CalificacionPCLController extends Controller
         $Requiere_dispositivo_apoyo_dp = $array_datos_info_dictamen[0]->Requiere_dispositivo_apoyo;
         $Justificacion_dependencia_dp = $array_datos_info_dictamen[0]->Justificacion_dependencia;
 
+        /* se añade la validacion del requiere revisión pensión marcado (FICHA PBS 052) */
+        $validacion_si_req_rev_pension = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+        ->select('Requiere_Revision_Pension')
+        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get(); 
+        $si_req_rev_pension = $validacion_si_req_rev_pension[0]->Requiere_Revision_Pension;
+
         //consulta si esta visado o no para mostrar las firmas
         
         $validacion_visado = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
@@ -9233,6 +9246,7 @@ class CalificacionPCLController extends Controller
             'Enfermedad_catastrofica_dp' => $Enfermedad_catastrofica_dp,
             'Enfermedad_congenita_dp' => $Enfermedad_congenita_dp,
             'Revision_pension_dp' => $Revision_pension_dp,
+            'si_req_rev_pension' => $si_req_rev_pension,
             'Nombre_enfermedad_dp' => $Nombre_enfermedad_dp,
             'Requiere_tercera_persona_dp' => $Requiere_tercera_persona_dp,
             'Requiere_tercera_persona_decisiones_dp' => $Requiere_tercera_persona_decisiones_dp,
@@ -9795,8 +9809,8 @@ class CalificacionPCLController extends Controller
                 'Radicado_comuni' => $Radicado_comuni_comite,
                 'Asunto_correspondencia' => $Asunto_correspondencia,
                 'Cuerpo_comunicado_correspondencia' => $Cuerpo_comunicado_correspondencia,
-                'F_correspondecia' => $F_correspondecia,
-                'Ciudad_correspondencia' => $Ciudad_correspondencia,
+                'F_correspondecia' => fechaFormateada($F_correspondecia),
+                'Ciudad_correspondencia' => $Ciudad_correspondencia, 
                 'Nombre_afiliado_pie' => $Nombre_afiliado_pie,
                 'Nombre_afiliado' => $nombre_destinatario_principal,
                 'direccion_destinatario_principal' => $direccion_destinatario_principal,
@@ -9863,8 +9877,13 @@ class CalificacionPCLController extends Controller
             
             // Crear una instancia de Dompdf
             $pdf = app('dompdf.wrapper');
-            $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_remisorio_pcl', $data);            
-            $nombre_pdf = 'PCL_OFICIO_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';    
+            $pdf->loadView('/Proformas/Proformas_Prev/PCL/oficio_remisorio_pcl', $data);     
+            
+            $indicativo = time();
+
+            // $nombre_pdf = 'PCL_OFICIO_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'.pdf';    
+            $nombre_pdf = 'PCL_OFICIO_'.$Id_Asignacion_comuni_comite.'_'.$NroIden_afiliado_noti.'_'.$indicativo.'.pdf';    
+
             //Obtener el contenido del PDF
             $output = $pdf->output();
             //Guardar el PDF en un archivo
@@ -9967,7 +9986,7 @@ class CalificacionPCLController extends Controller
                 'Radicado_comuni' => $Radicado_comuni_comite,
                 'Asunto_correspondencia' => $Asunto_correspondencia,
                 'Cuerpo_comunicado_correspondencia' => $Cuerpo_comunicado_correspondencia,
-                'F_correspondecia' => $F_correspondecia,
+                'F_correspondecia' => fechaFormateada($F_correspondecia),
                 'Ciudad_correspondencia' => $Ciudad_correspondencia,
                 'Nombre_afiliado_pie' => $Nombre_afiliado_pie,
                 'Nombre_afiliado' => $nombre_destinatario_principal,

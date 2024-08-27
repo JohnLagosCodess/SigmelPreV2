@@ -258,6 +258,7 @@ class DeterminacionOrigenATEL extends Controller
 
         $array_comunicados_correspondencia = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$Id_evento_dto_atel], ['Id_Asignacion',$Id_asignacion_dto_atel], ['T_documento','N/A'], ['Modulo_creacion','determinacionOrigenATEL']])->get();
+
         foreach ($array_comunicados_correspondencia as $comunicado) {
             if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
                 $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
@@ -285,12 +286,14 @@ class DeterminacionOrigenATEL extends Controller
             }
 
         }
+
         /* Nombre Afp */
         $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
         ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sie.Emails as Email')
         ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
         ->get();
+
         /* Traer datos de la AFP de Conocimiento */
         $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
@@ -1591,12 +1594,12 @@ class DeterminacionOrigenATEL extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
-        
+
         /* Captura de variables del formulario */
         $id_tupla_comunicado = $request->id_tupla_comunicado;
         $id_com_inter = $request->id_com_inter;
         $ciudad = $request->ciudad;
-        $fecha = $request->fecha;
+        $fecha =  fechaFormateada($request->fecha);
         $asunto = strtoupper($request->asunto);
         $cuerpo = $request->cuerpo;
         $tipo_identificacion = $request->tipo_identificacion;

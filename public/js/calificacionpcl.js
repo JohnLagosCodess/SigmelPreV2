@@ -2521,11 +2521,11 @@ $(document).ready(function(){
                     "<p>"+listado+"</p>"+
                     "<p>Esta documentación debe suministrarla a los siguientes correos electrónicos: servicioalcliente@codess.org.co, "+
                     "servicioalcliente@segurosalfa.com.co en un término de tres (3) meses contados a partir del recibido de la presente comunicación, y a "+
-                    "partir de ese momento se inicia nuevamente el estudio de tu solicitud. En el evento de no recibir la documentación medica "+
+                    "partir de ese momento se inicia nuevamente el estudio de tu solicitud. En el evento de no recibir la documentación médica "+
                     "actualizada, se considerará desistimiento de tu solicitud por parte de esta aseguradora.</p>"+
                     "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 "+
                     "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o "+
-                    "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+                    "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>";
                     $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
                 }
             });
@@ -2550,14 +2550,14 @@ $(document).ready(function(){
             "el fin de revisar sus condiciones de salud.</p>"+
             "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida "+
             "Alfa S.A., hemos definido que Usted actualmente mantiene las condiciones para continuar con el beneficio "+
-            "de pensión por invalidez sobre el cual esta compañía Aseguradora ha venido pagando la mesada pensional "+
+            "de pensión por invalidez sobre el cual esta compañía aseguradora ha venido pagando la mesada pensional "+
             "en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la Administradora de Fondos de "+
             "Pensiones Porvenir S.A.</p>"+
-            "<p>En forma sucinta la revisión de invalidez, se fundamenta en: </p>"+
+            "<p>En forma sucinta, la revisión de invalidez, se fundamenta en: </p>"+
             "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al "+
             "cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de "+
             "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a "+
-            "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+            "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>";
             $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
 
             // Auto selección de la opción Afiliado (Destinatario Principal)
@@ -2571,9 +2571,9 @@ $(document).ready(function(){
             $("#firmarcomunicado_editar").prop('checked', true);
 
         }else if (opc_seleccionada == "Documento_Revision_pension") {
-            $("#asunto_editar").val("Servicio del Proceso de PCL  Revision Pension");
+            $("#asunto_editar").val("SOLICITUD DE DOCUMENTOS COMPLEMENTARIOS");
             var texto_insertar = '<p>Reciba un cordial saludo por parte de Seguros de Vida Alfa S.A.</p>'+
-            '<p>En cumplimiento de la normatividad vigente, Seguros de Vida Alfa S.A, se encuentra realizando la actualización de información de las '+ 
+            '<p>En cumplimiento de la normatividad vigente, Seguros de Vida Alfa S.A., se encuentra realizando la actualización de información de las '+ 
             'condiciones de salud de los pensionados por invalidez, sustentada en el artículo 44 de la Ley 100 de 1993, que establece:</p>'+
             '<p class="cuerpo_doc_revPen">“(...)<strong>ARTÍCULO 44. REVISIÓN DE LAS PENSIONES DE INVALIDEZ.</strong> El estado de invalidez podrá <br>'+
             'revisarse: <br>'+
@@ -2588,17 +2588,17 @@ $(document).ready(function(){
             'la pensión. Transcurridos doce (12) meses contados desde la misma fecha sin que el pensionado '+
             'se presente o permita el examen, la respectiva pensión prescribirá. '+
             'Para readquirir el derecho en forma posterior, el afiliado que alegue permanecer inválido deberá '+
-            'someterse a un nuevo dictamen. Los gastos de este nuevo dictamen ser án pagados por el afiliado <br>'+
+            'someterse a un nuevo dictamen. Los gastos de este nuevo dictamen serán pagados por el afiliado <br>'+
             '(...)”</p>'+
             '<p>De acuerdo con lo anterior y una vez revisado el expediente previsional de referencia, se estableció que es necesario que allegue '+
-            'esta documentación a los siguientes correos electrónicos : alfa.previsional2@codess.org.co, servicioalcliente@segurosalfa.com.co en '+
+            'esta documentación a los siguientes correos electrónicos: alfa.previsional2@codess.org.co, servicioalcliente@segurosalfa.com.co en '+
             'un término de tres (3) meses contados a partir del recibido de la presente comunicación, los siguientes documentos:</p>'+
             '<p>1. </p>'+
-            '<p>Los documentos anteriormente mencionados deben ser solicitados en su EPS con su médico tratante; por otra parte aclaramos que los '+
-            'mismos se deben radicar en papelería física. No se aceptan medios magnéticos como CD o correos electrónicos.</p>'+
+            '<p>Los documentos anteriormente mencionados deben ser solicitados en su EPS con su médico tratante; por otra parte, aclaramos que los '+
+            'mismos se deben radicar en papelería física.</p>'+
             '<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 '+
             '70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o '+
-            'escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>';
+            'escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>';
             $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
@@ -2616,22 +2616,30 @@ $(document).ready(function(){
             $("#firmarcomunicado_editar").prop('checked', true);
 
         }else if (opc_seleccionada == "Documento_No_Recalificacion") {
-            $("#asunto_editar").val("RESPUESTA A SOLICITUD DE RECALIFICACIÓN");
+            $("#asunto_editar").val("RESPUESTA A SOLICITUD DE RECALIFICACIÓN DE PCL");
+
+            // var texto_insertar = '<p>Reciba un cordial saludo, </p>'+
+            // '<p>Con ocasión de la solicitud de calificación de pérdida de capacidad laboral radicada por usted en la administradora de fondo de '+ 
+            // 'pensiones Porvenir, Seguros de Vida Alfa S.A., se permite dar respuesta en los términos que se describen a continuación. '+
+            // 'Una vez revisadas nuestras bases de datos y sistemas de información, se evidencia con respecto a su caso, que Seguros de Vida Alfa '+
+            // 'S.A. realizó calificación de la pérdida de capacidad laboral (PCL), con los diagnósticos de origen {{$OrigenPcl_dp}}: {{$CIE10Nombres}}, '+
+            // 'con un porcentaje del {{$PorcentajePcl_dp}} % y fecha de estructuración {{$F_estructuracionPcl_dp}}, la cual le fue remitida y le fue notificada.</p>'+
+            // '<p>Por tanto, en el momento no hay lugar a emitir nuevo dictamen de Calificación de Pérdida de Capacidad Laboral (PCL) por parte de '+
+            // 'Seguros Alfa; de acuerdo a lo establecido en el Decreto 1352 del 2013, Artículo 55:</p>'+
+            // '<p class="cuerpo_doc_revPen">“...la revisión de la pérdida de incapacidad permanente parcial por parte de las '+
+            // 'Juntas será procedente cuando el porcentaje sea inferior al 50% de pérdida de '+
+            // 'capacidad laboral a solicitud de la Administradora de Riesgos Laborales, los '+
+            // 'trabajadores o personas interesadas, mínimo al año siguiente de la calificación y '+
+            // 'siguiendo los procedimientos y términos de tiempo establecidos en el presente '+
+            // 'decreto...”</p>'+
+            // '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';
+
             var texto_insertar = '<p>Reciba un cordial saludo, </p>'+
-            '<p>Con ocasión a la solicitud de calificación de pérdida de capacidad laboral radicado por usted en la Administradora de Fondo de '+ 
-            'Pensiones Porvenir, Seguros de Vida Alfa S.A. se permite dar respuesta en los términos que se describen a continuación. '+
-            'Una vez revisadas nuestras bases de datos y sistemas de información, se evidencia con respecto a su caso, que Seguros de Vida Alfa '+
-            'S.A. realizó calificación de la Pérdida de Capacidad Laboral (PCL), con los diagnósticos de origen {{$OrigenPcl_dp}}: {{$CIE10Nombres}}, '+
-            'con un porcentaje del {{$PorcentajePcl_dp}} % y fecha de estructuración {{$F_estructuracionPcl_dp}}, la cual le fue remitida y le fue notificada.</p>'+
-            '<p>Por tanto, en el momento no hay lugar a emitir nuevo dictamen de Calificación de Pérdida de Capacidad Laboral (PCL) por parte de '+
-            'Seguros Alfa; de acuerdo a lo establecido en el Decreto 1352 del 2013 Articulo 55:</p>'+
-            '<p class="cuerpo_doc_revPen">“...la revisión de la pérdida de incapacidad permanente parcial por parte de las '+
-            'Juntas será procedente cuando el porcentaje sea inferior al 50% de pérdida de '+
-            'capacidad laboral a solicitud de la Administradora de Riesgos Laborales, los '+
-            'trabajadores o personas interesadas, mínimo al año siguiente de la calificación y '+
-            'siguiendo los procedimientos y términos de tiempo establecidos en el presente '+
-            'decreto...”</p>'+
-            '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';            
+            '<p>Con ocasión de la solicitud de calificación de pérdida de capacidad laboral radicada por usted en la administradora de fondo de '+ 
+            'pensiones Porvenir, Seguros de Vida Alfa S.A., se permite dar respuesta en los términos que se describen a continuación.</p>'+
+            '<p>(Sustentación de no recalificación)</p>'+
+            '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';
+
             $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
             $('#btn_insertar_Origen_editar').removeClass('d-none')
             $('#btn_insertar_nombreCIE10_editar').removeClass('d-none')
@@ -3288,13 +3296,13 @@ $(document).ready(function(){
                     "<p>No obstante, a que la información suministrada es relevante, se hace necesario que sean aportados documentos adicionales con el fin "+
                     "de poder realizar la calificación de pérdida de capacidad laboral requerida, que a continuación relacionamos:</p>"+
                     "<p>"+listado+"</p>"+
-                    "<p>Esta documentación debe sumistrarla a los siguientes correos electrónicos: servicioalcliente@codess.org.co, "+
+                    "<p>Esta documentación debe suministrarla a los siguientes correos electrónicos: servicioalcliente@codess.org.co, "+
                     "servicioalcliente@segurosalfa.com.co en un término de tres (3) meses contados a partir del recibido de la presente comunicación, y a "+
-                    "partir de ese momento se inicia nuevamente el estudio de tu solicitud. En el evento de no recibir la documentación medica "+
+                    "partir de ese momento se inicia nuevamente el estudio de tu solicitud. En el evento de no recibir la documentación médica "+
                     "actualizada, se considerará desistimiento de tu solicitud por parte de esta aseguradora.</p>"+
                     "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 "+
                     "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o "+
-                    "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+                    "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>";
                     $('#cuerpo_comunicado').summernote('code', texto_insertar);
                 }
             });
@@ -3321,14 +3329,14 @@ $(document).ready(function(){
             "el fin de revisar sus condiciones de salud.</p>"+
             "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida "+
             "Alfa S.A., hemos definido que Usted actualmente mantiene las condiciones para continuar con el beneficio "+
-            "de pensión por invalidez sobre el cual esta compañía Aseguradora ha venido pagando la mesada pensional "+
+            "de pensión por invalidez sobre el cual esta compañía aseguradora ha venido pagando la mesada pensional "+
             "en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la Administradora de Fondos de "+
             "Pensiones Porvenir S.A.</p>"+
-            "<p>En forma sucinta la revisión de invalidez, se fundamenta en: </p>"+
+            "<p>En forma sucinta, la revisión de invalidez, se fundamenta en: </p>"+
             "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al "+
             "cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de "+
             "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a "+
-            "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+            "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
@@ -3343,9 +3351,9 @@ $(document).ready(function(){
             $("#firmarcomunicado").prop('checked', true);
             
         }else if (opc_seleccionada == "Documento_Revision_pension") {
-            $("#asunto").val("Servicio del Proceso de PCL  Revision Pension");
+            $("#asunto").val("SOLICITUD DE DOCUMENTOS COMPLEMENTARIOS");
             var texto_insertar = '<p>Reciba un cordial saludo por parte de Seguros de Vida Alfa S.A.</p>'+
-            '<p>En cumplimiento de la normatividad vigente, Seguros de Vida Alfa S.A, se encuentra realizando la actualización de información de las '+ 
+            '<p>En cumplimiento de la normatividad vigente, Seguros de Vida Alfa S.A., se encuentra realizando la actualización de información de las '+ 
             'condiciones de salud de los pensionados por invalidez, sustentada en el artículo 44 de la Ley 100 de 1993, que establece:</p>'+
             '<p class="cuerpo_doc_revPen">“(...)<strong>ARTÍCULO 44. REVISIÓN DE LAS PENSIONES DE INVALIDEZ.</strong> El estado de invalidez podrá <br>'+
             'revisarse: <br>'+
@@ -3360,17 +3368,17 @@ $(document).ready(function(){
             'la pensión. Transcurridos doce (12) meses contados desde la misma fecha sin que el pensionado '+
             'se presente o permita el examen, la respectiva pensión prescribirá. '+
             'Para readquirir el derecho en forma posterior, el afiliado que alegue permanecer inválido deberá '+
-            'someterse a un nuevo dictamen. Los gastos de este nuevo dictamen ser án pagados por el afiliado <br>'+
+            'someterse a un nuevo dictamen. Los gastos de este nuevo dictamen serán pagados por el afiliado <br>'+
             '(...)”</p>'+
             '<p>De acuerdo con lo anterior y una vez revisado el expediente previsional de referencia, se estableció que es necesario que allegue '+
-            'esta documentación a los siguientes correos electrónicos : alfa.previsional2@codess.org.co, servicioalcliente@segurosalfa.com.co en '+
+            'esta documentación a los siguientes correos electrónicos: alfa.previsional2@codess.org.co, servicioalcliente@segurosalfa.com.co en '+
             'un término de tres (3) meses contados a partir del recibido de la presente comunicación, los siguientes documentos:</p>'+
             '<p>1. </p>'+
-            '<p>Los documentos anteriormente mencionados deben ser solicitados en su EPS con su médico tratante; por otra parte aclaramos que los '+
-            'mismos se deben radicar en papelería física. No se aceptan medios magnéticos como CD o correos electrónicos.</p>'+
+            '<p>Los documentos anteriormente mencionados deben ser solicitados en su EPS con su médico tratante; por otra parte, aclaramos que los '+
+            'mismos se deben radicar en papelería física.</p>'+
             '<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 '+
             '70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o '+
-            'escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>';
+            'escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>';
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
@@ -3386,30 +3394,38 @@ $(document).ready(function(){
 
             // Selección automática del checkbox firmar
             $("#firmarcomunicado").prop('checked', true);
-
+            
         }else if (opc_seleccionada == "Documento_No_Recalificacion") {
-            $("#asunto").val("RESPUESTA A SOLICITUD DE RECALIFICACIÓN");
+            $("#asunto").val("RESPUESTA A SOLICITUD DE RECALIFICACIÓN DE PCL");
+
+            // var texto_insertar = '<p>Reciba un cordial saludo, </p>'+
+            // '<p>Con ocasión de la solicitud de calificación de pérdida de capacidad laboral radicada por usted en la administradora de fondo de '+ 
+            // 'pensiones Porvenir, Seguros de Vida Alfa S.A., se permite dar respuesta en los términos que se describen a continuación. '+
+            // 'Una vez revisadas nuestras bases de datos y sistemas de información, se evidencia con respecto a su caso, que Seguros de Vida Alfa '+
+            // 'S.A. realizó calificación de la pérdida de capacidad laboral (PCL), con los diagnósticos de origen {{$OrigenPcl_dp}}: {{$CIE10Nombres}}, '+
+            // 'con un porcentaje del {{$PorcentajePcl_dp}} % y fecha de estructuración {{$F_estructuracionPcl_dp}}, la cual le fue remitida y le fue notificada.</p>'+
+            // '<p>Por tanto, en el momento no hay lugar a emitir nuevo dictamen de Calificación de Pérdida de Capacidad Laboral (PCL) por parte de '+
+            // 'Seguros Alfa; de acuerdo a lo establecido en el Decreto 1352 del 2013, Artículo 55:</p>'+
+            // '<p class="cuerpo_doc_revPen">“...la revisión de la pérdida de incapacidad permanente parcial por parte de las '+
+            // 'Juntas será procedente cuando el porcentaje sea inferior al 50% de pérdida de '+
+            // 'capacidad laboral a solicitud de la Administradora de Riesgos Laborales, los '+
+            // 'trabajadores o personas interesadas, mínimo al año siguiente de la calificación y '+
+            // 'siguiendo los procedimientos y términos de tiempo establecidos en el presente '+
+            // 'decreto...”</p>'+
+            // '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';
+
             var texto_insertar = '<p>Reciba un cordial saludo, </p>'+
-            '<p>Con ocasión a la solicitud de calificación de pérdida de capacidad laboral radicado por usted en la Administradora de Fondo de '+ 
-            'Pensiones Porvenir, Seguros de Vida Alfa S.A. se permite dar respuesta en los términos que se describen a continuación. '+
-            'Una vez revisadas nuestras bases de datos y sistemas de información, se evidencia con respecto a su caso, que Seguros de Vida Alfa '+
-            'S.A. realizó calificación de la Pérdida de Capacidad Laboral (PCL), con los diagnósticos de origen {{$OrigenPcl_dp}}: {{$CIE10Nombres}}, '+
-            'con un porcentaje del {{$PorcentajePcl_dp}} % y fecha de estructuración {{$F_estructuracionPcl_dp}}, la cual le fue remitida y le fue notificada.</p>'+
-            '<p>Por tanto, en el momento no hay lugar a emitir nuevo dictamen de Calificación de Pérdida de Capacidad Laboral (PCL) por parte de '+
-            'Seguros Alfa; de acuerdo a lo establecido en el Decreto 1352 del 2013 Articulo 55:</p>'+
-            '<p class="cuerpo_doc_revPen">“...la revisión de la pérdida de incapacidad permanente parcial por parte de las '+
-            'Juntas será procedente cuando el porcentaje sea inferior al 50% de pérdida de '+
-            'capacidad laboral a solicitud de la Administradora de Riesgos Laborales, los '+
-            'trabajadores o personas interesadas, mínimo al año siguiente de la calificación y '+
-            'siguiendo los procedimientos y términos de tiempo establecidos en el presente '+
-            'decreto...”</p>'+
-            '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';            
+            '<p>Con ocasión de la solicitud de calificación de pérdida de capacidad laboral radicada por usted en la administradora de fondo de '+ 
+            'pensiones Porvenir, Seguros de Vida Alfa S.A., se permite dar respuesta en los términos que se describen a continuación.</p>'+
+            '<p>(Sustentación de no recalificación)</p>'+
+            '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';
+
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
-            $('#btn_insertar_Origen').removeClass('d-none');
-            $('#btn_insertar_nombreCIE10').removeClass('d-none');
-            $('#btn_insertar_porPcl').removeClass('d-none');
-            $('#btn_insertar_F_estructuracion').removeClass('d-none');
+            // $('#btn_insertar_Origen').removeClass('d-none');
+            // $('#btn_insertar_nombreCIE10').removeClass('d-none');
+            // $('#btn_insertar_porPcl').removeClass('d-none');
+            // $('#btn_insertar_F_estructuracion').removeClass('d-none');
 
             // Auto selección de la opción Afiliado (Destinatario Principal)
             $('#afiliado_comunicado').click();

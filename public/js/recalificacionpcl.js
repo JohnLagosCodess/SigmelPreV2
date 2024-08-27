@@ -1929,7 +1929,7 @@ $(document).ready(function(){
                     deshabilitar_edicion: estado_correspondencia == '1' || (StatusSeleccionado == 359 || StatusSeleccionado == 358) ? '' : 'pointer-events: none; color: gray;'
                 }
 
-                console.log(controlComunicados.deshabilitar_selector,'32d');
+                
                 // Extraer el contenido de la columna de acciones y limpiar la columna
                 let acciones = $tableComunicados.find("td").eq(4).html();
                 
@@ -1960,7 +1960,6 @@ $(document).ready(function(){
                         $("#listado_comunicados_clpcl thead th").eq(4).hide(); //cabecera
                         $tableComunicados.find("td").eq(4).hide(); // fila
                     }else{
-                        console.log('sssw2');
                         if(estado_correspondencia == '1' || (StatusSeleccionado == 359 || StatusSeleccionado == 358)){
                             $("#btn_reemplazar_archivo_"+data_comunicado.Id_Comunicado).prop('disabled',false);
                         }else{
@@ -5213,7 +5212,7 @@ $(document).ready(function(){
            "<p>Una vez estudiados los documentos aportados para el proceso, se determinó que las condiciones que originaron la invalidez han "+
            "cambiado, lo cual se encuentra debidamente sustentado en la historia clínica, de acuerdo con los parámetros establecidos en al Manual "+
            "Único para la Calificación de la Pérdida de Capacidad Laboral.</p>"+
-           "<p>En forma sucinta el aumento de su porcentaje de invalidez, se fundamenta en:{{$Detalle_calificacion_Fbdp}}</p>";
+           "<p>En forma sucinta, el aumento de su porcentaje de invalidez, se fundamenta en:{{$Detalle_calificacion_Fbdp}}</p>";
             $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
             $('#btn_insertar_porPcl').removeClass('d-none')
             $('#btn_insertar_F_estructuracion').removeClass('d-none')
@@ -5249,23 +5248,23 @@ $(document).ready(function(){
         if ($(this).prop('checked')) {
             $("#Asunto").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
             var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
-           "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualizaci ón de historia clínica con "+ 
+           "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica con "+ 
            "el fin de revisar sus condiciones de salud.</p>"+
            "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida Alfa S.A., hemos definido "+
            "que Usted actualmente mantiene las condiciones para continuar con el beneficio de pensión por invalidez sobre el cual esta compañía "+
            "Aseguradora ha venido pagando la mesada pensional en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la "+
            "Administradora de Fondos de Pensiones Porvenir S.A.</p>"+
-           "<p>En forma sucinta la revisión de invalidez, se fundamenta en: {{$Detalle_calificacion_Fbdp}} </p>"+
-           "<p>Como puede observarse, usted ahora se encuentra dentro del porcentaje establecido en el literal A del Articulo 40 de la Ley 100 de "+
-           "1993, por lo anterior, esta Aseguradora procederá a seguir efectuando el pago de su mesada pensional en los términos establecidos en "+ 
+           "<p>En forma sucinta el aumento de su porcentaje de invalidez, se fundamenta en: {{$Detalle_calificacion_Fbdp}} </p>"+
+           "<p>Como puede observarse, usted ahora se encuentra dentro del porcentaje establecido en el literal A del Artículo 40 de la Ley 100 de "+
+           "1993, por lo anterior, esta aseguradora procederá a seguir efectuando el pago de su mesada pensional en los términos establecidos en "+ 
            "la norma anteriormente mencionada.</p>"+
-           "<p>De la misma manera nos permitimos informar que de no encontrarse de acuerdo con la calificaci ón de su estado de invalidez, usted "+
+           "<p>De la misma manera nos permitimos informar que de no encontrarse de acuerdo con la calificación de su estado de invalidez, usted "+
            "tiene la posibilidad de manifestar a Seguros de Vida Alfa S.A. su inconformidad dentro de los diez (10) días siguientes a partir de "+
            "la fecha de recibida la notificación, evento en el cual procederemos a remitir su caso a la respectiva Junta Regional de Calificación "+
            "de Invalidez para obtener una segunda calificación.</p>"+
            "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 "+
            "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o "+
-           "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+           "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>";
             $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
             $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
@@ -5297,14 +5296,14 @@ $(document).ready(function(){
             $("#Asunto").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
             var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
            "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica "+ 
-           "el fin de revisar sus condiciones de salud.</p>"+
+           "con el fin de revisar sus condiciones de salud.</p>"+
            "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida Alfa S.A. se ha generado "+
            "una nueva calificación de pérdida de capacidad laboral la cual estamos remitiendo como adjunto a esta comunicación y que corresponde "+
            "a un porcentaje de {{$PorcentajePcl_dp}} %, fecha de estructuración {{$F_estructuracionPcl_dp}} de origen {{$OrigenPcl_dp}}.</p>"+
            "<p>Una vez estudiados los documentos aportados para el proceso, se determinó que las condiciones que originaron la invalidez han "+
-           "cambiado, lo cual se encuentra debidamente sustentado en la historia cl ínica, de acuerdo con los parámetros establecidos en al "+
+           "cambiado, lo cual se encuentra debidamente sustentado en la historia clínica, de acuerdo con los parámetros establecidos en al "+
            "Manual Único para la Calificación de la Pérdida de Capacidad Laboral.</p>"+
-           "<p>En forma sucinta la revisión de invalidez, se fundamenta en: {{$Detalle_calificacion_Fbdp}}</p>";
+           "<p>En forma sucinta, la revisión de invalidez, se fundamenta en: {{$Detalle_calificacion_Fbdp}}</p>";
             $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
             $('#btn_insertar_porPcl').removeClass('d-none')
             $('#btn_insertar_F_estructuracion').removeClass('d-none')

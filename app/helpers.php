@@ -1,5 +1,6 @@
 <?php
-use Illuminate\Support\Facades\DB;
+    use Illuminate\Support\Facades\DB;
+    use Carbon\Carbon;
 
     function getDatabaseName($database, $includePeriod = true)
     {
@@ -56,4 +57,21 @@ use Illuminate\Support\Facades\DB;
         return $radicado;
 
     }
+
+    /**
+     * Funcion para para obtener la fecha formateada como: # de día de nombre del mes de # de año 
+     * @param string $fecha 
+     * @return string fecha formateada
+    */
+    function fechaFormateada($fecha){
+
+        // Establecemos el idioma a español para que los meses y días se traduzcan correctamente.
+        Carbon::setLocale('es');
+        
+        // Realizamos el formateo de la fecha como: # de día de nombre del mes de # de año 
+        $fecha_formateada = Carbon::parse($fecha)->translatedFormat('d \d\e F \d\e Y');
+
+        return $fecha_formateada;
+    }
+
 ?>

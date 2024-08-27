@@ -12,7 +12,7 @@
         }
         #header {
             position: fixed; 
-            top: -2.8cm;
+            top: -3cm;
             left: 0cm;
             width: 100%;
             text-align: right; 
@@ -44,11 +44,10 @@
         #footer{
             position: fixed;
             /* esta ligado con el tercer valor del margin */
-            bottom: -3cm;
+            bottom: -2.4cm;
             left: 0cm;
             width: 100%;
-            height: 14%;
-
+            height: 10%;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -140,7 +139,13 @@
             padding-left: 6px;  
             width: 5cm;
             height: 2cm;
-        }        
+        }
+        .copias{
+            font-size: 10px;
+        }
+        .derecha{
+            float:right;
+        } 
     </style>
 </head>
 <body>
@@ -182,6 +187,7 @@
             ?>
             <div class="footer_content">
                 <span style="color: #3C3C3C; margin-top:2px;">{{$nombre}} - {{$tipo_identificacion}} {{$num_identificacion}} - Siniestro: {{$N_siniestro}} </span>
+                <br>
                 <img src="data:image/png;base64,{{ $footer_base64 }}" class="footer_image">
             </div>
         <?php endif ?>
@@ -195,7 +201,8 @@
         <img src="data:image/png;base64,{{ $imagenBase64_footer }}" class="logo_footer">
     </div>
     <div class="container">
-        <p class="fuente_todo_texto">{{$ciudad}}, {{$fecha}}</p>
+        <p class="fuente_todo_texto derecha">{{$ciudad}} {{$fecha}}</p>
+        <br>
         <table class="tabla2">                        
             <tbody>
                 <tr>
@@ -233,20 +240,20 @@
         </table>
         <section class="fuente_todo_texto">                
             <?php       
-                $patron1 = '/\{\{\$OrigenPcl_dp\}\}/';   
-                $patron2 = '/\{\{\$CIE10Nombres\}\}/'; 
-                $patron3 = '/\{\{\$PorcentajePcl_dp\}\}/'; 
-                $patron4 = '/\{\{\$F_estructuracionPcl_dp\}\}/'; 
-                if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) 
-                    && preg_match($patron3, $cuerpo) && preg_match($patron4, $cuerpo)) {                    
-                    $texto_modificado = str_replace('{{$OrigenPcl_dp}}', '<b>'.$OrigenPcl_dp.'</b>', $cuerpo);
-                    $texto_modificado = str_replace('{{$CIE10Nombres}}', $CIE10Nombres, $texto_modificado);
-                    $texto_modificado = str_replace('{{$PorcentajePcl_dp}}', '<b>'.$PorcentajePcl_dp.'</b>', $texto_modificado);
-                    $texto_modificado = str_replace('{{$F_estructuracionPcl_dp}}', '<b>'.$F_estructuracionPcl_dp.'</b>', $texto_modificado);
-                    $cuerpo = $texto_modificado;
-                } else {
-                    $cuerpo = "";
-                }                
+                // $patron1 = '/\{\{\$OrigenPcl_dp\}\}/';   
+                // $patron2 = '/\{\{\$CIE10Nombres\}\}/'; 
+                // $patron3 = '/\{\{\$PorcentajePcl_dp\}\}/'; 
+                // $patron4 = '/\{\{\$F_estructuracionPcl_dp\}\}/'; 
+                // if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) 
+                //     && preg_match($patron3, $cuerpo) && preg_match($patron4, $cuerpo)) {                    
+                //     $texto_modificado = str_replace('{{$OrigenPcl_dp}}', '<b>'.$OrigenPcl_dp.'</b>', $cuerpo);
+                //     $texto_modificado = str_replace('{{$CIE10Nombres}}', $CIE10Nombres, $texto_modificado);
+                //     $texto_modificado = str_replace('{{$PorcentajePcl_dp}}', '<b>'.$PorcentajePcl_dp.'</b>', $texto_modificado);
+                //     $texto_modificado = str_replace('{{$F_estructuracionPcl_dp}}', '<b>'.$F_estructuracionPcl_dp.'</b>', $texto_modificado);
+                //     $cuerpo = $texto_modificado;
+                // } else {
+                //     $cuerpo = "";
+                // }                
                 print_r($cuerpo);  
             ?>
         </section>
@@ -341,7 +348,7 @@
         if ( isset($pdf) ) {
             $pdf->page_script('
                 $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $pdf->text(485, 70, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+                $pdf->text(485, 50, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
             ');
         }
 	</script>

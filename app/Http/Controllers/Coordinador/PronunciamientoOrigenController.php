@@ -1100,7 +1100,8 @@ class PronunciamientoOrigenController extends Controller
         $array_datos_diagnostico_motcalifi = json_decode(json_encode($datos_diagnostico_motcalifi), true);
 
         for ($i=0; $i < count($array_datos_diagnostico_motcalifi); $i++) { 
-            $dato_concatenado = "(".$array_datos_diagnostico_motcalifi[$i]['Codigo'].")(".$array_datos_diagnostico_motcalifi[$i]['Nombre_CIE10'].")(".$array_datos_diagnostico_motcalifi[$i]['Nombre_parametro'].")";
+            // $dato_concatenado = "<b>(".$array_datos_diagnostico_motcalifi[$i]['Codigo'].")(".$array_datos_diagnostico_motcalifi[$i]['Nombre_CIE10'].")(".$array_datos_diagnostico_motcalifi[$i]['Nombre_parametro'].")";
+            $dato_concatenado = "(<b>".$array_datos_diagnostico_motcalifi[$i]['Codigo']."</b>) ".strtoupper($array_datos_diagnostico_motcalifi[$i]['Nombre_CIE10'])." de origen ".$array_datos_diagnostico_motcalifi[$i]['Nombre_parametro']."";
             array_push($diagnosticos_cie10, $dato_concatenado);
         }
 
@@ -1382,7 +1383,7 @@ class PronunciamientoOrigenController extends Controller
                 'logo_header' => $logo_header,
                 'id_cliente' => $Id_cliente_firma,
                 'ciudad' => $ciudad,
-                'fecha' => $fecha,
+                'fecha' => fechaFormateada($fecha),
                 'nro_siniestro' => $id_evento,
                 'nro_radicado' => $nro_radicado,
                 'nombre_afiliado' => $nombre_afiliado,
@@ -1515,6 +1516,7 @@ class PronunciamientoOrigenController extends Controller
             ->select('Footer_cliente')
             ->where([['Id_cliente', $Id_cliente_firma]])
             ->limit(1)->get();
+
             if (count($dato_logo_footer) > 0 && $dato_logo_footer[0]->Footer_cliente != null) {
                 $logo_footer = $dato_logo_footer[0]->Footer_cliente;
                 $ruta_logo_footer = "/footer_clientes/{$Id_cliente_firma}/{$logo_footer}";
@@ -1531,6 +1533,7 @@ class PronunciamientoOrigenController extends Controller
             $phpWord->setDefaultParagraphStyle(
                 array('align' => 'both', 'spaceAfter' => 0, 'spaceBefore' => 0)
             );
+
             // Configurar el idioma del documento a español
             $phpWord->getSettings()->setThemeFontLang(new \PhpOffice\PhpWord\Style\Language('es-ES'));
     
@@ -1545,30 +1548,24 @@ class PronunciamientoOrigenController extends Controller
             $header = $section->addHeader();
             $imagenPath_header = public_path($ruta_logo);
             $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
-            $test = $header->addTextRun(['alignment' => 'right']);
-            $test->addText('Página ');
-            $test->addField('PAGE');
-            $test->addText(' de ');
-            $test->addField('NUMPAGES');
+            $esti = array('size' => 11, 'font' => 'Arial');
+            $encabezado = $header->addTextRun(['alignment' => 'right']);
+            $encabezado->addText('Página ');
+            $encabezado->addField('PAGE');
+            $encabezado->addText(' de ');
+            $encabezado->addField('NUMPAGES');
             $header->addTextBreak();
                       
             // Creación de Contenido
-            $section->addText($ciudad.' '.$fecha, array('bold' => true));
+            $fecha_formateada = fechaFormateada($fecha);
+            $section->addText($ciudad.' '.$fecha_formateada, array('bold' => true), array('align' => 'right'));
             $section->addTextBreak();
 
             $table = $section->addTable();
 
-    
             $table->addRow();
 
-
             $cell1 = $table->addCell(6000);
-            // $imagenPath_header = public_path($ruta_logo);
-            // $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
-
-            // Creación de Contenido
-            // $section->addText($ciudad.', '.$fecha, array('bold' => true));
-            // $section->addTextBreak();
 
             $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
             $textRun1->addText('Señores: ',array('bold' => true));
@@ -1625,7 +1622,7 @@ class PronunciamientoOrigenController extends Controller
             $asuntoyafiliado->addText($asunto, array('bold' => true));
             $asuntoyafiliado->addTextBreak();
             $asuntoyafiliado->addText('Paciente: ', array('bold' => true));
-            $asuntoyafiliado->addText($nombre_afiliado." ".$tipo_identificacion." ".$num_identificacion);
+            $asuntoyafiliado->addText(strtoupper($nombre_afiliado)." ".$tipo_identificacion." ".$num_identificacion);
             $asuntoyafiliado->addTextBreak();
             $asuntoyafiliado->addText('Ramo: ', array('bold' => true));
             $asuntoyafiliado->addText($ramo);
@@ -1649,9 +1646,9 @@ class PronunciamientoOrigenController extends Controller
             if (preg_match($patron1, $sustentacion) && preg_match($patron2, $sustentacion) &&
                 preg_match($patron3, $sustentacion) && preg_match($patron4, $sustentacion)) {
                 
-                    $texto_modificado = str_replace('{{$nombre_afiliado}}', $nombre_afiliado, $sustentacion);
-                    $texto_modificado = str_replace('{{$tipo_documento}}', $tipo_identificacion, $texto_modificado);
-                    $texto_modificado = str_replace('{{$nro_identificacion}}', $num_identificacion, $texto_modificado);
+                    $texto_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.strtoupper($nombre_afiliado).'</b>', $sustentacion);
+                    $texto_modificado = str_replace('{{$tipo_documento}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $texto_modificado);
+                    $texto_modificado = str_replace('{{$nro_identificacion}}', '<b>'.$num_identificacion.'</b>', $texto_modificado);
                     $texto_modificado = str_replace('{{$cie10_nombrecie10_origencie10}}', $string_diagnosticos_cie10, $texto_modificado);
 
                     $texto_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $texto_modificado);
@@ -1857,7 +1854,7 @@ class PronunciamientoOrigenController extends Controller
             // return response()->download(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
 
             // Leer el contenido del archivo guardado y codificarlo en base64
-            $contenidoWord = File::get(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+            $contenidoWord = File::get(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
 
             $datos = [
                 'indicativo' => $indicativo,

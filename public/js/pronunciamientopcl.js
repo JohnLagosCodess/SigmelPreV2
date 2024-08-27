@@ -750,7 +750,6 @@ $(document).ready(function(){
     //Selectores estados de notificacion
     $("[id^='status_notificacion_']").each(function() {
         let $selector = $(this);
-        console.log($(this));
         let opocionSeleccionada = $selector.data('default');
         let desactivar = $selector.data('deshabilitar') == '1' ? false: true;
         
@@ -991,10 +990,10 @@ $(document).ready(function(){
             "ALFA S.A.</strong> Aseguradora que expidió el seguro previsional a la <strong>AFP PORVENIR S.A.</strong>, debidamente facultado para ello, en atención al "+
             "dictamen de la referencia, estando dentro de los términos de ley, me permito interponer <strong>RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE "+
             "APELACIÓN</strong> ante la Junta, por los siguientes motivos: </p>"+
-            "<p>Nuestra inconformidad se dirige a la calificación de <strong>PERDIDA DE CAPACIDAD LABORAL</strong> dictaminada al afiliado <strong>{{$Nombre_afiliado}}</strong>, "+
-            "donde califican los diagnósticos: <strong>{{$CIE10_Nombres_Origen}}</strong>, y por los cuales les otorga una calificación de <strong>{{$PorcentajePcl}}%</strong> fecha de "+
-            "estructuración: <strong>{{$F_estructuracionPcl}}</strong>.</p>"+
-            "<p>1. </p>"+
+            "<p>Nuestra inconformidad se dirige a la calificación de <strong>PERDIDA DE CAPACIDAD LABORAL</strong> dictaminada al afiliado {{$Nombre_afiliado}}, "+
+            "donde califican los diagnósticos: {{$CIE10_Nombres_Origen}}, PCL de {{$PorcentajePcl}}% y fecha de "+
+            "estructuración {{$F_estructuracionPcl}}.</p>"+
+            "<p>1. (Descripción de recurso)</p>"+
             "<p>Por lo anterior, presentamos el recurso de reposición y en subsidio el de apelación, contra la pérdida de capacidad laboral (PCL), "+
             "con el fin que se dictamine el valor correspondiente a las patologías del paciente dando aplicación al Decreto 1507/2014 como "+
             "normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e "+

@@ -2390,7 +2390,7 @@ class AdicionDxDTO extends Controller
         $id_tupla_comunicado = $request->id_tupla_comunicado;
         $id_com_inter = $request->id_com_inter;
         $ciudad = $request->ciudad;
-        $fecha = $request->fecha;
+        $fecha =  fechaFormateada($request->fecha);
         $asunto = strtoupper($request->asunto);
         $cuerpo = $request->cuerpo;
         $tipo_identificacion = $request->tipo_identificacion;

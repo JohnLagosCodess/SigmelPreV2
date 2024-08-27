@@ -402,7 +402,8 @@
             </tr>
             <tr>
                 <td colspan="4" class="titulo_labels">Población en edad económicamente activa:</td>
-                <td colspan="1" class="centrar_dato_dinamico">{{$Poblacion_edad_econo_activa}}</td>
+                {{-- <td colspan="1" class="centrar_dato_dinamico">{{$Poblacion_edad_econo_activa}}</td> --}}
+                <td colspan="1" class="centrar_dato_dinamico">X</td>
                 <td colspan="3" class="titulo_labels">Bebés y menores de 3 años:</td>
                 <td colspan="1" class="centrar_dato_dinamico">{{$Bebe_menor3}}</td>
                 <td colspan="3" class="titulo_labels">Niños y adolescentes:</td>
