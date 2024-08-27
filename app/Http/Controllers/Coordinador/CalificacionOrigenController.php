@@ -29,11 +29,14 @@ use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_lista_parametros;
 use App\Models\sigmel_auditorias_informacion_accion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
+use App\Traits\GenerarRadicados;
 
 use DateTime;
 
 class CalificacionOrigenController extends Controller
 {
+    use GenerarRadicados;
+
     public function mostrarVistaCalificacionOrigen(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -2064,6 +2067,19 @@ class CalificacionOrigenController extends Controller
         $Id_procesos = $request->Id_procesos;
         $tipo_descarga = $request->tipo_descarga;
 
+        //Obtiene el radicado correspondiente al proceso en curso
+        switch($request->modulo_creacion){
+            case 'controversiaJuntas' : 
+                $radicado = $this->disponible($request->radicado2,$request->Id_evento)->getRadicado('juntas',$request->Id_evento);
+                break;
+            case 'calificacionTecnicaPCL' || 'pronunciamientoPCL':
+                    $radicado = $this->disponible($request->radicado2,$request->Id_evento)->getRadicado('pcl',$request->Id_evento);
+                    break;
+            case 'pronunciamientoOrigen' || 'calificacionOrigen' || 'determinacionOrigenATEL': 
+                    $radicado = $this->disponible($request->radicado2,$request->Id_evento)->getRadicado('origen',$request->Id_evento);
+                break;
+        }
+
         if($tipo_descarga != 'Manual'){
             $radioafiliado_comunicado = $request->radioafiliado_comunicado;
             $radioempresa_comunicado = $request->radioempresa_comunicado;
@@ -2089,7 +2105,7 @@ class CalificacionOrigenController extends Controller
                 'Id_proceso' => $Id_procesos,
                 'Ciudad' => $request->ciudad,
                 'F_comunicado' => $request->fecha_comunicado2,
-                'N_radicado' => $request->radicado2,
+                'N_radicado' => $radicado,
                 'Cliente' => $request->cliente_comunicado2,
                 'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
                 'T_documento' => $request->tipo_documento_comunicado2,
@@ -2116,7 +2132,7 @@ class CalificacionOrigenController extends Controller
                 'Modulo_creacion' => $request->modulo_creacion,
                 'N_siniestro' => $request->N_siniestro,
             ];
-            
+
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
     
             sleep(2);
@@ -2176,7 +2192,7 @@ class CalificacionOrigenController extends Controller
                 'Id_proceso' => $Id_procesos,
                 'Ciudad' => $request->ciudad,
                 'F_comunicado' => $date,
-                'N_radicado' => $request->radicado2,
+                'N_radicado' => $radicado,
                 'Cliente' => $request->cliente_comunicado2,
                 'Nombre_afiliado' => $request->nombre_afiliado_comunicado2,
                 'T_documento' => $request->tipo_documento_comunicado2,

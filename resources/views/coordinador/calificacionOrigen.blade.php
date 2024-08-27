@@ -563,6 +563,13 @@
                             <h5>Comunicados</h5>
                         </div>
                         <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">                                               
+                                        <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Recuerde que despues de generar o actualizar un archivo debe descargarlo y recargar la pagina para poder reemplazarlo
+                                    </div>
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table id="listado_agregar_comunicados" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
                                     <thead>

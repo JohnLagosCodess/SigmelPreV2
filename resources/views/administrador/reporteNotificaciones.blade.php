@@ -74,6 +74,12 @@
                                             <thead>
                                                 <tr class="bg-info">
                                                     <th>CONS</th>
+                                                    <th>Id_correspondencia</th>
+                                                    <th>Id_comunicado</th>
+                                                    <th>Id_asignacion</th>
+                                                    <th>Id_proceso</th>
+                                                    <th>Id_servicio</th>
+                                                    <th>Id_evento</th>
                                                     <th>FECHA COMUNICADO</th>
                                                     <th>N° RADICADO</th>
                                                     <th>DOCUMENTO</th>
@@ -136,14 +142,20 @@
                                             <label for="cargue_corres" class="col-form-label">Seleccione el archivo</label>
                                             <input style="padding: unset; height: auto;" type="file" name="cargue_corres" class="form-control" required>
                                         </div>
-                                        <input type="submit" class="btn btn-info" value="Cargar">
+                                        <input type="submit" class="btn btn-info" id="cargar_Correspondencia" value="Cargar">
                                     </form>
                                     @if ($errors->has('cargue_corres'))
                                         <span class="text-danger">{{ $errors->first('cargue_corres') }}</span>
                                     @endif
                                 </div>
+
+                                <div class="col-6">
+                                    <br>
+                                    <a class="btn btn-info" style="padding-top: 10px;" href="/Plantilla_Correspondencia/Plantilla_Cargue_Correspondecias.xlsx" download>Descargar Plantilla De Cargue</a>
+                                </div>
+                                
                             </div>
-                            <br>                            
+                            <br>                                                   
                             <div class="text-center d-none" id="mostrar_barra_cargar_correspondencia">                                
                                 <button class="btn btn-info" type="button" disabled>
                                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
