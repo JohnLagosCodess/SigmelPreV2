@@ -29,6 +29,7 @@ use App\Traits\GenerarRadicados;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
+use PhpOffice\PhpWord\Style\Image;
 
 class ControversiaJuntasController extends Controller
 {
@@ -2660,6 +2661,21 @@ class ControversiaJuntasController extends Controller
         //     $footer_dato_5 = "";
         // }
 
+        //Marca de agua
+        $styleVigilado = [
+            'width' => 25,           
+            'height' => 200,            
+            'marginTop' => 0,           
+            'marginLeft' => -50,       
+            'wrappingStyle' => 'behind',   // Imagen detrás del texto
+            'positioning' => Image::POSITION_RELATIVE, 
+            'posVerticalRel' => 'page', 
+            'posHorizontal' => Image::POSITION_ABSOLUTE,
+            'posVertical' => Image::POSITION_VERTICAL_CENTER, // Centrado verticalmente en la página
+        ];
+
+        $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
+
         /* Construcción proforma en formato docx (word) */
         $phpWord = new PhpWord();
         // Configuramos la fuente y el tamaño de letra para todo el documento
@@ -2681,6 +2697,7 @@ class ControversiaJuntasController extends Controller
 
         // Creación de Header
         $header = $section->addHeader();
+        $header->addWatermark($pathVigilado, $styleVigilado);
         $imagenPath_header = public_path($ruta_logo);
         $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
         $test = $header->addTextRun(['alignment' => 'right']);
@@ -2691,7 +2708,8 @@ class ControversiaJuntasController extends Controller
         $header->addTextBreak();
 
         // Creación de Contenido
-        $section->addText('Bogotá D.C, '.$date, array('bold' => true));
+        $fecha_formateada = fechaFormateada($date);
+        $section->addText('Bogotá D.C. '.$fecha_formateada, array('bold' => true), array('align' => 'right'));
         $section->addTextBreak();
 
 
@@ -2783,7 +2801,7 @@ class ControversiaJuntasController extends Controller
         $patron1 = '/\{\{\$sustentacion_jrci\}\}/'; // Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional)
         $patron2 = '/\{\{\$sustentacion_jrci1\}\}/'; // Sustentación Concepto JRCI (Revisión ante recurso de reposición de la Junta Regional)
 
-        $cuerpo = str_replace(['<br>', '<br/>', '<br />', '</br>'], '', $cuerpo);
+        // $cuerpo = str_replace(['<br>', '<br/>', '<br />', '</br>'], '', $cuerpo);
 
         $cuerpo_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $cuerpo);
         $cuerpo_modificado = str_replace('SEGUROS DE VIDA ALFA S.A.', '<b>SEGUROS DE VIDA ALFA S.A.</b>', $cuerpo_modificado);
@@ -2798,28 +2816,26 @@ class ControversiaJuntasController extends Controller
             $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
             $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
 
-            $cuerpo = $cuerpo_modificado;
+            $cuerpo_final = nl2br($cuerpo_modificado);
         
         } elseif (preg_match($patron1, $cuerpo_modificado)) {
             // Solo patrón6 encontrado
             $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
 
-            $cuerpo = $cuerpo_modificado;
+            $cuerpo_final = nl2br($cuerpo_modificado);
         
         } elseif (preg_match($patron2, $cuerpo_modificado)) {
             // Solo patrón9 encontrado
             $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
             
-            $cuerpo = $cuerpo_modificado;
+            $cuerpo_final = nl2br($cuerpo_modificado);
         } else {
             // Ninguno de los patrones encontrados
-            // $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', "", $cuerpo_modificado);
-            // $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', "", $cuerpo_modificado);
-            $cuerpo = "";
+            $cuerpo_final = "";
         }
 
         $section->addTextBreak();
-        Html::addHtml($section, $cuerpo, false, false);
+        Html::addHtml($section, $cuerpo_final, false, false);
         $section->addTextBreak();
         $section->addText('Cordialmente,');
         $section->addTextBreak();
@@ -2853,7 +2869,7 @@ class ControversiaJuntasController extends Controller
         $section->addTextBreak();
         $section->addText('Representante Legal para Asuntos de Seguridad Social', array('bold' => true));
         $section->addTextBreak();
-        $section->addText('Convenio Codess - Seguros de Vida Alfa S.A', array('bold' => true));
+        $section->addText('Convenio Codess - Seguros de Vida Alfa S.A.', array('bold' => true));
         $section->addTextBreak();
         // $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
         // $section->addTextBreak();
@@ -2878,23 +2894,23 @@ class ControversiaJuntasController extends Controller
         //     $ARL = 'ARL';
 
         //     if (isset($Agregar_copias[$Afiliado])) {
-        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
         //     }
 
         //     if (isset($Agregar_copias[$Empleador])) {
-        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
         //     }
 
         //     if (isset($Agregar_copias[$EPS])) {
-        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
         //     }
 
         //     if (isset($Agregar_copias[$AFP])) {
-        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
         //     }
 
         //     if (isset($Agregar_copias[$ARL])) {
-        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
         //     }
         // }
 
@@ -3274,6 +3290,7 @@ class ControversiaJuntasController extends Controller
             $afiliadoEmail = $emailAfiliado[0]->Email;            
             $Agregar_copias['Afiliado'] = $afiliadoEmail;            
         }
+
         if(isset($copia_empleador)){
 
             $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
@@ -3432,7 +3449,7 @@ class ControversiaJuntasController extends Controller
         $datos_finales_proforma_acuerdo = [
             'id_cliente' => $id_cliente,
             'logo_header' => $logo_header,
-            'fecha' => $date,
+            'fecha' => fechaFormateada($date),
             'nombre_junta' => $nombre_junta,
             'direccion_junta' => $direccion_junta,
             'telefono_junta' => $telefono_junta,
@@ -3458,7 +3475,8 @@ class ControversiaJuntasController extends Controller
             'Firma_cliente' => $Firma_cliente,
             'nombre_usuario' => $nombre_usuario,
             'footer' => $footer,
-            'N_siniestro' => $N_siniestro
+            'N_siniestro' => $N_siniestro,
+            'id_servicio' => $id_servicio
             // 'footer_dato_1' => $footer_dato_1,
             // 'footer_dato_2' => $footer_dato_2,
             // 'footer_dato_3' => $footer_dato_3,
@@ -3486,70 +3504,70 @@ class ControversiaJuntasController extends Controller
         /* Inserción del registro de que fue descargado */
 
         // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
-        $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
-        ->select('sice.F_comunicado')
-        ->where([
-            ['sice.N_radicado', $nro_radicado]
-        ])
-        ->get();
+        // $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
+        // ->select('sice.F_comunicado')
+        // ->where([
+        //     ['sice.N_radicado', $nro_radicado]
+        // ])
+        // ->get();
 
-        $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
+        // $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
 
-        // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-        $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-        ->select('Nombre_documento')
-        ->where([
-            ['Nombre_documento', $nombre_pdf],
-        ])->get();
+        // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
+        // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        // ->select('Nombre_documento')
+        // ->where([
+        //     ['Nombre_documento', $nombre_pdf],
+        // ])->get();
         
-        if(count($verficar_documento) == 0){
+        // if(count($verficar_documento) == 0){
 
-            // Se valida si antes de insertar la info del doc de acuerdo ya hay un doc de desacuerdo
-            $nombre_docu_desacuerdo = "JUN_DESACUERDO_{$id_asignacion}_{$num_identificacion}_{$nro_radicado}.docx";
-            $verificar_docu_desacuerdo = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            ->select('Nombre_documento')
-            ->where([
-                ['Nombre_documento', $nombre_docu_desacuerdo],
-            ])->get();
+        //     // Se valida si antes de insertar la info del doc de acuerdo ya hay un doc de desacuerdo
+        //     $nombre_docu_desacuerdo = "JUN_DESACUERDO_{$id_asignacion}_{$num_identificacion}_{$nro_radicado}.docx";
+        //     $verificar_docu_desacuerdo = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        //     ->select('Nombre_documento')
+        //     ->where([
+        //         ['Nombre_documento', $nombre_docu_desacuerdo],
+        //     ])->get();
 
-            // Si no existe info del documento de desacuerdo, inserta la info del documento de acuerdo
-            // De lo contrario hace una actualización de la info
-            if (count($verificar_docu_desacuerdo) == 0) {
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $id_asignacion,
-                    'Id_proceso' => $id_proceso,
-                    'Id_servicio' => $id_servicio,
-                    'ID_evento' => $id_evento,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $nro_radicado,
-                    'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
+        //     // Si no existe info del documento de desacuerdo, inserta la info del documento de acuerdo
+        //     // De lo contrario hace una actualización de la info
+        //     if (count($verificar_docu_desacuerdo) == 0) {
+        //         $info_descarga_documento = [
+        //             'Id_Asignacion' => $id_asignacion,
+        //             'Id_proceso' => $id_proceso,
+        //             'Id_servicio' => $id_servicio,
+        //             'ID_evento' => $id_evento,
+        //             'Nombre_documento' => $nombre_pdf,
+        //             'N_radicado_documento' => $nro_radicado,
+        //             'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+        //             'F_descarga_documento' => $date,
+        //             'Nombre_usuario' => $nombre_usuario,
+        //         ];
                 
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-            }else{
-                $info_descarga_documento = [
-                    'Id_Asignacion' => $id_asignacion,
-                    'Id_proceso' => $id_proceso,
-                    'Id_servicio' => $id_servicio,
-                    'ID_evento' => $id_evento,
-                    'Nombre_documento' => $nombre_pdf,
-                    'N_radicado_documento' => $nro_radicado,
-                    'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-                    'F_descarga_documento' => $date,
-                    'Nombre_usuario' => $nombre_usuario,
-                ];
+        //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
+        //     }else{
+        //         $info_descarga_documento = [
+        //             'Id_Asignacion' => $id_asignacion,
+        //             'Id_proceso' => $id_proceso,
+        //             'Id_servicio' => $id_servicio,
+        //             'ID_evento' => $id_evento,
+        //             'Nombre_documento' => $nombre_pdf,
+        //             'N_radicado_documento' => $nro_radicado,
+        //             'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
+        //             'F_descarga_documento' => $date,
+        //             'Nombre_usuario' => $nombre_usuario,
+        //         ];
                 
-                sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-                ->where([
-                    ['Id_Asignacion', $id_asignacion],
-                    ['N_radicado_documento', $nro_radicado],
-                    ['ID_evento', $id_evento]
-                ])
-                ->update($info_descarga_documento);
-            }
-        }
+        //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')
+        //         ->where([
+        //             ['Id_Asignacion', $id_asignacion],
+        //             ['N_radicado_documento', $nro_radicado],
+        //             ['ID_evento', $id_evento]
+        //         ])
+        //         ->update($info_descarga_documento);
+        //     }
+        // }
 
         // return $dompdf->stream($nombre_pdf);
         return $pdf->download($nombre_pdf);

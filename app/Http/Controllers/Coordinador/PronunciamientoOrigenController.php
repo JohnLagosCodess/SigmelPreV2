@@ -1488,6 +1488,21 @@ class PronunciamientoOrigenController extends Controller
                 $ruta_logo_footer = null;
             }
             
+            //Marca de agua
+            $styleVigilado = [
+                'width' => 25,           
+                'height' => 200,            
+                'marginTop' => 0,           
+                'marginLeft' => -50,       
+                'wrappingStyle' => 'behind',   // Imagen detrás del texto
+                'positioning' => Image::POSITION_RELATIVE, 
+                'posVerticalRel' => 'page', 
+                'posHorizontal' => Image::POSITION_ABSOLUTE,
+                'posVertical' => Image::POSITION_VERTICAL_CENTER, // Centrado verticalmente en la página
+            ];
+
+            $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
+
             $phpWord = new PhpWord();
             // Configuramos la fuente y el tamaño de letra para todo el documento
             $phpWord->setDefaultFontName('Arial');
@@ -1509,6 +1524,7 @@ class PronunciamientoOrigenController extends Controller
 
             // Creación de Header
             $header = $section->addHeader();
+            $header->addWatermark($pathVigilado, $styleVigilado);
             $imagenPath_header = public_path($ruta_logo);
             $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
             $esti = array('size' => 11, 'font' => 'Arial');
