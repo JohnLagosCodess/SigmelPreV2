@@ -19,6 +19,7 @@ class sigmel_informacion_eventos extends Model
     'ID_evento',
     'F_evento',
     'F_radicacion',
+    'N_siniestro',
     'Nombre_usuario',
     'F_registro'];
 

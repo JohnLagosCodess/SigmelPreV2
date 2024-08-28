@@ -85,7 +85,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="tipo_evento" class="col-form-label">Tipo de evento <!--<span style="color:red;">(*)</span> --></label>
                                                     <select class="tipo_evento custom-select" name="tipo_evento" id="tipo_evento"></select>
@@ -97,16 +97,22 @@
                                                     <input type="text" class="id_evento form-control" name="id_evento" id="id_evento" required>
                                                 </div>
                                             </div> --}}
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_evento" class="col-form-label">Fecha de evento <!-- <span style="color:red;">(*)</span> --></label>
                                                     <input type="date" class="fecha_evento form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}">
                                                 </div>
                                             </div>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_radicacion" class="col-form-label">Fecha de radicación <span style="color:red;">(*)</span></label>
                                                     <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label for="n_siniestro" class="col-form-label">N° de Siniestro </label>
+                                                    <input type="text" class="n_siniestro form-control" name="n_siniestro" id="n_siniestro" maxlength="25">
                                                 </div>
                                             </div>
                                         </div>

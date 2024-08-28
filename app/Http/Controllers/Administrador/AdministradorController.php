@@ -3178,6 +3178,7 @@ class AdministradorController extends Controller
             'ID_evento' => $Id_evento,
             'F_evento' => $request->fecha_evento,
             'F_radicacion' => $request->fecha_radicacion,
+            'N_siniestro' => $request->n_siniestro,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
         ];
@@ -3947,7 +3948,7 @@ class AdministradorController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_clientes as sltc', 'sie.Tipo_cliente', '=', 'sltc.Id_TipoCliente')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'sie.Tipo_evento', '=', 'slte.Id_Evento')
         ->select('sie.Cliente', 'slc.Nombre_cliente', 'sie.Tipo_cliente', 'sltc.Nombre_tipo_cliente', 'sie.Tipo_evento',
-        'slte.Nombre_evento', 'sie.ID_evento', 'sie.F_evento', 'sie.F_radicacion')
+        'slte.Nombre_evento', 'sie.ID_evento', 'sie.F_evento', 'sie.F_radicacion', 'sie.N_siniestro')
         ->where([['sie.ID_evento', '=', $newIdEvento]])->get();  
         
         $array_datos_info_afiliados =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
@@ -4068,6 +4069,7 @@ class AdministradorController extends Controller
             'Tipo_evento' => $request->tipo_evento,
             'F_evento' => $request->fecha_evento,
             'F_radicacion' => $request->fecha_radicacion,
+            'N_siniestro' => $request->n_siniestro,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date
         ];      
@@ -4598,7 +4600,7 @@ class AdministradorController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_clientes as sltc', 'sie.Tipo_cliente', '=', 'sltc.Id_TipoCliente')
         ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'sie.Tipo_evento', '=', 'slte.Id_Evento')
         ->select('sie.Cliente', 'slc.Nombre_cliente', 'sie.Tipo_cliente', 'sltc.Nombre_tipo_cliente', 'sie.Tipo_evento',
-        'slte.Nombre_evento', 'sie.ID_evento', 'sie.F_evento', 'sie.F_radicacion')
+        'slte.Nombre_evento', 'sie.ID_evento', 'sie.F_evento', 'sie.F_radicacion', 'sie.N_siniestro')
         ->where([['sie.ID_evento', '=', $newIdEvento]])->get();  
         
         $array_datos_info_afiliados =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
