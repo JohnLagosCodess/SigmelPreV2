@@ -3613,7 +3613,7 @@ class CalificacionJuntasController extends Controller
                 $data = [
                     'id_cliente' => $id_cliente,
                     'logo_header' => $logo_header,
-                    'fecha' => $date,
+                    'fecha' => fechaFormateada($date),
                     'ID_evento' => $ID_evento,
                     'nro_radicado' => $nro_radicado,
                     'nombre_cliente' => $nombre_cliente,
@@ -4792,7 +4792,8 @@ class CalificacionJuntasController extends Controller
                 $header->addTextBreak();
 
                 // Creación de Contenido
-                $section->addText('Bogotá D.C, '.$date, array('bold' => true));
+                $fecha_formateada = fechaFormateada($date);
+                $section->addText('Bogotá D.C. '.$fecha_formateada, array('bold' => true), array('align' => 'right'));
                 $section->addTextBreak();
 
                 $table = $section->addTable();
@@ -5086,7 +5087,7 @@ class CalificacionJuntasController extends Controller
                     // return response()->download(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
 
                     // Leer el contenido del archivo guardado y codificarlo en base64
-                    $contenidoWord = File::get(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+                    $contenidoWord = File::get(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
 
                     $datos = [
                         'indicativo' => $indicativo,

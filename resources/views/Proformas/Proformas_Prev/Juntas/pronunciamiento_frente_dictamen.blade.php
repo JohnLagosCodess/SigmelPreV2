@@ -20,7 +20,7 @@
         #header {
             position: fixed; 
             /* esta ligado con el primer valor del margin */
-            top: -2.8cm;
+            top: -3cm;
             left: 0cm;
             width: 100%;
             text-align: right; 
@@ -32,11 +32,10 @@
         #footer{
             position: fixed;
             /* esta ligado con el tercer valor del margin */
-            bottom: -3cm;
+            bottom: -2.4cm;
             left: 0cm;
             width: 100%;
-            height: 14%;
-
+            height: 10%;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -111,6 +110,14 @@
             width: 5cm;
             height: 2cm;
         }
+
+        .derecha{
+            float: right;
+        }
+
+        .copias{
+            font-size: 10px;
+        }
         /* .hijo{
             width: 2cm;
             height: 1cm;
@@ -153,6 +160,7 @@
             ?>
             <div class="footer_content">
                 <span style="color: #3C3C3C; margin-top:2px;">{{$nombre_afiliado}} - {{$tipo_identificacion}} {{$num_identificacion}} - Siniestro: {{$N_siniestro}} </span>
+                <br>
                 <img src="data:image/png;base64,{{ $footer_base64 }}" class="footer_image">
             </div>
         <?php endif ?>
@@ -170,7 +178,8 @@
             <div class="hijo">{{$i}}</div>
         @endfor --}}
 
-        <p class="fuente_todo_texto"><span class="negrita">Bogotá D.C, {{$fecha}}</span></p>
+        <p class="fuente_todo_texto derecha"><span class="negrita">Bogotá D.C. {{$fecha}}</span></p>
+        <br><br>
         <table class="tabla2">
             <tbody>
                 <tr>
@@ -231,52 +240,98 @@
                 $patron11 = '/\{\{\$sustentacion_jrci\}\}/';
                 $patron12 = '/\{\{\$sustentacion_jrci1\}\}/';
 
-                if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron3, $cuerpo) &&
-                    preg_match($patron4, $cuerpo) && preg_match($patron5, $cuerpo) && preg_match($patron6, $cuerpo) &&
-                    preg_match($patron7, $cuerpo) && preg_match($patron8, $cuerpo) && preg_match($patron9, $cuerpo) &&
-                    preg_match($patron10, $cuerpo)
-                ) {
-                    
-                    $cuerpo_modificado = str_replace('{{$nro_dictamen}}', "<b>".$nro_dictamen."</b>", $cuerpo);
-                    $cuerpo_modificado = str_replace('{{$f_dictamen_jrci}}', "<b>".$f_dictamen_jrci_emitido."</b>", $cuerpo_modificado);
-                    $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', "<b>".$nombre_afiliado."</b>", $cuerpo_modificado);
-                    $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', "<b>".$tipo_identificacion."</b>", $cuerpo_modificado);
-                    $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', "<b>".$num_identificacion."</b>", $cuerpo_modificado);
-                    $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10_jrci, $cuerpo_modificado);
-                    $cuerpo_modificado = str_replace('{{$pcl_jrci}}', "<b>".$porcentaje_pcl_jrci_emitido."</b>", $cuerpo_modificado);
-                    $cuerpo_modificado = str_replace('{{$origen_dx_jrci}}', "<b>".$origen_jrci_emitido."</b>", $cuerpo_modificado);
-                    $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', "<b>".$f_estructuracion_contro_jrci_emitido."</b>", $cuerpo_modificado);
-                    $cuerpo_modificado = str_replace('{{$decreto_calificador_jrci}}', "<b>".$manual_de_califi_jrci_emitido."</b>", $cuerpo_modificado);
-                    $cuerpo_modificado = str_replace('ACUERDO', "<b>ACUERDO</b>", $cuerpo_modificado);
-
-                    if (preg_match($patron11, $cuerpo_modificado) && preg_match($patron12, $cuerpo_modificado)) {
-                        // Ambos patrones encontrados
-                        $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
-                        $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
-
-                        $cuerpo = $cuerpo_modificado;
-                    
-                    } elseif (preg_match($patron11, $cuerpo_modificado)) {
-                        // Solo patrón11 encontrado
-                        $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
-
-                        $cuerpo = $cuerpo_modificado;
-                    
-                    } elseif (preg_match($patron12, $cuerpo_modificado)) {
-                        // Solo patrón12 encontrado
-                        $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+                /* Evaluamos el tipo de controversia para saber que texto hay que insertar en la proforma. 12 es Contro Origen y 13 Contro PCL*/
+                if($id_servicio == 12){
+                    if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron3, $cuerpo) &&
+                        preg_match($patron4, $cuerpo) && preg_match($patron5, $cuerpo) && preg_match($patron6, $cuerpo)                    
+                    ) {
                         
-                        $cuerpo = $cuerpo_modificado;
+                        $cuerpo_modificado = str_replace('{{$nro_dictamen}}', "<b>".$nro_dictamen."</b>", $cuerpo);
+                        $cuerpo_modificado = str_replace('{{$f_dictamen_jrci}}', "<b>".$f_dictamen_jrci_emitido."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', "<b>".$nombre_afiliado."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', "<b>".$tipo_identificacion."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', "<b>".$num_identificacion."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10_jrci, $cuerpo_modificado);
+                        // $cuerpo_modificado = str_replace('{{$pcl_jrci}}', "<b>".$porcentaje_pcl_jrci_emitido."</b>", $cuerpo_modificado);
+                        // $cuerpo_modificado = str_replace('{{$origen_dx_jrci}}', "<b>".$origen_jrci_emitido."</b>", $cuerpo_modificado);
+                        // $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', "<b>".$f_estructuracion_contro_jrci_emitido."</b>", $cuerpo_modificado);
+                        // $cuerpo_modificado = str_replace('{{$decreto_calificador_jrci}}', "<b>".$manual_de_califi_jrci_emitido."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('ACUERDO', "<b>ACUERDO</b>", $cuerpo_modificado);
+
+                        if (preg_match($patron11, $cuerpo_modificado) && preg_match($patron12, $cuerpo_modificado)) {
+                            // Ambos patrones encontrados
+                            $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+                            $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+
+                            $cuerpo = nl2br($cuerpo_modificado);
+                        
+                        } elseif (preg_match($patron11, $cuerpo_modificado)) {
+                            // Solo patrón11 encontrado
+                            $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+
+                            $cuerpo = nl2br($cuerpo_modificado);
+                        
+                        } elseif (preg_match($patron12, $cuerpo_modificado)) {
+                            // Solo patrón12 encontrado
+                            $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+                            
+                            $cuerpo = nl2br($cuerpo_modificado);
+                        } else {
+                            // Ninguno de los patrones encontrados
+                            $cuerpo = "";
+                        }
+
                     } else {
-                        // Ninguno de los patrones encontrados
-                        // $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', "", $cuerpo_modificado);
-                        // $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', "", $cuerpo_modificado);
                         $cuerpo = "";
                     }
+                }else{
 
-                } else {
-                    $cuerpo = "";
+                    if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron3, $cuerpo) &&
+                        preg_match($patron4, $cuerpo) && preg_match($patron5, $cuerpo) && preg_match($patron6, $cuerpo) &&
+                        preg_match($patron7, $cuerpo) && preg_match($patron8, $cuerpo) && preg_match($patron9, $cuerpo) &&
+                        preg_match($patron10, $cuerpo)
+                    ){
+                        
+                        $cuerpo_modificado = str_replace('{{$nro_dictamen}}', "<b>".$nro_dictamen."</b>", $cuerpo);
+                        $cuerpo_modificado = str_replace('{{$f_dictamen_jrci}}', "<b>".$f_dictamen_jrci_emitido."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', "<b>".$nombre_afiliado."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', "<b>".$tipo_identificacion."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', "<b>".$num_identificacion."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10_jrci, $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$pcl_jrci}}', "<b>".$porcentaje_pcl_jrci_emitido."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$origen_dx_jrci}}', "<b>".$origen_jrci_emitido."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', "<b>".$f_estructuracion_contro_jrci_emitido."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$decreto_calificador_jrci}}', "<b>".$manual_de_califi_jrci_emitido."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('ACUERDO', "<b>ACUERDO</b>", $cuerpo_modificado);
+    
+                        if (preg_match($patron11, $cuerpo_modificado) && preg_match($patron12, $cuerpo_modificado)) {
+                            // Ambos patrones encontrados
+                            $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+                            $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+    
+                            $cuerpo = nl2br($cuerpo_modificado);
+                        
+                        } elseif (preg_match($patron11, $cuerpo_modificado)) {
+                            // Solo patrón11 encontrado
+                            $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+    
+                            $cuerpo = nl2br($cuerpo_modificado);
+                        
+                        } elseif (preg_match($patron12, $cuerpo_modificado)) {
+                            // Solo patrón12 encontrado
+                            $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+                            
+                            $cuerpo = nl2br($cuerpo_modificado);
+                        } else {
+                            // Ninguno de los patrones encontrados
+                            $cuerpo = "";
+                        }
+    
+                    } else {
+                        $cuerpo = "";
+                    }
                 }
+
                 print_r($cuerpo);
             ?>
         </section>
@@ -313,7 +368,7 @@
                     <?php 
                         if (isset($Agregar_copia[$Afiliado])) { ?>
                             <tr>
-                                <td>
+                                <td class="copias">
                                     <span class="negrita">Afiliado: </span><?=$Agregar_copia['Afiliado'];?>
                                 </td>
                             </tr>
@@ -323,7 +378,7 @@
                     <?php 
                         if (isset($Agregar_copia[$Empleador])) { ?>
                             <tr>
-                                <td>
+                                <td class="copias">
                                     <span class="negrita">Empleador: </span><?=$Agregar_copia['Empleador'];?>
                                 </td>
                             </tr>
@@ -368,7 +423,7 @@
         if ( isset($pdf) ) {
             $pdf->page_script('
                 $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $pdf->text(485, 70, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+                $pdf->text(485, 50, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
             ');
         }
 	</script>

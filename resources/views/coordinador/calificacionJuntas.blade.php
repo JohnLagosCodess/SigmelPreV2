@@ -1077,14 +1077,16 @@
                                                 </div>
                                             </div>                                            
                                         @endif
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="devol_expediente_jrci" value="Devolucion_Expediente_JRCI" required>
-                                                    <label class="form-check-label custom-control-label" for="devol_expediente_jrci"><strong>Devol. Expediente JRCI</strong></label>
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="devol_expediente_jrci" value="Devolucion_Expediente_JRCI" required>
+                                                        <label class="form-check-label custom-control-label" for="devol_expediente_jrci"><strong>Devol. Expediente JRCI</strong></label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @endif
                                         @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
                                             <div class="col">
                                                 <div class="form-group">
@@ -1500,14 +1502,16 @@
                                                 </div>
                                             </div>                                            
                                         @endif
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="devol_expediente_jrci_editar" value="Devolucion_Expediente_JRCI" required>
-                                                    <label class="form-check-label custom-control-label" for="devol_expediente_jrci_editar"><strong>Devol. Expediente JRCI</strong></label>
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="devol_expediente_jrci_editar" value="Devolucion_Expediente_JRCI" required>
+                                                        <label class="form-check-label custom-control-label" for="devol_expediente_jrci_editar"><strong>Devol. Expediente JRCI</strong></label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                            @endif
                                         @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
                                             <div class="col">
                                                 <div class="form-group">

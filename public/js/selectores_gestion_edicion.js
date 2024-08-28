@@ -408,11 +408,28 @@ $(document).ready(function(){
         data: datos_lista_tipo_documento_benefi,
         success:function(data) {
             // console.log(data);
-            $('#afi_tipo_documento').empty();
-            $('#afi_tipo_documento').append('<option value="" selected>Seleccione</option>');
-            let claves = Object.keys(data);
-            for (let i = 0; i < claves.length; i++) {
-                $('#afi_tipo_documento').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+            //Validamos si el tipo de documento del afiliado ya fue guardado anteriormente
+            if($('#afi_tipo_documento').val()){
+                //Por medio de find buscamos el tipo de documento que fue guardado y lo asignamos como valor por defecto al selector
+                let optionSelected = data.find(finder => finder.Id_Parametro === parseInt($('#afi_tipo_documento').val()));
+                $("#afi_tipo_documento").val(optionSelected?.Id_Parametro);
+                $('#afi_tipo_documento').empty();
+                $('#afi_tipo_documento').append('<option value="'+optionSelected?.Id_Parametro+'" selected>'+optionSelected?.Nombre_parametro+'</option>');
+                let SelectorTipoDocumentoAfiliado = $('select[name=afi_tipo_documento]').val();
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    if (data[claves[i]]['Id_Parametro'] != SelectorTipoDocumentoAfiliado) {
+                        $('#afi_tipo_documento').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                    }   
+                }
+            }
+            else{
+                $('#afi_tipo_documento').empty();
+                $('#afi_tipo_documento').append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $('#afi_tipo_documento').append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                }
             }
         }
     });
@@ -533,7 +550,6 @@ $(document).ready(function(){
             url:'/cargarselectores',
             data: datos_lista_municipios_info_afiliado,
             success:function(data) {
-                // console.log(data);
                 let municipio_info_afiliadoEdicion = $('select[name=municipio_info_afiliado]').val();
                 $('#municipio_info_afiliado').empty();
                 let claves = Object.keys(data);
@@ -585,11 +601,27 @@ $(document).ready(function(){
         data: datos_lista_departamentos_info_afiliado_benefi,
         success:function(data) {
             // console.log(data);
-            $('#afi_departamento_info_afiliado').empty();
-            $('#afi_departamento_info_afiliado').append('<option value="" selected>Seleccione</option>');
-            let claves = Object.keys(data);
-            for (let i = 0; i < claves.length; i++) {
-                $('#afi_departamento_info_afiliado').append('<option value="'+data[claves[i]]["Id_departamento"]+'">'+data[claves[i]]["Nombre_departamento"]+'</option>');
+            //Validamos si el departamento afiliado ya fue guardado anteriormente
+            if($('#afi_departamento_info_afiliado').val()){
+                //Por medio de find buscamos el departamento que fue guardado y lo asignamos como valor por defecto al selector
+                let optionSelected = data.find(finder => finder.Id_departamento === parseInt($('#afi_departamento_info_afiliado').val()));
+                $("#afi_departamento_info_afiliado").val(optionSelected?.Id_departamento);
+                $('#afi_departamento_info_afiliado').empty();
+                $('#afi_departamento_info_afiliado').append('<option value="'+optionSelected?.Id_departamento+'" selected>'+optionSelected?.Nombre_departamento+'</option>');
+                let SelectorDepartamentAfiliado = $('select[name=afi_departamento_info_afiliado]').val();
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    if (data[claves[i]]['Id_departamento'] != SelectorDepartamentAfiliado) {
+                        $('#afi_departamento_info_afiliado').append('<option value="'+data[claves[i]]["Id_departamento"]+'">'+data[claves[i]]["Nombre_departamento"]+'</option>');
+                    }
+                }
+            }else{
+                $('#afi_departamento_info_afiliado').empty();
+                $('#afi_departamento_info_afiliado').append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data);
+                for (let i = 0; i < claves.length; i++) {
+                    $('#afi_departamento_info_afiliado').append('<option value="'+data[claves[i]]["Id_departamento"]+'">'+data[claves[i]]["Nombre_departamento"]+'</option>');
+                }
             }
         }
     });
