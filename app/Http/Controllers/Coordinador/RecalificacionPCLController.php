@@ -5721,7 +5721,7 @@ class RecalificacionPCLController extends Controller
         'side.Numero_dictamen', 'side.PCL_anterior', 'side.Descripcion_nueva_calificacion', 'side.Relacion_documentos', 'side.Otros_relacion_doc', 
         'side.Descripcion_enfermedad_actual', 'side.Suma_combinada', 'side.Total_Deficiencia50', 'side.Porcentaje_pcl', 'side.Rango_pcl', 
         'side.Monto_indemnizacion', 'side.Tipo_evento', 'sltp.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro as Nombre_origen', 'side.F_evento', 
-        'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+        'side.F_estructuracion', 'side.Requiere_Revision_Pension', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slpa.Nombre_parametro as Nombre_enfermedad', 'side.Requiere_tercera_persona', 
         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.N_radicado', 
         'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro', 'side.N_siniestro')
@@ -6079,20 +6079,14 @@ class RecalificacionPCLController extends Controller
         $Detalle_calificacion_dp = $array_datos_info_dictamen[0]->Detalle_calificacion;
         $Enfermedad_catastrofica_dp = $array_datos_info_dictamen[0]->Enfermedad_catastrofica;
         $Enfermedad_congenita_dp = $array_datos_info_dictamen[0]->Enfermedad_congenita;
-        $validar_servicio_revision_pension = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-        ->select('Id_servicio')->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();  
-        $Revision_pension_dp = $validar_servicio_revision_pension[0]->Id_servicio;
+        // $validar_servicio_revision_pension = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        // ->select('Id_servicio')->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();  
+        $Revision_pension_dp = $array_datos_info_dictamen[0]->Requiere_Revision_Pension;       
         $Nombre_enfermedad_dp = $array_datos_info_dictamen[0]->Nombre_enfermedad;
         $Requiere_tercera_persona_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona;
         $Requiere_tercera_persona_decisiones_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona_decisiones;
         $Requiere_dispositivo_apoyo_dp = $array_datos_info_dictamen[0]->Requiere_dispositivo_apoyo;
         $Justificacion_dependencia_dp = $array_datos_info_dictamen[0]->Justificacion_dependencia;
-
-        /* se añade la validacion del requiere revisión pensión marcado (FICHA PBS 052) */
-        $validacion_si_req_rev_pension = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-        ->select('Requiere_Revision_Pension')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get(); 
-        $si_req_rev_pension = $validacion_si_req_rev_pension[0]->Requiere_Revision_Pension;
 
         //consulta si esta visado o no para mostrar las firmas
 
@@ -6184,8 +6178,7 @@ class RecalificacionPCLController extends Controller
             'Detalle_calificacion_dp' => $Detalle_calificacion_dp,
             'Enfermedad_catastrofica_dp' => $Enfermedad_catastrofica_dp,
             'Enfermedad_congenita_dp' => $Enfermedad_congenita_dp,
-            'Revision_pension_dp' => $Revision_pension_dp,   
-            'si_req_rev_pension' => $si_req_rev_pension,
+            'Revision_pension_dp' => $Revision_pension_dp,
             'Nombre_enfermedad_dp' => $Nombre_enfermedad_dp,
             'Requiere_tercera_persona_dp' => $Requiere_tercera_persona_dp,
             'Requiere_tercera_persona_decisiones_dp' => $Requiere_tercera_persona_decisiones_dp,
@@ -6331,7 +6324,7 @@ class RecalificacionPCLController extends Controller
         'side.Numero_dictamen', 'side.PCL_anterior', 'side.Descripcion_nueva_calificacion', 'side.Relacion_documentos', 'side.Otros_relacion_doc', 
         'side.Descripcion_enfermedad_actual', 'side.Suma_combinada', 'side.Total_Deficiencia50', 'side.Porcentaje_pcl', 'side.Rango_pcl', 
         'side.Monto_indemnizacion', 'side.Tipo_evento', 'sltp.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro as Nombre_origen', 'side.F_evento', 
-        'side.F_estructuracion', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+        'side.F_estructuracion', 'side.Requiere_Revision_Pension', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slpa.Nombre_parametro as Nombre_enfermedad', 'side.Requiere_tercera_persona', 
         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.N_radicado', 
         'side.Estado_decreto', 'side.Nombre_usuario', 'side.F_registro','side.N_siniestro')
@@ -6529,21 +6522,14 @@ class RecalificacionPCLController extends Controller
         $Detalle_calificacion_dp = $array_datos_info_dictamen[0]->Detalle_calificacion;
         $Enfermedad_catastrofica_dp = $array_datos_info_dictamen[0]->Enfermedad_catastrofica;
         $Enfermedad_congenita_dp = $array_datos_info_dictamen[0]->Enfermedad_congenita;
-        $validar_servicio_revision_pension = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
-        ->select('Id_servicio')->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();  
-        $Revision_pension_dp = $validar_servicio_revision_pension[0]->Id_servicio;
+        // $validar_servicio_revision_pension = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+        // ->select('Id_servicio')->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get();          
+        $Revision_pension_dp = $array_datos_info_dictamen[0]->Requiere_Revision_Pension;        
         $Nombre_enfermedad_dp = $array_datos_info_dictamen[0]->Nombre_enfermedad;
         $Requiere_tercera_persona_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona;
         $Requiere_tercera_persona_decisiones_dp = $array_datos_info_dictamen[0]->Requiere_tercera_persona_decisiones;
         $Requiere_dispositivo_apoyo_dp = $array_datos_info_dictamen[0]->Requiere_dispositivo_apoyo;
         $Justificacion_dependencia_dp = $array_datos_info_dictamen[0]->Justificacion_dependencia;
-
-
-        /* se añade la validacion del requiere revisión pensión marcado (FICHA PBS 052) */
-        $validacion_si_req_rev_pension = sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-        ->select('Requiere_Revision_Pension')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni]])->get(); 
-        $si_req_rev_pension = $validacion_si_req_rev_pension[0]->Requiere_Revision_Pension;
 
         //consulta si esta visado o no para mostrar las firmas
 
@@ -6614,7 +6600,6 @@ class RecalificacionPCLController extends Controller
             'Enfermedad_catastrofica_dp' => $Enfermedad_catastrofica_dp,
             'Enfermedad_congenita_dp' => $Enfermedad_congenita_dp,
             'Revision_pension_dp' => $Revision_pension_dp,
-            'si_req_rev_pension' => $si_req_rev_pension,
             'Nombre_enfermedad_dp' => $Nombre_enfermedad_dp,
             'Requiere_tercera_persona_dp' => $Requiere_tercera_persona_dp,
             'Requiere_tercera_persona_decisiones_dp' => $Requiere_tercera_persona_decisiones_dp,
@@ -8544,38 +8529,44 @@ class RecalificacionPCLController extends Controller
 
         //Captura de datos de Etapas del ciclo vital
 
-        $validar_laboralmente_activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion', 'Activo']])->get();       
+        // $validar_laboralmente_activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+        // ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion', 'Activo']])->get();       
 
-        if (count($validar_laboralmente_activo) > 0) {
-            $Poblacion_edad_econo_activa = 'X';
-        }else{
-            $Poblacion_edad_econo_activa = '';
-        }        
+        // if (count($validar_laboralmente_activo) > 0) {
+        //     $Poblacion_edad_econo_activa = 'X';
+        // }else{
+        //     $Poblacion_edad_econo_activa = '';
+        // }  
+        
+        $Poblacion_edad_econo_activa = 'X';
 
-        $validar_rol_ocupacional = sigmel_informacion_rol_ocupacional_eventos::on('sigmel_gestiones')
-        ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion', 'Activo']])->get();       
+        // $validar_rol_ocupacional = sigmel_informacion_rol_ocupacional_eventos::on('sigmel_gestiones')
+        // ->where([['ID_Evento',$ID_Evento_comuni], ['Id_Asignacion',$Id_Asignacion_comuni], ['Estado_Recalificacion', 'Activo']])->get();       
 
-        if (count($validar_rol_ocupacional) > 0) {
-            if ($validar_rol_ocupacional[0]->Poblacion_calificar == 75) {
-                $Bebe_menor3 = 'X';
-                $Ninos_adolecentes = '';
-                $Adultos_mayores = '';                
-            }elseif($validar_rol_ocupacional[0]->Poblacion_calificar == 76){
-                $Bebe_menor3 = '';
-                $Ninos_adolecentes = 'X';
-                $Adultos_mayores = '';
-            }elseif($validar_rol_ocupacional[0]->Poblacion_calificar == 77){
-                $Bebe_menor3 = '';
-                $Ninos_adolecentes = '';
-                $Adultos_mayores = 'X';
-            }
+        // if (count($validar_rol_ocupacional) > 0) {
+        //     if ($validar_rol_ocupacional[0]->Poblacion_calificar == 75) {
+        //         $Bebe_menor3 = 'X';
+        //         $Ninos_adolecentes = '';
+        //         $Adultos_mayores = '';                
+        //     }elseif($validar_rol_ocupacional[0]->Poblacion_calificar == 76){
+        //         $Bebe_menor3 = '';
+        //         $Ninos_adolecentes = 'X';
+        //         $Adultos_mayores = '';
+        //     }elseif($validar_rol_ocupacional[0]->Poblacion_calificar == 77){
+        //         $Bebe_menor3 = '';
+        //         $Ninos_adolecentes = '';
+        //         $Adultos_mayores = 'X';
+        //     }
             
-        }else{
-            $Bebe_menor3 = '';
-            $Ninos_adolecentes = '';
-            $Adultos_mayores = '';
-        } 
+        // }else{
+        //     $Bebe_menor3 = '';
+        //     $Ninos_adolecentes = '';
+        //     $Adultos_mayores = '';
+        // } 
+
+        $Bebe_menor3 = '';
+        $Ninos_adolecentes = '';
+        $Adultos_mayores = '';
 
         //Captura de datos de Afiliacion al siss:
 

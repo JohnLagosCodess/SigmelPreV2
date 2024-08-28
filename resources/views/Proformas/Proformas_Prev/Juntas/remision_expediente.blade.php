@@ -14,7 +14,7 @@
         #header {
             position: fixed; 
             /* esta ligado con el primer valor del margin */
-            top: -2.8cm;
+            top: -3cm;
             left: 0cm;
             width: 100%;
             text-align: right;
@@ -26,10 +26,10 @@
         #footer{
             position: fixed;
             /* esta ligado con el tercer valor del margin */
-            bottom: -3cm;
+            bottom: -2.4cm;
             left: 0cm;
             width: 100%;
-            height: 14%;
+            height: 10%;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -128,6 +128,14 @@
             font-family: sans-serif;
             font-size: 12px !important;
         }
+
+        .derecha{
+            float:right;
+        }
+
+        .copias{
+            font-size: 10px;
+        }
         /* .hijo{
             width: 2cm;
             height: 1cm;
@@ -164,6 +172,7 @@
             ?>
             <div class="footer_content">
                 <span style="color: #3C3C3C; margin-top:2px;">{{$nombre_afiliado}} - {{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}} - Siniestro: {{$N_siniestro}} </span>
+                <br>
                 <img src="data:image/png;base64,{{ $footer_base64 }}" class="footer_image">
             </div>
         <?php endif ?>
@@ -180,14 +189,15 @@
         {{-- @for ($i=0; $i<40; $i++)
             <div class="hijo">{{$i}}</div>
         @endfor --}}
-        <p class="fuente_todo_texto"><span class="negrita">Bogotá D.C., {{$fecha}}</span></p>
+        <p class="fuente_todo_texto derecha"><span class="negrita">Bogotá D.C., {{$fecha}}</span></p>
+        <br><br>
         <table class="tabla2">
             <tbody>
                 <tr>
                     <td style="width: 100%;">
                         <span class="fuente_todo_texto"><span class="negrita">Señores: <br>{{$nombre_junta}}</span></span><br>
-                        <span class="fuente_todo_texto">{{$direccion_junta}}</span><br>
-                        <span class="fuente_todo_texto">{{$telefono_junta}}</span><br>
+                        <span class="fuente_todo_texto">Dirección: {{$direccion_junta}}</span><br>
+                        <span class="fuente_todo_texto">Teléfono: {{$telefono_junta}}</span><br>
                         <span class="fuente_todo_texto">{{$ciudad_junta}} - {{$departamento_junta}}</span>
                     </td>
                     <td>
@@ -301,7 +311,7 @@
                     <?php 
                     if (isset($Agregar_copia[$Afiliado])) { ?>
                         <tr>
-                            <td>
+                            <td class="copias">
                                 <span class="negrita">Afiliado: </span><?=$Agregar_copia['Afiliado'];?>
                             </td>
                         </tr>
@@ -311,7 +321,7 @@
                     <?php 
                         if (isset($Agregar_copia[$Empleador])) { ?>
                             <tr>
-                                <td>
+                                <td class="copias">
                                     <span class="negrita">Empleador: </span><?=$Agregar_copia['Empleador'];?>
                                 </td>
                             </tr>
@@ -376,7 +386,7 @@
         if ( isset($pdf) ) {
             $pdf->page_script('
                 $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $pdf->text(485, 63, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+                $pdf->text(485, 50, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
             ');
         }
 	</script>

@@ -2497,8 +2497,8 @@
             </tr>
             <tr>
                 <td colspan="4" class="left_titulo_labels">Revisión pensión:</td>
-                <td colspan="5" class="dato_dinamico"><?php if ($Revision_pension_dp == 8) {echo 'Si';} else { echo 'No';}?></td>
-                {{-- <td colspan="5" class="dato_dinamico"><?php if ($si_req_rev_pension == 'Require Revision Pension') {echo 'SI';} else { echo '';}?></td> --}}
+                {{-- <td colspan="5" class="dato_dinamico"><?php if ($Revision_pension_dp == 8) {echo 'Si';} else { echo 'No';}?></td> --}}
+                <td colspan="5" class="dato_dinamico"><?php if ($Revision_pension_dp == 'Require Revision Pension') {echo 'SI';} else { echo 'NO';}?></td>
                 <td colspan="4" class="left_titulo_labels">Tipo de enfermedad / Deficiencia:</td>
                 <td colspan="5" class="dato_dinamico"><?php if (!empty($Nombre_enfermedad_dp)){ echo $Nombre_enfermedad_dp;} else {echo 'N/A';}?></td>
             </tr>
