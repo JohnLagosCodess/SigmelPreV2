@@ -230,6 +230,12 @@
                                                     <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_info_evento[0]->F_radicacion}}" required>
                                                 </div>
                                             </div>
+                                            <div class="col-sm-3">
+                                                <div class="form-group">
+                                                    <label for="n_siniestro" class="col-form-label">N° de Siniestro </label>
+                                                    <input type="text" class="n_siniestro form-control" name="n_siniestro" id="n_siniestro" maxlength="25" value="{{$array_datos_info_evento[0]->N_siniestro}}">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -529,7 +535,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-3 columna_tipo_documen_afi_beni d-none">
-                                                    <div class="form-group">
+                                                    <div class="form-group" style="display:flex; flex-direction:column;">
                                                         <label for="afi_tipo_documento" class="col-form-label">Tipo de documento afiliado<span style="color:red;">(*)</span></label>
                                                         <select class="afi_tipo_documento custom-select" name="afi_tipo_documento" id="afi_tipo_documento">
                                                             <option value="{{$array_datos_info_afiliados[0]->Tipo_documento_benefi}}" selected>{{$array_datos_info_afiliados[0]->Nombre_documento_benefi}}</option>
@@ -555,7 +561,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-3 columna_depar_afi_beni d-none">
-                                                    <div class="form-group">
+                                                    <div class="form-group" style="display:flex; flex-direction:column;">
                                                         <label for="afi_departamento_info_afiliado" class="col-form-label">Departamento afiliado<span style="color:red;">(*)</span></label>
                                                         <select class="afi_departamento_info_afiliado custom-select" name="afi_departamento_info_afiliado" id="afi_departamento_info_afiliado">
                                                             <option value="{{$array_datos_info_afiliados[0]->Id_departamento_benefi}}" selected>{{$array_datos_info_afiliados[0]->Nombre_departamento_benefi}}</option>
@@ -563,7 +569,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-3 afi_columna_municipio_info_afiliado d-none">
-                                                    <div class="form-group">
+                                                    <div class="form-group" style="display:flex; flex-direction:column;">
                                                         <label for="afi_municipio_info_afiliado" class="col-form-label">Ciudad afiliado<span style="color:red;">(*)</span></label>
                                                         <select class="afi_municipio_info_afiliado custom-select" name="afi_municipio_info_afiliado" id="afi_municipio_info_afiliado" disabled>
                                                             <option value="{{$array_datos_info_afiliados[0]->Id_municipio_benefi}}" selected>{{$array_datos_info_afiliados[0]->Nombre_municipio_benefi}}</option>
@@ -1289,7 +1295,7 @@
 @stop
 
 @section('js')
-    <script type="text/javascript">
+    {{-- <script type="text/javascript">
         document.getElementById('btn_regreso_dto_atel').addEventListener('click', function(event) {
             event.preventDefault();
             // Realizar las acciones que quieres al hacer clic en el botón
@@ -1301,7 +1307,7 @@
             // Realizar las acciones que quieres al hacer clic en el botón
             document.getElementById('Regreso_Adicion_Dx').submit();
         });
-    </script>
+    </script> --}}
     <script src="/js/selectores_gestion_edicion.js"></script>  
 
     <script type="text/javascript">
