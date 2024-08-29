@@ -152,7 +152,7 @@ class ControversiaJuntasController extends Controller
         'sicie.Departamento_destinatario', 'sicie.Ciudad_destinatario', 'sicie.Asunto', 'sicie.Cuerpo_comunicado', 'sicie.Copia_empleador',
         'sicie.Copia_eps', 'sicie.Copia_afp', 'sicie.Copia_arl', 'sicie.Copia_jr', 'sicie.Cual_jr', 'sicie.Copia_jn', 'sicie.Anexos',
         'sicie.Elaboro', 'sicie.Reviso', 'sicie.Firmar', 'sicie.Ciudad', 'sicie.F_correspondecia', 'sicie.N_radicado', 'sicie.Nombre_usuario',
-        'sicie.F_registro')        
+        'sicie.F_registro','sicie.Decision_dictamen')        
         ->where([
             ['ID_evento',$Id_evento_juntas],
             ['Id_Asignacion',$Id_asignacion_juntas]
@@ -1679,6 +1679,7 @@ class ControversiaJuntasController extends Controller
         if (!Auth::check()) {
             return redirect('/');
         }
+
         $time = time();
         $nombre_usuario = Auth::user()->name;
         $date = date("Y-m-d", $time);
@@ -1855,6 +1856,7 @@ class ControversiaJuntasController extends Controller
                 'Ciudad' => $ciudad,
                 'F_correspondecia' => $f_correspondencia,
                 'N_radicado' => $radicado,
+                'Decision_dictamen' => $request->decision_dictamen,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];
@@ -1938,6 +1940,7 @@ class ControversiaJuntasController extends Controller
                 'Ciudad' => $ciudad,
                 'F_correspondecia' => $f_correspondencia,
                 'N_radicado' => $radicado,
+                'Decision_dictamen' => $request->decision_dictamen,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];
