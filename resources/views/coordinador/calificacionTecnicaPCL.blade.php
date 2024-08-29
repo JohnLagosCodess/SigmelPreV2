@@ -6937,11 +6937,11 @@
                                         <div class="form-group">
                                             <label for="f_evento_pericial">Fecha de evento<span style="color: red;">(*)</span></label>
                                             @if (!empty($array_dictamen_pericial[0]->F_evento) && $array_dictamen_pericial[0]->F_evento !== '0000-00-00')                                                
-                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_dictamen_pericial[0]->F_evento}}" max="{{now()->format('Y-m-d')}}">                                                                                                
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_dictamen_pericial[0]->F_evento}}" max="{{now()->format('Y-m-d')}}"required>                                                                                                
                                             @elseif(!empty($array_tipo_fecha_evento[0]->F_evento))
-                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_tipo_fecha_evento[0]->F_evento}}" max="{{now()->format('Y-m-d')}}">                                                                                                
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_tipo_fecha_evento[0]->F_evento}}" max="{{now()->format('Y-m-d')}}"required>
                                             @else
-                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" max="{{now()->format('Y-m-d')}}">                                                
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" max="{{now()->format('Y-m-d')}}"required>                                                
                                             @endif                                        
                                         </div>
                                     </div>

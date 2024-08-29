@@ -2434,8 +2434,8 @@ $(document).ready(function(){
             // botón preforma: ACLARACIÓN E INFORMACIÓN SOBRE RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN
             $("#btn_insertar_correo_solicitud_info").prop('disabled', true);
 
-            $("#asunto").val('');
-            $('#cuerpo_comunicado').summernote('code', '');
+            $("#asunto").val('N/A');
+            $('#cuerpo_comunicado').summernote('code', 'N/A');
 
             // Auto selección de la opción JRCI (Destinatario Principal)
             $('#jrci_comunicado').click();
@@ -6077,8 +6077,8 @@ $(document).ready(function(){
             // botón preforma: ACLARACIÓN E INFORMACIÓN SOBRE RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN
             $("#btn_insertar_correo_solicitud_info_editar").prop('disabled', true);
 
-            $("#asunto_editar").val('');
-            $('#cuerpo_comunicado_editar').summernote('code', '');
+            $("#asunto_editar").val('N/A');
+            $('#cuerpo_comunicado_editar').summernote('code', 'N/A');
 
             $("#Pdf").val("Pdf");
             $("#formato_descarga").html('');
