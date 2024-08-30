@@ -223,12 +223,18 @@ class CalificacionOrigenController extends Controller
         ])
        ->get();
 
+       //Traer el N_siniestro del evento
+       $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+       ->select('N_siniestro')
+       ->where([['ID_evento',$newIdEvento]])
+       ->get();
+
         // Validar si la accion ejecutada tiene enviar a notificaciones            
         $enviar_notificaciones = BandejaNotifiController::evento_en_notificaciones($newIdEvento,$newIdAsignacion);
         return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos',
         'arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc',
         'dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados',
-        'cali_profe_comite', 'Id_servicio', 'enviar_notificaciones'));
+        'cali_profe_comite', 'Id_servicio', 'enviar_notificaciones','N_siniestro_evento'));
     }
 
     //Guardar informacion del modulo de Origen ATEL
@@ -2098,6 +2104,17 @@ class CalificacionOrigenController extends Controller
             }elseif(empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && !empty($radioOtro)){
                 $destinatario = 'Otro';
             }
+
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->N_siniestro
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$Id_evento]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
+
             $datos_info_registrarComunicadoPcl=[
     
                 'ID_evento' => $Id_evento,
@@ -2127,10 +2144,10 @@ class CalificacionOrigenController extends Controller
                 'Agregar_copia' => $total_copia_comunicado,
                 'Firmar_Comunicado' => $request->firmarcomunicado,
                 'Tipo_descarga' => $request->tipo_descarga,
-                'Nombre_usuario' => $nombre_usuario,
-                'F_registro' => $date,
                 'Modulo_creacion' => $request->modulo_creacion,
                 'N_siniestro' => $request->N_siniestro,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
             ];
 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
@@ -2378,6 +2395,15 @@ class CalificacionOrigenController extends Controller
             $destinatario = 'Otro';
         }
 
+        //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+        $dato_actualizar_n_siniestro = [
+            'N_siniestro' => $request->N_siniestro
+        ];
+        sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$Id_evento_editar]])
+        ->update($dato_actualizar_n_siniestro);
+        sleep(2);
+
         $datos_info_actualizarComunicadoPcl=[
 
             'ID_evento' => $Id_evento_editar,
@@ -2409,11 +2435,10 @@ class CalificacionOrigenController extends Controller
             'Tipo_descarga' => $request->tipo_descarga,
             'Modulo_creacion' => $request->modulo_creacion,
             'Reemplazado' => 0,
+            'N_siniestro' => $request->N_siniestro,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
-            'N_siniestro' => $request->N_siniestro,
         ];
-
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado_editar)
         ->update($datos_info_actualizarComunicadoPcl);
 

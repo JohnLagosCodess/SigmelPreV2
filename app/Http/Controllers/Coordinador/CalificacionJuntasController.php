@@ -157,9 +157,15 @@ class CalificacionJuntasController extends Controller
         // Validar si la accion ejecutada tiene enviar a notificaciones            
         $enviar_notificaciones = BandejaNotifiController::evento_en_notificaciones($newIdEvento,$newIdAsignacion);
 
+        //Traer el N_siniestro del evento
+        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->select('N_siniestro')
+        ->where([['ID_evento',$newIdEvento]])
+        ->get();
+
         return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos','arrayinfo_afiliado',
         'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs',
-        'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio','enviar_notificaciones'));
+        'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio','enviar_notificaciones', 'N_siniestro_evento'));
     }
     //Cargar Selectores Juntas
     public function cargueListadoSelectoresJuntas(Request $request){
@@ -1866,6 +1872,16 @@ class CalificacionJuntasController extends Controller
             ];
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')->insert($datos_info_controvertido);
 
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->n_siniestro,
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$newIdEvento]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
+
             $mensajes = array(
                 "parametro" => 'agregar_controvertido',
                 "mensaje" => 'Registro agregado satisfactoriamente.'
@@ -1891,6 +1907,16 @@ class CalificacionJuntasController extends Controller
            
             sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actuali_controvertido);
+
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->n_siniestro,
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$newIdEvento]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
 
             $mensajes = array(
                 "parametro" => 'agregar_controvertido',
@@ -2498,6 +2524,15 @@ class CalificacionJuntasController extends Controller
                     $destinatario = 'Otro';
             }
             
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->N_siniestro,
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$Id_evento]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
 
             $datos_info_registrarComunicadoPcl=[
                 'ID_evento' => $Id_evento,
@@ -2806,6 +2841,16 @@ class CalificacionJuntasController extends Controller
             && empty($radioeps_comunicado_editar) && empty($radioafp_comunicado_editar) && empty($radioarl_comunicado_editar) && !empty($radioOtro_editar)){
                 $destinatario = 'Otro';
         }
+
+        //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+        $dato_actualizar_n_siniestro = [
+            'N_siniestro' => $request->N_siniestro,
+        ];
+        sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$Id_evento_editar]])
+        ->update($dato_actualizar_n_siniestro);
+
+        sleep(2);
 
         $datos_info_actualizarComunicadoPcl=[
 

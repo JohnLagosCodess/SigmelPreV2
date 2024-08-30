@@ -4059,7 +4059,7 @@ $(document).ready(function(){
             'tipo_descarga':'Oficio',
             'N_siniestro': N_siniestro
         }
-
+        console.log('datos_correspondecia ', datos_correspondecia)
         $.ajax({    
             type:'POST',
             url:'/guardarcorrespondencias',

@@ -897,11 +897,17 @@ class AdicionDxDTO extends Controller
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
         }
 
+        //Traer el N_siniestro del evento
+        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->select('N_siniestro')
+        ->where([['ID_evento',$Id_evento]])
+        ->get();
+
         return view('coordinador.adicionDxDtoOrigen', compact('user', 'Id_asignacion_actual', 'datos_bd_DTO_ATEL', 'bandera_hay_dto', 'array_datos_calificacion_origen', 
             'bandera_tipo_evento', 'nombre_del_evento_guardado', 'numero_consecutivo', 'motivo_solicitud_actual',
             'datos_apoderado_actual', 'array_datos_info_laboral','listado_documentos_solicitados', 'dato_articulo_12', 'array_datos_examenes_interconsultas',
             'array_datos_diagnostico_motcalifi', 'info_adicion_dx', 'array_datos_diagnostico_adicionales','array_comite_interdisciplinario', 'consecutivo', 
-            'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento', 'caso_notificado'
+            'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento', 'caso_notificado', 'N_siniestro_evento'
             )
         );
         
@@ -1632,6 +1638,16 @@ class AdicionDxDTO extends Controller
 
             sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')->insert($datos_formulario);
 
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->N_siniestro
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$request->ID_Evento]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
+
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $request->ID_Evento,
                 'Id_proceso' => $request->Id_proceso,
@@ -1660,6 +1676,7 @@ class AdicionDxDTO extends Controller
                 'Tipo_descarga' => 'Dictamen',
                 'Modulo_creacion' => 'adicionDxDtoOrigen',
                 'Reemplazado' => 0,
+                'N_siniestro' => $request->N_siniestro,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -1683,8 +1700,19 @@ class AdicionDxDTO extends Controller
             ->where('Id_Adiciones_Dx', $Id_Adiciones_Dx)->update($datos_formulario);
             $mensaje = 'Información actualizada satisfactoriamente.';
 
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->N_siniestro
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$request->ID_Evento]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
+
             $comunicado_reemplazado = [
-                'Reemplazado' => 0
+                'Reemplazado' => 0,
+                'N_siniestro' => $request->N_siniestro,
             ];
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
                 ->where([

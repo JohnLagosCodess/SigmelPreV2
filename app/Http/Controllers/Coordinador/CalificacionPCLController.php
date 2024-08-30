@@ -154,11 +154,16 @@ class CalificacionPCLController extends Controller
 
         // Validar si la accion ejecutada tiene enviar a notificaciones            
         $enviar_notificaciones = BandejaNotifiController::evento_en_notificaciones($newIdEvento,$newIdAsignacion);
-        
+
+        //Traer el N_siniestro del evento
+        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->select('N_siniestro')
+        ->where([['ID_evento',$newIdEvento]])
+        ->get();        
         
         return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 
         'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado', 
-        'info_comite_inter', 'Id_servicio', 'info_accion_eventos', 'enviar_notificaciones'));
+        'info_comite_inter', 'Id_servicio', 'info_accion_eventos', 'enviar_notificaciones','N_siniestro_evento'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){
@@ -2199,6 +2204,17 @@ class CalificacionPCLController extends Controller
             }elseif(empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && !empty($radioOtro)){
                 $destinatario = 'Otro';
             }
+
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->N_siniestro
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$Id_evento]])
+            ->update($dato_actualizar_n_siniestro);
+            
+            sleep(2);
+
             $tipo_descarga = $request->tipo_descarga;
             $datos_info_registrarComunicadoPcl=[
 
@@ -2231,9 +2247,9 @@ class CalificacionPCLController extends Controller
                 'Tipo_descarga' => $tipo_descarga,
                 'Modulo_creacion' => 'calificacionPCL',
                 'Reemplazado'=> 0,
+                'N_siniestro' => $request->N_siniestro,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'N_siniestro' => $request->N_siniestro,
             ];
             
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
@@ -2521,6 +2537,16 @@ class CalificacionPCLController extends Controller
         }elseif(empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && !empty($radioOtro_editar)){
             $destinatario = 'Otro';
         }
+
+        //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+        $dato_actualizar_n_siniestro = [
+            'N_siniestro' => $request->N_siniestro
+        ];
+        sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$Id_evento_editar]])
+        ->update($dato_actualizar_n_siniestro);
+        sleep(2);
+
         $tipo_descarga = $request->tipo_descarga;
 
         $datos_info_actualizarComunicadoPcl=[
@@ -2554,9 +2580,9 @@ class CalificacionPCLController extends Controller
             'Tipo_descarga' => $tipo_descarga,
             'Modulo_creacion' => 'calificacionPCL',
             'Reemplazado' => 0,
+            'N_siniestro' => $request->N_siniestro,
             'Nombre_usuario' => $nombre_usuario,
             'F_registro' => $date,
-            'N_siniestro' => $request->N_siniestro,
         ];
 
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado_editar)
@@ -3043,6 +3069,7 @@ class CalificacionPCLController extends Controller
 
             $datos = [
                 'indicativo' => $indicativo,
+                'nombre_pdf' => $nombre_pdf,
                 'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
             ];
             
@@ -3371,6 +3398,7 @@ class CalificacionPCLController extends Controller
 
             $datos = [
                 'indicativo' => $indicativo,
+                'nombre_pdf' => $nombre_pdf,
                 'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
             ];
             
@@ -4704,6 +4732,7 @@ class CalificacionPCLController extends Controller
 
             $datos = [
                 'indicativo' => $indicativo,
+                'nombre_pdf' => $fileName,
                 'pdf' => base64_encode($pdf->download($fileName)->getOriginalContent())
             ];
             
@@ -5356,11 +5385,17 @@ class CalificacionPCLController extends Controller
         ->where([['siae.ID_evento', $Id_evento_calitec]])
         ->get();
 
+        //Traer el N_siniestro del evento
+        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->select('N_siniestro')
+        ->where([['ID_evento',$Id_evento_calitec]])
+        ->get();
+
         return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 
         'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo',
         'array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 
         'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 
-        'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento'));
+        'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento','N_siniestro_evento'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
@@ -7761,7 +7796,7 @@ class CalificacionPCLController extends Controller
                     ['ID_evento', $Id_EventoDecreto],
                     ['Id_Asignacion',$Id_Asignacion_Dcreto],
                     ['Id_proceso', $Id_ProcesoDecreto],
-                    ['N_radicado',$radicado]
+                    ['N_radicado',$request->radicado]
                     ])
             ->update($datos_info_comunicado_eventos);
             
@@ -7872,6 +7907,16 @@ class CalificacionPCLController extends Controller
             
                 sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
                 ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
+
+                //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+                $dato_actualizar_n_siniestro = [
+                    'N_siniestro' => $n_siniestro
+                ];
+                sigmel_informacion_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$Id_EventoDecreto]])
+                ->update($dato_actualizar_n_siniestro);
+
+                sleep(2);
     
                 $datos_info_comunicado_eventos = [
                     'ID_Evento' => $Id_EventoDecreto,
@@ -7901,9 +7946,9 @@ class CalificacionPCLController extends Controller
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'calificacionTecnicaPCL',
                     'Reemplazado' => 0,
+                    'N_siniestro' => $n_siniestro,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
-                    'N_siniestro' => $n_siniestro,
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -7949,6 +7994,16 @@ class CalificacionPCLController extends Controller
                 sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
                 ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
 
+                //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+                $dato_actualizar_n_siniestro = [
+                    'N_siniestro' => $n_siniestro
+                ];
+                sigmel_informacion_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$Id_EventoDecreto]])
+                ->update($dato_actualizar_n_siniestro);
+
+                sleep(2);
+
                 $datos_info_comunicado_eventos = [
                     'ID_Evento' => $Id_EventoDecreto,
                     'Id_proceso' => $Id_ProcesoDecreto,
@@ -7977,9 +8032,9 @@ class CalificacionPCLController extends Controller
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'calificacionTecnicaPCL',
                     'Reemplazado' => 0,
+                    'N_siniestro' => $n_siniestro,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
-                    'N_siniestro' => $n_siniestro,
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -8051,6 +8106,16 @@ class CalificacionPCLController extends Controller
                 ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial); 
                 
             }    
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $n_siniestro
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$Id_EventoDecreto]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
+
             $comunicado_reemplazado = [
                 'Reemplazado' => 0,
                 'N_siniestro' => $n_siniestro,
@@ -8059,7 +8124,7 @@ class CalificacionPCLController extends Controller
                 ->where([
                     ['ID_evento',$Id_EventoDecreto],
                     ['Id_Asignacion',$Id_Asignacion_Dcreto],
-                    ['N_radicado',$radicado_dictamen]
+                    ['N_radicado',$request->radicado_dictamen]
                     ])
             ->update($comunicado_reemplazado);
             $mensajes = array(

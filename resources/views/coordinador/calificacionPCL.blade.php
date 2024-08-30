@@ -729,7 +729,7 @@
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="n_siniestro">N° de Siniestro</label>
-                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro">        
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$N_siniestro_evento[0]->N_siniestro}}">        
                                             </div>
                                         </div>
                                     </div>
@@ -1068,7 +1068,7 @@
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="n_siniestro_proforma_editar">N° de Siniestro</label>
-                                                <input type="text" class="n_siniestro_proforma_editar form-control" id="n_siniestro_proforma_editar" name="n_siniestro_proforma_editar">        
+                                                <input type="text" class="n_siniestro_proforma_editar form-control" id="n_siniestro_proforma_editar" name="n_siniestro_proforma_editar" value="{{$N_siniestro_evento[0]->N_siniestro}}">        
                                             </div>
                                         </div>
                                     </div>

@@ -3529,7 +3529,7 @@ $(document).ready(function(){
         var reviso = $('#reviso_editar').val();
         var firmarcomunicado = $('#firmarcomunicado_editar').filter(":checked").val();
         var tipo_descarga = $("[name='tipo_documento_descarga_califi_editar']").filter(":checked").val();
-        var N_siniestro = $("#n_siniestro_editar").val();
+        var N_siniestro = $("#n_siniestro_proforma_editar").val();
        //Copias Interesadas Origen
        var EditComunicadoTotal = [];
        cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';

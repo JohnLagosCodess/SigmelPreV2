@@ -542,7 +542,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="n_siniestro">N° de Siniestro</label>                                            
-                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="<?php if(!empty($arrayinfo_controvertido[0]->N_siniestro)) { echo $arrayinfo_controvertido[0]->N_siniestro;} ?>">                                                                                                                                                        
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="<?php if(!empty($N_siniestro_evento[0]->N_siniestro)) { echo $N_siniestro_evento[0]->N_siniestro;} ?>">                                                                                                                                                        
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -1039,7 +1039,7 @@
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <label for="n_siniestro">N° de Siniestro</label>
-                                                <input type="text" class="n_siniestro_comunicado form-control" id="n_siniestro_comunicado" name="n_siniestro_comunicado">        
+                                                <input type="text" class="n_siniestro_comunicado form-control" id="n_siniestro_comunicado" name="n_siniestro_comunicado" value="{{$N_siniestro_evento[0]->N_siniestro}}">        
                                             </div>
                                         </div>
                                     </div>

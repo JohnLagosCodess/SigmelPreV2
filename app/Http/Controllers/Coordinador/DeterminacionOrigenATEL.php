@@ -272,13 +272,19 @@ class DeterminacionOrigenATEL extends Controller
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
         }
 
+        //Traer el N_siniestro del evento
+        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->select('N_siniestro')
+        ->where([['ID_evento',$Id_evento_dto_atel]])
+        ->get();
+
         return view('coordinador.determinacionOrigenATEL', compact('user', 'array_datos_calificacion_origen', 
         'motivo_solicitud_actual', 'datos_apoderado_actual', 
         'array_datos_info_laboral', 'listado_documentos_solicitados', 
         'dato_articulo_12', 'array_datos_diagnostico_motcalifi',
         'array_datos_examenes_interconsultas', 'array_datos_historico_laboral', 'datos_bd_DTO_ATEL', 
         'nombre_del_evento_guardado','array_comite_interdisciplinario', 'consecutivo', 
-        'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento', 'caso_notificado'));
+        'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento', 'caso_notificado', 'N_siniestro_evento'));
     }
 
     public function cargueListadoSelectoresDTOATEL(Request $request){
@@ -729,6 +735,16 @@ class DeterminacionOrigenATEL extends Controller
         if ($Id_Dto_ATEL == "") {
             sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')->insert($datos_formulario);
 
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->N_siniestro
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$request->ID_Evento]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
+
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $request->ID_Evento,
                 'Id_proceso' => $request->Id_proceso,
@@ -757,6 +773,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Tipo_descarga' => 'Dictamen',
                 'Modulo_creacion' => 'determinacionOrigenATEL',
                 'Reemplazado' => 0,
+                'N_siniestro' => $request->N_siniestro,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -778,9 +795,20 @@ class DeterminacionOrigenATEL extends Controller
             sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
             ->where('Id_Dto_ATEL', $Id_Dto_ATEL)->update($datos_formulario);
             $mensaje = 'Información actualizada satisfactoriamente.';
+            
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->N_siniestro
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$request->ID_Evento]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
 
             $comunicado_reemplazado = [
-                'Reemplazado' => 0
+                'Reemplazado' => 0,
+                'N_siniestro' => $request->N_siniestro,
             ];
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
                 ->where([
@@ -1291,7 +1319,7 @@ class DeterminacionOrigenATEL extends Controller
                     ['ID_evento', $Id_Evento_dto_atel],
                     ['Id_Asignacion',$Id_Asignacion_dto_atel],
                     ['Id_proceso', $Id_Proceso_dto_atel],
-                    ['N_radicado',$radicado]
+                    ['N_radicado',$request->radicado]
                     ])
             ->update($datos_info_comunicado_eventos);
 
