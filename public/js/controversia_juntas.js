@@ -960,11 +960,8 @@ $(document).ready(function(){
         $("#btn_insertar_decreto_calificador_jrci").prop("disabled", true);
 
         $("#Asunto").val("RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN AL DICTAMEN DEL {{$f_dictamen_jrci_asunto}}");
-        var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de ORIGEN, de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+        var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>1. (Descripción de recurso)</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de ORIGEN, de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
         $("#cuerpo_comunicado").summernote('code', texto_insertar);
-
-        $("a[id^='generar_proforma_desacuerdo_']").removeClass('d-none');
-        $("a[id^='generar_proforma_acuerdo_']").addClass('d-none');
 
         // Seteo automático del nro de anexos:
         var seteo_nro_anexos = 0;
@@ -999,17 +996,36 @@ $(document).ready(function(){
         $("#btn_insertar_tipo_documento_afiliado").prop("disabled", false);
         $("#btn_insertar_documento_afiliado").prop("disabled", false);
         $("#btn_insertar_cie_nombre_jrci").prop("disabled", false);
-        $("#btn_insertar_pcl_jrci").prop("disabled", false);
-        $("#btn_insertar_origen_dx_jrci").prop("disabled", false);
-        $("#btn_insertar_f_estructuracion_jrci").prop("disabled", false);
-        $("#btn_insertar_decreto_calificador_jrci").prop("disabled", false);
-
+        
         $("#Asunto").val("PRONUNCIAMIENTO FRENTE A DICTAMEN {{$nro_dictamen_asunto}}");
-        var texto_insertar = "<p>Respetados señores</p><p>Con atento saludo les informamos que fuimos notificados del dictamen número {{$nro_dictamen}} de fecha {{$f_dictamen_jrci}}, correspondiente al afiliado {{$nombre_afiliado}}, quien se identifica con la {{$tipo_identificacion_afiliado}} número {{$num_identificacion_afiliado}}, mediante el cual califican las patologías: {{$cie10_nombre_cie10_jrci}}, determinando un porcentaje de Pérdida De Capacidad Laboral de {{$pcl_jrci}}, de origen {{$origen_dx_jrci}} y Fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>Una vez estudiado el dictamen por parte del equipo interdisciplinario de medicina laboral, esta aseguradora se manifiesta en ACUERDO respecto al Porcentaje de PCL, determinado(s) en el dictamen de calificación, toda vez que los elementos determinados se ajustan al Decreto {{$decreto_calificador_jrci}} (Manual Único de Calificación de Invalidez).</p><p>Dicho acuerdo se fundamenta en: Una vez revisado el dictamen proferido por la junta, esta aseguradora se manifiesta en ACUERDO con la calificación asignada, {{$sustentacion_jrci}}.</p><p>En caso de que las demás partes interesadas no interpongan el recurso de reposición en subsidio de apelación, amablemente solicitamos nos sea remitida la CONSTANCIA EJECUTORIA del dictamen emitido por su entidad.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+
+        /* extraemos el id del tipo de controversia es decir : 12 (Controversia Origen), 13 (Controversia PCL) */
+        var id_tipo_controversia = $('#id_servicio').val();
+        
+        /* Evaluamos el tipo de controversia para saber que texto hay que insertar en la proforma. */
+        if (id_tipo_controversia == 12) {
+
+            $("#btn_insertar_pcl_jrci").prop("disabled", true);
+            $("#btn_insertar_origen_dx_jrci").prop("disabled", true);
+            $("#btn_insertar_f_estructuracion_jrci").prop("disabled", true);
+            $("#btn_insertar_decreto_calificador_jrci").prop("disabled", true);
+
+            var texto_insertar = "<p>Respetados señores</p><p>Con atento saludo les informamos que fuimos notificados del dictamen número {{$nro_dictamen}} de fecha {{$f_dictamen_jrci}}, correspondiente al afiliado {{$nombre_afiliado}}, quien se identifica con la {{$tipo_identificacion_afiliado}} número {{$num_identificacion_afiliado}}, mediante el cual califican las patologías: {{$cie10_nombre_cie10_jrci}}.</p><p>Una vez estudiado el dictamen por parte del equipo interdisciplinario de medicina laboral, esta aseguradora se manifiesta en ACUERDO con la calificación realizada, por cuanto, se ajusta a los fundamentos fácticos evidenciados en las historias clínica y ocupacional y, los fundamentos jurídicos contemplados en el Decreto 1295 de 1994 y la Ley 1562 de 2012.</p><p>Dicho acuerdo se fundamenta en: Una vez revisado el dictamen proferido por la junta, esta aseguradora se manifiesta en ACUERDO con la calificación asignada, {{$sustentacion_jrci}}.</p><p>En caso de que las demás partes interesadas no interpongan el recurso de reposición en subsidio de apelación, amablemente solicitamos nos sea remitida la CONSTANCIA EJECUTORIA del dictamen emitido por su entidad.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+        }else{
+
+            $("#btn_insertar_pcl_jrci").prop("disabled", false);
+            $("#btn_insertar_origen_dx_jrci").prop("disabled", false);
+            $("#btn_insertar_f_estructuracion_jrci").prop("disabled", false);
+            $("#btn_insertar_decreto_calificador_jrci").prop("disabled", false);
+
+            var texto_insertar = "<p>Respetados señores</p><p>Con atento saludo les informamos que fuimos notificados del dictamen número {{$nro_dictamen}} de fecha {{$f_dictamen_jrci}}, correspondiente al afiliado {{$nombre_afiliado}}, quien se identifica con la {{$tipo_identificacion_afiliado}} número {{$num_identificacion_afiliado}}, mediante el cual califican las patologías: {{$cie10_nombre_cie10_jrci}}, determinando un porcentaje de pérdida de capacidad laboral de {{$pcl_jrci}}%, de origen {{$origen_dx_jrci}} y Fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>Una vez estudiado el dictamen por parte del equipo interdisciplinario de medicina laboral, esta aseguradora se manifiesta en ACUERDO respecto al Porcentaje de PCL, determinado(s) en el dictamen de calificación, toda vez que los elementos determinados se ajustan al Decreto {{$decreto_calificador_jrci}} (Manual Único de Calificación de Invalidez).</p><p>Dicho acuerdo se fundamenta en: Una vez revisado el dictamen proferido por la junta, esta aseguradora se manifiesta en ACUERDO con la calificación asignada, {{$sustentacion_jrci}}.</p><p>En caso de que las demás partes interesadas no interpongan el recurso de reposición en subsidio de apelación, amablemente solicitamos nos sea remitida la CONSTANCIA EJECUTORIA del dictamen emitido por su entidad.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+
+        }
+
         $("#cuerpo_comunicado").summernote('code', texto_insertar);
 
-        $("a[id^='generar_proforma_acuerdo_']").removeClass('d-none');
-        $("a[id^='generar_proforma_desacuerdo_']").addClass('d-none');
+        
+        
 
         // Seteo automático del nro de anexos:
         var seteo_nro_anexos = 0;
@@ -1047,6 +1063,9 @@ $(document).ready(function(){
         $("#GuardarCorrespondencia").prop('disabled',false);
         $("#bandera_correspondecia_guardar_actualizar").prop('disabled',false);
 
+        /* extraemos el id del tipo de controversia es decir : 12 (Controversia Origen), 13 (Controversia PCL) */
+        var id_tipo_controversia = $('#id_servicio').val();
+
         // Insertar textos predeterminados en la sección de correspondencia
         if (opt_concepto_jrci == "Desacuerdo") {
             // Aplica para Controversia Pcl (id servicio 13) y Controversia Origen (id servicio 12)
@@ -1075,11 +1094,11 @@ $(document).ready(function(){
             $("#btn_insertar_decreto_calificador_jrci").prop("disabled", true);
 
             $("#Asunto").val("RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN AL DICTAMEN DEL {{$f_dictamen_jrci_asunto}}");
-            var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de ORIGEN, de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+            var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>1. (Descripción de recurso)</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de ORIGEN, de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
             $("#cuerpo_comunicado").summernote('code', texto_insertar);
 
-            $("a[id^='generar_proforma_desacuerdo_']").removeClass('d-none');
-            $("a[id^='generar_proforma_acuerdo_']").addClass('d-none');
+            
+            
             
             // Seteo automático del nro de anexos:
             var seteo_nro_anexos = 0;
@@ -1114,17 +1133,35 @@ $(document).ready(function(){
             $("#btn_insertar_tipo_documento_afiliado").prop("disabled", false);
             $("#btn_insertar_documento_afiliado").prop("disabled", false);
             $("#btn_insertar_cie_nombre_jrci").prop("disabled", false);
-            $("#btn_insertar_pcl_jrci").prop("disabled", false);
-            $("#btn_insertar_origen_dx_jrci").prop("disabled", false);
-            $("#btn_insertar_f_estructuracion_jrci").prop("disabled", false);
-            $("#btn_insertar_decreto_calificador_jrci").prop("disabled", false);
+            
 
             $("#Asunto").val("PRONUNCIAMIENTO FRENTE A DICTAMEN {{$nro_dictamen_asunto}}");
-            var texto_insertar = "<p>Respetados señores</p><p>Con atento saludo les informamos que fuimos notificados del dictamen número {{$nro_dictamen}} de fecha {{$f_dictamen_jrci}}, correspondiente al afiliado {{$nombre_afiliado}}, quien se identifica con la {{$tipo_identificacion_afiliado}} número {{$num_identificacion_afiliado}}, mediante el cual califican las patologías: {{$cie10_nombre_cie10_jrci}}, determinando un porcentaje de Pérdida De Capacidad Laboral de {{$pcl_jrci}}, de origen {{$origen_dx_jrci}} y Fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>Una vez estudiado el dictamen por parte del equipo interdisciplinario de medicina laboral, esta aseguradora se manifiesta en ACUERDO respecto al Porcentaje de PCL, determinado(s) en el dictamen de calificación, toda vez que los elementos determinados se ajustan al Decreto {{$decreto_calificador_jrci}} (Manual Único de Calificación de Invalidez).</p><p>Dicho acuerdo se fundamenta en: Una vez revisado el dictamen proferido por la junta, esta aseguradora se manifiesta en ACUERDO con la calificación asignada, {{$sustentacion_jrci}}.</p><p>En caso de que las demás partes interesadas no interpongan el recurso de reposición en subsidio de apelación, amablemente solicitamos nos sea remitida la CONSTANCIA EJECUTORIA del dictamen emitido por su entidad.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+
+            /* Evaluamos el tipo de controversia para saber que texto hay que insertar en la proforma. */
+            if (id_tipo_controversia == 12) {
+
+                $("#btn_insertar_pcl_jrci").prop("disabled", true);
+                $("#btn_insertar_origen_dx_jrci").prop("disabled", true);
+                $("#btn_insertar_f_estructuracion_jrci").prop("disabled", true);
+                $("#btn_insertar_decreto_calificador_jrci").prop("disabled", true);
+
+                var texto_insertar = "<p>Respetados señores</p><p>Con atento saludo les informamos que fuimos notificados del dictamen número {{$nro_dictamen}} de fecha {{$f_dictamen_jrci}}, correspondiente al afiliado {{$nombre_afiliado}}, quien se identifica con la {{$tipo_identificacion_afiliado}} número {{$num_identificacion_afiliado}}, mediante el cual califican las patologías: {{$cie10_nombre_cie10_jrci}}.</p><p>Una vez estudiado el dictamen por parte del equipo interdisciplinario de medicina laboral, esta aseguradora se manifiesta en ACUERDO con la calificación realizada, por cuanto, se ajusta a los fundamentos fácticos evidenciados en las historias clínica y ocupacional y, los fundamentos jurídicos contemplados en el Decreto 1295 de 1994 y la Ley 1562 de 2012.</p><p>Dicho acuerdo se fundamenta en: Una vez revisado el dictamen proferido por la junta, esta aseguradora se manifiesta en ACUERDO con la calificación asignada, {{$sustentacion_jrci}}.</p><p>En caso de que las demás partes interesadas no interpongan el recurso de reposición en subsidio de apelación, amablemente solicitamos nos sea remitida la CONSTANCIA EJECUTORIA del dictamen emitido por su entidad.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+            } else {
+
+                $("#btn_insertar_pcl_jrci").prop("disabled", false);
+                $("#btn_insertar_origen_dx_jrci").prop("disabled", false);
+                $("#btn_insertar_f_estructuracion_jrci").prop("disabled", false);
+                $("#btn_insertar_decreto_calificador_jrci").prop("disabled", false);
+
+                var texto_insertar = "<p>Respetados señores</p><p>Con atento saludo les informamos que fuimos notificados del dictamen número {{$nro_dictamen}} de fecha {{$f_dictamen_jrci}}, correspondiente al afiliado {{$nombre_afiliado}}, quien se identifica con la {{$tipo_identificacion_afiliado}} número {{$num_identificacion_afiliado}}, mediante el cual califican las patologías: {{$cie10_nombre_cie10_jrci}}, determinando un porcentaje de pérdida de capacidad laboral de {{$pcl_jrci}}%, de origen {{$origen_dx_jrci}} y Fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>Una vez estudiado el dictamen por parte del equipo interdisciplinario de medicina laboral, esta aseguradora se manifiesta en ACUERDO respecto al Porcentaje de PCL, determinado(s) en el dictamen de calificación, toda vez que los elementos determinados se ajustan al Decreto {{$decreto_calificador_jrci}} (Manual Único de Calificación de Invalidez).</p><p>Dicho acuerdo se fundamenta en: Una vez revisado el dictamen proferido por la junta, esta aseguradora se manifiesta en ACUERDO con la calificación asignada, {{$sustentacion_jrci}}.</p><p>En caso de que las demás partes interesadas no interpongan el recurso de reposición en subsidio de apelación, amablemente solicitamos nos sea remitida la CONSTANCIA EJECUTORIA del dictamen emitido por su entidad.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+            }
+
+            
+
             $("#cuerpo_comunicado").summernote('code', texto_insertar);
 
-            $("a[id^='generar_proforma_acuerdo_']").removeClass('d-none');
-            $("a[id^='generar_proforma_desacuerdo_']").addClass('d-none');
+            
+            
 
             // Seteo automático del nro de anexos:
             var seteo_nro_anexos = 0;
@@ -1358,8 +1395,8 @@ $(document).ready(function(){
             var texto_insertar = "<p>Respetados señores, cordial saludo:</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. en el ramo de Riesgos Laborales, debidamente facultado para ello; en atención al dictamen de la referencia y estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN ante la Junta Nacional de Calificación de Invalidez, por los siguientes motivos:</p><p>{{$sustentacion_jrci}}</p><p>De acuerdo con lo anteriormente expuesto, solicitamos se modifique la calificación de ORIGEN, de acuerdo con la información aportada y la historia clínica de la paciente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas de la paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Nacional de Calificación e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
             $("#cuerpo_comunicado").summernote('code', texto_insertar);
 
-            $("a[id^='generar_proforma_desacuerdo_']").removeClass('d-none');
-            $("a[id^='generar_proforma_acuerdo_']").addClass('d-none');
+            
+            
             
             // Seteo automático del nro de anexos:
             var seteo_nro_anexos = 0;
@@ -1403,8 +1440,8 @@ $(document).ready(function(){
             var texto_insertar = "<p>Respetados señores</p><p>Con atento saludo les informamos que fuimos notificados del dictamen número {{$nro_dictamen}} de fecha {{$f_dictamen_jrci}}, correspondiente al afiliado {{$nombre_afiliado}}, quien se identifica con la {{$tipo_identificacion_afiliado}} número {{$num_identificacion_afiliado}}, mediante el cual califican las patologías: {{$cie10_nombre_cie10_jrci}}, determinando un porcentaje de Pérdida De Capacidad Laboral de {{$pcl_jrci}}, de origen {{$origen_dx_jrci}} y Fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>Una vez estudiado el dictamen por parte del equipo interdisciplinario de medicina laboral, esta aseguradora se manifiesta en ACUERDO respecto al Porcentaje de PCL, determinado(s) en el dictamen de calificación, toda vez que los elementos determinados se ajustan al Decreto {{$decreto_calificador_jrci}} (Manual Único de Calificación de Invalidez).</p><p>Dicho acuerdo se fundamenta en: Una vez revisado el dictamen proferido por la junta, esta aseguradora se manifiesta en ACUERDO con la calificación asignada, {{$sustentacion_jrci}}.</p><p>En caso de que las demás partes interesadas no interpongan el recurso de reposición en subsidio de apelación, amablemente solicitamos nos sea remitida la CONSTANCIA EJECUTORIA del dictamen emitido por su entidad.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
             $("#cuerpo_comunicado").summernote('code', texto_insertar);
 
-            $("a[id^='generar_proforma_acuerdo_']").removeClass('d-none');
-            $("a[id^='generar_proforma_desacuerdo_']").addClass('d-none');
+            
+            
 
             // Seteo automático del nro de anexos:
             var seteo_nro_anexos = 0;
@@ -3588,7 +3625,7 @@ $(document).ready(function(){
         var f_correspondencia = $('#f_correspondencia').val();
         var radicado = $('#radicado').val();
         var bandera_correspondecia_guardar_actualizar = $('#bandera_correspondecia_guardar_actualizar').val();
-        
+        let decision_dictamen = $('input[name=decision_dictamen_jrci]').filter(":checked").val();
         var datos_correspondecia={
             '_token': token,            
             'newId_evento':newId_evento,
@@ -3624,6 +3661,7 @@ $(document).ready(function(){
             'ciudad':ciudad,
             'f_correspondencia':f_correspondencia,
             'radicado':radicado,
+            'decision_dictamen':  decision_dictamen,
             'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar
         }
 
@@ -4071,7 +4109,7 @@ $(document).ready(function(){
     /* Generacion de Proforma en PDF para decisión ACUERDO en la sección Revisión ante concepto de la Junta Regional */
 
     // llenado de datos con el hover para el ojito
-    $("a[id^='generar_proforma_acuerdo_']").hover(function(){
+    $("a[id^='generar_proforma_Acuerdo']").hover(function(){
         var id_comite_inter = $(this).data("id_comite_inter");
         // var tupla_comunicado = $(this).data("tupla_comunicado");
         var id_evento = $(this).data("id_evento");
@@ -4406,7 +4444,7 @@ $(document).ready(function(){
     });
 
     // Ejecución para descarga de proforma con el ojito
-    $("a[id^='generar_proforma_acuerdo_']").click(function(event){
+    $("a[id^='generar_proforma_Acuerdo']").click(function(event){
         event.preventDefault();
         
         // Recopilación de datos
@@ -4475,6 +4513,7 @@ $(document).ready(function(){
             'id_comunicado': infoComunicado.Id_Comunicado,
             'N_siniestro': N_siniestro
         }
+        
         if(infoComunicado.Reemplazado == 1){
             var nombre_doc = infoComunicado.Nombre_documento;
             var idEvento = infoComunicado.ID_evento;
@@ -4531,7 +4570,7 @@ $(document).ready(function(){
     /* Generacion de Proforma en WORD para decisión DESACUERDO en la sección Revisión ante concepto de la Junta Regional */
 
     // llenado de datos con el hover para el ojito
-    $("a[id^='generar_proforma_desacuerdo_']").hover(function(){
+    $("a[id^='generar_proforma_Desacuerdo']").hover(function(){
         var id_comite_inter = $(this).data("id_comite_inter");
         // var tupla_comunicado = $(this).data("tupla_comunicado");
         var id_evento = $(this).data("id_evento");
@@ -4867,7 +4906,7 @@ $(document).ready(function(){
     });
 
     // Ejecución para descarga de proforma con el ojito
-    $("a[id^='generar_proforma_desacuerdo_']").click(function(event){
+    $("a[id^='generar_proforma_Desacuerdo']").click(function(event){
         event.preventDefault();
         
         // Recopilación de datos
@@ -4926,6 +4965,7 @@ $(document).ready(function(){
             'id_comunicado': infoComunicado.Id_Comunicado,
             'N_siniestro' : N_siniestro
         }
+        
         if(infoComunicado.Reemplazado == 1){
             var nombre_doc = infoComunicado.Nombre_documento;
             var idEvento = infoComunicado.ID_evento;

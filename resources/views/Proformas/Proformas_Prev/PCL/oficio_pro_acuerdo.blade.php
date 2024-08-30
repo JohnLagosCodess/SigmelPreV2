@@ -8,10 +8,12 @@
     
     <style>
         @page{
+            /* arriba  derecha  abajo  izquierda */
             margin: 3cm 1.3cm 2.5cm 1.3cm;
         }
         #header {
             position: fixed; 
+            /* esta ligado con el primer valor del margin */
             top: -3cm;
             left: 0cm;
             width: 100%;
@@ -25,12 +27,16 @@
             max-height: 70px; 
         }
         .logo_header{
-            position: absolute;
+            /* position: absolute;
             max-width: 40%;
             height: auto;
             left: 530px;
-            max-height: 80px; 
+            max-height: 80px; */
+
+            width: 150px;
+            height: auto;
         }
+
         .tabla_header{
             width: 100%;
             font-family: sans-serif;
@@ -40,7 +46,8 @@
 
         .tabla_header td {
             border: none;
-        }        
+        }
+
         #footer{
             position: fixed;
             /* esta ligado con el tercer valor del margin */
@@ -166,13 +173,13 @@
 </head>
 <body>
     <div id="header">    
-        <table class="tabla_header">
+        {{-- <table class="tabla_header">
             <tbody>
-                <tr>
+                <tr> --}}
                     {{-- <td>
                         <img src="data:image/png;base64,{{ base64_encode($codigoQR) }}" class="codigo_qr" alt="Código QR">
                     </td> --}}
-                    <td>
+                    {{-- <td> --}}
                         <?php if($logo_header == "Sin logo"): ?>
                             <p>No logo</p>
                         <?php else: ?>
@@ -184,10 +191,10 @@
                             ?>
                             <img src="data:image/png;base64,{{ $imagenBase64_header }}" class="logo_header">
                         <?php endif ?>                   
-                    </td>
+                    {{-- </td>
                 </tr>
             </tbody>
-        </table>            
+        </table> --}}
     </div>
     <div id="footer">        
         <?php if($footer == null): ?>
@@ -409,7 +416,7 @@
         if ( isset($pdf) ) {
             $pdf->page_script('
                 $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $pdf->text(485, 50, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+                $pdf->text(485, 50, "Página $PAGE_NUM de $PAGE_COUNT", $font, 9);
             ');
         }
 	</script>

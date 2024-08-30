@@ -4094,13 +4094,16 @@ $(document).ready(function(){
         var valorSeleccionado = $(this).val();
         if (valorSeleccionado != 2) {
             $('#div_tipo_evento').removeClass('d-none');
+            $('#f_evento_pericial').prop('required', true);
         } else if (valorSeleccionado == 2) {
             $('#div_tipo_evento').addClass('d-none');
+            $('#f_evento_pericial').prop('required', false);
         } 
     });
     var t_evento = $('#tipo_evento').val();
     if (t_evento == 2) {
         $('#div_tipo_evento').addClass('d-none');
+        $('#f_evento_pericial').prop('required', false);
     }else{
         $('#div_tipo_evento').removeClass('d-none');
     }

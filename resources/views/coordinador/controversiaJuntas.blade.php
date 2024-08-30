@@ -2013,16 +2013,7 @@
                                                                                     data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
                                                                                 ><i class="fa fa-pen text-info"></i></a>
                                                                             @endif
-                                                                            <a href="javascript:void(0);" id="generar_proforma_acuerdo_{{$comunicados->Id_Comunicado}}"
-                                                                                data-archivo = "{{$comunicados}}"
-                                                                                data-tupla_nro_radicado="{{$comunicados->N_radicado}}"
-                                                                                data-id_comite_inter={{$comite_inter->Id_com_inter}}
-                                                                                data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
-                                                                                data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
-                                                                                data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
-                                                                            ><i class="far fa-eye text-info"></i>
-                                                                            </a>
-                                                                            <a href="javascript:void(0);" id="generar_proforma_desacuerdo_{{$comunicados->Id_Comunicado}}"
+                                                                            <a href="javascript:void(0);" id="generar_proforma_{{$comite_inter->Decision_dictamen ?? ''}}"
                                                                                 data-archivo = "{{$comunicados}}"
                                                                                 data-tupla_nro_radicado="{{$comunicados->N_radicado}}"
                                                                                 data-id_comite_inter={{$comite_inter->Id_com_inter}}
@@ -2053,7 +2044,7 @@
                                             <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                             <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
                                                 <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
-                                                <button class="btn-info" id="cargarComunicado">Cargar</button>
+                                                <button class="btn btn-sm btn-info" id="cargarComunicado">Cargar</button>
                                             </div>
                                         </div>
                                     </div>

@@ -26,9 +26,10 @@
         }
         .logo_header{
             position: absolute;
-            max-width: 40%;
+            /* max-width: 40%; */
+            width: 150px;
             height: auto;
-            left: 530px;
+            left: 498px;
             max-height: 80px; 
         }
         .tabla_header{
@@ -230,9 +231,19 @@
         </table>
         <section class="fuente_todo_texto">            
             <?php
-                $patron1 = '/\{\{\$Detalle_calificacion_Fbdp\}\}/';
-                if (preg_match($patron1, $Cuerpo_comunicado_correspondencia)) {                    
-                    $texto_modificado = str_replace('{{$Detalle_calificacion_Fbdp}}', $Detalle_calificacion_Fbdp, $Cuerpo_comunicado_correspondencia);
+                // $patron1 = '/\{\{\$Detalle_calificacion_Fbdp\}\}/';
+                $patron1 = '/\{\{\$PorcentajePcl_dp\}\}/'; 
+                $patron2 = '/\{\{\$F_estructuracionPcl_dp\}\}/'; 
+                $patron3 = '/\{\{\$OrigenPcl_dp\}\}/'; 
+                $patron4 = '/\{\{\$Detalle_calificacion_Fbdp\}\}/'; 
+                // if (preg_match($patron1, $Cuerpo_comunicado_correspondencia))
+                if (preg_match($patron1, $Cuerpo_comunicado_correspondencia) && preg_match($patron2, $Cuerpo_comunicado_correspondencia) 
+                    && preg_match($patron3, $Cuerpo_comunicado_correspondencia) && preg_match($patron4, $Cuerpo_comunicado_correspondencia))
+                {                    
+                    $texto_modificado = str_replace('{{$PorcentajePcl_dp}}', '<b>'.$PorcentajePcl_dp.'</b>', $Cuerpo_comunicado_correspondencia);
+                    $texto_modificado = str_replace('{{$F_estructuracionPcl_dp}}', '<b>'.$F_estructuracionPcl_dp.'</b>', $texto_modificado);
+                    $texto_modificado = str_replace('{{$OrigenPcl_dp}}', '<b>'.$OrigenPcl_dp.'</b>', $texto_modificado);
+                    $texto_modificado = str_replace('{{$Detalle_calificacion_Fbdp}}', $Detalle_calificacion_Fbdp, $texto_modificado);
                     $Cuerpo_comunicado_correspondencia = $texto_modificado;
                 } else {
                     $Cuerpo_comunicado_correspondencia = "";
@@ -261,14 +272,24 @@
         </section>           --}}
         <section class="fuente_todo_texto">
             <table class="tabla1" style="text-align: justify;">                              
-                @if (empty($Copia_empleador_correspondecia) && empty($Copia_eps_correspondecia) && empty($Copia_afp_correspondecia) && empty($Copia_arl_correspondecia))
+                @if (empty($Copia_afiliado_correspondecia) && empty($Copia_empleador_correspondecia) && empty($Copia_eps_correspondecia) && empty($Copia_afp_correspondecia) && empty($Copia_arl_correspondecia))
                     <tr>
                         <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
                     </tr>
                 @else
                     <tr>
                         <td class="justificado"><span class="negrita">Copia:</span></td>                            
-                    </tr>  
+                    </tr> 
+                    <?php 
+                        if (!empty($Copia_empleador_correspondecia)) { ?>
+                            <tr>
+                                <td>
+                                    <span class="negrita">Afiliado: </span><?php echo $copia_nombreAfiliado.' - '.$copia_direccionAfiliado.'; '.$copia_emailAfiliado.'; Teléfono: '.$copia_telefonoAfiliado.', '.$copia_ciudadAfiliado.'-'.$copia_departamentoAfiliado;?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
+                    ?> 
                     <?php 
                         if (!empty($Copia_empleador_correspondecia)) { ?>
                             <tr>
@@ -317,7 +338,7 @@
         if ( isset($pdf) ) {
             $pdf->page_script('
                 $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $pdf->text(485, 50, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+                $pdf->text(485, 60, "Página $PAGE_NUM de $PAGE_COUNT", $font, 9);
             ');
         }
 	</script>

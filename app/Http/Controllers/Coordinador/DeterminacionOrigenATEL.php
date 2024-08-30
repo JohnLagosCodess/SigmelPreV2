@@ -1358,7 +1358,12 @@ class DeterminacionOrigenATEL extends Controller
         $act_economica_laboral = $request->act_economica_laboral;
         $justificacion_revision_origen = $request->justificacion_revision_origen;
         $nombre_evento = $request->nombre_evento;
-        $f_evento = date("d-m-Y", strtotime($request->f_evento));
+        if (!empty($request->f_evento)) {
+            $f_evento = date("d-m-Y", strtotime($request->f_evento));
+        } else {
+            $f_evento = '';
+        }
+        
         if (!empty($request->f_fallecimiento)) {
             $f_fallecimiento = date("d-m-Y", strtotime($request->f_fallecimiento));
         } else {

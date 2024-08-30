@@ -1049,14 +1049,16 @@
                                     </div>
                                     {{-- radiobutton para las 5 preformas de juntas arl previsional --}}
                                     <div class="row">
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="oficio_afiliado" value="Oficio_Afiliado" required>
-                                                    <label class="form-check-label custom-control-label" for="oficio_afiliado"><strong>Oficio Juntas afiliado</strong></label>
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="oficio_afiliado" value="Oficio_Afiliado" required>
+                                                        <label class="form-check-label custom-control-label" for="oficio_afiliado"><strong>Oficio Juntas afiliado</strong></label>                                                                                                                                                                    
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @endif
                                         <div class="col">
                                             <div class="form-group">
                                                 <div class="form-check custom-control custom-radio">
@@ -1065,30 +1067,36 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="remision_expediente_jrci" value="Remision_Expediente_JRCI" required>
-                                                    <label class="form-check-label custom-control-label" for="remision_expediente_jrci"><strong>Expediente JRCI</strong></label>
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="remision_expediente_jrci" value="Remision_Expediente_JRCI" required>
+                                                        <label class="form-check-label custom-control-label" for="remision_expediente_jrci"><strong>Expediente JRCI</strong></label>
+                                                    </div>
+                                                </div>
+                                            </div>                                            
+                                        @endif
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="devol_expediente_jrci" value="Devolucion_Expediente_JRCI" required>
+                                                        <label class="form-check-label custom-control-label" for="devol_expediente_jrci"><strong>Devol. Expediente JRCI</strong></label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="devol_expediente_jrci" value="Devolucion_Expediente_JRCI" required>
-                                                    <label class="form-check-label custom-control-label" for="devol_expediente_jrci"><strong>Devol. Expediente JRCI</strong></label>
+                                        @endif
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="solicitud_dictamen_jrci" value="Solicitud_Dictamen_JRCI" required>
+                                                        <label class="form-check-label custom-control-label" for="solicitud_dictamen_jrci"><strong>SOLICITUD DICTAMEN JRCI</strong></label>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="solicitud_dictamen_jrci" value="Solicitud_Dictamen_JRCI" required>
-                                                    <label class="form-check-label custom-control-label" for="solicitud_dictamen_jrci"><strong>Solicitud Dictámen JRCI</strong></label>
-                                                </div>
-                                            </div>
-                                        </div>
+                                            </div>                                            
+                                        @endif
                                         <div class="col">
                                             <div class="form-group">
                                                 <div class="form-check custom-control custom-radio">
@@ -1466,14 +1474,16 @@
                                     </div>
                                     {{-- radiobutton para las 5 preformas de juntas arl previsional edición --}}
                                     <div class="row">
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="oficio_afiliado_editar" value="Oficio_Afiliado" required>
-                                                    <label class="form-check-label custom-control-label" for="oficio_afiliado_editar"><strong>Oficio Juntas afiliado</strong></label>
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="oficio_afiliado_editar" value="Oficio_Afiliado" required>
+                                                        <label class="form-check-label custom-control-label" for="oficio_afiliado_editar"><strong>Oficio Juntas afiliado</strong></label>                                                        
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @endif
                                         <div class="col">
                                             <div class="form-group">
                                                 <div class="form-check custom-control custom-radio">
@@ -1482,30 +1492,36 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="remision_expediente_jrci_editar" value="Remision_Expediente_JRCI" required>
-                                                    <label class="form-check-label custom-control-label" for="remision_expediente_jrci_editar"><strong>Expediente JRCI</strong></label>
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="remision_expediente_jrci_editar" value="Remision_Expediente_JRCI" required>
+                                                        <label class="form-check-label custom-control-label" for="remision_expediente_jrci_editar"><strong>Expediente JRCI</strong></label>
+                                                    </div>
+                                                </div>
+                                            </div>                                            
+                                        @endif
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="devol_expediente_jrci_editar" value="Devolucion_Expediente_JRCI" required>
+                                                        <label class="form-check-label custom-control-label" for="devol_expediente_jrci_editar"><strong>Devol. Expediente JRCI</strong></label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="devol_expediente_jrci_editar" value="Devolucion_Expediente_JRCI" required>
-                                                    <label class="form-check-label custom-control-label" for="devol_expediente_jrci_editar"><strong>Devol. Expediente JRCI</strong></label>
+                                            @endif
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="solicitud_dictamen_jrci_editar" value="Solicitud_Dictamen_JRCI" required>
+                                                        <label class="form-check-label custom-control-label" for="solicitud_dictamen_jrci_editar"><strong>SOLICITUD DICTAMEN JRCI</strong></label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="solicitud_dictamen_jrci_editar" value="Solicitud_Dictamen_JRCI" required>
-                                                    <label class="form-check-label custom-control-label" for="solicitud_dictamen_jrci_editar"><strong>Solicitud Dictámen JRCI</strong></label>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @endif
                                         <div class="col">
                                             <div class="form-group">
                                                 <div class="form-check custom-control custom-radio">

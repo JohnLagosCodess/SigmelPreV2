@@ -112,6 +112,10 @@
             font-weight: bold;
         }
 
+        .derecha{
+            float:right;
+        }
+
         /* .hijo{
             width: 2cm;
             height: 1cm;
@@ -164,10 +168,11 @@
                     </td> --}}
                 </tr>
                 <tr>
-                    <td><span class="titulo_labels">Fecha de solicitud: </span><span class="dato_dinamico">{{$fecha}}</span></td>
+                    <td><span class="derecha"><span class="titulo_labels">Fecha de solicitud: </span><span class="dato_dinamico">{{$fecha}}</span></span></td>
                 </tr>
             </tbody>
         </table>
+        <br>
         <table class="tabla_dictamen">
             <tbody>
                 <tr>

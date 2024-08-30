@@ -26,9 +26,10 @@
         }
         .logo_header{
             position: absolute;
-            max-width: 40%;
+            /* max-width: 40%; */
+            width: 150px;
             height: auto;
-            left: 530px;
+            left: 498px;
             max-height: 80px; 
         }
         .tabla_header{
@@ -395,7 +396,7 @@
         if ( isset($pdf) ) {
             $pdf->page_script('
                 $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $pdf->text(485, 50, "Página $PAGE_NUM de $PAGE_COUNT", $font, 10);
+                $pdf->text(485, 60, "Página $PAGE_NUM de $PAGE_COUNT", $font, 9);
             ');
         }
 	</script>

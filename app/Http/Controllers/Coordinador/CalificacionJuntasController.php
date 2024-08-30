@@ -46,6 +46,7 @@ use DateTime;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
+use PhpOffice\PhpWord\Style\Image;
 
 class CalificacionJuntasController extends Controller
 {
@@ -3331,7 +3332,7 @@ class CalificacionJuntasController extends Controller
                 /* Recolección de datos para la proforma en pdf */
                 $data = [
                     'id_cliente' => $id_cliente,
-                    'fecha' => $date,
+                    'fecha' => fechaFormateada($date),
                     'nombre_afiliado' => $nombre_afiliado,
                     'tipo_identificacion' => $tipo_identificacion,
                     'num_identificacion' => $N_identificacion,
@@ -3657,7 +3658,7 @@ class CalificacionJuntasController extends Controller
                 $data = [
                     'id_cliente' => $id_cliente,
                     'logo_header' => $logo_header,
-                    'fecha' => $date,
+                    'fecha' => fechaFormateada($date),
                     'ID_evento' => $ID_evento,
                     'nro_radicado' => $nro_radicado,
                     'nombre_cliente' => $nombre_cliente,
@@ -4300,7 +4301,7 @@ class CalificacionJuntasController extends Controller
                 $data = [
                     'ID_evento' => $ID_evento,
                     'id_cliente' => $id_cliente,
-                    'fecha' => $date,
+                    'fecha' => fechaFormateada($date),
                     'logo_header' => $logo_header,
                     'nro_radicado' => $nro_radicado,
                     'nro_orden_pago' => $nro_orden_pago,
@@ -4836,7 +4837,8 @@ class CalificacionJuntasController extends Controller
                 $header->addTextBreak();
 
                 // Creación de Contenido
-                $section->addText('Bogotá D.C, '.$date, array('bold' => true));
+                $fecha_formateada = fechaFormateada($date);
+                $section->addText('Bogotá D.C. '.$fecha_formateada, array('bold' => true), array('align' => 'right'));
                 $section->addTextBreak();
 
                 $table = $section->addTable();
@@ -5130,7 +5132,7 @@ class CalificacionJuntasController extends Controller
                     // return response()->download(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
 
                     // Leer el contenido del archivo guardado y codificarlo en base64
-                    $contenidoWord = File::get(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+                    $contenidoWord = File::get(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
 
                     $datos = [
                         'indicativo' => $indicativo,
@@ -5527,11 +5529,26 @@ class CalificacionJuntasController extends Controller
                 //     $footer_dato_5 = "";
                 // }
 
+                //Marca de agua
+                $styleVigilado = [
+                    'width' => 25,           
+                    'height' => 200,            
+                    'marginTop' => 0,           
+                    'marginLeft' => -50,       
+                    'wrappingStyle' => 'behind',   // Imagen detrás del texto
+                    'positioning' => Image::POSITION_RELATIVE, 
+                    'posVerticalRel' => 'page', 
+                    'posHorizontal' => Image::POSITION_ABSOLUTE,
+                    'posVertical' => Image::POSITION_VERTICAL_CENTER, // Centrado verticalmente en la página
+                ];
+
+                $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
+
                 /* Construcción proforma en formato docx (word) */
                 $phpWord = new PhpWord();
                 // Configuramos la fuente y el tamaño de letra para todo el documento
                 $phpWord->setDefaultFontName('Arial');
-                $phpWord->setDefaultFontSize(12);
+                $phpWord->setDefaultFontSize(11);
                 // Configuramos la alineación justificada para todo el documento
                 $phpWord->setDefaultParagraphStyle(
                     array('align' => 'both', 'spaceAfter' => 0, 'spaceBefore' => 0)
@@ -5548,6 +5565,7 @@ class CalificacionJuntasController extends Controller
 
                 // Creación de Header
                 $header = $section->addHeader();
+                $header->addWatermark($pathVigilado, $styleVigilado);
                 $imagenPath_header = public_path($ruta_logo);
                 $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
                 $test = $header->addTextRun(['alignment' => 'right']);
@@ -5558,43 +5576,24 @@ class CalificacionJuntasController extends Controller
                 $header->addTextBreak();
 
                 // Creación de Contenido
-                $section->addText('Bogotá D.C, '.$date, array('bold' => true));
+                $section->addText('Bogotá D.C. '.fechaFormateada($date), array('bold' => true), array('align' => 'right'));
                 $section->addTextBreak();
 
-                $table = $section->addTable();
-
-    
+                $table = $section->addTable();                    
                 $table->addRow();
-    
-    
-                $cell1 = $table->addCell(5000);
-    
-    
+                $cell1 = $table->addCell(10000);
+
                 $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
                 $textRun1->addText('Señores: ',array('bold' => true));
                 $textRun1->addTextBreak();
-                $textRun1->addText($nombre_junta);
+                $textRun1->addText($nombre_junta, array('bold' => true));
                 $textRun1->addTextBreak();
-                $textRun1->addText($direccion_junta);
+                $textRun1->addText('Dirección: '.$direccion_junta);
                 $textRun1->addTextBreak();
-                $textRun1->addText($telefono_junta);
+                $textRun1->addText('Teléfono: '.$telefono_junta);
                 $textRun1->addTextBreak();
                 $textRun1->addText($ciudad_junta.' - '.$departamento_junta);
     
-                $cell2 = $table->addCell(5000);
-    
-                $nestedTable = $cell2->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80 * 60, 'alignment'=>'right'));
-                $nestedTable->addRow();
-                $nestedCell = $nestedTable->addCell();
-                $nestedTextRun = $nestedCell->addTextRun(array('alignment'=>'left'));
-                $nestedTextRun->addText('Nro. Radicado: ', array('bold' => true));
-                $nestedTextRun->addTextBreak();
-                $nestedTextRun->addText($nro_radicado, array('bold' => true));
-                $nestedTextRun->addTextBreak();
-                $nestedTextRun->addText($tipo_doc_afiliado . ' ' . $num_identificacion_afiliado, array('bold' => true));
-                $nestedTextRun->addTextBreak();
-                $nestedTextRun->addText('Siniestro: ' . $request->n_siniestro_proforma_editar, array('bold' => true));
-                
                 $section->addTextBreak();
                 $section->addTextBreak();
                     // $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
@@ -5633,7 +5632,7 @@ class CalificacionJuntasController extends Controller
                     $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
                     $asuntoyafiliado->addText($request->asunto_act, array('bold' => true));
                     $asuntoyafiliado->addTextBreak();
-                    $asuntoyafiliado->addText('Paciente: ', array('bold' => true));
+                    $asuntoyafiliado->addText('PACIENTE: ', array('bold' => true));
                     $asuntoyafiliado->addText($nombre_afiliado." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado);
                     $section->addTextBreak();
                     // Configuramos el reemplazo de las etiquetas del cuerpo del comunicado
@@ -5681,11 +5680,30 @@ class CalificacionJuntasController extends Controller
                         $section->addText($Firma_cliente);
                     }
                     
-                    $section->addTextBreak();
+                    // $section->addTextBreak();
                     $section->addText('Departamento de medicina laboral', array('bold' => true));
-                    $section->addTextBreak();
+                    // $section->addTextBreak();
                     $section->addText('Convenio Codess -  Seguros de Vida Alfa S.A', array('bold' => true));
                     $section->addTextBreak();
+
+                    $table2 = $section->addTable();
+                    $table2 = $section->addTable(array('alignment'=>'center'));
+
+                    $table2->addRow();
+                    $cell2 = $table2->addCell(5000);
+    
+                    $nestedTable = $cell2->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80 * 60, 'alignment'=>'center'));
+                    $nestedTable->addRow();
+                    $nestedCell = $nestedTable->addCell();
+                    $nestedTextRun = $nestedCell->addTextRun(array('alignment'=>'left'));
+                    $nestedTextRun->addText('Nro. Radicado: ', array('bold' => true));
+                    $nestedTextRun->addTextBreak();
+                    $nestedTextRun->addText($nro_radicado, array('bold' => true));
+                    $nestedTextRun->addTextBreak();
+                    $nestedTextRun->addText($tipo_doc_afiliado . ' ' . $num_identificacion_afiliado, array('bold' => true));
+                    $nestedTextRun->addTextBreak();
+                    $nestedTextRun->addText('Siniestro: ' . $request->n_siniestro_proforma_editar, array('bold' => true));
+                    
                     // $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
                     // $section->addTextBreak();
 
@@ -5851,7 +5869,7 @@ class CalificacionJuntasController extends Controller
                     // return response()->download(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
 
                     // Leer el contenido del archivo guardado y codificarlo en base64
-                    $contenidoWord = File::get(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_docx}"));
+                    $contenidoWord = File::get(public_path("Documentos_Eventos/{$ID_evento}/{$nombre_docx}"));
 
                     $datos = [
                         'indicativo' => $indicativo,

@@ -4558,11 +4558,16 @@ $(document).ready(function(){
         } else {
             var cuerpo_comunicadoPcl = cuerpo_comunicado;
         }
-        var empleador = $('input[name="empleador"]:checked').val();;        
+
+        var afiliado = $('input[name="afiliado"]:checked').val();
+        var empleador = $('input[name="empleador"]:checked').val();      
         var eps = $('input[name="eps"]:checked').val();
         var afp = $('input[name="afp"]:checked').val();
+
         cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
+
         cuerpo_comunicado_formatos_pension = cuerpo_comunicado_formatos_pension ? cuerpo_comunicado_formatos_pension.replace(/"/g, "'") : '';
+
         // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
         var afp_conocimiento = '';
         if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -4586,7 +4591,8 @@ $(document).ready(function(){
         var f_correspondencia = $('#f_correspondencia').val();
         var radicado = $('#radicado').val();
         var bandera_correspondecia_guardar_actualizar = $('#bandera_correspondecia_guardar_actualizar').val();    
-        var N_siniestro = $('#n_siniestro').val();    
+        var N_siniestro = $('#n_siniestro').val();  
+
         var datos_correspondecia={
             '_token': token,            
             'Id_EventoDecreto':Id_EventoDecreto,
@@ -4612,6 +4618,7 @@ $(document).ready(function(){
             'ciudad_destinatario': ciudad_destinatario,
             'Asunto':Asunto,
             'cuerpo_comunicado':cuerpo_comunicadoPcl,
+            'afiliado': afiliado,
             'empleador':empleador,
             'eps':eps,
             'afp':afp,
@@ -4630,9 +4637,9 @@ $(document).ready(function(){
             'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar,
             'tipo_descarga':'Oficio',
             'N_siniestro': N_siniestro
-            
         }
-
+        
+        
         $.ajax({    
             type:'POST',
             url:'/guardarcorrespondenciasRe',
@@ -4667,13 +4674,16 @@ $(document).ready(function(){
         var valorSeleccionado = $(this).val();
         if (valorSeleccionado != 2) {
             $('#div_tipo_evento').removeClass('d-none');
+            $('#f_evento_pericial').prop('required', true);
         } else if (valorSeleccionado == 2) {
             $('#div_tipo_evento').addClass('d-none');
+            $('#f_evento_pericial').prop('required', false);
         } 
     });
     var t_evento = $('#tipo_evento').val();
     if (t_evento == 2) {
         $('#div_tipo_evento').addClass('d-none');
+        $('#f_evento_pericial').prop('required', false);
     }else{
         $('#div_tipo_evento').removeClass('d-none');
     }
@@ -5283,25 +5293,47 @@ $(document).ready(function(){
     oficioformatod.change(function(){
         if ($(this).prop('checked')) {
             $("#Asunto").val("NOTIFICACIÓN RESULTADO REVISIÓN PENSIONAL");
+
+            //     var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
+            //    "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica con "+ 
+            //    "el fin de revisar sus condiciones de salud.</p>"+
+            //    "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida Alfa S.A., hemos definido "+
+            //    "que Usted actualmente mantiene las condiciones para continuar con el beneficio de pensión por invalidez sobre el cual esta compañía "+
+            //    "Aseguradora ha venido pagando la mesada pensional en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la "+
+            //    "Administradora de Fondos de Pensiones Porvenir S.A.</p>"+
+            //    "<p>En forma sucinta el aumento de su porcentaje de invalidez, se fundamenta en: {{$Detalle_calificacion_Fbdp}} </p>"+
+            //    "<p>Como puede observarse, usted ahora se encuentra dentro del porcentaje establecido en el literal A del Artículo 40 de la Ley 100 de "+
+            //    "1993, por lo anterior, esta aseguradora procederá a seguir efectuando el pago de su mesada pensional en los términos establecidos en "+ 
+            //    "la norma anteriormente mencionada.</p>"+
+            //    "<p>De la misma manera nos permitimos informar que de no encontrarse de acuerdo con la calificación de su estado de invalidez, usted "+
+            //    "tiene la posibilidad de manifestar a Seguros de Vida Alfa S.A. su inconformidad dentro de los diez (10) días siguientes a partir de "+
+            //    "la fecha de recibida la notificación, evento en el cual procederemos a remitir su caso a la respectiva Junta Regional de Calificación "+
+            //    "de Invalidez para obtener una segunda calificación.</p>"+
+            //    "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 "+
+            //    "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o "+
+            //    "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>";
+
             var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
-           "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica con "+ 
-           "el fin de revisar sus condiciones de salud.</p>"+
-           "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida Alfa S.A., hemos definido "+
-           "que Usted actualmente mantiene las condiciones para continuar con el beneficio de pensión por invalidez sobre el cual esta compañía "+
-           "Aseguradora ha venido pagando la mesada pensional en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la "+
-           "Administradora de Fondos de Pensiones Porvenir S.A.</p>"+
-           "<p>En forma sucinta el aumento de su porcentaje de invalidez, se fundamenta en: {{$Detalle_calificacion_Fbdp}} </p>"+
-           "<p>Como puede observarse, usted ahora se encuentra dentro del porcentaje establecido en el literal A del Artículo 40 de la Ley 100 de "+
-           "1993, por lo anterior, esta aseguradora procederá a seguir efectuando el pago de su mesada pensional en los términos establecidos en "+ 
-           "la norma anteriormente mencionada.</p>"+
-           "<p>De la misma manera nos permitimos informar que de no encontrarse de acuerdo con la calificación de su estado de invalidez, usted "+
-           "tiene la posibilidad de manifestar a Seguros de Vida Alfa S.A. su inconformidad dentro de los diez (10) días siguientes a partir de "+
-           "la fecha de recibida la notificación, evento en el cual procederemos a remitir su caso a la respectiva Junta Regional de Calificación "+
-           "de Invalidez para obtener una segunda calificación.</p>"+
-           "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 "+
-           "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o "+
-           "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>";
+            "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica con "+ 
+            "el fin de revisar sus condiciones de salud.</p>"+
+            "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida Alfa S.A. se ha generado una nueva calificación de pérdida de capacidad laboral la cual estamos remitiendo como adjunto a esta comunicación y que corresponde a un porcentaje de <strong>{{$PorcentajePcl_dp}} % </strong>, fecha de estructuración {{$F_estructuracionPcl_dp}} de origen {{$OrigenPcl_dp}}.</p>"+
+            "<p>En forma sucinta el aumento de su porcentaje de invalidez, se fundamenta en: {{$Detalle_calificacion_Fbdp}} </p>"+
+            "<p>Como puede observarse, usted ahora se encuentra dentro del porcentaje establecido en el literal A del Artículo 40 de la Ley 100 de "+
+            "1993, por lo anterior, esta aseguradora procederá a seguir efectuando el pago de su mesada pensional en los términos establecidos en "+ 
+            "la norma anteriormente mencionada.</p>"+
+            "<p>De la misma manera nos permitimos informar que de no encontrarse de acuerdo con la calificación de su estado de invalidez, usted "+
+            "tiene la posibilidad de manifestar a Seguros de Vida Alfa S.A. su inconformidad dentro de los diez (10) días siguientes a partir de "+
+            "la fecha de recibida la notificación, evento en el cual procederemos a remitir su caso a la respectiva Junta Regional de Calificación "+
+            "de Invalidez para obtener una segunda calificación.</p>"+
+            "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 "+
+            "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o "+
+            "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>";
+
             $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
+
+            $('#btn_insertar_porPcl').removeClass('d-none');
+            $('#btn_insertar_F_estructuracion').removeClass('d-none');
+            $('#btn_insertar_Origen').removeClass('d-none');
             $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
             // Seteo automático del nro de anexos:

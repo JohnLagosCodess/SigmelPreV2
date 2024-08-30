@@ -56,9 +56,9 @@ class PronunciamientoOrigenController extends Controller
         ,'pr.Nit_calificador','pr.Dir_calificador','pr.Email_calificador','pr.Telefono_calificador','pr.Depar_calificador','pr.Ciudad_calificador'
         ,'pr.Id_tipo_pronunciamiento','p.Nombre_parametro as Tpronuncia','pr.Id_tipo_evento','ti.Nombre_evento','pr.Id_tipo_origen','or.Nombre_parametro as T_origen'
         ,'pr.Fecha_evento','pr.Dictamen_calificador','pr.Fecha_calificador','pr.N_siniestro','pr.Fecha_estruturacion','pr.Porcentaje_pcl','pr.Rango_pcl'
-        ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Destinatario_principal','pr.Tipo_entidad','pr.Nombre_entidad as Nombre_entidad_correspon','pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps'
-        ,'pr.Copia_afp','pr.Copia_arl','pr.Copia_junta_regional','pr.Copia_junta_nacional','pr.Junta_regional_cual','sie.Nombre_entidad as Ciudad_Junta'
-        ,'pr.N_anexos','pr.Elaboro_pronuncia','pr.Reviso_Pronuncia','pr.Ciudad_correspon','pr.N_radicado','pr.Firmar','pr.Fecha_correspondencia'
+        ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Destinatario_principal','pr.Tipo_entidad','pr.Nombre_entidad as Nombre_entidad_correspon',
+        'pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps','pr.Copia_afp','pr.Copia_arl','pr.Copia_junta_regional','pr.Copia_junta_nacional','pr.Junta_regional_cual',
+        'sie.Nombre_entidad as Ciudad_Junta','pr.N_anexos','pr.Elaboro_pronuncia','pr.Reviso_Pronuncia','pr.Ciudad_correspon','pr.N_radicado','pr.Firmar','pr.Fecha_correspondencia'
         ,'pr.Archivo_pronuncia')
         ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as c', 'c.Id_Entidad', '=', 'pr.Id_primer_calificador')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as e', 'e.Id_Entidad', '=', 'pr.Id_nombre_calificador')
@@ -665,7 +665,7 @@ class PronunciamientoOrigenController extends Controller
             $mensajes = array(
                 "parametro" => 'agregar_pronunciamiento',
                 "parametro2" => 'guardo',
-                "mensaje" => 'Guardado satisfactoriamente.'
+                "mensaje" => 'Información guardada satisfactoriamente.'
             ); 
 
             return json_decode(json_encode($mensajes, true));
@@ -881,7 +881,7 @@ class PronunciamientoOrigenController extends Controller
             $mensajes = array(
                 "parametro" => 'update_pronunciamiento',
                 "parametro2" => 'guardo',
-                "mensaje2" => 'Actualiza satisfactoriamente.'
+                "mensaje2" => 'Información actualizada satisfactoriamente.'
             ); 
 
             return json_decode(json_encode($mensajes, true));
@@ -959,7 +959,7 @@ class PronunciamientoOrigenController extends Controller
 
         $ciudad = $request->ciudad;
         $fecha = $request->fecha;
-        $id_evento = $request->nro_siniestro;
+        $id_evento = $request->id_evento;
         
         $nro_radicado = $request->nro_radicado;
         $nombre_afiliado = $request->nombre_afiliado;
@@ -1001,7 +1001,13 @@ class PronunciamientoOrigenController extends Controller
         $nro_dictamen_pri_cali = $request->nro_dictamen_pri_cali;
         $fecha_dictamen_pri_cali = $request->fecha_dictamen_pri_cali;
         $Id_comunicado = $request->id_comunicado;
-        $N_siniestro = $request->N_siniestro;
+
+        if (!empty($request->N_siniestro)) {
+            $N_siniestro = $request->N_siniestro;
+        } else {
+            $N_siniestro = '';
+        }
+        
 
 
         /* Creación de las variables faltantes que no están en el ajax */
@@ -1518,6 +1524,21 @@ class PronunciamientoOrigenController extends Controller
                 $ruta_logo_footer = null;
             }
             
+            //Marca de agua
+            $styleVigilado = [
+                'width' => 25,           
+                'height' => 200,            
+                'marginTop' => 0,           
+                'marginLeft' => -50,       
+                'wrappingStyle' => 'behind',   // Imagen detrás del texto
+                'positioning' => Image::POSITION_RELATIVE, 
+                'posVerticalRel' => 'page', 
+                'posHorizontal' => Image::POSITION_ABSOLUTE,
+                'posVertical' => Image::POSITION_VERTICAL_CENTER, // Centrado verticalmente en la página
+            ];
+
+            $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
+
             $phpWord = new PhpWord();
             // Configuramos la fuente y el tamaño de letra para todo el documento
             $phpWord->setDefaultFontName('Arial');
@@ -1539,6 +1560,7 @@ class PronunciamientoOrigenController extends Controller
 
             // Creación de Header
             $header = $section->addHeader();
+            $header->addWatermark($pathVigilado, $styleVigilado);
             $imagenPath_header = public_path($ruta_logo);
             $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
             $esti = array('size' => 11, 'font' => 'Arial');
@@ -1718,31 +1740,31 @@ class PronunciamientoOrigenController extends Controller
                 $JNCI = 'JNCI';
 
                 if (isset($Agregar_copias[$Afiliado])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$Empleador])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$EPS])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$AFP])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$ARL])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$JRCI])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$JNCI])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
                 }
             }
 
@@ -1750,7 +1772,7 @@ class PronunciamientoOrigenController extends Controller
             Html::addHtml($section, $htmltabla2, false, true);
             $section->addTextBreak();
             // Configuramos el footer
-            $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$id_evento;
+            $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$N_siniestro;
             $footer = $section->addFooter();
             $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
             if($ruta_logo_footer != null){
