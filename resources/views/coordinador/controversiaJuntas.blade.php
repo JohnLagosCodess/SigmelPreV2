@@ -2013,16 +2013,7 @@
                                                                                     data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
                                                                                 ><i class="fa fa-pen text-info"></i></a>
                                                                             @endif
-                                                                            <a href="javascript:void(0);" id="generar_proforma_acuerdo_{{$comunicados->Id_Comunicado}}"
-                                                                                data-archivo = "{{$comunicados}}"
-                                                                                data-tupla_nro_radicado="{{$comunicados->N_radicado}}"
-                                                                                data-id_comite_inter={{$comite_inter->Id_com_inter}}
-                                                                                data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
-                                                                                data-id_evento= "{{$array_datos_controversiaJuntas[0]->ID_evento}}"
-                                                                                data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
-                                                                            ><i class="far fa-eye text-info"></i>
-                                                                            </a>
-                                                                            <a href="javascript:void(0);" id="generar_proforma_desacuerdo_{{$comunicados->Id_Comunicado}}"
+                                                                            <a href="javascript:void(0);" id="generar_proforma_{{$comite_inter->Decision_dictamen ?? ''}}"
                                                                                 data-archivo = "{{$comunicados}}"
                                                                                 data-tupla_nro_radicado="{{$comunicados->N_radicado}}"
                                                                                 data-id_comite_inter={{$comite_inter->Id_com_inter}}

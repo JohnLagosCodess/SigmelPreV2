@@ -693,7 +693,7 @@ class PronunciamientoPCLController extends Controller
             $mensajes = array(
                 "parametro" => 'agregar_pronunciamiento',
                 "parametro2" => 'guardo',
-                "mensaje" => 'Guardado satisfactoriamente.'
+                "mensaje" => 'Información guardada satisfactoriamente.'
             ); 
 
             return json_decode(json_encode($mensajes, true));
@@ -890,7 +890,7 @@ class PronunciamientoPCLController extends Controller
             $mensajes = array(
                 "parametro" => 'update_pronunciamiento',
                 "parametro2" => 'guardo',
-                "mensaje2" => 'Actualiza satisfactoriamente.'
+                "mensaje2" => 'Información actualizada satisfactoriamente.'
             ); 
 
             return json_decode(json_encode($mensajes, true));

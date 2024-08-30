@@ -5041,11 +5041,13 @@ class RecalificacionPCLController extends Controller
         if($formatoe == '') {
             $formatoe = 'No';
         }
+
         $destinatario_principal = $request->destinatario_principal;
         $otrodestinariop = $request->otrodestinariop;
         $tipo_destinatario_principal = $request->tipo_destinatario_principal;
         $nombre_destinatariopri = $request->nombre_destinatariopri;
         $Nombre_dest_principal_afi_empl = $request->Nombre_dest_principal_afi_empl;
+
         if ($tipo_destinatario_principal == '') {
             $tipo_destinatario_principal = null;
             $nombre_destinatariopri = null;
@@ -5068,8 +5070,11 @@ class RecalificacionPCLController extends Controller
             $departamento_destinatario = $request->departamento_destinatario;
             $ciudad_destinatario = $request->ciudad_destinatario;
         }
+
         $Asunto = $request->Asunto;
         $cuerpo_comunicado = $request->cuerpo_comunicado;
+
+        $afiliado = $request->afiliado;
         $empleador = $request->empleador;
         $eps = $request->eps;
         $afp = $request->afp;
@@ -5078,12 +5083,19 @@ class RecalificacionPCLController extends Controller
         $jrci = $request->jrci;        
         $cual = $request->cual;
         $N_siniestro = $request->N_siniestro;
+
         if($cual == ''){
             $cual = null;
         }
+
         $jnci = $request->jnci;
+
         // $agregar_copias_comu = $empleador.','.$eps.','.$afp.','.$arl.','.$jrci.','.$jnci;
         $variables_llenas = array();
+
+        if(!empty($afiliado)){
+            $variables_llenas[] = $afiliado;
+        }
 
         if (!empty($empleador)) {
             $variables_llenas[] = $empleador;
@@ -5190,6 +5202,7 @@ class RecalificacionPCLController extends Controller
                 'Ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_afiliado' => $afiliado,
                 'Copia_empleador' => $empleador,
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
@@ -5283,6 +5296,7 @@ class RecalificacionPCLController extends Controller
                 'Ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_afiliado' => $afiliado,
                 'Copia_empleador' => $empleador,
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
@@ -6772,6 +6786,8 @@ class RecalificacionPCLController extends Controller
         $F_correspondecia = $array_datos_comite_inter[0]->F_correspondecia;        
         $Anexos_correspondecia = $array_datos_comite_inter[0]->Anexos;
         $Elaboro_correspondecia = $array_datos_comite_inter[0]->Elaboro;
+
+        $Copia_afiliado_correspondecia = $array_datos_comite_inter[0]->Copia_afiliado;
         $Copia_empleador_correspondecia = $array_datos_comite_inter[0]->Copia_empleador;
         $Copia_eps_correspondecia = $array_datos_comite_inter[0]->Copia_eps;
         $Copia_afp_correspondecia = $array_datos_comite_inter[0]->Copia_afp;
@@ -6849,6 +6865,23 @@ class RecalificacionPCLController extends Controller
         //     $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
         //     $Email_afiliado_noti = '';
         // }
+
+        // Captura de datos de Información del afiliado
+        if(!empty($Copia_afiliado_correspondecia) && $Copia_afiliado_correspondecia == 'Afiliado'){
+            $copia_nombreAfiliado = $Nombre_afiliado_noti;
+            $copia_direccionAfiliado = $Direccion_afiliado_noti;
+            $copia_telefonoAfiliado = $Telefono_afiliado_noti;
+            $copia_ciudadAfiliado = $Ciudad_afiliado_noti;
+            $copia_departamentoAfiliado = $Departamento_afiliado_noti;
+            $copia_emailAfiliado = $Email_afiliado_noti;
+        }else{
+            $copia_nombreAfiliado = '';
+            $copia_direccionAfiliado = '';
+            $copia_telefonoAfiliado = '';
+            $copia_ciudadAfiliado = '';
+            $copia_departamentoAfiliado = '';
+            $copia_emailAfiliado = '';
+        }
 
         if(!empty($Copia_eps_correspondecia) && $Copia_eps_correspondecia == 'EPS'){
             $Nombre_eps = $array_datos_info_afiliado[0]->Entidad_eps;
@@ -7915,8 +7948,8 @@ class RecalificacionPCLController extends Controller
                 'NroIden_afiliado_noti' => $NroIden_afiliado_noti,
                 'Email_afiliado_noti' => $Email_afiliado_noti, 
                 'PorcentajePcl_dp' => $PorcentajePcl_dp,
-                'F_estructuracionPcl_dp' => $F_estructuracionPcl_dp,
-                'OrigenPcl_dp' => $OrigenPcl_dp,
+                'F_estructuracionPcl_dp' => fechaFormateada($F_estructuracionPcl_dp),
+                'OrigenPcl_dp' => mb_strtoupper($OrigenPcl_dp, 'UTF-8'),
                 'CIE10Nombres' => $CIE10Nombres,
                 'Detalle_calificacion_Fbdp' => $Detalle_calificacion_Fbdp,
                 'Nombre_decreto_dp' => $Nombre_decreto_dp,
@@ -7928,9 +7961,16 @@ class RecalificacionPCLController extends Controller
                 'Telefono_empresa_noti' => $Telefono_empresa_noti,
                 'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
                 'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
+                'Copia_afiliado_correspondecia' => $Copia_afiliado_correspondecia,
                 'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
                 'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
+                'copia_nombreAfiliado' => $copia_nombreAfiliado,
+                'copia_direccionAfiliado' => $copia_direccionAfiliado,
+                'copia_telefonoAfiliado' => $copia_telefonoAfiliado,
+                'copia_ciudadAfiliado' => $copia_ciudadAfiliado,
+                'copia_departamentoAfiliado' => $copia_departamentoAfiliado,
+                'copia_emailAfiliado' => $copia_emailAfiliado,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
                 'copiaEmail_empresa_noti' => $copiaEmail_empresa_noti,

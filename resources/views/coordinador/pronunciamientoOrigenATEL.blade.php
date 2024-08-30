@@ -588,7 +588,7 @@
                                             <div class="custom-control custom-checkbox">
                                                 <br>
                                                 @if (!empty($info_pronuncia[0]->Firmar) && $info_pronuncia[0]->Firmar=='firmar')
-                                                    <input type="hidden" id="bd_check_firmar" value= "{{$info_pronuncia[0]->Firmar=='firmar'}}">
+                                                    <input type="hidden" id="bd_check_firmar" value= "{{$info_pronuncia[0]->Firmar}}">
                                                 @else
                                                     <input type="hidden" id="bd_check_firmar" value= "">
                                                 @endif
@@ -805,7 +805,7 @@
                                                                                 {{-- Nro de documento --}}
                                                                                 <input type="hidden" id="num_identificacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nro_identificacion)){echo $array_datos_pronunciamientoOrigen[0]->Nro_identificacion;}?>">
                                                                                 {{-- Siniestro --}}
-                                                                                <input type="hidden" id="nro_siniestro" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
+                                                                                <input type="hidden" id="id_evento" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
                                                                                 {{-- Nombre afiliado --}}
                                                                                 <input type="hidden" id="nombre_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_afiliado)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_afiliado;}?>">
                                                                                 {{-- Nombre entidad calificadora --}}
@@ -830,7 +830,7 @@
                                                                                 {{-- Nro de documento --}}
                                                                                 <input type="hidden" id="num_identificacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nro_identificacion)){echo $array_datos_pronunciamientoOrigen[0]->Nro_identificacion;}?>">
                                                                                 {{-- Siniestro --}}
-                                                                                <input type="hidden" id="nro_siniestro" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
+                                                                                <input type="hidden" id="id_evento" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
                                                                                 {{-- Nombre afiliado --}}
                                                                                 <input type="hidden" id="nombre_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_afiliado)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_afiliado;}?>">
                                                                                 {{-- Id asignacion para consultar los diagnosticos --}}
