@@ -210,16 +210,49 @@
         .decreto1352{
             text-align: justify;
             font-size: 10px;
+            font-family: sans-serif;
             font-style: italic;
+            color: #000;            
         }
-        
+
+        .seccion8{
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 12px;
+            background: #D9D9D9;
+            color: black;
+            text-align: center !important;
+            border: 1px solid #000;
+        }
+
+        .div_firmas{
+            text-align: justify;
+            font-size: 11px !important;
+            border: 1px solid #000;
+        }
+
+        .table-cell {
+            display: table-cell;
+            width: 33.33%;
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .table-row {
+            display: table;
+            width: 100%;
+            table-layout: fixed; 
+        }
+
         .fecha_firma{
             font-size: 8px;
         }  
 
-        .firma_1, .firma_2, .firma_3{
+        .firma_1, .firma_2, .firma_3{           
             width: auto;
-            height: 11.2%;
+            max-width: 100%; 
+            height: auto; 
         }
 
         #footer .page:after { content: counter(page, upper-decimal); }   
@@ -2526,65 +2559,67 @@
         </div> 
         <table class="tabla_dictamen">
             <tr>
-                <td colspan="18" class="decreto1352">
-                    Esta calificación de pérdida de capacidad laboral es producto de la información suministrada por el usuario y se realiza bajo el entendido
-                    que no existe un primer dictamen, no obstante, si se llega a conocer que hay uno que se encuentre en firme por el o los mismos 
-                    diagnósticos o en trámite ante alguna de las entidades competentes y/o en cualquier instancia, es importante indicar que esta segunda 
-                    calificación no tendría validez y tampoco sería posible de controversia ante las Juntas Regionales de Calificación de Invalidez ni de 
-                    demanda ante la Jurisdicción Ordinaria Laboral. La anterior aclaración, por cuanto es nuestro interés prestar el servicio requerido sin 
-                    llegar a incurrir en la conducta irregular de que trata el artículo 32 del Decreto 1352 de 2013.
+                <td colspan="18">
+                    <p class="decreto1352">
+                        Esta calificación de pérdida de capacidad laboral es producto de la información suministrada por el usuario y se realiza bajo el entendido que no existe un primer dictamen, no obstante, si se llega a conocer que hay uno que se encuentre en firme por el o los mismos 
+                        diagnósticos o en trámite ante alguna de las entidades competentes y/o en cualquier instancia, es importante indicar que esta segunda calificación no tendría validez y tampoco sería posible de controversia ante las Juntas Regionales de Calificación de Invalidez ni de 
+                        demanda ante la Jurisdicción Ordinaria Laboral. La anterior aclaración, por cuanto es nuestro interés prestar el servicio requerido sin llegar a incurrir en la conducta irregular de que trata el artículo 32 del Decreto 1352 de 2013.
+                    </p>
+                    <div class="seccion8">
+                        8. GRUPO CALIFICADOR
+                    </div>   
+                    @if (count($validacion_visado) > 0)
+                        <div class="table-row">
+                            <div class="table-cell">
+                                <?php 
+                                $ruta_firma_1 = "/Firmas_provisionales/firma_comite_lina_pcl.png";
+                                $imagenPath_firma_1 = public_path($ruta_firma_1);
+                                $imagenData_firma_1 = file_get_contents($imagenPath_firma_1);
+                                $imagenBase64_firma_1 = base64_encode($imagenData_firma_1);
+                                ?>
+                                <div style="text-align: center;">
+                                    <img src="data:image/png;base64,{{ $imagenBase64_firma_1 }}" class="firma_1">
+                                    <p class="fecha_firma"><b>Fecha de firma: <?= $Fecha_Firma; ?></b></p>
+                                </div>
+                            </div>
+                            <div class="table-cell">
+                                <?php 
+                                $ruta_firma_2 = "/Firmas_provisionales/firma_comite_julian_pcl.png";
+                                $imagenPath_firma_2 = public_path($ruta_firma_2);
+                                $imagenData_firma_2 = file_get_contents($imagenPath_firma_2);
+                                $imagenBase64_firma_2 = base64_encode($imagenData_firma_2);
+                                ?>
+                                <div style="text-align: center;">
+                                    <img src="data:image/png;base64,{{ $imagenBase64_firma_2 }}" class="firma_2">
+                                    <p class="fecha_firma"><b>Fecha de firma: <?= $Fecha_Firma; ?></b></p>
+                                </div>
+                            </div>
+                            <div class="table-cell">
+                                <?php 
+                                $ruta_firma_3 = "/Firmas_provisionales/firma_comite_liliana_pcl.png";
+                                $imagenPath_firma_3 = public_path($ruta_firma_3);
+                                $imagenData_firma_3 = file_get_contents($imagenPath_firma_3);
+                                $imagenBase64_firma_3 = base64_encode($imagenData_firma_3);
+                                ?>
+                                <div style="text-align: center;">
+                                    <img src="data:image/png;base64,{{ $imagenBase64_firma_3 }}" class="firma_3">
+                                    <p class="fecha_firma"><b>Fecha de firma: <?= $Fecha_Firma; ?></b></p>
+                                </div>
+                            </div>
+                        </div>  
+                    @else
+                        <div class="table-row">
+                            <div class="table-cell">                                
+                            </div>
+                            <div class="table-cell">                                
+                            </div>
+                            <div class="table-cell">                                
+                            </div>
+                        </div>
+                    @endif
                 </td>
-            </tr>
-            <tr>
-                <td colspan="18" class="titulo_tablas">8. GRUPO CALIFICADOR</td>
-            </tr>
-            @if (count($validacion_visado) > 0)
-                <tr>
-                    <td colspan="6" class="dato_dinamico">
-                        <?php 
-                            $ruta_firma_1 = "/Firmas_provisionales/firma_comite_lina_pcl.png";
-                            $imagenPath_firma_1 = public_path($ruta_firma_1);
-                            $imagenData_firma_1 = file_get_contents($imagenPath_firma_1);
-                            $imagenBase64_firma_1 = base64_encode($imagenData_firma_1);
-                        ?>
-                        <div style="text-align: center;">
-                            <img src="data:image/png;base64,{{ $imagenBase64_firma_1 }}" class="firma_1">
-                            <p class="fecha_firma"><b>Fecha de firma: <?= $Fecha_Firma; ?></b></p>
-                        </div>
-                    </td>
-                    <td colspan="6" class="dato_dinamico">
-                        <?php 
-                            $ruta_firma_2 = "/Firmas_provisionales/firma_comite_julian_pcl.png";
-                            $imagenPath_firma_2 = public_path($ruta_firma_2);
-                            $imagenData_firma_2 = file_get_contents($imagenPath_firma_2);
-                            $imagenBase64_firma_2 = base64_encode($imagenData_firma_2);
-                        ?>
-                        <div style="text-align: center;">
-                            <img src="data:image/png;base64,{{ $imagenBase64_firma_2 }}" class="firma_2">
-                            <p class="fecha_firma"><b>Fecha de firma: <?= $Fecha_Firma; ?></b></p>
-                        </div>
-                    </td>
-                    <td colspan="6" class="dato_dinamico">
-                        <?php 
-                            $ruta_firma_3 = "/Firmas_provisionales/firma_comite_liliana_pcl.png";
-                            $imagenPath_firma_3 = public_path($ruta_firma_3);
-                            $imagenData_firma_3 = file_get_contents($imagenPath_firma_3);
-                            $imagenBase64_firma_3 = base64_encode($imagenData_firma_3);
-                        ?>
-                        <div style="text-align: center;">
-                            <img src="data:image/png;base64,{{ $imagenBase64_firma_3 }}" class="firma_3">
-                            <p class="fecha_firma"><b>Fecha de firma: <?= $Fecha_Firma; ?></b></p>
-                        </div>
-                    </td>
-                </tr>                
-            @else
-                <tr>
-                    <td colspan="6" class="dato_dinamico"></td>
-                    <td colspan="6" class="dato_dinamico"></td>
-                    <td colspan="6" class="dato_dinamico"></td>
-                </tr>
-            @endif
-        </table>                                                                              
+            </tr>            
+        </table>                                                                                  
     </div>    
 </body>
 </html>
