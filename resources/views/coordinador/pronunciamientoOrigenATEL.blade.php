@@ -245,8 +245,8 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="n_siniestro">N° de Siniestro</label>                                            
-                                            @if (!empty($info_pronuncia[0]->N_siniestro))                                                
-                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$info_pronuncia[0]->N_siniestro}}">                                                
+                                            @if (!empty($N_siniestro_evento[0]->N_siniestro))                                                
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$N_siniestro_evento[0]->N_siniestro}}">                                                
                                             @else                                               
                                                 <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro">                                                
                                             @endif
@@ -588,7 +588,7 @@
                                             <div class="custom-control custom-checkbox">
                                                 <br>
                                                 @if (!empty($info_pronuncia[0]->Firmar) && $info_pronuncia[0]->Firmar=='firmar')
-                                                    <input type="hidden" id="bd_check_firmar" value= "{{$info_pronuncia[0]->Firmar=='firmar'}}">
+                                                    <input type="hidden" id="bd_check_firmar" value= "{{$info_pronuncia[0]->Firmar}}">
                                                 @else
                                                     <input type="hidden" id="bd_check_firmar" value= "">
                                                 @endif
@@ -730,6 +730,7 @@
                                                                         data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                         data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                         data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                                        data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}"
                                                                         style="<?php echo subrayado('afiliado', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >Afiliado</a>
 
@@ -738,6 +739,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}"
                                                                     style="<?php echo subrayado('empleador', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >Empleador</a>
 
@@ -746,6 +748,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}"
                                                                     style="<?php echo subrayado('eps', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >EPS</a>
 
@@ -754,6 +757,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}"
                                                                     style="<?php echo subrayado('afp', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >AFP</a>
 
@@ -762,6 +766,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}"
                                                                     style="<?php echo subrayado('arl', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >ARL</a>
                                                                     
@@ -786,6 +791,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}"
                                                                     style="<?php echo subrayado('afp_conocimiento', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >AFP Conocimiento</a>
                                                                 </td>
@@ -805,7 +811,7 @@
                                                                                 {{-- Nro de documento --}}
                                                                                 <input type="hidden" id="num_identificacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nro_identificacion)){echo $array_datos_pronunciamientoOrigen[0]->Nro_identificacion;}?>">
                                                                                 {{-- Siniestro --}}
-                                                                                <input type="hidden" id="nro_siniestro" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
+                                                                                <input type="hidden" id="id_evento" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
                                                                                 {{-- Nombre afiliado --}}
                                                                                 <input type="hidden" id="nombre_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_afiliado)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_afiliado;}?>">
                                                                                 {{-- Nombre entidad calificadora --}}
@@ -830,7 +836,7 @@
                                                                                 {{-- Nro de documento --}}
                                                                                 <input type="hidden" id="num_identificacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nro_identificacion)){echo $array_datos_pronunciamientoOrigen[0]->Nro_identificacion;}?>">
                                                                                 {{-- Siniestro --}}
-                                                                                <input type="hidden" id="nro_siniestro" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
+                                                                                <input type="hidden" id="id_evento" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
                                                                                 {{-- Nombre afiliado --}}
                                                                                 <input type="hidden" id="nombre_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_afiliado)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_afiliado;}?>">
                                                                                 {{-- Id asignacion para consultar los diagnosticos --}}

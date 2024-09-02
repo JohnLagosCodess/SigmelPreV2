@@ -26,6 +26,7 @@ use App\Models\sigmel_informacion_comunicado_eventos;
 use App\Models\sigmel_informacion_deficiencias_alteraciones_eventos;
 use App\Models\sigmel_informacion_diagnosticos_eventos;
 use App\Models\sigmel_informacion_entidades;
+use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_informacion_examenes_interconsultas_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_laboralmente_activo_eventos;
@@ -926,7 +927,20 @@ class RecalificacionPCLController extends Controller
                     }
                 }  
                 
-                return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'eventoAsigancion_Recalifi', 'eventoAsigancion_Recalifi_estadoDecreto', 'validar_estado_decreto', 'eventoAsigancion_RecalifiPCL', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento'));
+                //Traer el N_siniestro del evento
+                $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+                ->select('N_siniestro')
+                ->where([['ID_evento',$Id_evento_recali]])
+                ->get();
+                
+                return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'eventoAsigancion_Recalifi', 'eventoAsigancion_Recalifi_estadoDecreto', 
+                'validar_estado_decreto', 'eventoAsigancion_RecalifiPCL', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 
+                'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 
+                'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 
+                'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 
+                'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 
+                'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 
+                'info_afp_conocimiento','N_siniestro_evento'));
                 
             }                        
         } 
@@ -1518,9 +1532,19 @@ class RecalificacionPCLController extends Controller
                     if($comunicado_inter->Id_Comunicado){
                         $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
                     }
-                }                
+                } 
+
+                //Traer el N_siniestro del evento
+                $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+                ->select('N_siniestro')
+                ->where([['ID_evento',$Id_evento_recali]])
+                ->get();               
                 
-                return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'validar_estado_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditivare', 'hay_agudeza_visualre', 'array_laboralmente_Activore', 'array_rol_ocupacionalre', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento'));
+                return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'validar_estado_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 
+                'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultasre', 
+                'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditivare', 'hay_agudeza_visualre', 'array_laboralmente_Activore', 
+                'array_rol_ocupacionalre', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinariore', 'consecutivore', 
+                'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento'));
                 // return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento'));
             }            
             elseif (!empty($validar_evento_CalifiTecnica[0]->Id_servicio)) { 
@@ -2327,7 +2351,19 @@ class RecalificacionPCLController extends Controller
                     }
                 }  
 
-                return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'validar_estado_decreto', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento'));
+                //Traer el N_siniestro del evento
+                $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+                ->select('N_siniestro')
+                ->where([['ID_evento',$Id_evento_recali]])
+                ->get(); 
+
+                return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'validar_estado_decreto', 'datos_decreto', 'datos_decretore', 
+                'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 
+                'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 
+                'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 
+                'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 
+                'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 
+                'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento'));
                 
             }
         }
@@ -5041,11 +5077,13 @@ class RecalificacionPCLController extends Controller
         if($formatoe == '') {
             $formatoe = 'No';
         }
+
         $destinatario_principal = $request->destinatario_principal;
         $otrodestinariop = $request->otrodestinariop;
         $tipo_destinatario_principal = $request->tipo_destinatario_principal;
         $nombre_destinatariopri = $request->nombre_destinatariopri;
         $Nombre_dest_principal_afi_empl = $request->Nombre_dest_principal_afi_empl;
+
         if ($tipo_destinatario_principal == '') {
             $tipo_destinatario_principal = null;
             $nombre_destinatariopri = null;
@@ -5068,8 +5106,11 @@ class RecalificacionPCLController extends Controller
             $departamento_destinatario = $request->departamento_destinatario;
             $ciudad_destinatario = $request->ciudad_destinatario;
         }
+
         $Asunto = $request->Asunto;
         $cuerpo_comunicado = $request->cuerpo_comunicado;
+
+        $afiliado = $request->afiliado;
         $empleador = $request->empleador;
         $eps = $request->eps;
         $afp = $request->afp;
@@ -5078,12 +5119,19 @@ class RecalificacionPCLController extends Controller
         $jrci = $request->jrci;        
         $cual = $request->cual;
         $N_siniestro = $request->N_siniestro;
+
         if($cual == ''){
             $cual = null;
         }
+
         $jnci = $request->jnci;
+
         // $agregar_copias_comu = $empleador.','.$eps.','.$afp.','.$arl.','.$jrci.','.$jnci;
         $variables_llenas = array();
+
+        if(!empty($afiliado)){
+            $variables_llenas[] = $afiliado;
+        }
 
         if (!empty($empleador)) {
             $variables_llenas[] = $empleador;
@@ -5190,6 +5238,7 @@ class RecalificacionPCLController extends Controller
                 'Ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_afiliado' => $afiliado,
                 'Copia_empleador' => $empleador,
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
@@ -5283,6 +5332,7 @@ class RecalificacionPCLController extends Controller
                 'Ciudad_destinatario' => $ciudad_destinatario,
                 'Asunto' => $Asunto,
                 'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Copia_afiliado' => $afiliado,
                 'Copia_empleador' => $empleador,
                 'Copia_eps' => $eps,
                 'Copia_afp' => $afp,
@@ -5345,8 +5395,11 @@ class RecalificacionPCLController extends Controller
             ];  
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-            ->where([                
-                ['N_radicado',$radicado]
+            ->where([        
+                ['ID_evento', $Id_EventoDecreto],
+                ['Id_Asignacion',$Id_Asignacion_Dcreto],
+                ['Id_proceso', $Id_ProcesoDecreto],        
+                ['N_radicado',$request->radicado]
             ])->update($datos_info_comunicado_eventos); 
     
             $mensajes = array(
@@ -5457,6 +5510,16 @@ class RecalificacionPCLController extends Controller
             
                 sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
                 ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
+
+                //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+                $dato_actualizar_n_siniestro = [
+                    'N_siniestro' => $n_siniestro
+                ];
+                sigmel_informacion_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$Id_EventoDecreto]])
+                ->update($dato_actualizar_n_siniestro);
+
+                sleep(2);
     
                 $datos_info_comunicado_eventos = [
                     'ID_Evento' => $Id_EventoDecreto,
@@ -5483,11 +5546,11 @@ class RecalificacionPCLController extends Controller
                     'Elaboro' => $nombre_usuario,
                     'Reviso' => 'N/A',
                     'Anexos' => 'N/A',
-                    'Nombre_usuario' => $nombre_usuario,
-                    'F_registro' => $date,
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'recalificacionPCL',
                     'N_siniestro' => $n_siniestro,
+                    'Nombre_usuario' => $nombre_usuario,
+                    'F_registro' => $date,
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -5532,6 +5595,16 @@ class RecalificacionPCLController extends Controller
             
                 sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
                 ->where('Id_Asignacion', $Id_Asignacion_Dcreto)->update($datos_profesional_calificador);
+
+                //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+                $dato_actualizar_n_siniestro = [
+                    'N_siniestro' => $n_siniestro
+                ];
+                sigmel_informacion_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$Id_EventoDecreto]])
+                ->update($dato_actualizar_n_siniestro);
+
+                sleep(2);
                 
                 $datos_info_comunicado_eventos = [
                     'ID_Evento' => $Id_EventoDecreto,
@@ -5558,11 +5631,11 @@ class RecalificacionPCLController extends Controller
                     'Elaboro' => $nombre_usuario,
                     'Reviso' => 'N/A',
                     'Anexos' => 'N/A',
-                    'Nombre_usuario' => $nombre_usuario,
-                    'F_registro' => $date,
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'recalificacionPCL',
                     'N_siniestro' => $n_siniestro,
+                    'Nombre_usuario' => $nombre_usuario,
+                    'F_registro' => $date,
                 ];
         
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
@@ -5634,6 +5707,16 @@ class RecalificacionPCLController extends Controller
                 ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial);  
                 
             }
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $n_siniestro
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$Id_EventoDecreto]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
+
             $comunicado_reemplazado = [
                 'Reemplazado' => 0,
                 'N_siniestro' => $n_siniestro,
@@ -6772,6 +6855,8 @@ class RecalificacionPCLController extends Controller
         $F_correspondecia = $array_datos_comite_inter[0]->F_correspondecia;        
         $Anexos_correspondecia = $array_datos_comite_inter[0]->Anexos;
         $Elaboro_correspondecia = $array_datos_comite_inter[0]->Elaboro;
+
+        $Copia_afiliado_correspondecia = $array_datos_comite_inter[0]->Copia_afiliado;
         $Copia_empleador_correspondecia = $array_datos_comite_inter[0]->Copia_empleador;
         $Copia_eps_correspondecia = $array_datos_comite_inter[0]->Copia_eps;
         $Copia_afp_correspondecia = $array_datos_comite_inter[0]->Copia_afp;
@@ -6849,6 +6934,23 @@ class RecalificacionPCLController extends Controller
         //     $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
         //     $Email_afiliado_noti = '';
         // }
+
+        // Captura de datos de Información del afiliado
+        if(!empty($Copia_afiliado_correspondecia) && $Copia_afiliado_correspondecia == 'Afiliado'){
+            $copia_nombreAfiliado = $Nombre_afiliado_noti;
+            $copia_direccionAfiliado = $Direccion_afiliado_noti;
+            $copia_telefonoAfiliado = $Telefono_afiliado_noti;
+            $copia_ciudadAfiliado = $Ciudad_afiliado_noti;
+            $copia_departamentoAfiliado = $Departamento_afiliado_noti;
+            $copia_emailAfiliado = $Email_afiliado_noti;
+        }else{
+            $copia_nombreAfiliado = '';
+            $copia_direccionAfiliado = '';
+            $copia_telefonoAfiliado = '';
+            $copia_ciudadAfiliado = '';
+            $copia_departamentoAfiliado = '';
+            $copia_emailAfiliado = '';
+        }
 
         if(!empty($Copia_eps_correspondecia) && $Copia_eps_correspondecia == 'EPS'){
             $Nombre_eps = $array_datos_info_afiliado[0]->Entidad_eps;
@@ -7915,8 +8017,8 @@ class RecalificacionPCLController extends Controller
                 'NroIden_afiliado_noti' => $NroIden_afiliado_noti,
                 'Email_afiliado_noti' => $Email_afiliado_noti, 
                 'PorcentajePcl_dp' => $PorcentajePcl_dp,
-                'F_estructuracionPcl_dp' => $F_estructuracionPcl_dp,
-                'OrigenPcl_dp' => $OrigenPcl_dp,
+                'F_estructuracionPcl_dp' => fechaFormateada($F_estructuracionPcl_dp),
+                'OrigenPcl_dp' => mb_strtoupper($OrigenPcl_dp, 'UTF-8'),
                 'CIE10Nombres' => $CIE10Nombres,
                 'Detalle_calificacion_Fbdp' => $Detalle_calificacion_Fbdp,
                 'Nombre_decreto_dp' => $Nombre_decreto_dp,
@@ -7928,9 +8030,16 @@ class RecalificacionPCLController extends Controller
                 'Telefono_empresa_noti' => $Telefono_empresa_noti,
                 'Ciudad_departamento_empresa_noti' => $Ciudad_departamento_empresa_noti,
                 'Copia_empleador_correspondecia' => $Copia_empleador_correspondecia,
+                'Copia_afiliado_correspondecia' => $Copia_afiliado_correspondecia,
                 'Copia_eps_correspondecia' => $Copia_eps_correspondecia,
                 'Copia_afp_correspondecia' => $Copia_afp_correspondecia,
                 'Copia_arl_correspondecia' => $Copia_arl_correspondecia,
+                'copia_nombreAfiliado' => $copia_nombreAfiliado,
+                'copia_direccionAfiliado' => $copia_direccionAfiliado,
+                'copia_telefonoAfiliado' => $copia_telefonoAfiliado,
+                'copia_ciudadAfiliado' => $copia_ciudadAfiliado,
+                'copia_departamentoAfiliado' => $copia_departamentoAfiliado,
+                'copia_emailAfiliado' => $copia_emailAfiliado,
                 'copiaNombre_empresa_noti' => $copiaNombre_empresa_noti,
                 'copiaDireccion_empresa_noti' => $copiaDireccion_empresa_noti,
                 'copiaEmail_empresa_noti' => $copiaEmail_empresa_noti,
