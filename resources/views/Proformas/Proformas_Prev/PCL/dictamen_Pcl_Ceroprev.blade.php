@@ -271,7 +271,7 @@
         }    
         $F_nacimiento_per_calF = date("d-m-Y", strtotime($F_nacimiento_per_cal));
         $F_estructuracion_dpF = date("d-m-Y", strtotime($F_estructuracion_dp));
-        if ($F_evento_dp == '0000-00-00') {
+        if ($F_evento_dp == '0000-00-00' || $F_evento_dp == '') {
             $F_evento_dpF = '';
         } else {
             $F_evento_dpF = date("d-m-Y", strtotime($F_evento_dp));            
