@@ -816,7 +816,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="telefono_destinatario">Telefono destinatario <span style="color: red;">(*)</span></label>
-                                            <input class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario" id="telefono_destinatario" required>
+                                            <input class="form-control" type="text" name="telefono_destinatario" id="telefono_destinatario" required>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -1130,8 +1130,8 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="telefono_destinatario_act">Telefono destinatario <span style="color: red;">(*)</span></label>
-                                            <input class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario_act" id="telefono_destinatario_editar" required>
-                                            <input hidden="hidden" class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario_act2" id="telefono_destinatario_editar2" required>
+                                            <input class="form-control" type="text"  name="telefono_destinatario_act" id="telefono_destinatario_editar" required>
+                                            <input hidden="hidden" class="form-control" type="text" name="telefono_destinatario_act2" id="telefono_destinatario_editar2" required>
                                         </div>
                                     </div>
                                     <div class="col-4">
