@@ -387,14 +387,14 @@ $(document).ready(function(){
             data: datos_lista_profesional,
             success:function (data) {
                 // //console.log(data)
-                $('#profesional').empty();
-                $('#profesional').append('<option value="" selected>Seleccione</option>');
+                //$('#profesional').empty();
+                $('#profesional').append('<option value="" >Seleccione</option>');
                 let id_profesional= $('select[name=profesional]').val();
                 let profesionalorigen = Object.keys(data.info_listado_profesionales);
                 for (let i = 0; i < profesionalorigen.length; i++) {
                     if (data.info_listado_profesionales[profesionalorigen[i]]['id'] != id_profesional) {
                         if (data.info_listado_profesionales[profesionalorigen[i]]['id'] == data.Profesional_asignado) {
-                            $('#profesional').append('<option value="'+data.info_listado_profesionales[profesionalorigen[i]]['id']+'" selected>'+data.info_listado_profesionales[profesionalorigen[i]]['name']+'</option>')                    
+                            $('#profesional').append('<option value="'+data.info_listado_profesionales[profesionalorigen[i]]['id']+'" >'+data.info_listado_profesionales[profesionalorigen[i]]['name']+'</option>')                    
                         }else{
                             $('#profesional').append('<option value="'+data.info_listado_profesionales[profesionalorigen[i]]['id']+'">'+data.info_listado_profesionales[profesionalorigen[i]]['name']+'</option>')                    
                         }
