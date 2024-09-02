@@ -717,19 +717,19 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="proceso" class="col-form label">Proceso <span style="color:red;">(*)</span></label>
-                                                    <select class="proceso custom-select" name="proceso" id="proceso" requierd></select>
+                                                    <select class="proceso custom-select" name="proceso" id="proceso" required></select>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="servicio" class="col-form label">Servicio <span style="color:red;">(*)</span></label>
-                                                    <select class="servicio custom-select" name="servicio" id="servicio" requierd disabled></select>
+                                                    <select class="servicio custom-select" name="servicio" id="servicio" required disabled></select>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="accion" class="col-form label">Acción <span style="color:red;">(*)</span></label>
-                                                    <select class="accion custom-select" name="accion" id="accion" requierd></select>
+                                                    <select class="accion custom-select" name="accion" id="accion" required></select>
                                                 </div>
                                             </div> 
                                             <div class="col-sm">
