@@ -348,7 +348,7 @@
         </p>
         <br>
         <section class="fuente_todo_texto">
-            <span class="negrita">Elboró:</span> {{$nombre_usuario}}
+            {{-- <span class="negrita">Elboró:</span> {{$nombre_usuario}} --}}
             <table style="text-align: justify; width:100%; margin-left: -3px;">
                 @if (count($Agregar_copia) == 0)
                     <tr>
