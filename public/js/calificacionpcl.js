@@ -322,14 +322,14 @@ $(document).ready(function(){
             url:'/selectoresModuloCalificacionPCL',
             data: datos_lista_profesional,
             success:function (data) {
-                $('#profesional').empty();
-                $('#profesional').append('<option value="" selected>Seleccione</option>');
+                //$('#profesional').empty();
+                $('#profesional').append('<option value="" >Seleccione</option>');
                 let id_profesional= $('select[name=profesional]').val();
                 let profecionalpcl = Object.keys(data.info_listado_profesionales);
                 for (let i = 0; i < profecionalpcl.length; i++) {
                     if (data.info_listado_profesionales[profecionalpcl[i]]['id'] != id_profesional) {
                         if (data.info_listado_profesionales[profecionalpcl[i]]['id'] == data.Profesional_asignado) {
-                            $('#profesional').append('<option value="'+data.info_listado_profesionales[profecionalpcl[i]]['id']+'" selected>'+data.info_listado_profesionales[profecionalpcl[i]]['name']+'</option>')                    
+                            $('#profesional').append('<option value="'+data.info_listado_profesionales[profecionalpcl[i]]['id']+'" >'+data.info_listado_profesionales[profecionalpcl[i]]['name']+'</option>')                    
                         }else{
                             $('#profesional').append('<option value="'+data.info_listado_profesionales[profecionalpcl[i]]['id']+'">'+data.info_listado_profesionales[profecionalpcl[i]]['name']+'</option>')                    
                         }

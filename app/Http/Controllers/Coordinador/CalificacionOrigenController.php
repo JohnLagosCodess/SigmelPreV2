@@ -2488,7 +2488,8 @@ class CalificacionOrigenController extends Controller
                 ['Causal_seguimiento', '=', $primer_causal],
                 ['Estado', '=', 'Activo'],
                 ['Id_proceso', '=', '1'],
-                ['ID_evento', '=', $request->Id_evento]
+                ['ID_evento', '=', $request->Id_evento],
+                ['Id_Asignacion', '=', $request->Id_Asignacion]
             ])
             ->get();
             //Si no tiene registro lo agrega
@@ -2519,7 +2520,8 @@ class CalificacionOrigenController extends Controller
                 ['Causal_seguimiento', '=', $segundo_causal],
                 ['Estado', '=', 'Activo'],
                 ['Id_proceso', '=', '1'],
-                ['ID_evento', '=', $request->Id_evento]
+                ['ID_evento', '=', $request->Id_evento],
+                ['Id_Asignacion', '=', $request->Id_Asignacion]
             ])
             ->get();
             //Si no tiene registro lo agrega
@@ -2550,7 +2552,9 @@ class CalificacionOrigenController extends Controller
                 ['Causal_seguimiento', '=', $tercer_causal],
                 ['Estado', '=', 'Activo'],
                 ['Id_proceso', '=', '1'],
-                ['ID_evento', '=', $request->Id_evento]
+                ['ID_evento', '=', $request->Id_evento],
+                ['Id_Asignacion', '=', $request->Id_Asignacion]
+
             ])
             ->get();
             //Si no tiene registro lo agrega

@@ -348,6 +348,11 @@ $(document).ready(function () {
 
     }); */
 
+    $('#btn_expor_datos').click(function () {
+        $('.dt-button').click();
+
+    });
+
 });
 
 /**
@@ -400,7 +405,6 @@ function sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token) {
                     data[i]['moduloNotifi'] = enlaceModuloPrincipal;
 
                     if (alertasNaranjaMap.has(data[i]['Id_Asignacion'])) {
-                        console.log(data[i]['Id_Asignacion']);
                         let alertaFechas = alertasNaranjaMap.get(data[i]['Id_Asignacion']);
                         let currentTime = new Date();
 
@@ -436,7 +440,6 @@ function sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token) {
                     data[i]['moduloNotifi'] = "";
                 }
                 }
-                console.log(cellCss);
                 //const end = performance.now();
                 //console.log(`Execution time Bucle: ${end - start} ms`);
                 //const startDatatable = performance.now();

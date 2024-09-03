@@ -271,7 +271,11 @@
         }   
         $F_nacimiento_per_calF = date("d-m-Y", strtotime($F_nacimiento_per_cal));
         $F_estructuracion_dpF = date("d-m-Y", strtotime($F_estructuracion_dp));
-        $F_evento_dpF = date("d-m-Y", strtotime($F_evento_dp));
+        if ($F_evento_dp == '0000-00-00' || $F_evento_dp == '') {
+            $F_evento_dpF = '';
+        } else {
+            $F_evento_dpF = date("d-m-Y", strtotime($F_evento_dp));            
+        }
     ?>
     <div id="header">
         <table class="tabla_header">
@@ -2504,7 +2508,7 @@
             </tr>
             <tr>
                 <td colspan="5" class="titulo_labels">FECHA ACCIDENTE / ENFERMEDAD</td>
-                <td colspan="4" class="dato_dinamico"> <?php if($F_evento_dpF<>'31-12-1969'){ echo $F_evento_dpF;}?></td>
+                <td colspan="4" class="dato_dinamico"> <?php if($F_evento_dpF<>'31-12-1969' || $F_evento_dpF<>'0000-00-00'){ echo $F_evento_dpF;}?></td>
                 <td colspan="4" class="titulo_labels">ORIGEN</td>
                 <td colspan="5" class="dato_dinamico"> {{$Origen_dp}}</td>
             </tr>
