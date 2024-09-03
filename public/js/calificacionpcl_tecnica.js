@@ -3247,6 +3247,12 @@ $(document).ready(function(){
 
                 // Extraer el contenido de la columna de acciones y limpiar la columna
                 let acciones = $tableComunicados.find("td").eq(4).html();
+
+                //validamos si el check verde debe agregarse por el idRol
+                let checkAccion = `<a href="javascript:void(0);" id="editar_comunicado" data-radicado="${radicado}" style="${controlComunicados.deshabilitar_edicion}"><i class="fa fa-sm fa-check text-success"></i></a></td>`;
+                if(idRol === '7'){
+                    checkAccion = `</td>`
+                }
                 
                 //Obtenemos los nuevos campos a incluir en la tabla
                 camposNotificacion = getHistorialNotificacion(radicado,NotaComunicado,opciones_Notificacion,data_comunicado);
@@ -3258,7 +3264,7 @@ $(document).ready(function(){
                 $tableComunicados.append(`
                     <td>${camposNotificacion.Estado_General}</td>
                     <td >${camposNotificacion.Nota_Comunicados}</td>
-                    <td>${acciones}<a href="javascript:void(0);" id="editar_comunicado" data-radicado="${radicado}" style="${controlComunicados.deshabilitar_edicion}"><i class="fa fa-sm fa-check text-success"></i></a></td>`
+                    <td>${acciones}${checkAccion}`
                 );
                 // Estilo de la columna de acciones
                 $tableComunicados.find("td").eq(7).css({
@@ -4499,6 +4505,7 @@ $(document).ready(function(){
         $("#div_comite_interdisciplinario").addClass('d-none');
         $("#div_correspondecia").addClass('d-none');
         $("#editar_correspondencia").addClass('d-none');
+        $("#btn_guardar_actualizar_correspondencia").prop('disabled',true);
     }
 
     // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
