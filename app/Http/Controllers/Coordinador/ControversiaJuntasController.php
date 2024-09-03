@@ -24,6 +24,7 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
 use App\Models\sigmel_informacion_correspondencia_eventos;
+use App\Models\sigmel_informacion_eventos;
 use App\Traits\GenerarRadicados;
 
 use PhpOffice\PhpWord\PhpWord;
@@ -226,12 +227,20 @@ class ControversiaJuntasController extends Controller
         if(count($array_caso_notificado) > 0){
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
         }
+
+        //Traer el N_siniestro del evento
+        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->select('N_siniestro')
+        ->where([['ID_evento',$Id_evento_juntas]])
+        ->get();
+
         //dd($arrayinfo_controvertido);
         return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido',
         'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
-        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado'));
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 
+        'caso_notificado', 'N_siniestro_evento'));
     
     }
 
@@ -634,6 +643,16 @@ class ControversiaJuntasController extends Controller
                 "mensaje" => 'Registro guardado satisfactoriamente.'
             );
         }
+
+        //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+        $dato_actualizar_n_siniestro = [
+            'N_siniestro' => $request->n_siniestro,
+        ];
+        sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$newIdEvento]])
+        ->update($dato_actualizar_n_siniestro);
+
+        sleep(2);
     
         return json_decode(json_encode($mensajes, true));
     }
@@ -1964,7 +1983,7 @@ class ControversiaJuntasController extends Controller
                     ['ID_evento', $newId_evento],
                     ['Id_Asignacion',$newId_asignacion],
                     ['Id_proceso', $Id_proceso],
-                    ['N_radicado',$radicado]
+                    ['N_radicado',$request->radicado]
                     ])
             ->update($datos_info_comunicado_eventos);
 

@@ -336,7 +336,7 @@
                     <td colspan="2"><span class="titulo_labels">Firma:</span></td>
                     <td colspan="6" class="dato_dinamico">
                         <?php 
-                            $ruta_firma_3 = "/Firmas_provisionales/firma_liliana_sin_texto.png";
+                            $ruta_firma_3 = "/Firmas_provisionales/firma_comite_liliana_origen.png";
                             $imagenPath_firma_3 = public_path($ruta_firma_3);
                             $imagenData_firma_3 = file_get_contents($imagenPath_firma_3);
                             $imagenBase64_firma_3 = base64_encode($imagenData_firma_3);

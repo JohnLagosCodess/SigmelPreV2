@@ -91,7 +91,7 @@ class BandejaNotifiController extends Controller
 
         if($BandejaNotifiTotal == 'CargaBandejaNotifi'){
 
-            if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
+            if($newId_rol=='5' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
                 $bandejaNotifi = cndatos_bandeja_eventos::on('sigmel_gestiones')
                 ->where('Id_profesional', '=', $newId_user)->where(function($query){
                     $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'Si');
@@ -124,7 +124,7 @@ class BandejaNotifiController extends Controller
         switch (true) {
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and !empty($consultar_g_dias)):
 
-                if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
+                if($newId_rol=='5' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
@@ -158,7 +158,7 @@ class BandejaNotifiController extends Controller
             break;
             case (!empty($consultar_f_desde) and !empty($consultar_f_hasta) and empty($consultar_g_dias)):
                     
-                if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
+                if($newId_rol=='5' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where('Id_profesional', '=', $newId_user)->where(function($query){
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'Si');
@@ -187,7 +187,7 @@ class BandejaNotifiController extends Controller
             break;
             case (empty($consultar_f_desde) and empty($consultar_f_hasta) and !empty($consultar_g_dias)):
                     
-                if($newId_rol=='5' || $newId_rol=='9' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
+                if($newId_rol=='5' || $newId_rol=='10'|| $newId_rol == '3'){ // si el rol es analista o profesional o comité
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where([
                         ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],

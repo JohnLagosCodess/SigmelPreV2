@@ -448,10 +448,10 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="n_siniestro">N° de Siniestro</label>                                            
-                                                    @if (!empty($info_adicion_dx[0]->N_siniestro))                                              
-                                                        <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$info_adicion_dx[0]->N_siniestro}}">                                                
+                                                    @if (!empty($N_siniestro_evento[0]->N_siniestro))                                              
+                                                        <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$N_siniestro_evento[0]->N_siniestro}}">                                                
                                                     @else                                               
-                                                        <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->N_siniestro)){echo $datos_bd_DTO_ATEL[0]->N_siniestro;}?>">                                                
+                                                        <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="<?php if(!empty($N_siniestro_evento[0]->N_siniestro)){echo $N_siniestro_evento[0]->N_siniestro;}?>">                                                
                                                     @endif
                                                 </div>
                                             </div>

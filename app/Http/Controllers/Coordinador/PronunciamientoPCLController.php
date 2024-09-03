@@ -27,6 +27,7 @@ use App\Models\sigmel_auditorias_pronunciamiento_eventos;
 use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
+use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_registro_descarga_documentos;
 use App\Traits\GenerarRadicados;
@@ -128,7 +129,14 @@ class PronunciamientoPCLController extends Controller
         if(count($array_caso_notificado) > 0){
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
         }
-        return view('coordinador.pronunciamientoPCL', compact('user','array_datos_pronunciamientoPcl','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo', 'array_comunicados','caso_notificado'));
+        
+        //Traer el N_siniestro del evento
+        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->select('N_siniestro')
+        ->where([['ID_evento',$Id_evento_calitec]])
+        ->get();
+        return view('coordinador.pronunciamientoPCL', compact('user','array_datos_pronunciamientoPcl','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo', 
+        'array_comunicados','caso_notificado','N_siniestro_evento'));
     
     }
     //Ver Documento Pronuncia
@@ -609,11 +617,23 @@ class PronunciamientoPCLController extends Controller
                 'Reemplazado' => 0,
                 'Otro_destinatario' => 1,
                 'Modulo_creacion' => 'pronunciamientoPCL',
+                'N_siniestro' => $request->n_siniestro,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
             sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->insert($datos_info_pronunciamiento_eventos);
             sleep(2);
+
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->n_siniestro
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$Id_EventoPronuncia]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
+
             if($request->decision_pr != 'Silencio'){
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
                 sleep(2);
@@ -753,6 +773,16 @@ class PronunciamientoPCLController extends Controller
             ->where([['ID_Evento', $Id_EventoPronuncia], ['Id_Asignacion',$Id_Asignacion_Pronuncia]])->update($datos_info_pronunciamiento_eventos);
             sleep(2);
 
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->n_siniestro
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$Id_EventoPronuncia]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
+
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $Id_EventoPronuncia,
                 'Id_proceso' => $Id_ProcesoPronuncia,
@@ -781,7 +811,9 @@ class PronunciamientoPCLController extends Controller
                 'Tipo_descarga' => $request->decision_pr,
                 'Modulo_creacion' => 'pronunciamientoPCL',
                 'Reemplazado' => 0,
+                //En pronunciamientos el destinatario es el primer calificador
                 'Otro_destinatario' => 1,
+                'N_siniestro' => $request->n_siniestro,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];

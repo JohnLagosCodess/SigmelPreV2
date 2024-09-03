@@ -122,8 +122,14 @@ class PronunciamientoOrigenController extends Controller
         if(count($array_caso_notificado) > 0){
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
         }
+
+        //Traer el N_siniestro del evento
+        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->select('N_siniestro')
+        ->where([['ID_evento',$Id_evento_calitec]])
+        ->get();
         return view('coordinador.pronunciamientoOrigenATEL', compact('user','array_datos_pronunciamientoOrigen','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo',
-        'array_comunicados', 'caso_notificado'));
+        'array_comunicados', 'caso_notificado','N_siniestro_evento'));
     }
 
     //Cargar Selectores pronunciamiento
@@ -557,12 +563,25 @@ class PronunciamientoOrigenController extends Controller
                 'Tipo_descarga' => $request->decision_pr,
                 'Modulo_creacion' => 'pronunciamientoOrigen',
                 'Reemplazado' => 0,
+                'N_siniestro' => $request->n_siniestro,
+                //Siempre va a ser otro destinatario, debido a que el destinatario es el primer calificador.
                 'Otro_destinatario' => 1,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
             sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->insert($datos_info_pronunciamiento_eventos);
             sleep(2);
+
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->n_siniestro
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$Id_EventoPronuncia]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
+
             if($request->decision_pr != 'Silencio'){
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
                 sleep(2);
@@ -706,6 +725,16 @@ class PronunciamientoOrigenController extends Controller
             ])->update($datos_info_pronunciamiento_eventos);
             sleep(2);
 
+            //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
+            $dato_actualizar_n_siniestro = [
+                'N_siniestro' => $request->n_siniestro
+            ];
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$Id_EventoPronuncia]])
+            ->update($dato_actualizar_n_siniestro);
+
+            sleep(2);
+
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $Id_EventoPronuncia,
                 'Id_proceso' => $Id_ProcesoPronuncia,
@@ -736,6 +765,7 @@ class PronunciamientoOrigenController extends Controller
                 'Modulo_creacion' => 'pronunciamientoOrigen',
                 'Reviso' => 0,
                 'Reemplazado' => 0,
+                'N_siniestro' => $request->n_siniestro,
                 'Otro_destinatario' => 1,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,

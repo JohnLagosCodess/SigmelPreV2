@@ -237,8 +237,8 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="n_siniestro">N° de Siniestro</label>                                            
-                                            @if (!empty($info_pronuncia[0]->N_siniestro))                                                
-                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$info_pronuncia[0]->N_siniestro}}">                                                
+                                            @if (!empty($N_siniestro_evento[0]->N_siniestro))                                                
+                                                <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$N_siniestro_evento[0]->N_siniestro}}">                                                
                                             @else                                               
                                                 <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro">                                                
                                             @endif

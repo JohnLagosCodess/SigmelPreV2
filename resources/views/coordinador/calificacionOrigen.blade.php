@@ -757,7 +757,7 @@
                                     <div class="col-3">
                                         <div class="form-group">
                                             <label for="n_siniestro">N° de Siniestro</label>
-                                            <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro">        
+                                            <input type="text" class="n_siniestro form-control" id="n_siniestro" name="n_siniestro" value="{{$N_siniestro_evento[0]->N_siniestro}}">        
                                         </div>
                                     </div>
                                 </div>
@@ -816,7 +816,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="telefono_destinatario">Telefono destinatario <span style="color: red;">(*)</span></label>
-                                            <input class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario" id="telefono_destinatario" required>
+                                            <input class="form-control" type="text" name="telefono_destinatario" id="telefono_destinatario" required>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -1063,7 +1063,7 @@
                                     <div class="col-3">
                                         <div class="form-group">
                                             <label for="n_siniestro_proforma_editar">N° de Siniestro</label>
-                                            <input type="text" class="n_siniestro form-control" id="n_siniestro_proforma_editar" name="n_siniestro_proforma_editar">        
+                                            <input type="text" class="n_siniestro form-control" id="n_siniestro_proforma_editar" name="n_siniestro_proforma_editar" value="{{$N_siniestro_evento[0]->N_siniestro}}">        
                                         </div>
                                     </div>
                                 </div>
@@ -1130,8 +1130,8 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="telefono_destinatario_act">Telefono destinatario <span style="color: red;">(*)</span></label>
-                                            <input class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario_act" id="telefono_destinatario_editar" required>
-                                            <input hidden="hidden" class="form-control" type="number" min="999999" max="9999999999" name="telefono_destinatario_act2" id="telefono_destinatario_editar2" required>
+                                            <input class="form-control" type="text"  name="telefono_destinatario_act" id="telefono_destinatario_editar" required>
+                                            <input hidden="hidden" class="form-control" type="text" name="telefono_destinatario_act2" id="telefono_destinatario_editar2" required>
                                         </div>
                                     </div>
                                     <div class="col-4">
