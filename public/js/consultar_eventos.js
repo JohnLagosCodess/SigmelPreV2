@@ -1455,20 +1455,26 @@ $(document).ready(function () {
                 if(response.parametro == "creo_proceso"){
     
                     $("#crear_proceso_evento_"+response.retorno_id_evento).addClass('d-none');
-                    $("#actualizar_consulta_nuevo_proceso_"+response.retorno_id_evento).removeClass('d-none');
     
                     $('.mostrar_mensaje_creo_proceso').removeClass('d-none');
                     $('.mostrar_mensaje_creo_proceso').append('<strong>'+response.mensaje+'</strong>');
                     setTimeout(function(){
                         $('.mostrar_mensaje_creo_proceso').addClass('d-none');
                         $('.mostrar_mensaje_creo_proceso').empty();
-                    }, 9000);
+                        localStorage.setItem('buscar_nuevo_evento', nro_evento_nuevo_proceso);
+                        location.reload();
+                    }, 6000);
     
                 }
             }         
         });
 
     });
+
+    //Setea el campo buscador del evento y agrega el evento ejecutado
+    let setEventoBuscador = localStorage.getItem("buscar_nuevo_evento");
+    $("#consultar_id_evento").val(setEventoBuscador);
+    localStorage.removeItem("buscar_nuevo_evento");
 
     /* ACTUALIZAR CONSULTA (Botón Actualizar formulario Nuevo Proceso) */
     $(document).on('click', "button[id^='actualizar_consulta_nuevo_proceso_']", function(){

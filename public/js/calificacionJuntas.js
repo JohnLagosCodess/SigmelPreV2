@@ -346,14 +346,14 @@ $(document).ready(function(){
             url:'/selectoresJuntas',
             data: datos_lista_profesional,
             success:function (data) {
-                $('#profesional').empty();
-                $('#profesional').append('<option value="" selected>Seleccione</option>');
+                //$('#profesional').empty();
+                $('#profesional').append('<option value="" >Seleccione</option>');
                 let id_profesional= $('select[name=profesional]').val();
                 let profecionalpcl = Object.keys(data.info_listado_profesionales);
                 for (let i = 0; i < profecionalpcl.length; i++) {
                     if (data.info_listado_profesionales[profecionalpcl[i]]['id'] != id_profesional) {
                         if (data.info_listado_profesionales[profecionalpcl[i]]['id'] == data.Profesional_asignado) {
-                            $('#profesional').append('<option value="'+data.info_listado_profesionales[profecionalpcl[i]]['id']+'" selected>'+data.info_listado_profesionales[profecionalpcl[i]]['name']+'</option>')                    
+                            $('#profesional').append('<option value="'+data.info_listado_profesionales[profecionalpcl[i]]['id']+'" >'+data.info_listado_profesionales[profecionalpcl[i]]['name']+'</option>')                    
                         }else{
                             $('#profesional').append('<option value="'+data.info_listado_profesionales[profecionalpcl[i]]['id']+'">'+data.info_listado_profesionales[profecionalpcl[i]]['name']+'</option>')                    
                         }
@@ -2967,7 +2967,7 @@ $(document).ready(function(){
                 }
                 if (data.hitorialAgregarComunicado[i].N_radicado != '' && data.hitorialAgregarComunicado[i].Tipo_descarga != 'Manual'){
                     let comunicadoNradico = '<div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center">';
-                    if (!data.hitorialAgregarComunicado[i].Correspondencia) {
+                    if (!data.hitorialAgregarComunicado[i].Correspondencia && idRol !== '7') {
                         comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalcomunicados_" id="EditarComunicado_'+data.hitorialAgregarComunicado[i].Id_Comunicado+'" title="Editar Comunicado"\
                             data-id_comunicado="'+data.hitorialAgregarComunicado[i].Id_Comunicado+'" data-id_evento="'+data.hitorialAgregarComunicado[i].ID_evento+'"\
                             data-id_asignacion="'+data.hitorialAgregarComunicado[i].Id_Asignacion+'" data-id_proceso="'+data.hitorialAgregarComunicado[i].Id_proceso+'"\
@@ -3013,7 +3013,7 @@ $(document).ready(function(){
                         jrci_copia="'+data.hitorialAgregarComunicado[i].JRCI_copia+'" agregar_copia="'+data.hitorialAgregarComunicado[i].Agregar_copia+'" tipo_descarga="'+data.hitorialAgregarComunicado[i].Tipo_descarga+'"\
                         modulo_creacion="'+data.hitorialAgregarComunicado[i].Modulo_creacion+'" reemplazado="'+data.hitorialAgregarComunicado[i].Reemplazado+'" nombre_documento="'+data.hitorialAgregarComunicado[i].Nombre_documento + '"\
                         numero_siniestro="'+data.hitorialAgregarComunicado[i].N_siniestro+'"><i style="cursor:pointer; display: flex; justify-content: center; align-items:center;" class="far fa-eye text-info"></i></a>';
-                    if(data.hitorialAgregarComunicado[i].Existe && data.hitorialAgregarComunicado[i].Nombre_documento != null){
+                    if(data.hitorialAgregarComunicado[i].Existe && data.hitorialAgregarComunicado[i].Nombre_documento != null && idRol !== '7'){
                         comunicadoNradico += '<a href="javascript:void(0);" id="replace_file" style="'+estado_correspondencia.deshabilitar_remplazar+'" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalReemplazarArchivos"\
                             data-id_evento="' + data.hitorialAgregarComunicado[i].ID_evento + '" data-id_comunicado="'+ data.hitorialAgregarComunicado[i].Id_Comunicado + '"\
                             data-numero_radicado="'+ data.hitorialAgregarComunicado[i].N_radicado + '" data-fecha_comunicado="' + data.hitorialAgregarComunicado[i].F_comunicado + '"\
@@ -3022,8 +3022,9 @@ $(document).ready(function(){
                             data-numero_identificacion="'+data.hitorialAgregarComunicado[i].N_identificacion +'" data-nombre_documento="'+data.hitorialAgregarComunicado[i].Nombre_documento + '"\
                             ><i class="fas fa-sync-alt text-info"></i></a>';
                     }
-
-                    comunicadoNradico += `<a href="javascript:void(0);"  class="editar_comunicado_${data.hitorialAgregarComunicado[i].N_radicado}" id="editar_comunicado" data-radicado="${data.hitorialAgregarComunicado[i].N_radicado}" style="display: flex; justify-content: center; ${estado_correspondencia.deshabilitar_edicion}"><i class="fa fa-sm fa-check text-success"></i></a>`;
+                    if(idRol !== '7'){
+                        comunicadoNradico += `<a href="javascript:void(0);"  class="editar_comunicado_${data.hitorialAgregarComunicado[i].N_radicado}" id="editar_comunicado" data-radicado="${data.hitorialAgregarComunicado[i].N_radicado}" style="display: flex; justify-content: center; ${estado_correspondencia.deshabilitar_edicion}"><i class="fa fa-sm fa-check text-success"></i></a>`;
+                    }
                     comunicadoNradico += '</div>';
                     data.hitorialAgregarComunicado[i].Editarcomunicado = comunicadoNradico;
                     
@@ -3052,7 +3053,7 @@ $(document).ready(function(){
                     agregar_copia="'+data.hitorialAgregarComunicado[i].Agregar_copia+'"tipo_descarga="'+data.hitorialAgregarComunicado[i].Tipo_descarga+ '"\
                     modulo_creacion="'+data.hitorialAgregarComunicado[i].Modulo_creacion+'" reemplazado="'+data.hitorialAgregarComunicado[i].Reemplazado+'" nombre_documento="'+data.hitorialAgregarComunicado[i].Nombre_documento + '"\
                     ><i style="cursor:pointer" id="comunicado_manual_boton" class="far fa-eye text-info"></i></a>';
-                    if(data.hitorialAgregarComunicado[i].Existe  && !data.hitorialAgregarComunicado[i].Asunto.includes('Lista_chequeo')){
+                    if(data.hitorialAgregarComunicado[i].Existe  && !data.hitorialAgregarComunicado[i].Asunto.includes('Lista_chequeo') && idRol !== '7'){
                         comunicadoNradico += '<a href="javascript:void(0);" id="replace_file" style="'+estado_correspondencia.deshabilitar_remplazar+'" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalReemplazarArchivos"\
                             data-id_evento="' + data.hitorialAgregarComunicado[i].ID_evento + '" data-id_comunicado="'+ data.hitorialAgregarComunicado[i].Id_Comunicado + '"\
                             data-numero_radicado="'+ data.hitorialAgregarComunicado[i].N_radicado + '" data-fecha_comunicado="' + data.hitorialAgregarComunicado[i].F_comunicado + '"\
@@ -3063,10 +3064,12 @@ $(document).ready(function(){
                     }
 
                     //Accion editar lista de chequeo
-                    if(data.hitorialAgregarComunicado[i].Asunto.includes('Lista_chequeo')){
+                    if(data.hitorialAgregarComunicado[i].Asunto.includes('Lista_chequeo') && idRol !== '7'){
                         comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalCrearExpediente" title="Editar expediente" id="editarExpediente"><i style="cursor:pointer" class="fa fa-pen text-info"></i></a>';
                     }
-                    comunicadoNradico += `<a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" data-radicado="${data.hitorialAgregarComunicado[i].N_radicado}" style="display: flex; justify-content: center; ${estado_correspondencia.deshabilitar_edicion}"><i class="fa fa-sm fa-check text-success"></i></a>`;
+                    if(idRol !== '7'){
+                        comunicadoNradico += `<a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" data-radicado="${data.hitorialAgregarComunicado[i].N_radicado}" style="display: flex; justify-content: center; ${estado_correspondencia.deshabilitar_edicion}"><i class="fa fa-sm fa-check text-success"></i></a>`;
+                    }
                     comunicadoNradico += '</div>';
                     data.hitorialAgregarComunicado[i].Editarcomunicado = comunicadoNradico;
                 }

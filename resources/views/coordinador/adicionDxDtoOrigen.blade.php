@@ -1750,14 +1750,16 @@
                                                                 <i class="far fa-eye text-info"></i>
                                                             </button>
                                                         </form>
-                                                        @if ($comunicados['Existe'])
+                                                        @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                             <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                 <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" {{$deshabilitarRemplazar ?? ''}} style="border: none; background: transparent;">
                                                                     <i class="fas fa-sync-alt text-info"></i>
                                                                 </button>
                                                             </form>
                                                         @endif
-                                                        <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" style="{{$deshabilitaredicion ?? ''}}" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
+                                                        @if($dato_rol !== '7')
+                                                            <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" style="{{$deshabilitaredicion ?? ''}}" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
+                                                        @endif
                                                     </td>
                                                 @elseif ($comunicados->Tipo_descarga == "Manual")
                                                     <td style="display: flex; flex-direction:row; justify-content:space-around; border:none;">
@@ -1766,14 +1768,16 @@
                                                                 <i class="far fa-eye text-info"></i>
                                                             </button>
                                                         </form>
-                                                        @if ($comunicados['Existe'])
+                                                        @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                             <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                 <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" {{$deshabilitarRemplazar ?? ''}} style="border: none; background: transparent;">
                                                                     <i class="fas fa-sync-alt text-info"></i>
                                                                 </button>
                                                             </form>
                                                         @endif
-                                                        <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" style="{{$deshabilitaredicion ?? ''}}" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
+                                                        @if($dato_rol !== '7')
+                                                            <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" style="{{$deshabilitaredicion ?? ''}}" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
+                                                        @endif
                                                     </td>                                                                
                                                 @else
                                                     <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center; border:none;">
@@ -1822,18 +1826,20 @@
                                                                 <i class="far fa-eye text-info"></i>
                                                             </button>
                                                         </form>
-                                                        @if ($comunicados->Correspondencia == '')
+                                                        @if ($comunicados->Correspondencia == '' && $dato_rol !== '7')
                                                             <label for="editar_correspondencia" id="editar_correspondencia"><i class="fa fa-pen text-info"></i></label>
                                                         @endif
 
-                                                        @if ($comunicados['Existe'])
+                                                        @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                             <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                 <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" {{$deshabilitarRemplazar ?? ''}} style="border: none; background: transparent;">
                                                                     <i class="fas fa-sync-alt text-info"></i>
                                                                 </button>
                                                             </form>
                                                         @endif
-                                                        <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" style="{{$deshabilitaredicion ?? ''}}" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
+                                                        @if($dato_rol !== '7')
+                                                            <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" style="{{$deshabilitaredicion ?? ''}}" data-radicado="{{$comunicados->N_radicado}}" ><i class="fa fa-sm fa-check text-success"></i></a>
+                                                        @endif
                                                     </td>
                                                 @endif
                                             </tr>                                                        
