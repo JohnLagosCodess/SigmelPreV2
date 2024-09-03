@@ -2317,6 +2317,8 @@ class ControversiaJuntasController extends Controller
         $cuerpo = $request->cuerpo;
         $firmar = $request->firmar;
         $N_siniestro = $request->N_siniestro;
+        $porcentaje_pcl_jrci_emitido = $request->porcentaje_pcl_jrci_emitido;
+        $f_estructuracion_contro_jrci_emitido = $request->f_estructuracion_contro_jrci_emitido;
 
         /* Creación de las variables faltantes que no están en el ajax */
 
@@ -2804,34 +2806,76 @@ class ControversiaJuntasController extends Controller
         $patron1 = '/\{\{\$sustentacion_jrci\}\}/'; // Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional)
         $patron2 = '/\{\{\$sustentacion_jrci1\}\}/'; // Sustentación Concepto JRCI (Revisión ante recurso de reposición de la Junta Regional)
 
+        $patron3 = '/\{\{\$nombre_afiliado\}\}/';
+        $patron4 = '/\{\{\$tipo_identificacion_afiliado\}\}/';
+        $patron5 = '/\{\{\$num_identificacion_afiliado\}\}/';
+        $patron6 = '/\{\{\$cie10_nombre_cie10_jrci\}\}/';
+        $patron7 = '/\{\{\$pcl_jrci\}\}/';
+        $patron8 = '/\{\{\$f_estructuracion_jrci\}\}/';
+
         // $cuerpo = str_replace(['<br>', '<br/>', '<br />', '</br>'], '', $cuerpo);
 
         $cuerpo_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $cuerpo);
         $cuerpo_modificado = str_replace('SEGUROS DE VIDA ALFA S.A.', '<b>SEGUROS DE VIDA ALFA S.A.</b>', $cuerpo_modificado);
         $cuerpo_modificado = str_replace('RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN', '<b>RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN</b>', $cuerpo_modificado);
         $cuerpo_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $cuerpo_modificado);
+        $cuerpo_modificado = str_replace('PÉRDIDA DE CAPACIDAD LABORAL', '<b>PÉRDIDA DE CAPACIDAD LABORAL</b>', $cuerpo_modificado);
         $cuerpo_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $cuerpo_modificado);
         $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo_modificado);
         $cuerpo_modificado = str_replace('<p><br>', ' ', $cuerpo_modificado);
 
         if (preg_match($patron1, $cuerpo_modificado) && preg_match($patron2, $cuerpo_modificado)) {
-            // Ambos patrones encontrados
-            $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
-            $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+            
+            if (preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado)) {
+                // Ambos patrones encontrados
+                $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
 
-            $cuerpo_final = nl2br($cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.strtoupper($nombre_afiliado).'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', '<b>'.$num_identificacion.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$pcl_jrci}}', $porcentaje_pcl_jrci_emitido, $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', '<b>'.$f_estructuracion_contro_jrci_emitido.'</b>', $cuerpo_modificado);
+    
+                $cuerpo_final = nl2br($cuerpo_modificado);
+            }else{
+                $cuerpo_final = "";
+            }
         
         } elseif (preg_match($patron1, $cuerpo_modificado)) {
-            // Solo patrón6 encontrado
-            $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+            if (preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado)) {
+                // Solo patrón6 encontrado
+                $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
 
-            $cuerpo_final = nl2br($cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.strtoupper($nombre_afiliado).'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', '<b>'.$num_identificacion.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$pcl_jrci}}', $porcentaje_pcl_jrci_emitido, $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', '<b>'.$f_estructuracion_contro_jrci_emitido.'</b>', $cuerpo_modificado);
+    
+                $cuerpo_final = nl2br($cuerpo_modificado);
+
+            }else{
+                $cuerpo_final = "";
+            }
+            
         
         } elseif (preg_match($patron2, $cuerpo_modificado)) {
-            // Solo patrón9 encontrado
-            $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
-            
-            $cuerpo_final = nl2br($cuerpo_modificado);
+            if (preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado)) {
+                // Solo patrón9 encontrado
+                $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+
+                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.strtoupper($nombre_afiliado).'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', '<b>'.$num_identificacion.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$pcl_jrci}}', $porcentaje_pcl_jrci_emitido, $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', '<b>'.$f_estructuracion_contro_jrci_emitido.'</b>', $cuerpo_modificado);
+                
+                $cuerpo_final = nl2br($cuerpo_modificado);
+
+            }else{
+                $cuerpo_final = "";
+            }
         } else {
             // Ninguno de los patrones encontrados
             $cuerpo_final = "";
@@ -2878,47 +2922,47 @@ class ControversiaJuntasController extends Controller
         // $section->addTextBreak();
 
         // Configuramos la tabla de copias a partes interesadas
-        // $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
-        // if (count($Agregar_copias) == 0) {
-        //     $htmltabla2 .= '
-        //         <tr>
-        //             <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
-        //         </tr>';
-        // } else {
-        //     $htmltabla2 .= '
-        //         <tr>
-        //             <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
-        //         </tr>';
+        $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
+        if (count($Agregar_copias) == 0) {
+            $htmltabla2 .= '
+                <tr>
+                    <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
+                </tr>';
+        } else {
+            $htmltabla2 .= '
+                <tr>
+                    <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
+                </tr>';
 
-        //     $Afiliado = 'Afiliado';
-        //     $Empleador = 'Empleador';
-        //     $EPS = 'EPS';
-        //     $AFP = 'AFP';
-        //     $ARL = 'ARL';
+            $Afiliado = 'Afiliado';
+            $Empleador = 'Empleador';
+            $EPS = 'EPS';
+            $AFP = 'AFP';
+            $ARL = 'ARL';
 
-        //     if (isset($Agregar_copias[$Afiliado])) {
-        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
-        //     }
+            if (isset($Agregar_copias[$Afiliado])) {
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+            }
 
-        //     if (isset($Agregar_copias[$Empleador])) {
-        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
-        //     }
+            if (isset($Agregar_copias[$Empleador])) {
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+            }
 
-        //     if (isset($Agregar_copias[$EPS])) {
-        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
-        //     }
+            if (isset($Agregar_copias[$EPS])) {
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+            }
 
-        //     if (isset($Agregar_copias[$AFP])) {
-        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
-        //     }
+            if (isset($Agregar_copias[$AFP])) {
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+            }
 
-        //     if (isset($Agregar_copias[$ARL])) {
-        //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
-        //     }
-        // }
+            if (isset($Agregar_copias[$ARL])) {
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+            }
+        }
 
-        // $htmltabla2 .= '</table>';
-        // Html::addHtml($section, $htmltabla2, false, true);
+        $htmltabla2 .= '</table>';
+        Html::addHtml($section, $htmltabla2, false, true);
         // $section->addTextBreak();
         // $section->addText($nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$id_evento, array('bold' => true));
 
