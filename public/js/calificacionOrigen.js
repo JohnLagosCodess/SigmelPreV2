@@ -807,7 +807,7 @@ $(document).ready(function(){
                         $('.alerta_calificacion').addClass('d-none');
                         $('.alerta_calificacion').empty(); 
                         location.reload();                       
-                    }, 15000);
+                    }, 5000);
                 }                
             }
         })        
