@@ -2491,8 +2491,8 @@ $(document).ready(function(){
             var seteo_nro_anexos = 0;
             $("#anexos").val(seteo_nro_anexos);
 
-            // Deselección automática de las copias a partes interesadas: Afiliado
-            $("#copia_afiliado").prop('checked', false);
+            // selección automática de las copias a partes interesadas: Afiliado
+            $("#copia_afiliado").prop('checked', true);
 
             // Selección automática del checkbox firmar
             $("#firmarcomunicado").prop('checked', true);
@@ -6141,8 +6141,8 @@ $(document).ready(function(){
             var seteo_nro_anexos = 0;
             $("#anexos_editar").val(seteo_nro_anexos);
 
-            // Deselección automática de las copias a partes interesadas: Afiliado
-            $("#edit_copia_afiliado").prop('checked', false);
+            // selección automática de las copias a partes interesadas: Afiliado
+            $("#edit_copia_afiliado").prop('checked', true);
 
             // Selección automática del checkbox firmar
             $("#firmarcomunicado_editar").prop('checked', true);

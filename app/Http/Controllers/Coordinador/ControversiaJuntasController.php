@@ -24,7 +24,6 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
 use App\Models\sigmel_informacion_correspondencia_eventos;
-use App\Models\sigmel_informacion_eventos;
 use App\Traits\GenerarRadicados;
 
 use PhpOffice\PhpWord\PhpWord;
@@ -227,20 +226,12 @@ class ControversiaJuntasController extends Controller
         if(count($array_caso_notificado) > 0){
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
         }
-
-        //Traer el N_siniestro del evento
-        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
-        ->select('N_siniestro')
-        ->where([['ID_evento',$Id_evento_juntas]])
-        ->get();
-
         //dd($arrayinfo_controvertido);
         return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido',
         'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
-        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 
-        'caso_notificado', 'N_siniestro_evento'));
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado'));
     
     }
 
@@ -643,16 +634,6 @@ class ControversiaJuntasController extends Controller
                 "mensaje" => 'Registro guardado satisfactoriamente.'
             );
         }
-
-        //Actualización del N_siniestro del evento, el cual pidieron fuera "Global"
-        $dato_actualizar_n_siniestro = [
-            'N_siniestro' => $request->n_siniestro,
-        ];
-        sigmel_informacion_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$newIdEvento]])
-        ->update($dato_actualizar_n_siniestro);
-
-        sleep(2);
     
         return json_decode(json_encode($mensajes, true));
     }
@@ -1983,7 +1964,7 @@ class ControversiaJuntasController extends Controller
                     ['ID_evento', $newId_evento],
                     ['Id_Asignacion',$newId_asignacion],
                     ['Id_proceso', $Id_proceso],
-                    ['N_radicado',$request->radicado]
+                    ['N_radicado',$radicado]
                     ])
             ->update($datos_info_comunicado_eventos);
 
@@ -2497,6 +2478,54 @@ class ControversiaJuntasController extends Controller
             
         }
 
+        /* Tipos de controversia primera calificación */
+        $datos_tipo_controversia = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
+        ->select('Contro_origen', 'Contro_pcl', 'Contro_diagnostico', 'Contro_f_estructura', 'Contro_m_califi')
+        ->where([['ID_evento',$id_evento],
+            ['Id_Asignacion',$id_asignacion],
+        ])->get(); 
+
+        $array_datos_tipo_controversia = json_decode(json_encode($datos_tipo_controversia), true);
+
+        if (count($array_datos_tipo_controversia) > 0) {
+
+            // Obtener los valores del primer elemento del array
+            $controversias = array_values($array_datos_tipo_controversia[0]);
+
+            // Obtener el último elemento
+            $ultimo_tipo_controversia = array_pop($controversias);
+
+            // Concatenar los valores con comas y agregar "y" antes del último
+            $string_tipos_controversia = implode(", ", $controversias) . " y " . $ultimo_tipo_controversia;
+
+        } else {
+            $string_tipos_controversia = "";
+        }
+
+        // Traer datos CIE10 de Dictamen emitido por la Junta Regional de Calificación de Invalidez (JRCI)
+        $diagnosticos_cie10 = array();
+        $datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
+        ->select('slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 'slp.Nombre_parametro')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_cie_diagnosticos as slcd', 'slcd.Id_Cie_diagnostico', '=', 'side.CIE10')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_CIE10')
+        ->where([
+            ['side.ID_evento', '=', $id_evento],
+            ['side.Id_Asignacion', '=', $id_asignacion],
+            ['side.Item_servicio', '=', 'Emitido JRCI'],
+            ['side.Estado', '=', 'Activo'],
+        ])
+        ->get();
+
+        $array_datos_diagnostico_motcalifi = json_decode(json_encode($datos_diagnostico_motcalifi), true);
+
+        for ($i=0; $i < count($array_datos_diagnostico_motcalifi); $i++) { 
+            $dato_concatenado = "(<b>".$array_datos_diagnostico_motcalifi[$i]['Codigo']."</b>) ".mb_strtoupper($array_datos_diagnostico_motcalifi[$i]['Nombre_CIE10'], 'UTF-8')." de origen ".$array_datos_diagnostico_motcalifi[$i]['Nombre_parametro']."";
+            array_push($diagnosticos_cie10, $dato_concatenado);
+        }
+
+        $string_diagnosticos_cie10 = implode(", ", $diagnosticos_cie10);
+        $string_diagnosticos_cie10 = $string_diagnosticos_cie10;
+
         /* Copias Interesadas */
         // Validamos si los checkbox esta marcados
         $final_copia_afiliado = isset($copia_afiliado) ? 'Afiliado' : '';
@@ -2520,12 +2549,20 @@ class ControversiaJuntasController extends Controller
         
         $Agregar_copias = [];
         if(isset($copia_afiliado)){
-            $emailAfiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-            ->select('siae.Email')
-            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
+            
+            $AfiliadoData = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'siae.Email')
+            ->where([['siae.Nro_identificacion', $num_identificacion],['siae.ID_evento', $id_evento]])
             ->get();
-            $afiliadoEmail = $emailAfiliado[0]->Email;            
-            $Agregar_copias['Afiliado'] = $afiliadoEmail;            
+            $nombreAfiliado = $AfiliadoData[0]->Nombre_afiliado;
+            $direccionAfiliado = $AfiliadoData[0]->Direccion;
+            $telefonoAfiliado = $AfiliadoData[0]->Telefono_contacto;
+            $ciudadAfiliado = $AfiliadoData[0]->Nombre_ciudad;
+            $municipioAfiliado = $AfiliadoData[0]->Nombre_municipio;
+            $emailAfiliado = $AfiliadoData[0]->Email;            
+            $Agregar_copias['Afiliado'] = $nombreAfiliado."; ".$direccionAfiliado."; ".$emailAfiliado."; ".$telefonoAfiliado."; ".$ciudadAfiliado."; ".$municipioAfiliado.".";  
         }
         if(isset($copia_empleador)){
 
@@ -2831,6 +2868,7 @@ class ControversiaJuntasController extends Controller
         $patron6 = '/\{\{\$cie10_nombre_cie10_jrci\}\}/';
         $patron7 = '/\{\{\$pcl_jrci\}\}/';
         $patron8 = '/\{\{\$f_estructuracion_jrci\}\}/';
+        $patron9 = '/\{\{\$tipos_controversia\}\}/';
 
         // $cuerpo = str_replace(['<br>', '<br/>', '<br />', '</br>'], '', $cuerpo);
 
@@ -2845,16 +2883,18 @@ class ControversiaJuntasController extends Controller
 
         if (preg_match($patron1, $cuerpo_modificado) && preg_match($patron2, $cuerpo_modificado)) {
             
-            if (preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado)) {
+            if (preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron6, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
                 // Ambos patrones encontrados
                 $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
 
-                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.strtoupper($nombre_afiliado).'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.mb_strtoupper($nombre_afiliado, 'UTF-8').'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', '<b>'.$num_identificacion.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10, $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$pcl_jrci}}', $porcentaje_pcl_jrci_emitido, $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', '<b>'.$f_estructuracion_contro_jrci_emitido.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$tipos_controversia}}', '<b>'.$string_tipos_controversia.'</b>', $cuerpo_modificado);
     
                 $cuerpo_final = nl2br($cuerpo_modificado);
             }else{
@@ -2862,15 +2902,17 @@ class ControversiaJuntasController extends Controller
             }
         
         } elseif (preg_match($patron1, $cuerpo_modificado)) {
-            if (preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado)) {
+            if (preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron6, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
                 // Solo patrón6 encontrado
                 $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
 
                 $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.strtoupper($nombre_afiliado).'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', '<b>'.$num_identificacion.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10, $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$pcl_jrci}}', $porcentaje_pcl_jrci_emitido, $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', '<b>'.$f_estructuracion_contro_jrci_emitido.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$tipos_controversia}}', '<b>'.$string_tipos_controversia.'</b>', $cuerpo_modificado);
     
                 $cuerpo_final = nl2br($cuerpo_modificado);
 
@@ -2880,15 +2922,17 @@ class ControversiaJuntasController extends Controller
             
         
         } elseif (preg_match($patron2, $cuerpo_modificado)) {
-            if (preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado)) {
+            if (preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron6, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
                 // Solo patrón9 encontrado
                 $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
 
                 $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.strtoupper($nombre_afiliado).'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', '<b>'.$num_identificacion.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10, $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$pcl_jrci}}', $porcentaje_pcl_jrci_emitido, $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', '<b>'.$f_estructuracion_contro_jrci_emitido.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$tipos_controversia}}', '<b>'.$string_tipos_controversia.'</b>', $cuerpo_modificado);
                 
                 $cuerpo_final = nl2br($cuerpo_modificado);
 
@@ -3349,12 +3393,20 @@ class ControversiaJuntasController extends Controller
         
         $Agregar_copias = [];
         if(isset($copia_afiliado)){
-            $emailAfiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-            ->select('siae.Email')
-            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
+            
+            $AfiliadoData = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+            ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'siae.Email')
+            ->where([['siae.Nro_identificacion', $num_identificacion],['siae.ID_evento', $id_evento]])
             ->get();
-            $afiliadoEmail = $emailAfiliado[0]->Email;            
-            $Agregar_copias['Afiliado'] = $afiliadoEmail;            
+            $nombreAfiliado = $AfiliadoData[0]->Nombre_afiliado;
+            $direccionAfiliado = $AfiliadoData[0]->Direccion;
+            $telefonoAfiliado = $AfiliadoData[0]->Telefono_contacto;
+            $ciudadAfiliado = $AfiliadoData[0]->Nombre_ciudad;
+            $municipioAfiliado = $AfiliadoData[0]->Nombre_municipio;
+            $emailAfiliado = $AfiliadoData[0]->Email;            
+            $Agregar_copias['Afiliado'] = $nombreAfiliado."; ".$direccionAfiliado."; ".$emailAfiliado."; ".$telefonoAfiliado."; ".$ciudadAfiliado."; ".$municipioAfiliado.".";  
         }
 
         if(isset($copia_empleador)){
