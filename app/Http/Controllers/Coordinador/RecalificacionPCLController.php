@@ -1501,8 +1501,8 @@ class RecalificacionPCLController extends Controller
                         $comunicado['Existe'] = false;
                     }
 
-                    if($comunicado_inter->Id_Comunicado){
-                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado_inter->Id_Comunicado);
+                    if($comunicado->Id_Comunicado){
+                        $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($Id_evento_recali,$Id_asignacion_recali,$comunicado->Id_Comunicado);
                     }
                 }
                 // $array_comunicados_comite_interre = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')

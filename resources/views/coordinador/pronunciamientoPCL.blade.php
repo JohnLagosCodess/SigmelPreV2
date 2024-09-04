@@ -6,6 +6,9 @@
 @section('content_header') 
     <div class='row mb-2'>
         <div class='col-sm-6'>
+            <?php 
+                $dato_rol=$captura_id_rol = session('id_cambio_rol');
+            ?>
         </div>
     </div>
 @stop
@@ -842,12 +845,14 @@
                                                                             <i class="far fa-eye text-info"></i>
                                                                         </button>
                                                                     </form>
-                                                                    <form  id="form_editar_comunicado_{{$comunicados->Id_Comunicado}}" data-tupla_comunicado="{{$comunicados}}" method="POST">
-                                                                        <button type="submit" id="editar_correspondencia" style="border: none; background:transparent;">
-                                                                            <i class="fa fa-pen text-info"></i>
-                                                                        </button>
-                                                                    </form>
-                                                                    @if ($comunicados['Existe'])
+                                                                    @if($dato_rol !== '7')
+                                                                        <form  id="form_editar_comunicado_{{$comunicados->Id_Comunicado}}" data-tupla_comunicado="{{$comunicados}}" method="POST">
+                                                                            <button type="submit" id="editar_correspondencia" style="border: none; background:transparent;">
+                                                                                <i class="fa fa-pen text-info"></i>
+                                                                            </button>
+                                                                        </form>
+                                                                    @endif
+                                                                    @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                                         <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                             <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" {{$deshabilitarRemplazar ?? ''}}>
                                                                                 <i class="fas fa-sync-alt text-info"></i>
@@ -861,7 +866,7 @@
                                                                             <i class="far fa-eye text-info"></i>
                                                                         </button>
                                                                     </form>
-                                                                    @if ($comunicados['Existe'])
+                                                                    @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                                         <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                             <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" {{$deshabilitarRemplazar ?? ''}}>
                                                                                 <i class="fas fa-sync-alt text-info"></i>
@@ -872,7 +877,9 @@
                                                                 {{-- <button id="replace_file" style="border: none; background:transparent;">
                                                                     <i class="fas fa-sync-alt text-info"></i>
                                                                 </button> --}}
-                                                                <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" style="{{$deshabilitaredicion ?? ''}}"><i class="fa fa-sm fa-check text-success"></i></a>
+                                                                @if($dato_rol !== '7')
+                                                                    <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" style="{{$deshabilitaredicion ?? ''}}"><i class="fa fa-sm fa-check text-success"></i></a>
+                                                                @endif
                                                             </td>
                                                         </tr>                                                      
                                                     @endforeach

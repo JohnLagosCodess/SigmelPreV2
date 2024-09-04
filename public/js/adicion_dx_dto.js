@@ -3110,6 +3110,7 @@ $(document).ready(function(){
         $("#div_comite_interdisciplinario").addClass('d-none');
         $("#div_correspondecia").addClass('d-none');
         $("#editar_correspondencia").addClass('d-none');
+        $("#btn_guardar_actualizar_correspondencia").prop('disabled',true);
     }
 
     // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:

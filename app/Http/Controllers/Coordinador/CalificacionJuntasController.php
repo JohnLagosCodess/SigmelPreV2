@@ -1845,7 +1845,7 @@ class CalificacionJuntasController extends Controller
         ->where('EsHabil', 1)
         ->where('EsFestivo', 0)
         ->count();
-        if($conteoDias > 10){
+        if($conteoDias > 11){
                 $terminos='Fuera de términos';
         }else{
                 $terminos='Dentro de términos';  
@@ -1950,7 +1950,7 @@ class CalificacionJuntasController extends Controller
         ->where('EsHabil', 1)
         ->where('EsFestivo', 0)
         ->count();
-        if($conteoDias > 10){
+        if($conteoDias > 11){
             $terminos='Fuera de términos';
         }else{
             $terminos='Dentro de términos';  

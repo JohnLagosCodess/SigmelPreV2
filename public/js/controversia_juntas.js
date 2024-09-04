@@ -5059,6 +5059,7 @@ $(document).ready(function(){
         $("#div_correspondencia").addClass('d-none');
         $("#msg_alerta").addClass('d-none');
         $("a[id^='editar_correspondencia_']").addClass('d-none');
+        $("#btn_guardar_actualizar_correspondencia").prop('disabled',true);
     }
 
     /* Códigos para el tema del rol administrador (modelo a seguir) */

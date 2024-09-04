@@ -1920,6 +1920,7 @@ $(document).ready(function(){
         $("#div_msg_alerta").addClass('d-none');
         $("#ActualizarPronuncia").addClass('d-none');
         $("#GuardarPronuncia").addClass('d-none');
+        $("#btn_guardar_actualizar_correspondencia").prop('disabled',true)
     };
 
     /* Códigos para el tema del rol administrador (modelo a seguir) */
