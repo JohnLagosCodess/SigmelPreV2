@@ -7726,7 +7726,7 @@
                                                                                     <label for="ver_dictamenesPcl"><i class="far fa-eye text-info" style="cursor: pointer;"></i></i></label>
                                                                                     <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
                                                                             </form> 
-                                                                            @if ($comunicados['Existe'])
+                                                                            @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                                     <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
@@ -7741,7 +7741,7 @@
                                                                                     <i class="far fa-eye text-info" style="cursor: pointer;"></i>
                                                                                 </button>
                                                                             </form>
-                                                                            @if ($comunicados['Existe'])
+                                                                            @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                                     <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
@@ -7773,8 +7773,10 @@
                                                                         <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
                                                                         <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor: pointer;" value="">
                                                                     </form>
-                                                                    <i class="fa fa-pen text-info" id="editar_correspondencia" style="cursor: pointer;"></i>
-                                                                    @if ($comite_inter->Existe)
+                                                                    @if($dato_rol !== '7')
+                                                                        <i class="fa fa-pen text-info" id="editar_correspondencia" style="cursor: pointer;"></i>
+                                                                    @endif
+                                                                    @if ($comite_inter->Existe && $dato_rol !== '7')
                                                                         <form id="form_reemplazar_archivo_" data-archivo="{{json_encode($comite_inter)}}" method="POST">
                                                                             <button type="submit" id="btn_reemplazar_archivo" style="border: none; background: transparent;">
                                                                                 <i class="fas fa-sync-alt text-info"></i>
@@ -7810,7 +7812,7 @@
                                                                                 <label for="ver_dictamenesPcl"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
                                                                                 <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
                                                                             </form>
-                                                                            @if ($comunicados['Existe'])
+                                                                            @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                                     <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
@@ -7825,7 +7827,7 @@
                                                                                     <i class="far fa-eye text-info" style="cursor: pointer;"></i>
                                                                                 </button>
                                                                             </form>
-                                                                            @if ($comunicados['Existe'])
+                                                                            @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                                     <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
@@ -7857,8 +7859,10 @@
                                                                         <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
                                                                         <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor:pointer;" value="">
                                                                     </form>
-                                                                    <i class="fa fa-pen text-info" style="cursor:pointer;" id="editar_correspondencia"></i>
-                                                                    @if ($comite_inter->Existe)
+                                                                    @if($dato_rol !== '7')
+                                                                        <i class="fa fa-pen text-info" style="cursor:pointer;" id="editar_correspondencia"></i>
+                                                                    @endif
+                                                                    @if ($comite_inter->Existe && $dato_rol !== '7')
                                                                         <form id="form_reemplazar_archivo_" data-archivo="{{json_encode($comite_inter)}}" method="POST">
                                                                             <button type="submit" id="btn_reemplazar_archivo_" style="border: none; background: transparent;">
                                                                                 <i class="fas fa-sync-alt text-info"></i>
@@ -7894,7 +7898,7 @@
                                                                                     <label for="ver_dictamenesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></i></label>
                                                                                     <input class="btn-icon-only text-info btn-sm" name="ver_dictamenesPcl" id="ver_dictamenesPcl" type="submit" style="font-weight: bold;" value="">
                                                                             </form>
-                                                                            @if ($comunicados['Existe'])
+                                                                            @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                                     <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
@@ -7909,7 +7913,7 @@
                                                                                     <i class="far fa-eye text-info"></i>
                                                                                 </button>
                                                                             </form>
-                                                                            @if ($comunicados['Existe'])
+                                                                            @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                                     <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>
@@ -7941,8 +7945,10 @@
                                                                         <label for="ver_notificacionesPcl" style="margin-bottom: 0px;"><i class="far fa-eye text-info" style="cursor: pointer;"></i></label>
                                                                         <input class="btn-icon-only text-info btn-sm" name="ver_notificacionesPcl" id="ver_notificacionesPcl" type="submit" style="font-weight: bold; cursor: pointer;" value="">
                                                                     </form>
-                                                                    <i class="fa fa-pen text-info" id="editar_correspondencia" style="cursor: pointer;"></i>
-                                                                    @if ($comite_inter->Existe)
+                                                                    @if($dato_rol !== '7')
+                                                                        <i class="fa fa-pen text-info" id="editar_correspondencia" style="cursor: pointer;"></i>
+                                                                    @endif
+                                                                    @if ($comite_inter->Existe && $dato_rol !== '7')
                                                                         <form id="form_reemplazar_archivo_" data-archivo="{{json_encode($comite_inter)}}" method="POST">
                                                                             <button type="submit" id="btn_reemplazar_archivo_" style="border: none; background: transparent;">
                                                                                 <i class="fas fa-sync-alt text-info"></i>
@@ -7972,7 +7978,7 @@
                                                                                     <i class="far fa-eye text-info" style="cursor: pointer;"></i>
                                                                                 </button>
                                                                             </form>
-                                                                            @if ($comunicados['Existe'])
+                                                                            @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                                     <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" style="border: none; background: transparent;" >
                                                                                         <i class="fas fa-sync-alt text-info"></i>

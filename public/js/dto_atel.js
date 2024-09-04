@@ -1402,7 +1402,10 @@ $(document).ready(function(){
         let correspondencia = $(id).data('correspondencia');
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
-
+        //BENEFICIARIO
+        if((destinatarioPrincipal !== 'afiliado' && destinatarioPrincipal !== 'Afiliado') && copias && (copias.includes('beneficiario') || copias.includes('Beneficiario'))){
+            copias = copias.replace('beneficiario','afiliado');
+        }
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
             $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
@@ -2866,7 +2869,6 @@ $(document).ready(function(){
             'radicado':radicado,
             'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar
         }
-        
         $.ajax({    
             type:'POST',
             url:'/guardarcorrespondenciaDTO',
@@ -3332,6 +3334,7 @@ $(document).ready(function(){
         $("#div_comite_interdisciplinario").addClass('d-none');
         $("#div_correspondecia").addClass('d-none');
         $("label[for='editar_correspondencia']").addClass('d-none');
+        $("#btn_guardar_actualizar_correspondencia").prop('disabled',true);
     }
 
     // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:

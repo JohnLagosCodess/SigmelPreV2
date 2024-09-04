@@ -132,14 +132,14 @@ class BandejaNotifiController extends Controller
                     ])->where(function($query){
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'Si');
                     })
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 }else{
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where('Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias)->where(function($query){
                         $query->where('Enviar_bd_Notificacion', '=', 'Si');
                     })
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 }
 
@@ -163,13 +163,13 @@ class BandejaNotifiController extends Controller
                     ->where('Id_profesional', '=', $newId_user)->where(function($query){
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'Si');
                     })
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 
                 }else{
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where('Enviar_bd_Notificacion', '=', 'Si')
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 }
 

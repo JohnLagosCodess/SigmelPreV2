@@ -2179,6 +2179,35 @@ class AdicionDxDTO extends Controller
         $sustentacion_califi_origen = $request->sustentacion_califi_origen;
         $origen = $request->origen;
 
+        //QR
+        $formattedData = "";
+        $dictamenOrigenQr = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_decreto_eventos as side', 'side.Id_Asignacion', '=', 'siae.Id_Asignacion')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_afiliado_eventos as siaf', 'siaf.ID_evento', '=', 'siae.ID_evento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siaf.Tipo_documento')
+        ->select('siaf.Nombre_afiliado', 'slp.Nombre_parametro', 'siaf.Nro_identificacion', 'siae.Consecutivo_dictamen', 
+        'side.Porcentaje_pcl', 'side.F_estructuracion', 'siae.ID_evento')
+        ->where('siae.Id_Asignacion', $Id_Asignacion)->get();     
+
+        if (!$dictamenOrigenQr->isEmpty()) {
+            // Crear una cadena para almacenar los datos en el formato deseado                    
+        
+            foreach ($dictamenOrigenQr as $evento) {
+                // Construir la cadena de texto con el formato deseado
+                $formattedData .= $evento->Nombre_afiliado."\n";
+                $formattedData .= $evento->Nombre_parametro." ".$evento->Nro_identificacion . "\n";
+                $formattedData .= "N° Dictámen: ".$evento->Consecutivo_dictamen."\n";
+                $formattedData .= "Cod. Verificación: ".$evento->ID_evento."\n";
+                // Agregar un salto de línea después de cada conjunto de atributos de evento
+                $formattedData .= "\n";
+            }
+                            
+        }
+
+        // Codigo QR
+        $datosQr = $formattedData;
+        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datosQr); 
+
         /* Creación de las variables faltantes que no están en el formulario */
 
         // fecha solicitud
@@ -2266,6 +2295,7 @@ class AdicionDxDTO extends Controller
 
         /* Armado de datos para reemplazarlos en la plantilla */
         $datos_finales_dml_origen_previsional = [
+            'codigoQR' => $codigoQR,
             'id_cliente' => $id_cliente,
             'logo_header' => $logo_header,
             'id_evento' => $id_evento,

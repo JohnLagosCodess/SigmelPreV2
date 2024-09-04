@@ -18,14 +18,24 @@
             left: 0cm;
             width: 100%;
             /* height: 100px; */
-            text-align: right;
+            text-align: center; 
             /* background: green; */
+        }
+        .codigo_qr{
+            position: absolute;
+            top: 5px; 
+            left: 5px; 
+            max-width: 90px; 
+            max-height: 70px; 
         }
 
         .logo_header{
-            max-width: 30%;
-            max-height: 80px;
-        }
+            position: absolute;
+            max-width: 40%;
+            height: auto;
+            left: 535px;
+            max-height: 75px; 
+        } 
         #footer{
             position: fixed;
             /* esta ligado con el tercer valor del margin */
@@ -112,6 +122,16 @@
             text-align: center;
             font-size: 8px;
         }
+        .tabla_header{
+            width: 100%;
+            font-family: sans-serif;
+            font-size: 13px;
+            text-align: center;            
+        }
+
+        .tabla_header td {
+            border: none;
+        }
 
         /* .hijo{
             width: 2cm;
@@ -123,19 +143,29 @@
 </head>
 <body>
     <div id="header">
-        {{-- <img src="data:image/png;base64,{{ base64_encode($codigoQR) }}" class="codigo_qr" alt="Código QR"> --}}
-        <?php if($logo_header == "Sin logo"): ?>
-            <p>No logo</p>
-        <?php else: ?>
-            <?php 
-                $ruta_logo = "/logos_clientes/{$id_cliente}/{$logo_header}";
-                $imagenPath_header = public_path($ruta_logo);
-                $imagenData_header = file_get_contents($imagenPath_header);
-                $imagenBase64_header = base64_encode($imagenData_header);
-            ?>
-            <img src="data:image/png;base64,{{ $imagenBase64_header }}" class="logo_header">
-        <?php endif ?>
-    </div>
+        <table class="tabla_header">
+            <tbody>
+                <tr>
+                    <td>
+                        <img src="data:image/png;base64,{{ base64_encode($codigoQR) }}" class="codigo_qr" alt="Código QR">
+                    </td>
+                    <td>
+                        <?php if($logo_header == "Sin logo"): ?>
+                            <p>No logo</p>
+                        <?php else: ?>
+                            <?php 
+                                $ruta_logo = "/logos_clientes/{$id_cliente}/{$logo_header}";
+                                $imagenPath_header = public_path($ruta_logo);
+                                $imagenData_header = file_get_contents($imagenPath_header);
+                                $imagenBase64_header = base64_encode($imagenData_header);
+                            ?>
+                            <img src="data:image/png;base64,{{ $imagenBase64_header }}" class="logo_header">
+                        <?php endif ?>                    
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div> 
     <div id="footer">
         <table class="tabla_footer">
             <tbody>

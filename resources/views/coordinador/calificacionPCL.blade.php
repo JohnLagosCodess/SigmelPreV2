@@ -369,7 +369,9 @@
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <label for="descripcion_accion">Descripción acción</label>
-                                                    <textarea class="form-control" name="descripcion_accion" id="descripcion_accion" cols="30" rows="5" style="resize: none;">{{$array_datos_calificacionPcl[0]->Descripcion_accion}}</textarea>                                                
+                                                    {{-- <textarea class="form-control" name="descripcion_accion" id="descripcion_accion" cols="30" rows="5" style="resize: none;">{{$array_datos_calificacionPcl[0]->Descripcion_accion}}</textarea> --}}
+                                                    
+                                                    <textarea class="form-control" name="descripcion_accion" id="descripcion_accion" cols="30" rows="5" style="resize: none;"></textarea>      
                                                 </div>
                                             </div>
                                         </div>

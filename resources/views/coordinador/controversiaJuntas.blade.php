@@ -1662,6 +1662,7 @@
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_f_estructuracion_jrci">Fecha Estructuracion JRCI</button>
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_decreto_calificador_jrci">Decreto Calificador JRCI</button>
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci">Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional)</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_tipos_contro">Tipo Controversia Primera Calificación</button>
                                                 <?php if(count($array_comunicados_correspondencia) > 0): ?>
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci1">Sustentación Concepto JRCI (Revisión ante recurso de reposición de la Junta Regional)</button>
                                                 <?php endif ?>
@@ -1986,14 +1987,16 @@
                                                                             <i class="far fa-eye text-info"></i>
                                                                         </button>
                                                                     </form>
-                                                                    @if ($comunicados['Existe'])
+                                                                    @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                                         <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                             <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" {{$deshabilitarRemplazar ?? ''}} style="border: none; background: transparent;">
                                                                                 <i class="fas fa-sync-alt text-info"></i>
                                                                             </button>
                                                                         </form>
                                                                     @endif
-                                                                    <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" style="{{$deshabilitaredicion ?? ''}}"><i class="fa fa-sm fa-check text-success"></i></a>
+                                                                    @if($dato_rol !== '7')
+                                                                        <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" style="{{$deshabilitaredicion ?? ''}}"><i class="fa fa-sm fa-check text-success"></i></a>
+                                                                    @endif
                                                                 </td>
                                                             @else
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around;">
@@ -2005,7 +2008,7 @@
                                                                     type="button" style="font-weight: bold;"> --}}
                                                                     @foreach ($array_comite_interdisciplinario as $comite_inter)
                                                                         @if($comite_inter->N_radicado === $comunicados->N_radicado)
-                                                                            @if($comunicados->Correspondencia === '' || $comunicados->Correspondencia === null)
+                                                                            @if($comunicados->Correspondencia === '' || $comunicados->Correspondencia === null && $dato_rol !== '7')
                                                                                 <a href="javascript:void(0);" id="editar_correspondencia_{{$comunicados->Id_Comunicado}}"
                                                                                     data-id_comite_inter={{$comite_inter->Id_com_inter}}              
                                                                                     data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
@@ -2022,7 +2025,7 @@
                                                                                 data-id_asignacion= "{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}"
                                                                             ><i class="far fa-eye text-info"></i>
                                                                             </a>
-                                                                            @if ($comunicados['Existe'])
+                                                                            @if ($comunicados['Existe'] && $dato_rol !== '7')
                                                                                 <form id="form_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
                                                                                     <button type="submit" id="btn_reemplazar_archivo_{{$comunicados['Id_Comunicado']}}" {{$deshabilitarRemplazar ?? ''}} style="border: none; background: transparent;">
                                                                                         <i class="fas fa-sync-alt text-info"></i>
@@ -2031,7 +2034,9 @@
                                                                             @endif
                                                                         @endif
                                                                     @endforeach
-                                                                <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" style="{{$deshabilitaredicion ?? ''}}"><i class="fa fa-sm fa-check text-success"></i></a>
+                                                                    @if ($dato_rol !== '7')
+                                                                        <a href="javascript:void(0);"  class="editar_comunicado_{{$comunicados->N_radicado}}" id="editar_comunicado" data-radicado="{{$comunicados->N_radicado}}" style="{{$deshabilitaredicion ?? ''}}"><i class="fa fa-sm fa-check text-success"></i></a>
+                                                                    @endif
                                                                 </td>
                                                             @endif
                                                         </tr>

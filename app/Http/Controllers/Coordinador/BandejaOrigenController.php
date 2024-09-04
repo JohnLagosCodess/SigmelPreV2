@@ -429,7 +429,7 @@ class BandejaOrigenController extends Controller
                             ['Id_profesional', '=', $newId_user]
                         ])->where(function($query){
                             $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
-                        })->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        })->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                         ->get();
                     }else{
                         $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
@@ -438,7 +438,7 @@ class BandejaOrigenController extends Controller
                             ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias]
                         ])->where(function($query){
                             $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
-                        })->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        })->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                         ->get();
                     }
                     // ->whereNull('Nombre_proceso_anterior')
@@ -476,7 +476,7 @@ class BandejaOrigenController extends Controller
                             ['Id_profesional', '=', $newId_user]
                         ])->where(function($query){
                             $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
-                        })->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        })->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                         ->get();
                     }else{
                         $bandejaOrigenFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
@@ -484,7 +484,7 @@ class BandejaOrigenController extends Controller
                             ['Nombre_proceso_actual', '=', 'Origen'],
                         ])->where(function($query){
                             $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
-                        })->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        })->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                         ->get();
                     }
                     // ->whereNull('Nombre_proceso_anterior')

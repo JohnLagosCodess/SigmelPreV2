@@ -524,8 +524,7 @@ class CoordinadorController extends Controller
                             ['Id_profesional', '=', $newId_user]
                         ])->where(function($query){
                             $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
-                        })
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        })->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                         ->get(); 
 
                     }else{
@@ -534,8 +533,9 @@ class CoordinadorController extends Controller
                         ->where([
                             ['Nombre_proceso_actual', '=', 'Calificación PCL'],
                             ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
-                        ])
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ])->where(function($query){
+                            $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
+                        })->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                         ->get(); 
                     }
                     
@@ -689,16 +689,16 @@ class CoordinadorController extends Controller
                             ['Id_profesional', '=', $newId_user]
                         ])->where(function($query){
                             $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
-                        })
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        })->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                         ->get(); 
 
                     }else{
                         $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
                         ->where([
                             ['Nombre_proceso_actual', '=', 'Calificación PCL'],
-                        ])
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ])->where(function($query){
+                            $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
+                        })->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                         ->get(); 
                     }
                     // if (count($bandejaPCL)>0) {
