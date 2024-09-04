@@ -256,11 +256,11 @@ $(document).ready(function(){
                 $("#accion").append('<option></option>');
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
-                    if (data[claves[i]]["Id_Accion"] == $("#bd_id_accion").val()) {
-                        $("#accion").append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Nombre_accion"]+'</option>');
-                    } else {
+                    // if (data[claves[i]]["Id_Accion"] == $("#bd_id_accion").val()) {
+                    //     $("#accion").append('<option value="'+data[claves[i]]["Id_Accion"]+'" selected>'+data[claves[i]]["Nombre_accion"]+'</option>');
+                    // } else {
                         $("#accion").append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
-                    }
+                    // }
                 }
                 
                 $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
