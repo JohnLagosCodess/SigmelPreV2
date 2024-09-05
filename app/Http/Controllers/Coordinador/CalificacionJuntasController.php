@@ -6044,7 +6044,7 @@ class CalificacionJuntasController extends Controller
             $registro_documento = [
                 'Id_Documento' => $indice_lista_chequeo , //id Lista de chequeo
                 'ID_evento' => $request->Id_evento,
-                'Nombre_documento' => $nombre_pdf,
+                'Nombre_documento' => $nombre_documento,
                 'Formato_documento' => 'pdf',
                 'Id_servicio' => $request->Id_servicio,
                 'Lista_chequeo' => 'Si',
