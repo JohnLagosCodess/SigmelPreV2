@@ -401,6 +401,7 @@ function sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token) {
                                             <input type="hidden" name="bd_notificacion" value="true">
                                             <input type="hidden" name="newIdAsignacion" value="${data[i]["Id_Asignacion"]}">
                                             <input type="hidden" name="newIdEvento" id="newIdEvento" value="${data[i]["ID_evento"]}">
+                                            <input type="hidden" name="Id_Servicio" id="Id_Servicio" value="${data[i]["Id_Servicio"]}">
                                         </form>`;
                     data[i]['moduloNotifi'] = enlaceModuloPrincipal;
 
@@ -552,6 +553,7 @@ function filtro_bandejaNotifi(procesos) {
                                                         <input type="hidden" name="bd_notificacion" value="true">
                                                         <input type="hidden" name="newIdAsignacion" value="${data[i]["Id_Asignacion"]}">
                                                         <input type="hidden" name="newIdEvento" id="newIdEvento" value="${data[i]["ID_evento"]}">
+                                                        <input type="hidden" name="Id_Servicio" id="Id_Servicio" value="${data[i]["Id_Servicio"]}">
                                                     </form>`;
                                 data[i]['moduloNotifi'] = enlaceModuloPrincipal;
 
