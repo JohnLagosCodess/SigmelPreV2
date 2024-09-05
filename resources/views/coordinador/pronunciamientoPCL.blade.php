@@ -400,9 +400,9 @@
                                             <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_porPcl">% PCL</button>
                                             <button class="btn btn-sm btn-secondary mb-2 d-none" id="btn_insertar_F_estructuracion">Fecha de estructuracion</button>
                                             @if (!empty($info_pronuncia[0]->Sustenta_cali))
-                                                <textarea class="form-control" name="sustenta_cali" id="sustenta_cali" cols="30" rows="5" style="resize: none;">{{$info_pronuncia[0]->Sustenta_cali}}</textarea>
+                                                <textarea class="form-control" name="sustenta_cali" id="sustenta_cali" cols="30" rows="5" style="resize: none;" required>{{$info_pronuncia[0]->Sustenta_cali}}</textarea>
                                             @else
-                                                <textarea class="form-control" name="sustenta_cali" id="sustenta_cali" cols="30" rows="5" style="resize: none;"></textarea>
+                                                <textarea class="form-control" name="sustenta_cali" id="sustenta_cali" cols="30" rows="5" style="resize: none;" required></textarea>
                                             @endif
                                         </div>
                                     </div>
