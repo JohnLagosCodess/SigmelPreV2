@@ -1170,6 +1170,7 @@
                                             <div class="form-group">
                                                 <label for="telefono_destinatario_act">Telefono destinatario <span style="color: red;">(*)</span></label>
                                                 <input class="form-control" type="text"  name="telefono_destinatario_act" id="telefono_destinatario_editar" required>
+                                                
                                                 <input type="hidden" class="form-control" type="text"  name="telefono_destinatario_act2" id="telefono_destinatario_editar2" required>
                                             </div>
                                         </div>
