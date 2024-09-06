@@ -1412,6 +1412,8 @@
     {{-- SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE HISTORIAL DE SEGUIMIENTOS --}}
     <script type="text/javascript">
         $(document).ready(function(){
+            //Deshabilitar el btn de descarga del pdf general lista de chequeo
+            $("a[id^='btn_generar_descarga_15']").remove();
            var listado_histo_seguimiento = $('#listado_histori_seguimiento').DataTable({
                "responsive": true,
                "info": false,
