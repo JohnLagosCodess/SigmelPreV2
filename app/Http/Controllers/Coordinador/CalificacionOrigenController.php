@@ -316,13 +316,16 @@ class CalificacionOrigenController extends Controller
             ->select('Numero_orden')
             ->get();
 
+            $n_ordenNotificacion = DB::table(getDatabaseName('sigmel_gestiones') . "sigmel_informacion_asignacion_eventos")
+            ->select('N_de_orden')->where('Id_Asignacion', $newIdAsignacion)->get()->first();
+
             //Asignamos #n de orden cuado se envie un caso a notificaciones
             if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
                 BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
-                $N_orden_evento=$n_orden[0]->Numero_orden;
+                $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? $n_orden[0]->Numero_orden;
             }else{
                 BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
-                $N_orden_evento=null;
+                $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? null;
             }
 
             /* Verificación de que el check de detiene tiempo gestion este en sí acorde a la paramétrica */
@@ -875,14 +878,16 @@ class CalificacionOrigenController extends Controller
             $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
             ->select('Numero_orden')
             ->get();
-
+            
+            $n_ordenNotificacion = DB::table(getDatabaseName('sigmel_gestiones') . "sigmel_informacion_asignacion_eventos")
+            ->select('N_de_orden')->where('Id_Asignacion', $newIdAsignacion)->get()->first();
             //Asignamos #n de orden cuado se envie un caso a notificaciones
             if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
                 BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
-                $N_orden_evento=$n_orden[0]->Numero_orden;
+                $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? $n_orden[0]->Numero_orden;
             }else{
                 BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
-                $N_orden_evento=null;
+                $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? null;
             }
 
             /* Verificación de que el check de detiene tiempo gestion este en sí acorde a la paramétrica */

@@ -1166,7 +1166,7 @@ class CoordinadorController extends Controller
                         'Nombre_profesional' => $nombre_profesional,
                         'Descripcion_bandeja' => $Descripcion_bandeja,
                         'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
-                        'N_de_orden' => $N_orden_evento,
+                        //'N_de_orden' => $N_orden_evento,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
@@ -1219,7 +1219,7 @@ class CoordinadorController extends Controller
                         'Id_proceso_anterior' => $array_id_procesos[$m],
                         'Id_servicio_anterior' => $array_id_servicios[$m],
                         'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
-                        'N_de_orden' => $N_orden_evento,
+                        //'N_de_orden' => $N_orden_evento,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
@@ -1275,7 +1275,7 @@ class CoordinadorController extends Controller
                         'Nombre_profesional' => $nombre_profesional,
                         'Descripcion_bandeja' => $Descripcion_bandeja,
                         'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
-                        'N_de_orden' => $N_orden_evento,
+                        //'N_de_orden' => $N_orden_evento,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
@@ -1337,7 +1337,7 @@ class CoordinadorController extends Controller
 
                 //Habilita edicion del proceso de correspodencia para el proceso de notificacion.
                 if(isset($estado_acorde_a_parametrica[0]->enviarA)){
-                    BandejaNotifiController::finalizarNotificacion($info_array_asignacion[0]['ID_evento'], $info_array_asignacion[0]['Id_Asignacion'],false);
+                    BandejaNotifiController::finalizarNotificacion($info_array_asignacion[0]['ID_evento'], $info_array_asignacion[0]['Id_Asignacion'],false.true);
                 }
             }
 
