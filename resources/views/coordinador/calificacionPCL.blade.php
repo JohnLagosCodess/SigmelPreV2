@@ -1421,6 +1421,9 @@
         
         //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE LISTADOS DE DOCUMENTOS SOLICITADOS
         $(document).ready(function(){
+            //Deshabilitar el btn de descarga del pdf general lista de chequeo
+            $("a[id^='btn_generar_descarga_15']").remove();
+
             $(".centrar").css('text-align', 'center');
             var listado_docs_solicitados = $('#listado_docs_solicitados').DataTable({
                 "responsive": true,

@@ -602,6 +602,9 @@ class CalificacionJuntasController extends Controller
             $Nueva_fecha_radicacion = null;
         }
 
+        $n_ordenNotificacion = DB::table(getDatabaseName('sigmel_gestiones') . "sigmel_informacion_asignacion_eventos")
+        ->select('N_de_orden')->where('Id_Asignacion', $newIdAsignacion)->get()->first();
+
         // validacion de bandera para guardar o actualizar
         if ($request->banderaguardar == 'Guardar') {
 
@@ -623,6 +626,8 @@ class CalificacionJuntasController extends Controller
                 ['sipc.Accion_ejecutar','=',  $request->accion]
             ])->get();
 
+
+
             //Asignamos #n de orden cuado se envie un caso a notificaciones
             if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
                 //Trae El numero de orden actual
@@ -631,10 +636,11 @@ class CalificacionJuntasController extends Controller
                 ->get();
 
                 BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
-                $N_orden_evento=$n_orden[0]->Numero_orden;
+                $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? $n_orden[0]->Numero_orden;
             }else{
                 BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
-                $N_orden_evento=null;
+
+                $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? null;
             }
 
             if(count($estado_acorde_a_parametrica)>0){
@@ -1184,11 +1190,11 @@ class CalificacionJuntasController extends Controller
                 ->get();
 
                 BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
-                $N_orden_evento=$n_orden[0]->Numero_orden;
+                $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? $n_orden[0]->Numero_orden;
             }else{
-
                 BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
-                $N_orden_evento=null;
+
+                $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? null;
             }
 
             if(count($estado_acorde_a_parametrica)>0){
@@ -6044,7 +6050,7 @@ class CalificacionJuntasController extends Controller
             $registro_documento = [
                 'Id_Documento' => $indice_lista_chequeo , //id Lista de chequeo
                 'ID_evento' => $request->Id_evento,
-                'Nombre_documento' => $nombre_pdf,
+                'Nombre_documento' => $nombre_documento,
                 'Formato_documento' => 'pdf',
                 'Id_servicio' => $request->Id_servicio,
                 'Lista_chequeo' => 'Si',

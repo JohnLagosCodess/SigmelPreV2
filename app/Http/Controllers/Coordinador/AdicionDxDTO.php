@@ -419,7 +419,7 @@ class AdicionDxDTO extends Controller
                 ['ID_evento',$Id_evento],
                 ['Id_proceso',$Id_proceso],
                 ['Estado', 'Activo']
-            ])->get();
+            ])->orderBy('F_examen_interconsulta','DESC')->get();
 
             // $array_datos_diagnostico_motcalifi = "";
             // TRAER DATOS CIE10 (Diagnóstico motivo de calificación) Visuales
@@ -556,7 +556,7 @@ class AdicionDxDTO extends Controller
                     ['Id_Asignacion', $datos_bd_DTO_ATEL[0]->Id_Asignacion],
                     ['Id_proceso',$Id_proceso],
                     ['Estado', 'Activo']
-                ])->get();
+                ])->orderBy('F_examen_interconsulta','DESC')->get();
 
                 $array_datos_diagnostico_adicionales = "";
 
@@ -670,7 +670,7 @@ class AdicionDxDTO extends Controller
                     ['ID_evento',$Id_evento],
                     ['Id_proceso',$Id_proceso],
                     ['Estado', 'Activo']
-                ])->get();
+                ])->orderBy('F_examen_interconsulta','DESC')->get();
 
                 // $array_datos_diagnostico_motcalifi = "";
                 // TRAER DATOS CIE10 (Diagnóstico motivo de calificación) Visuales
