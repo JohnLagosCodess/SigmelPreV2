@@ -232,7 +232,7 @@ class RecalificacionPCLController extends Controller
                         ['Id_Asignacion', $eventoAsigancion_Recalifi],
                         ['Id_proceso',$Id_proceso_recali],
                         ['Estado_Recalificacion', 'Activo']
-                    ])
+                    ])->orderBy('F_examen_interconsulta','DESC')
                     ->get();
             
                     $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
@@ -1570,7 +1570,7 @@ class RecalificacionPCLController extends Controller
                         ['Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto],
                         ['Id_proceso',$Id_proceso_recali],
                         ['Estado', 'Activo']
-                    ])
+                    ])->orderBy('F_examen_interconsulta','DESC')
                     ->get();
         
                     $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
@@ -1662,7 +1662,7 @@ class RecalificacionPCLController extends Controller
                         ['ID_evento',$Id_evento_recali],
                         ['Id_proceso',$Id_proceso_recali],
                         ['Estado', 'Activo']
-                    ])
+                    ])->orderBy('F_examen_interconsulta','DESC')
                     ->get();
         
                     $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')

@@ -4905,7 +4905,7 @@ class CalificacionPCLController extends Controller
             ['Id_Asignacion',$Id_asignacion_calitec],
             ['Id_proceso',$Id_proceso_cali],
             ['Estado', 'Activo']
-        ])
+        ])->orderBy('F_examen_interconsulta','DESC')
         ->get();
 
         $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
