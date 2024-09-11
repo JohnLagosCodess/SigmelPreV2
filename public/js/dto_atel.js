@@ -2166,70 +2166,145 @@ $(document).ready(function(){
             type:'POST',
             url:'/GuardaroActualizarInfoDTOTAEL',
             data: informacion_formulario,
+            beforeSend:  function() {
+                showLoading();
+            },
             success: function(response){
-                if (response.parametro == "agregar_dto_atel") {
-                    // $("#GuardarDTOATEL").prop("disabled", true);
-                    if (btn_guardar_info_evento > 0) {
-                        $("#btn_guardar_info_evento").addClass('d-none');
-                        $("#mostrar_mensaje_1").removeClass('d-none');
-                        $(".mensaje_agrego_1").append('<strong>'+response.mensaje+'</strong>');
-                        setTimeout(() => {
-                            $("#mostrar_mensaje_1").addClass('d-none');
-                            $(".mensaje_agrego_1").empty();
-                            location.reload();
-                        }, 3000);
-                    }
-
-                    else if(btn_guardar_justi_revi_ori > 0){
-                        $("#btn_guardar_justi_revi_ori").addClass('d-none');
-                        $("#mostrar_mensaje_2").removeClass('d-none');
-                        $(".mensaje_agrego_2").append('<strong>'+response.mensaje+'</strong>');
-                        setTimeout(() => {
-                            $("#mostrar_mensaje_2").addClass('d-none');
-                            $(".mensaje_agrego_2").empty();
-                            location.reload();
-                        }, 3000);
-                    }
-
-                    else if(btn_guardar_relacion_docs > 0){
-                        $("#btn_guardar_relacion_docs").addClass('d-none');
-                        $("#mostrar_mensaje_3").removeClass('d-none');
-                        $(".mensaje_agrego_3").append('<strong>'+response.mensaje+'</strong>');
-                        setTimeout(() => {
-                            $("#mostrar_mensaje_3").addClass('d-none');
-                            $(".mensaje_agrego_3").empty();
-                            location.reload();
-                        }, 3000);
-                    }
-
-                    else if(btn_guardar_diagnosticos_mot_cali > 0){
-                        $("#btn_guardar_diagnosticos_mot_cali").addClass('d-none');
-                        $("#mostrar_mensaje_4").removeClass('d-none');
-                        $(".mensaje_agrego_4").append('<strong>'+response.mensaje+'</strong>');
-                        setTimeout(() => {
-                            $("#mostrar_mensaje_4").addClass('d-none');
-                            $(".mensaje_agrego_4").empty();
-                            location.reload();
-                        }, 3000);
-                    }
-                    
-                    else{
-                        $("#GuardarDTOATEL").addClass('d-none');
-                        $("#EditarDTOATEL").addClass('d-none');
-                        $("#mostrar_mensaje_agrego_dto_atel").removeClass('d-none');
-                        $(".mensaje_agrego_dto_atel").append('<strong>'+response.mensaje+'</strong>');
-                        setTimeout(() => {
-                            $("#mostrar_mensaje_agrego_dto_atel").addClass('d-none');
-                            $(".mensaje_agrego_dto_atel").empty();
-                            location.reload();
-                        }, 3000);
-
-                    }
+                if(response.Id_Comunicado){
+                    datos_dml = dataCreacionDMLOrigen(response.Id_Comunicado);
+                    $.ajax({    
+                        type:'POST',
+                        url:'/DescargaProformaDMLPrev',
+                        data: datos_dml,
+                        beforeSend:  function() {
+                            // $("#btn_enviar_dictamen_previsional").addClass("descarga-deshabilitada");
+                            showLoading();
+                        },
+                        success: function (response) {
+                            if(response.nombre_documento){
+                                $("#GuardarDTOATEL").addClass('d-none');
+                                $("#EditarDTOATEL").addClass('d-none');
+                                $("#mostrar_mensaje_agrego_dto_atel").removeClass('d-none');
+                                $(".mensaje_agrego_dto_atel").append('<strong>'+response.mensaje+'</strong>');
+                                setTimeout(() => {
+                                    $("#mostrar_mensaje_agrego_dto_atel").addClass('d-none');
+                                    $(".mensaje_agrego_dto_atel").empty();
+                                    location.reload();
+                                }, 3000);
+                            }
+                        },
+                        error: function (error) {
+                            // Manejar casos de error
+                            console.error('Error al descargar el PDF:', error);
+                        },
+                        complete:  function() {
+                            hideLoading();
+                            // $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
+                        },       
+                    });
                 }
+                // if (response.parametro == "agregar_dto_atel") {
+                //     // console.log("dataCreacionDMLOrigen : ",dataCreacionDMLOrigen());
+                //     // $("#GuardarDTOATEL").prop("disabled", true);
+                //     // if (btn_guardar_info_evento > 0) {
+                //     //     $("#btn_guardar_info_evento").addClass('d-none');
+                //     //     $("#mostrar_mensaje_1").removeClass('d-none');
+                //     //     $(".mensaje_agrego_1").append('<strong>'+response.mensaje+'</strong>');
+                //     //     setTimeout(() => {
+                //     //         $("#mostrar_mensaje_1").addClass('d-none');
+                //     //         $(".mensaje_agrego_1").empty();
+                //     //         location.reload();
+                //     //     }, 3000);
+                //     // }
+
+                //     // else if(btn_guardar_justi_revi_ori > 0){
+                //     //     $("#btn_guardar_justi_revi_ori").addClass('d-none');
+                //     //     $("#mostrar_mensaje_2").removeClass('d-none');
+                //     //     $(".mensaje_agrego_2").append('<strong>'+response.mensaje+'</strong>');
+                //     //     setTimeout(() => {
+                //     //         $("#mostrar_mensaje_2").addClass('d-none');
+                //     //         $(".mensaje_agrego_2").empty();
+                //     //         location.reload();
+                //     //     }, 3000);
+                //     // }
+
+                //     // else if(btn_guardar_relacion_docs > 0){
+                //     //     $("#btn_guardar_relacion_docs").addClass('d-none');
+                //     //     $("#mostrar_mensaje_3").removeClass('d-none');
+                //     //     $(".mensaje_agrego_3").append('<strong>'+response.mensaje+'</strong>');
+                //     //     setTimeout(() => {
+                //     //         $("#mostrar_mensaje_3").addClass('d-none');
+                //     //         $(".mensaje_agrego_3").empty();
+                //     //         location.reload();
+                //     //     }, 3000);
+                //     // }
+
+                //     // else if(btn_guardar_diagnosticos_mot_cali > 0){
+                //     //     $("#btn_guardar_diagnosticos_mot_cali").addClass('d-none');
+                //     //     $("#mostrar_mensaje_4").removeClass('d-none');
+                //     //     $(".mensaje_agrego_4").append('<strong>'+response.mensaje+'</strong>');
+                //     //     setTimeout(() => {
+                //     //         $("#mostrar_mensaje_4").addClass('d-none');
+                //     //         $(".mensaje_agrego_4").empty();
+                //     //         location.reload();
+                //     //     }, 3000);
+                //     // }
+                    
+                    
+
+                // }
+            },
+            complete: function(){
+                hideLoading();
             }
         });
 
     });
+
+    //Captura de data para el Formulario DML ORIGEN PREVISIONAL (DICTAMEN)
+    function dataCreacionDMLOrigen(id_comunicado){
+        var id_cliente = $("#Id_cliente_"+id_comunicado).val();
+        var num_identificacion = $("#num_identificacion_"+id_comunicado).val();
+        var nro_siniestro = $("#nro_siniestro_"+id_comunicado).val();
+        var Id_Asignacion = $("#Id_Asignacion_"+id_comunicado).val();
+        var Id_Proceso = $("#Id_Proceso_"+id_comunicado).val();
+        var f_dictamen = $("#f_dictamen_"+id_comunicado).val();
+        var empresa_laboral = $("#empresa_laboral_"+id_comunicado).val();
+        var nit_cc_laboral = $("#nit_cc_laboral_"+id_comunicado).val();
+        var cargo_laboral = $("#cargo_laboral_"+id_comunicado).val();
+        var antiguedad_cargo_laboral = $("#antiguedad_cargo_laboral_"+id_comunicado).val();
+        var act_economica_laboral = $("#act_economica_laboral_"+id_comunicado).val();
+        var justificacion_revision_origen = $("#justificacion_revision_origen_"+id_comunicado).val();
+        var nombre_evento = $("#nombre_evento_"+id_comunicado).val();
+        var f_evento = $("#f_evento_"+id_comunicado).val();
+        var f_fallecimiento = $("#f_fallecimiento_"+id_comunicado).val();
+        var sustentacion_califi_origen = $("#sustentacion_califi_origen_"+id_comunicado).val();
+        var origen = $("#origen_dto_atel option:selected").text();
+        var N_siniestro = $("#n_siniestro").val();
+
+        return datos_generacion_proforma_dml_previsional = {
+            '_token': token,
+            'id_cliente': id_cliente,
+            'nro_siniestro': nro_siniestro,
+            'Id_Asignacion': Id_Asignacion,
+            'Id_Proceso': Id_Proceso,
+            'f_dictamen': f_dictamen,
+            'empresa_laboral': empresa_laboral,
+            'nit_cc_laboral': nit_cc_laboral,
+            'cargo_laboral': cargo_laboral,
+            'antiguedad_cargo_laboral': antiguedad_cargo_laboral,
+            'act_economica_laboral': act_economica_laboral,
+            'justificacion_revision_origen': justificacion_revision_origen,
+            'nombre_evento': nombre_evento,
+            'f_evento': f_evento,
+            'f_fallecimiento': f_fallecimiento,
+            'sustentacion_califi_origen': sustentacion_califi_origen,
+            'origen': origen,
+            'id_comunicado' : id_comunicado,
+            'num_identificacion': num_identificacion,
+            'N_siniestro': N_siniestro,
+        };
+    }
 
     // Quitar el action del formulario (para cuando se da clic en el botón de evento y lo lleva a edicion de evento)
     $("#GuardarDTOATEL, #EditarDTOATEL").hover(function(){

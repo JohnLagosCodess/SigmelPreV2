@@ -28,6 +28,10 @@ use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_lista_parametros;
 use App\Models\sigmel_auditorias_informacion_accion_eventos;
+use App\Models\sigmel_clientes;
+use App\Models\sigmel_informacion_firmas_clientes;
+use App\Models\sigmel_informacion_laboral_eventos;
+use App\Models\sigmel_lista_departamentos_municipios;
 use App\Models\sigmel_numero_orden_eventos;
 use App\Traits\GenerarRadicados;
 
@@ -2024,7 +2028,7 @@ class CalificacionOrigenController extends Controller
                     'info_medio_noti' => $info_medio_noti
                 ]);
             break;
-            case ($destinatarioPrincipal == 'Empresa'):                
+            case ($destinatarioPrincipal == 'Empleador'):                
                 $array_datos_destinatarios = cndatos_comunicado_eventos::on('sigmel_gestiones')
                 ->where([['ID_evento',$newIdEvento],['Nro_identificacion',$identificacion_comunicado_afiliado]])
                 ->limit(1)->get(); 
@@ -2105,7 +2109,7 @@ class CalificacionOrigenController extends Controller
             if(!empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && empty($radioOtro)){
                 $destinatario = 'Afiliado';
             }elseif(empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado) && empty($radioOtro)){
-                $destinatario = 'Empresa';
+                $destinatario = 'Empleador';
             }elseif(empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && !empty($radioOtro)){
                 $destinatario = 'Otro';
             }
@@ -2395,7 +2399,7 @@ class CalificacionOrigenController extends Controller
         if(!empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
             $destinatario = 'Afiliado';
         }elseif(empty($radioafiliado_comunicado_editar) && !empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
-            $destinatario = 'Empresa';
+            $destinatario = 'Empleador';
         }elseif(empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && !empty($radioOtro_editar)){
             $destinatario = 'Otro';
         }
