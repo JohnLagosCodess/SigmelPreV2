@@ -793,7 +793,7 @@
                                         </div>
                                         <div class="col-3">
                                             <label for="empresa_comunicado"><strong>Empleador</strong></label>
-                                            <input class="scalesR" type="radio" name="afiliado_comunicado" id="empresa_comunicado" value="Empresa" style="margin-left: revert;" required>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado" id="empresa_comunicado" value="Empleador" style="margin-left: revert;" required>
                                         </div>
                                         <div class="col-3">
                                             <label for="Otro"><strong>Otro</strong></label>
@@ -1136,7 +1136,7 @@
                                         </div>
                                         <div class="col-3">
                                             <label for="empresa_comunicado"><strong>Empleador</strong></label>
-                                            <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empresa" style="margin-left: revert;" required>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empleador" style="margin-left: revert;" required>
                                         </div>
                                         <div class="col-3">
                                             <label for="Otro"><strong>Otro</strong></label>

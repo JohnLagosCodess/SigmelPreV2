@@ -441,11 +441,13 @@ class RecalificacionPCLController extends Controller
                 ->get();
                 
                 $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-                ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+                ->select('Nombre_apoderado','Nro_identificacion_apoderado', 'Edad')
                 ->where([
                     ['ID_evento', '=', $Id_evento_recali]
                 ])
                 ->get(); 
+
+                $edad_afiliado = $datos_apoderado_actual[0]->Edad;
                 
                 $array_datos_examenes_interconsultasre = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
                 ->where([
@@ -940,7 +942,7 @@ class RecalificacionPCLController extends Controller
                 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 
                 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 
                 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 
-                'info_afp_conocimiento','N_siniestro_evento'));
+                'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado'));
                 
             }                        
         } 
@@ -1044,11 +1046,13 @@ class RecalificacionPCLController extends Controller
                 ->get();
                 
                 $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-                ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+                ->select('Nombre_apoderado','Nro_identificacion_apoderado', 'Edad')
                 ->where([
                     ['ID_evento', '=', $Id_evento_recali]
                 ])
-                ->get(); 
+                ->get();
+                
+                $edad_afiliado = $datos_apoderado_actual[0]->Edad;                
                 
                 $array_datos_examenes_interconsultasre = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
                 ->where([
@@ -1544,8 +1548,7 @@ class RecalificacionPCLController extends Controller
                 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultasre', 
                 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditivare', 'hay_agudeza_visualre', 'array_laboralmente_Activore', 
                 'array_rol_ocupacionalre', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinariore', 'consecutivore', 
-                'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento'));
-                // return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento'));
+                'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado'));
             }            
             elseif (!empty($validar_evento_CalifiTecnica[0]->Id_servicio)) { 
                 
@@ -1868,11 +1871,13 @@ class RecalificacionPCLController extends Controller
                 ->get();
                 
                 $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-                ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+                ->select('Nombre_apoderado','Nro_identificacion_apoderado', 'Edad')
                 ->where([
                     ['ID_evento', '=', $Id_evento_recali]
                 ])
-                ->get(); 
+                ->get();
+                
+                $edad_afiliado = $datos_apoderado_actual[0]->Edad;                
                 
                 $array_datos_examenes_interconsultasre = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
                 ->where([
@@ -2363,7 +2368,7 @@ class RecalificacionPCLController extends Controller
                 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 
                 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 
                 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 
-                'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento'));
+                'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado'));
                 
             }
         }

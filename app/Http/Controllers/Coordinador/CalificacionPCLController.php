@@ -2132,7 +2132,7 @@ class CalificacionPCLController extends Controller
                     'info_medio_noti' => $info_medio_noti
                 ]);
             break;
-            case ($destinatarioPrincipal == 'Empresa'):                
+            case ($destinatarioPrincipal == 'Empleador'):                
                 $array_datos_destinatarios = cndatos_comunicado_eventos::on('sigmel_gestiones')
                 ->where([['ID_evento',$newIdEvento],['Nro_identificacion',$identificacion_comunicado_afiliado]])
                 ->limit(1)->get();  
@@ -2206,7 +2206,7 @@ class CalificacionPCLController extends Controller
             if(!empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && empty($radioOtro)){
                 $destinatario = 'Afiliado';
             }elseif(empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado) && empty($radioOtro)){
-                $destinatario = 'Empresa';
+                $destinatario = 'Empleador';
             }elseif(empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && !empty($radioOtro)){
                 $destinatario = 'Otro';
             }
@@ -2258,7 +2258,7 @@ class CalificacionPCLController extends Controller
                 'F_registro' => $date,
             ];
             
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
+            $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_registrarComunicadoPcl);
 
             sleep(2);
             $datos_info_historial_acciones = [
@@ -2270,6 +2270,13 @@ class CalificacionPCLController extends Controller
             ];
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+
+            $mensajes = array(
+                "parametro" => 'agregar_comunicado',
+                "mensaje" => 'Comunicado generado satisfactoriamente.',
+                "Id_Comunicado" => $Id_Comunicado,
+                "comunicadoSigmel" => 'DocumentoSigmel'
+            );
         }
         else if($tipo_descarga == 'Manual'){
             if($request->modulo){
@@ -2363,11 +2370,14 @@ class CalificacionPCLController extends Controller
             ];
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+
+            $mensajes = array(
+                "parametro" => 'agregar_comunicado',
+                "mensaje" => 'Comunicado generado satisfactoriamente.',
+                "comunicadoSigmel" => 'DocumentoManual'
+            );
         }
-        $mensajes = array(
-            "parametro" => 'agregar_comunicado',
-            "mensaje" => 'Comunicado generado satisfactoriamente.'
-        );
+        
 
         return json_decode(json_encode($mensajes, true));
 
@@ -2539,7 +2549,7 @@ class CalificacionPCLController extends Controller
         if(!empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
             $destinatario = 'Afiliado';
         }elseif(empty($radioafiliado_comunicado_editar) && !empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
-            $destinatario = 'Empresa';
+            $destinatario = 'Empleador';
         }elseif(empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && !empty($radioOtro_editar)){
             $destinatario = 'Otro';
         }
@@ -2628,45 +2638,68 @@ class CalificacionPCLController extends Controller
         $ciudad_destinatario_act = $request->ciudad_destinatario_act;
         $Forma_envio = $request->forma_envio_act;
         $Reviso = $request->reviso_act;
-        if ($request->afiliado_comunicado_act == "Otro") {
-            $nombre_destinatario = $request->nombre_destinatario_act;
-            $nit_cc = $request->nic_cc_act;
-            $direccion_destinatario = $request->direccion_destinatario_act;
-            $telefono_destinatario = $request->telefono_destinatario_act;
-            $email_destinatario = $request->email_destinatario_act;
-        } else {            
-            $nombre_destinatario = $request->nombre_destinatario_act2;
-            $nit_cc = $request->nic_cc_act2;
-            $direccion_destinatario = $request->direccion_destinatario_act2;
-            $telefono_destinatario = $request->telefono_destinatario_act2;
-            $email_destinatario = $request->email_destinatario_act2;
-        }
-        
 
-        if (empty($departamento_destinatario_act) && empty($ciudad_destinatario_act)) {
-            $Id_departamento = $departamento_pdf;
-            $Id_municipio = $ciudad_pdf;
-        }elseif(!empty($departamento_destinatario_act) && !empty($ciudad_destinatario_act)){
-            $Id_departamento = $departamento_destinatario_act;
-            $Id_municipio = $ciudad_destinatario_act;
-        }
+        // Si la descarga se hace desde el Icono Descargar (Icono OJO)
+        if($request->bandera_descarga == 'IconoDescarga'){
+            
+            if ($request->afiliado_comunicado_act == "Otro") {
+                $nombre_destinatario = $request->nombre_destinatario_act;
+                $nit_cc = $request->nic_cc_act;
+                $direccion_destinatario = $request->direccion_destinatario_act;
+                $telefono_destinatario = $request->telefono_destinatario_act;
+                $email_destinatario = $request->email_destinatario_act;
+            } else {            
+                $nombre_destinatario = $request->nombre_destinatario_act2;
+                $nit_cc = $request->nic_cc_act2;
+                $direccion_destinatario = $request->direccion_destinatario_act2;
+                $telefono_destinatario = $request->telefono_destinatario_act2;
+                $email_destinatario = $request->email_destinatario_act2;
+            }
 
-        if (empty($nombre_destinatario) && empty($nit_cc) && empty($direccion_destinatario) && 
-            empty($telefono_destinatario) && empty($email_destinatario)) {
-                $Nombre_destinatario = $request->nombre_destinatario_act;
-                $Nit_cc = $request->nic_cc_editar;
-                $Direccion_destinatario = $request->direccion_destinatario_act;
-                $Telefono_destinatario = $request->telefono_destinatario_act;
-                $Email_destinatario = $request->email_destinatario_act;
+            if (empty($departamento_destinatario_act) && empty($ciudad_destinatario_act)) {
+                $Id_departamento = $departamento_pdf;
+                $Id_municipio = $ciudad_pdf;
+            }elseif(!empty($departamento_destinatario_act) && !empty($ciudad_destinatario_act)){
+                $Id_departamento = $departamento_destinatario_act;
+                $Id_municipio = $ciudad_destinatario_act;
+            }
 
-        }elseif(!empty($nombre_destinatario) && !empty($nit_cc) && !empty($direccion_destinatario) && 
-            !empty($telefono_destinatario) && !empty($email_destinatario)){
+            if (empty($nombre_destinatario) && empty($nit_cc) && empty($direccion_destinatario) && 
+                empty($telefono_destinatario) && empty($email_destinatario)) {
+                    $Nombre_destinatario = $request->nombre_destinatario_act;
+                    $Nit_cc = $request->nic_cc_editar;
+                    $Direccion_destinatario = $request->direccion_destinatario_act;
+                    $Telefono_destinatario = $request->telefono_destinatario_act;
+                    $Email_destinatario = $request->email_destinatario_act;
+    
+            }elseif(!empty($nombre_destinatario) && !empty($nit_cc) && !empty($direccion_destinatario) && 
+                !empty($telefono_destinatario) && !empty($email_destinatario)){
                 $Nombre_destinatario = $nombre_destinatario;
                 $Nit_cc = $nit_cc;
                 $Direccion_destinatario = $direccion_destinatario;
                 $Telefono_destinatario = $telefono_destinatario;
                 $Email_destinatario = $email_destinatario;
-         }
+            }
+        }
+        // La descarga se hace desde que se guarda el comunicado
+        elseif($request->bandera_descarga == 'BotonGuardarComunicado'){
+
+            $nombre_destinatario = $request->nombre_destinatario_act2;
+            $nit_cc = $request->nic_cc_act2;
+            $direccion_destinatario = $request->direccion_destinatario_act2;
+            $telefono_destinatario = $request->telefono_destinatario_act2;
+            $email_destinatario = $request->email_destinatario_act2;
+
+            $Id_departamento = $departamento_pdf;
+            $Id_municipio = $ciudad_pdf;
+
+            $Nombre_destinatario = $nombre_destinatario;
+            $Nit_cc = $nit_cc;
+            $Direccion_destinatario = $direccion_destinatario;
+            $Telefono_destinatario = $telefono_destinatario;
+            $Email_destinatario = $email_destinatario;
+
+        }
 
         $departamentos_info_comunicado = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
         ->select('Nombre_departamento')
@@ -2718,10 +2751,18 @@ class CalificacionPCLController extends Controller
         $Nombre_usuario = $nombre_usuario;
         $F_registro = $date;
 
-        // validamos si el checkbox de la firma esta marcado
-        $validarFirma = isset($request->firmarcomunicado_editar) ? 'Firmar Documento' : 'No lleva firma';
+        // Si la descarga se hace desde el Icono Descargar (Icono OJO)
+        if ($request->bandera_descarga == 'IconoDescarga') {            
+            // validamos si el checkbox de la firma esta marcado
+            $validarFirma = isset($request->firmarcomunicado_editar) ? 'Firmar Documento' : 'No lleva firma';
+        } 
+        // La descarga se hace desde que se guarda el comunicado
+        elseif($request->bandera_descarga == 'BotonGuardarComunicado') {
+            $validarFirma = isset($request->firmarcomunicado_editar) ? 'firmar comunicado' : 'No lleva firma';            
+        }       
+
         
-        if ($validarFirma == 'Firmar Documento') {            
+        if ($validarFirma == 'Firmar Documento' || $validarFirma == 'firmar comunicado') {            
             $idcliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente', 'Nombre_cliente')
             ->where('Nombre_cliente', $Cliente)->get();
     
@@ -2751,28 +2792,53 @@ class CalificacionPCLController extends Controller
             /* Creación de las variables faltantes que no están en el formulario */
             $array_datos_fecha_evento = json_decode(json_encode($dato_fecha_evento), true);
             $fecha_evento = $array_datos_fecha_evento[0]["F_evento"];
+            // Si la descarga se hace desde el Icono Descargar (Icono OJO)
+            if ($request->bandera_descarga == 'IconoDescarga') {
+                /* Copias Interesadas */
+                // Validamos si los checkbox esta marcados
+                $final_copia_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
+                $final_copia_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
+                $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
+                $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
+                $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+    
+                $total_copias = array_filter(array(
+                    'copia_afiliado' => $final_copia_afiliado,
+                    'copia_empleador' => $final_copia_empleador,
+                    'copia_eps' => $final_copia_eps,
+                    'copia_afp' => $final_copia_afp,
+                    'copia_arl' => $final_copia_arl,
+                )); 
+    
+                sleep(2);
+                
+                // Conversión de las key en variables con sus respectivos datos
+                extract($total_copias);
+                
+            } 
+            // La descarga se hace desde que se guarda el comunicado
+            elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
 
-            /* Copias Interesadas */
-            // Validamos si los checkbox esta marcados
-            $final_copia_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-            $final_copia_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-            $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-            $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-            $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                $copiaComunicadosPcl = $request->agregar_copia_editar;
+                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
 
-            $total_copias = array_filter(array(
-                'copia_afiliado' => $final_copia_afiliado,
-                'copia_empleador' => $final_copia_empleador,
-                'copia_eps' => $final_copia_eps,
-                'copia_afp' => $final_copia_afp,
-                'copia_arl' => $final_copia_arl,
-            )); 
+                // Inicializar el array con todas las claves con valores vacíos
+                $total_copias = array_fill_keys(array_values($claves_copias), '');
 
-            sleep(2);
-            
-            // Conversión de las key en variables con sus respectivos datos
-            extract($total_copias);
-            
+                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                foreach ($copiaComunicadosPcl as $elemento) {
+                    if (isset($claves_copias[$elemento])) {
+                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                    }
+                }
+
+                // Filtrar las claves que tienen valores vacíos
+                $total_copias = array_filter($total_copias);
+
+                // Convertir las claves en variables con sus respectivos valores
+                extract($total_copias);
+            }
+                        
             $Agregar_copias = [];
             if (isset($copia_afiliado)) {
                 $AfiliadoData = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
@@ -3092,27 +3158,52 @@ class CalificacionPCLController extends Controller
             /* Creación de las variables faltantes que no están en el formulario */
             $array_datos_fecha_evento = json_decode(json_encode($dato_fecha_evento), true);
             $fecha_evento = $array_datos_fecha_evento[0]["F_evento"];
+            // Si la descarga se hace desde el Icono Descargar (Icono OJO)
+            if ($request->bandera_descarga == 'IconoDescarga') {                
+                /* Copias Interesadas */
+                // Validamos si los checkbox esta marcados
+                $final_copia_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
+                $final_copia_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
+                $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
+                $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
+                $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+    
+                $total_copias = array_filter(array(
+                    'copia_afiliado' => $final_copia_afiliado,
+                    'copia_empleador' => $final_copia_empleador,
+                    'copia_eps' => $final_copia_eps,
+                    'copia_afp' => $final_copia_afp,
+                    'copia_arl' => $final_copia_arl,
+                )); 
+    
+                sleep(2);
+                
+                // Conversión de las key en variables con sus respectivos datos
+                extract($total_copias);
 
-            /* Copias Interesadas */
-            // Validamos si los checkbox esta marcados
-            $final_copia_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-            $final_copia_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-            $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-            $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-            $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+            } 
+            // La descarga se hace desde que se guarda el comunicado
+            elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
+                $copiaComunicadosPcl = $request->agregar_copia_editar;
+                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
 
-            $total_copias = array_filter(array(
-                'copia_afiliado' => $final_copia_afiliado,
-                'copia_empleador' => $final_copia_empleador,
-                'copia_eps' => $final_copia_eps,
-                'copia_afp' => $final_copia_afp,
-                'copia_arl' => $final_copia_arl,
-            )); 
+                // Inicializar el array con todas las claves con valores vacíos
+                $total_copias = array_fill_keys(array_values($claves_copias), '');
 
-            sleep(2);
-            
-            // Conversión de las key en variables con sus respectivos datos
-            extract($total_copias);
+                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                foreach ($copiaComunicadosPcl as $elemento) {
+                    if (isset($claves_copias[$elemento])) {
+                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                    }
+                }
+
+                // Filtrar las claves que tienen valores vacíos
+                $total_copias = array_filter($total_copias);
+
+                // Convertir las claves en variables con sus respectivos valores
+                extract($total_copias);
+
+            }
             
             $Agregar_copias = [];
             if (isset($copia_afiliado)) {
@@ -4806,11 +4897,13 @@ class CalificacionPCLController extends Controller
 
         //Traer Información apoderado 
         $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-        ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+        ->select('Nombre_apoderado','Nro_identificacion_apoderado', 'Edad')
         ->where([
             ['ID_evento', '=', $Id_evento_calitec]
         ])
         ->get();
+
+        $edad_afiliado = $datos_apoderado_actual[0]->Edad;        
 
         $datos_demos =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_decreto_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen_firme')
@@ -5401,7 +5494,7 @@ class CalificacionPCLController extends Controller
         'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo',
         'array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 
         'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 
-        'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento','N_siniestro_evento'));
+        'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
