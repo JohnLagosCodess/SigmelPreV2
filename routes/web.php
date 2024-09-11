@@ -275,6 +275,9 @@ Route::post('/cargaDocumentosComplementarios', [AdministradorController::class, 
 // Acción: Eliminar documento complementario
 Route::post('/eliminarDocumentoComplementario', [AdministradorController::class, 'eliminarDocumentoComplementario']);
 
+Route::post('/upload', [AdministradorController::class, 'cargarHistorialClinico']);
+
+
 // Acción: Descargar Documentos
 Route::get('/descargar-archivo/{nombreArchivo}/{id_evento}', [AdministradorController::class, 'DescargarDocumentos']);
 Route::post('/descargar-documentos', [AdministradorController::class, 'descargaMasiva']);

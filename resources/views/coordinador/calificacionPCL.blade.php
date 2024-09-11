@@ -1356,6 +1356,7 @@
     {{-- Modal cargue documentos --}}
     <?php $aperturaModal = 'Edicion'; ?>
     @include('//.administrador.modalcarguedocumentos')
+    @include('//.administrador.modalProgressbar')
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.coordinador.modalCorrespondencia')
     
@@ -1492,5 +1493,6 @@
     
     <script type="text/javascript" src="/js/calificacionpcl.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

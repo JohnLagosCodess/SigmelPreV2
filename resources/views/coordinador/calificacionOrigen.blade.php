@@ -787,7 +787,7 @@
                                     </div>
                                     <div class="col-3">
                                         <label for="empresa_comunicado"><strong>Empleador</strong></label>
-                                        <input class="scalesR" type="radio" name="afiliado_comunicado" id="empresa_comunicado" value="Empresa" style="margin-left: revert;" required>
+                                        <input class="scalesR" type="radio" name="afiliado_comunicado" id="empresa_comunicado" value="Empleador" style="margin-left: revert;" required>
                                     </div>
                                     <div class="col-3">
                                         <label for="Otro"><strong>Otro</strong></label>
@@ -1097,7 +1097,7 @@
                                     </div>
                                     <div class="col-3">
                                         <label for="empresa_comunicado_editar"><strong>Empleador</strong></label>
-                                        <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empresa" style="margin-left: revert;" required>
+                                        <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empleador" style="margin-left: revert;" required>
                                     </div>
                                     <div class="col-3">
                                         <label for="Otro_editar"><strong>Otro</strong></label>
@@ -1331,6 +1331,7 @@
 {{-- Modal cargue documentos --}}
 <?php $aperturaModal = 'Edicion'; ?>
 @include('//.administrador.modalcarguedocumentos')
+@include('//.administrador.modalProgressbar')
 @include('//.coordinador.modalReemplazarArchivos')
 @include('//.coordinador.modalCorrespondencia')
 @stop
@@ -1509,6 +1510,7 @@
          //Elimina sessionStorage
          sessionStorage.removeItem("scrollTop");
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script type="text/javascript" src="/js/calificacionOrigen.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>

@@ -30,6 +30,7 @@ use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_accion_eventos;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use Dompdf\Dompdf;
@@ -40,6 +41,12 @@ use Carbon\Carbon;
 class DeterminacionOrigenATEL extends Controller
 {
     use GenerarRadicados;
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
 
     public function mostrarVistaDtoATEL(Request $request){
         if(!Auth::check()){
@@ -95,23 +102,25 @@ class DeterminacionOrigenATEL extends Controller
         ->get();
 
         // Traer Información laboral
-        $array_datos_info_laboral=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_arls as sla', 'sla.Id_arl', '=', 'sile.Id_arl')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'sile.Id_departamento')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldms', 'sldms.Id_municipios', '=', 'sile.Id_municipio')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_actividad_economicas as slae', 'slae.Id_ActEco', '=', 'sile.Id_actividad_economica')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_clase_riesgos as slcr', 'slcr.Id_Riesgo', '=', 'sile.Id_clase_riesgo')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'sile.Id_codigo_ciuo')
-        ->select('sile.ID_evento', 'sile.Tipo_empleado','sile.Id_arl', 'sla.Nombre_arl', 'sile.Empresa', 'sile.Nit_o_cc', 'sile.Telefono_empresa',
-        'sile.Email', 'sile.Direccion', 'sile.Id_departamento', 'sldm.Nombre_departamento', 'sile.Id_municipio', 
-        'sldms.Nombre_municipio', 'sile.Id_actividad_economica', 'slae.Nombre_actividad', 'sile.Id_clase_riesgo', 
-        'slcr.Nombre_riesgo', 'sile.Persona_contacto', 'sile.Telefono_persona_contacto', 'sile.Id_codigo_ciuo', 'slcc.Nombre_ciuo', 
-        'sile.F_ingreso', 'sile.Cargo', 'sile.Funciones_cargo', 'sile.Antiguedad_empresa', 'sile.Antiguedad_cargo_empresa', 
-        'sile.F_retiro', 'sile.Descripcion')
-        ->where([['sile.ID_evento','=', $Id_evento_dto_atel]])
-        ->orderBy('sile.F_registro', 'desc')
-        ->limit(1)
-        ->get();
+        $array_datos_info_laboral = $this->globalService->retornarInformaciónLaboral($Id_evento_dto_atel);
+        // $array_datos_info_laboral=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+        // ->leftJoin('sigmel_gestiones.sigmel_lista_arls as sla', 'sla.Id_arl', '=', 'sile.Id_arl')
+        // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'sile.Id_departamento')
+        // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldms', 'sldms.Id_municipios', '=', 'sile.Id_municipio')
+        // ->leftJoin('sigmel_gestiones.sigmel_lista_actividad_economicas as slae', 'slae.Id_ActEco', '=', 'sile.Id_actividad_economica')
+        // ->leftJoin('sigmel_gestiones.sigmel_lista_clase_riesgos as slcr', 'slcr.Id_Riesgo', '=', 'sile.Id_clase_riesgo')
+        // ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'sile.Id_codigo_ciuo')
+        // ->select('sile.ID_evento', 'sile.Tipo_empleado','sile.Id_arl', 'sla.Nombre_arl', 'sile.Empresa', 'sile.Nit_o_cc', 'sile.Telefono_empresa',
+        // 'sile.Email', 'sile.Direccion', 'sile.Id_departamento', 'sldm.Nombre_departamento', 'sile.Id_municipio', 
+        // 'sldms.Nombre_municipio', 'sile.Id_actividad_economica', 'slae.Nombre_actividad', 'sile.Id_clase_riesgo', 
+        // 'slcr.Nombre_riesgo', 'sile.Persona_contacto', 'sile.Telefono_persona_contacto', 'sile.Id_codigo_ciuo', 'slcc.Nombre_ciuo', 
+        // 'sile.F_ingreso', 'sile.Cargo', 'sile.Funciones_cargo', 'sile.Antiguedad_empresa', 'sile.Antiguedad_cargo_empresa', 
+        // 'sile.F_retiro', 'sile.Descripcion')
+        // ->where([['sile.ID_evento','=', $Id_evento_dto_atel]])
+        // ->orderBy('sile.F_registro', 'desc')
+        // ->limit(1)
+        // ->get();
+
 
         //Trae Documentos Solicitados del proceso origen solamente
         $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
@@ -827,10 +836,20 @@ class DeterminacionOrigenATEL extends Controller
         sigmel_informacion_accion_eventos::on('sigmel_gestiones')
         ->where('ID_evento', $request->ID_Evento)->update($datos_info_accion_evento);
         
+        //Capturamos el Id del comunicado para poder generarlo en el servidor
+        $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento',$request->ID_Evento],
+            ['Id_Asignacion',$request->Id_Asignacion],
+            ['N_radicado',$request->radicado_dictamen]
+            ])
+        ->value('Id_Comunicado');
+        
         $mensajes = array(
             "parametro" => 'agregar_dto_atel',
+            'Id_Comunicado' => $id_comunicado ? $id_comunicado : null,
             "mensaje" => $mensaje
-        ); 
+        );
 
         return json_decode(json_encode($mensajes, true));
     
@@ -1338,6 +1357,8 @@ class DeterminacionOrigenATEL extends Controller
         if(!Auth::check()){
             return redirect('/');
         }
+        dd($request);
+        // $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_dto_atel));
         
         $user= Auth::user();
         $time = time();
@@ -1400,7 +1421,7 @@ class DeterminacionOrigenATEL extends Controller
 
         // Codigo QR
         $datosQr = $formattedData;
-        $codigoQR = QrCode::size(110)->margin(0.5)->generate($datosQr);      
+        $codigoQR = null;//QrCode::size(110)->margin(0.5)->generate($datosQr);      
 
         /* Creación de las variables faltantes que no están en el formulario */
 
@@ -1548,61 +1569,10 @@ class DeterminacionOrigenATEL extends Controller
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
         ->update($actualizar_nombre_documento);
 
-        /* Inserción del registro de que fue descargado */
-        // Extraemos el id del servicio asociado
-        // $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
-        // ->select('siae.Id_servicio')
-        // ->where([
-        //     ['siae.Id_Asignacion', $Id_Asignacion],
-        //     ['siae.ID_evento', $nro_siniestro],
-        //     ['siae.Id_proceso', $Id_Proceso],
-        // ])->get();
-
-        // $Id_servicio = $dato_id_servicio[0]->Id_servicio;
-
-        // // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
-        // $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
-        // ->select('sice.F_comunicado', 'sice.N_radicado')
-        // ->where([
-        //     ['sice.ID_evento', $nro_siniestro],
-        //     ['sice.Id_Asignacion', $Id_Asignacion],
-        //     ['sice.Id_proceso', $Id_Proceso],
-        //     ['sice.T_documento', 'N/A'],
-        //     ['sice.Ciudad', 'N/A'],
-        // ])
-        // ->get();
-        
-        // $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
-        // $N_radicado_documento = $dato_f_elaboracion_correspondencia[0]->N_radicado;
-
-        // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-        // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-        // ->select('Nombre_documento')
-        // ->where([
-        //     ['Nombre_documento', $nombre_pdf],
-        // ])->get();
-        
-        // if(count($verficar_documento) == 0){
-        //     $info_descarga_documento = [
-        //         'Id_Asignacion' => $Id_Asignacion,
-        //         'Id_proceso' => $Id_Proceso,
-        //         'Id_servicio' => $Id_servicio,
-        //         'ID_evento' => $nro_siniestro,
-        //         'Nombre_documento' => $nombre_pdf,
-        //         'N_radicado_documento' => $N_radicado_documento,
-        //         'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-        //         'F_descarga_documento' => $date,
-        //         'Nombre_usuario' => $nombre_usuario,
-        //     ];
-            
-        //     sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-        // }
-
-        // return $pdf->download($nombre_pdf); 
-
         $datos = [
-            'indicativo' => $indicativo,
-            'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
+            'nombre_documento' => $nombre_pdf
+            // 'indicativo' => $indicativo,
+            // 'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
         ];
         
         return response()->json($datos);

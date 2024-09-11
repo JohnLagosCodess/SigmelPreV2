@@ -626,76 +626,175 @@ $(document).ready(function(){
             }         
         });
     });
+    //Se crea el resumable usando Resumable.js, el cual tiene como fin crear los chunks y enviarlos al endpoint('target') especificado 
+    let resumable = new Resumable({
+        target: '/upload',
+        query:{_token:$("input[name='_token']").val()},
+        maxFiles: 1,
+        fileType: ['pdf','xls','xlsx','doc','docx','jpeg','png','zip'],
+        testChunks: false,
+        headers: {
+            'Accept' : 'application/json'
+        },
+    });
 
     /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
     $("input[id^='listadodocumento_']").click(function(){
         let idobtenido = $('#newId_evento').val();
-        ////console.log(idobtenido);
+        let idDoc = $(this).data('id_doc');
         $("input[id^='EventoID_']").val(idobtenido);
-    });
+        if(idDoc === 4){
+            //Tomamos el input seleccionado
+            let inputFile = $(`#listadodocumento_${idDoc}`)
+            //Le asignamos el metodo de entrada de archivo el cual viene de nuestro input
+            resumable.assignBrowse(inputFile[0]);
+            //Esta función detecta cuando un archivo fue cargado
+            resumable.on('fileAdded', function (file) {
+                $(`#fileName_${idDoc}`).text(file.fileName);
+                resumable.opts.query.EventoID = idobtenido;
+                resumable.opts.query.Id_Documento = idDoc;
+                resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val();
+                resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
+            });
+        }
+    }); 
+    //Mostrar modal de progressBar cargue de documentos
+    function showProgress() {
+        let progress = $('.progress');
+        $('#modalProgressBar').show();
+        progress.find('.progress-bar').css('width', '0%');
+        progress.find('.progress-bar').html('0%');
+        progress.find('.progress-bar').removeClass('bg-success');
+        progress.show();
+    }
+
+    //Actualización progressBar cargue de documentos
+    function updateProgress(value) {
+        let progress = $('.progress');
+        progress.find('.progress-bar').css('width', `${value}%`)
+        progress.find('.progress-bar').html(`${value}%`)
+    }
+
+    //Errores al cargar un documento en Historia clinica completa
+    let errorCargueDocumentosID4 = (error,time=2000) => {
+        if ($('.mostrar_fallo').hasClass('d-none')) {
+            $('.mostrar_fallo').removeClass('d-none');
+            $('.mostrar_fallo').append(`<strong>${error}</strong>`);
+            setTimeout(function(){
+                $('.mostrar_fallo').addClass('d-none');
+                $('.mostrar_fallo').empty();
+            }, time);
+        }
+    }
 
     /* Envío de Información del Documento a Cargar */
     var fechaActual = new Date().toISOString().slice(0,10);
     $("form[id^='formulario_documento_']").submit(function(e){
-
+        
         e.preventDefault();
         var id_reg_doc = $(this).data("id_reg_doc");
         var id_doc = $(this).data("id_doc");
 
         var formData = new FormData($(this)[0]);
         var cambio_estado = $(this).parents()[1]['children'][2]["id"];
-        var input_documento = $(this).parents()[0]['children'][0][4]["id"];
+        var input_documento = $(this).parents()[0]['children'][0][4]["id"];  
+        if(id_doc === 4){
+            //Validación de posibles errores antes de enviar el documento
+            if(resumable.opts.query.EventoID === ""){
+                errorCargueDocumentosID4('Debe diligenciar primero el formulario para poder cargar este documento.')
+            }
+            if(resumable.opts.query.Id_servicio === ""){
+                errorCargueDocumentosID4('Debe seleccionar un servicio para poder cargar este documento.')
+            }
+            let file = resumable.files;
+            if(resumable.files.length > 0){
+                if(file[0].size > 1000000000){
+                    return errorCargueDocumentosID4('El tamaño máximo permitido para cargar en este documento es de 1Gb.');
+                }
+                showProgress();
+                resumable.upload();
+            }
+            else{
+                errorCargueDocumentosID4('Debe cargar este documento para poder guardarlo.');
+            }
 
-        //for (var pair of formData.entries()) {
-        //   //console.log(pair[0]+ ', ' + pair[1]); 
-        //}
+            resumable.on('fileProgress', function (file) { // trigger when file progress update
+                updateProgress(Math.floor(file.progress() * 100));
+            });
 
-        // Enviamos los datos para validar y guardar el docmuento correspondiente
-        $.ajax({
-            url: "/cargarDocumentos",
-            type: "post",
-            dataType: "json",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false  ,
-            success:function(response){
-                // //console.log(response);
-                if (response.parametro == "fallo") {
-                    if (response.otro != undefined) {
-                        $('#listadodocumento_'+response.otro).val('');
-                    }else{
-                        $('#'+input_documento).val('');
-                    }
-                    $('.mostrar_fallo').removeClass('d-none');
-                    $('.mostrar_fallo').append('<strong>'+response.mensaje+'</strong>');
-                    setTimeout(function(){
-                        $('.mostrar_fallo').addClass('d-none');
-                        $('.mostrar_fallo').empty();
-                    }, 6000);
-                }else if (response.parametro == "exito") {
+            resumable.on('fileSuccess', function (file, response) { // trigger when file upload complete
+                response = JSON.parse(response)
+                if (response.parametro == "exito") {
                     $("#fecha_cargue_documento_"+id_reg_doc+"_"+id_doc).val(fechaActual);
-                    if(response.otro != undefined){
-                        $("#estadoDocumentoOtro_"+response.otro).empty();
-                        $("#estadoDocumentoOtro_"+response.otro).append('<strong class="text-success">Cargado</strong>');
-                        $('#listadodocumento_'+response.otro).prop("disabled", true);
-                        $('#CargarDocumento_'+response.otro).prop("disabled", true);
-                        $('#habilitar_modal_otro_doc').prop("disabled", true);
-                    }else{
-                        $("#"+cambio_estado).empty();
-                        $("#"+cambio_estado).append('<strong class="text-success">Cargado</strong>');
-                    }
+                    $("#"+cambio_estado).empty();
+                    $("#"+cambio_estado).append('<strong class="text-success">Cargado</strong>');
                     $('.mostrar_exito').removeClass('d-none');
                     $('.mostrar_exito').append('<strong>'+response.mensaje+'</strong>');
                     setTimeout(function(){
                         $('.mostrar_exito').addClass('d-none');
                         $('.mostrar_exito').empty();
                     }, 6000);
-                }else{}
-                
+                }
+                setTimeout(() => {
+                    $('#modalProgressBar').hide();
+                }, 500);
+            });
 
-            }         
-        });
+            resumable.on('fileError', function (file, response) { // trigger when there is any error
+                alert('file uploading error.')
+            });
+        }
+        else{
+            //for (var pair of formData.entries()) {
+            //   //console.log(pair[0]+ ', ' + pair[1]); 
+            //}
+            // Enviamos los datos para validar y guardar el docmuento correspondiente
+            $.ajax({
+                url: "/cargarDocumentos",
+                type: "post",
+                dataType: "json",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false  ,
+                success:function(response){
+                    // //console.log(response);
+                    if (response.parametro == "fallo") {
+                        if (response.otro != undefined) {
+                            $('#listadodocumento_'+response.otro).val('');
+                        }else{
+                            $('#'+input_documento).val('');
+                        }
+                        $('.mostrar_fallo').removeClass('d-none');
+                        $('.mostrar_fallo').append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(function(){
+                            $('.mostrar_fallo').addClass('d-none');
+                            $('.mostrar_fallo').empty();
+                        }, 6000);
+                    }else if (response.parametro == "exito") {
+                        $("#fecha_cargue_documento_"+id_reg_doc+"_"+id_doc).val(fechaActual);
+                        if(response.otro != undefined){
+                            $("#estadoDocumentoOtro_"+response.otro).empty();
+                            $("#estadoDocumentoOtro_"+response.otro).append('<strong class="text-success">Cargado</strong>');
+                            $('#listadodocumento_'+response.otro).prop("disabled", true);
+                            $('#CargarDocumento_'+response.otro).prop("disabled", true);
+                            $('#habilitar_modal_otro_doc').prop("disabled", true);
+                        }else{
+                            $("#"+cambio_estado).empty();
+                            $("#"+cambio_estado).append('<strong class="text-success">Cargado</strong>');
+                        }
+                        $('.mostrar_exito').removeClass('d-none');
+                        $('.mostrar_exito').append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(function(){
+                            $('.mostrar_exito').addClass('d-none');
+                            $('.mostrar_exito').empty();
+                        }, 6000);
+                    }else{}
+                    
+
+                }         
+            });
+        } 
     }); 
 
     var accion_realizarinput = $('#bd_id_accion').val();
@@ -1299,7 +1398,7 @@ $(document).ready(function(){
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
                     $("#reviso").prop("selectedIndex", 1);
-                }else if(data.destinatarioPrincipal == 'Empresa'){      
+                }else if(data.destinatarioPrincipal == 'Empleador'){      
                     ////console.log(data.array_datos_destinatarios);
                     var Nombre_afiliado = $('#nombre_destinatario');
                     Nombre_afiliado.val(data.array_datos_destinatarios[0].Nombre_empresa);
@@ -2952,7 +3051,7 @@ $(document).ready(function(){
                     document.querySelector("#email_destinatario_editar").disabled = true;
                     document.querySelector("#departamento_destinatario_editar").disabled = true;
                     document.querySelector("#ciudad_destinatario_editar").disabled = true;
-                }else if(destino == 'Empresa'){
+                }else if(destino == 'Empleador'){
                     $('#empresa_comunicado_editar').prop('checked', true);
                     document.querySelector("#nombre_destinatario_editar").disabled = true;
                     document.querySelector("#nic_cc_editar").disabled = true;
@@ -3158,7 +3257,7 @@ $(document).ready(function(){
                         // for (let i = 0; i < revisolider.length; i++) {
                         //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                         // }
-                    }else if(data.destinatarioPrincipal == 'Empresa'){
+                    }else if(data.destinatarioPrincipal == 'Empleador'){
                         ////console.log(data.array_datos_destinatarios);
                         var Nombre_afiliado = $('#nombre_destinatario_editar');
                         Nombre_afiliado.val(data.array_datos_destinatarios[0].Nombre_empresa);
@@ -3817,29 +3916,12 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     let Destinatario = data_comunicado['Destinatario'];
     let Copias = data_comunicado['Agregar_copia'];
     let Correspondencia = data_comunicado['Correspondencia'];
-    console.log('antes',data_comunicado['Estado_correspondencia']);
     data_comunicado['Estado_correspondencia'] = data_comunicado['Estado_correspondencia'] == null ||  data_comunicado['Estado_correspondencia'] == '1' ? '1' : '0';
-    console.log('despues',data_comunicado['Estado_correspondencia']);
     if(Copias){
         Copias = Copias.split(',').map(copia => copia.trim().toLowerCase());
     }
     // La copia del empleador y el destinanario empleador tienen valores distintos, por ende, se realiza la siguiente validación:
-    // este dato finalmente irá en donde se construye los elementos a subrayados
-    if (Copias != null && Copias.includes('empleador')) {
-        var dato_empleador = 'empleador';
-        var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
-        if(Destinatario.toLowerCase() === 'empresa'){
-            dato_empleador_form = Destinatario;
-            dato_empleador = Destinatario.toLowerCase();
-        }
-    }else{
-        var dato_empleador = 'empresa';
-        var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
-        if(Destinatario.toLowerCase() === 'empleador'){
-            dato_empleador_form = Destinatario;
-            dato_empleador = Destinatario.toLowerCase();
-        }
-    }
+    // este dato finalmente irá en donde se construye los elementos a subrayado
     if(Correspondencia){
         Correspondencia = Correspondencia.split(',').map(correspondencia => correspondencia.trim().toLowerCase());
     }
@@ -3857,12 +3939,12 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
                 style="${getUnderlineStyle('afiliado')}">Afiliado</a>
-            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="${dato_empleador_form}" \
+            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Empleador" \
                 data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle(dato_empleador)}">Empleador</a>
+                style="${getUnderlineStyle('empleador')}">Empleador</a>
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps" \
                 data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \

@@ -1286,6 +1286,7 @@
         {{-- MODAL PARA AGREGAR DOCUMENTOS INFORMACION PERICIAL --}}
         <?php $aperturaModal = 'Edicion'; ?>
         {{-- @include('administrador.modalcarguedocumentos') --}}
+        @include('//.administrador.modalProgressbar')
         <?php 
         /* echo'<pre>';
         print_r($arraylistado_documentos) ;
@@ -1309,6 +1310,7 @@
         });
     </script> --}}
     <script src="/js/selectores_gestion_edicion.js"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
 
     <script type="text/javascript">
         // var conteo = 0;

@@ -1928,12 +1928,14 @@
     </div>
     <?php $aperturaModal = 'Edicion'; ?>
     @include('//.administrador.modalcarguedocumentos')
+    @include('//.administrador.modalProgressbar')
     @include('//.coordinador.modalCrearExpediente')
     @include('//.coordinador.modalCorrespondencia')
     @include('//.coordinador.modalReemplazarArchivos')
 @stop
 @section('js')
     <script type="text/javascript" src="/js/calificacionJuntas.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
     <script>
         //funcion para habilitar el historial de acciones
