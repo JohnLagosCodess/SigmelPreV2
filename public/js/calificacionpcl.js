@@ -1534,19 +1534,8 @@ $(document).ready(function(){
                     // Crear un Blob a partir del array de bytes
                     var blob = new Blob([bytes], { type: 'application/pdf' });
 
-                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-
-                    var indicativo = response.indicativo;
-
-                    if(TipoDescarga != 'Otro_Documento'){
-                        // var nombre_pdf = "PCL_SOL_DOC_"+Id_Asignacion+"_"+num_identificacion+".pdf";
-                        var nombre_pdf = response.nombre_pdf;
-                    }
-                    else{
-                        // var nombre_pdf = "Comunicado_"+Nradicado+".pdf";
-                        var nombre_pdf = "Comunicado_"+Nradicado+"_"+indicativo+".pdf";
-                    }
-                    
+                    var nombre_pdf = response.nombre_pdf;
+                                        
                     // Crear un enlace de descarga similar al ejemplo anterior
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
@@ -3712,6 +3701,8 @@ $(document).ready(function(){
     $('#form_generarComunicadoPcl').submit(function (e) {
         e.preventDefault();  
         $("#Generar_comunicados").prop('disabled', true);
+        $("#Generar_comunicados").addClass('d-none');
+        $("#mostrar_barra_creacion_comunicado").removeClass('d-none');
         var ciudad = $('#ciudad').val();
         var Id_evento = $('#Id_evento').val();
         var Id_asignacion = $('#Id_asignacion').val();
@@ -3883,18 +3874,8 @@ $(document).ready(function(){
                             // Crear un Blob a partir del array de bytes
                             var blob = new Blob([bytes], { type: 'application/pdf' });
     
-                            // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+                            var nombre_pdf = response.nombre_pdf;
     
-                            var indicativo = response.indicativo;
-    
-                            if(tipo_descarga != 'Otro_Documento'){
-                                // var nombre_pdf = "PCL_SOL_DOC_"+Id_Asignacion+"_"+num_identificacion+".pdf";
-                                var nombre_pdf = response.nombre_pdf;
-                            }
-                            else{
-                                // var nombre_pdf = "Comunicado_"+Nradicado+".pdf";
-                                var nombre_pdf = "Comunicado_"+Nradicado+"_"+indicativo+".pdf";
-                            }
                             // console.log(nombre_pdf);                        
                             // Crear un enlace de descarga similar al ejemplo anterior
                             var link = document.createElement('a');
@@ -3909,11 +3890,13 @@ $(document).ready(function(){
                             document.body.removeChild(link);
 
                             if (respuesta.parametro == 'agregar_comunicado') {
+                                $("#mostrar_barra_creacion_comunicado").addClass('d-none');
                                 $('.alerta_comunicado').removeClass('d-none');
                                 $('.alerta_comunicado').append('<strong>'+respuesta.mensaje+'</strong>');
                                 setTimeout(function(){
                                     $('.alerta_comunicado').addClass('d-none');
                                     $('.alerta_comunicado').empty();
+                                    $("#Generar_comunicados").removeClass('d-none');
                                     localStorage.setItem("#Generar_comunicados", true);
                                     location.reload();
                                 }, 3000);
@@ -3927,11 +3910,13 @@ $(document).ready(function(){
                 } else {
 
                     if (respuesta.parametro == 'agregar_comunicado') {
+                        $("#mostrar_barra_creacion_comunicado").addClass('d-none');
                         $('.alerta_comunicado').removeClass('d-none');
                         $('.alerta_comunicado').append('<strong>'+respuesta.mensaje+'</strong>');
                         setTimeout(function(){
                             $('.alerta_comunicado').addClass('d-none');
                             $('.alerta_comunicado').empty();
+                            $("#Generar_comunicados").removeClass('d-none');
                             localStorage.setItem("#Generar_comunicados", true);
                             location.reload();
                         }, 3000);

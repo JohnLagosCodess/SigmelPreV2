@@ -1621,7 +1621,9 @@ $(document).ready(function(){
     // llenado del formulario para la captura de la modal de Generar Comunicado
     $('#form_generarComunicadoOrigen').submit(function (e) {
         e.preventDefault();  
-        $("#Generar_comunicados").prop('disabled', true);        
+        $("#Generar_comunicados").prop('disabled', true);   
+        $("#Generar_comunicados").addClass('d-none');
+        $("#mostrar_barra_creacion_comunicado").removeClass('d-none');     
         var ciudad = $('#ciudad').val();
         var Id_evento = $('#Id_evento').val();
         var Id_asignacion = $('#Id_asignacion').val();
@@ -1809,11 +1811,13 @@ $(document).ready(function(){
                             document.body.removeChild(link);
 
                             if (respuesta.parametro == 'agregar_comunicado') {
+                                $("#mostrar_barra_creacion_comunicado").addClass('d-none');
                                 $('.alerta_comunicado').removeClass('d-none');
                                 $('.alerta_comunicado').append('<strong>'+respuesta.mensaje+'</strong>');
                                 setTimeout(function(){
                                     $('.alerta_comunicado').addClass('d-none');
                                     $('.alerta_comunicado').empty();
+                                    $("#Generar_comunicados").removeClass('d-none');
                                     localStorage.setItem("#Generar_comunicados", true);
                                     location.reload();
                                 }, 3000);
@@ -1827,11 +1831,13 @@ $(document).ready(function(){
                 } else {
                     
                     if (respuesta.parametro == 'agregar_comunicado') {
+                        $("#mostrar_barra_creacion_comunicado").addClass('d-none');
                         $('.alerta_comunicado').removeClass('d-none');
                         $('.alerta_comunicado').append('<strong>'+respuesta.mensaje+'</strong>');
                         setTimeout(function(){
                             $('.alerta_comunicado').addClass('d-none');
                             $('.alerta_comunicado').empty();
+                            $("#Generar_comunicados").removeClass('d-none');
                             localStorage.setItem("#Generar_comunicados", true);
                             location.reload();
                         }, 3000);
@@ -1977,7 +1983,7 @@ $(document).ready(function(){
             var comunicadoNradico = '';
             /** @var select2 Config. del select2 */
             let select2 = [];
-            console.log('ID ROL ',idRol);
+            // console.log('ID ROL ',idRol);
             for (let i = 0; i < data.hitorialAgregarComunicado.length; i++) {
                 let estado_correspondencia = {}
                 let estado_notificacion = data.hitorialAgregarComunicado[i].Estado_Notificacion;

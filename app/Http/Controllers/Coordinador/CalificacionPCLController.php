@@ -3512,27 +3512,51 @@ class CalificacionPCLController extends Controller
             /* Creación de las variables faltantes que no están en el formulario */
             $array_datos_fecha_evento = json_decode(json_encode($dato_fecha_evento), true);
             $fecha_evento = $array_datos_fecha_evento[0]["F_evento"];
+            // Si la descarga se hace desde el Icono Descargar (Icono OJO)
+            if ($request->bandera_descarga == 'IconoDescarga') {
+                /* Copias Interesadas */
+                // Validamos si los checkbox esta marcados
+                $final_copia_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
+                $final_copia_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
+                $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
+                $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
+                $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+    
+                $total_copias = array_filter(array(
+                    'copia_afiliado' => $final_copia_afiliado,
+                    'copia_empleador' => $final_copia_empleador,
+                    'copia_eps' => $final_copia_eps,
+                    'copia_afp' => $final_copia_afp,
+                    'copia_arl' => $final_copia_arl,
+                )); 
+    
+                sleep(2);
+                
+                // Conversión de las key en variables con sus respectivos datos
+                extract($total_copias);                
 
-            /* Copias Interesadas */
-            // Validamos si los checkbox esta marcados
-            $final_copia_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-            $final_copia_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-            $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-            $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-            $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+            } 
+            // La descarga se hace desde que se guarda el comunicado
+            elseif($request->bandera_descarga == 'BotonGuardarComunicado') {
+                $copiaComunicadosPcl = $request->agregar_copia_editar;
+                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
 
-            $total_copias = array_filter(array(
-                'copia_afiliado' => $final_copia_afiliado,
-                'copia_empleador' => $final_copia_empleador,
-                'copia_eps' => $final_copia_eps,
-                'copia_afp' => $final_copia_afp,
-                'copia_arl' => $final_copia_arl,
-            )); 
+                // Inicializar el array con todas las claves con valores vacíos
+                $total_copias = array_fill_keys(array_values($claves_copias), '');
 
-            sleep(2);
-            
-            // Conversión de las key en variables con sus respectivos datos
-            extract($total_copias);
+                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                foreach ($copiaComunicadosPcl as $elemento) {
+                    if (isset($claves_copias[$elemento])) {
+                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                    }
+                }
+
+                // Filtrar las claves que tienen valores vacíos
+                $total_copias = array_filter($total_copias);
+
+                // Convertir las claves en variables con sus respectivos valores
+                extract($total_copias);
+            }
             
             $Agregar_copias = [];
             if (isset($copia_afiliado)) {
@@ -3837,27 +3861,51 @@ class CalificacionPCLController extends Controller
             /* Creación de las variables faltantes que no están en el formulario */
             $array_datos_fecha_evento = json_decode(json_encode($dato_fecha_evento), true);
             $fecha_evento = $array_datos_fecha_evento[0]["F_evento"];
+            // Si la descarga se hace desde el Icono Descargar (Icono OJO)
+            if ($request->bandera_descarga == 'IconoDescarga') {
+                /* Copias Interesadas */
+                // Validamos si los checkbox esta marcados
+                $final_copia_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
+                $final_copia_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
+                $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
+                $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
+                $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+    
+                $total_copias = array_filter(array(
+                    'copia_afiliado' => $final_copia_afiliado,
+                    'copia_empleador' => $final_copia_empleador,
+                    'copia_eps' => $final_copia_eps,
+                    'copia_afp' => $final_copia_afp,
+                    'copia_arl' => $final_copia_arl,
+                )); 
+    
+                sleep(2);
+                
+                // Conversión de las key en variables con sus respectivos datos
+                extract($total_copias);
+                
+            } 
+            // La descarga se hace desde que se guarda el comunicado
+            elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
+                $copiaComunicadosPcl = $request->agregar_copia_editar;
+                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
 
-            /* Copias Interesadas */
-            // Validamos si los checkbox esta marcados
-            $final_copia_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-            $final_copia_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-            $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-            $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-            $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                // Inicializar el array con todas las claves con valores vacíos
+                $total_copias = array_fill_keys(array_values($claves_copias), '');
 
-            $total_copias = array_filter(array(
-                'copia_afiliado' => $final_copia_afiliado,
-                'copia_empleador' => $final_copia_empleador,
-                'copia_eps' => $final_copia_eps,
-                'copia_afp' => $final_copia_afp,
-                'copia_arl' => $final_copia_arl,
-            )); 
+                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                foreach ($copiaComunicadosPcl as $elemento) {
+                    if (isset($claves_copias[$elemento])) {
+                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                    }
+                }
 
-            sleep(2);
-            
-            // Conversión de las key en variables con sus respectivos datos
-            extract($total_copias);
+                // Filtrar las claves que tienen valores vacíos
+                $total_copias = array_filter($total_copias);
+
+                // Convertir las claves en variables con sus respectivos valores
+                extract($total_copias);
+            }
 
             $email_afiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
             ->select('Email')
@@ -4170,27 +4218,51 @@ class CalificacionPCLController extends Controller
             /* Creación de las variables faltantes que no están en el formulario */
             $array_datos_fecha_evento = json_decode(json_encode($dato_fecha_evento), true);
             $fecha_evento = $array_datos_fecha_evento[0]["F_evento"];
+            // Si la descarga se hace desde el Icono Descargar (Icono OJO)
+            if ($request->bandera_descarga == 'IconoDescarga') {
+                /* Copias Interesadas */
+                // Validamos si los checkbox esta marcados
+                $final_copia_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
+                $final_copia_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
+                $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
+                $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
+                $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+    
+                $total_copias = array_filter(array(
+                    'copia_afiliado' => $final_copia_afiliado,
+                    'copia_empleador' => $final_copia_empleador,
+                    'copia_eps' => $final_copia_eps,
+                    'copia_afp' => $final_copia_afp,
+                    'copia_arl' => $final_copia_arl,
+                )); 
+    
+                sleep(2);
+                
+                // Conversión de las key en variables con sus respectivos datos
+                extract($total_copias);
+                
+            } 
+            // La descarga se hace desde que se guarda el comunicado
+            elseif ($request->bandera_descarga == 'BotonGuardarComunicado'){
+                $copiaComunicadosPcl = $request->agregar_copia_editar;
+                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
 
-            /* Copias Interesadas */
-            // Validamos si los checkbox esta marcados
-            $final_copia_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-            $final_copia_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-            $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-            $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-            $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                // Inicializar el array con todas las claves con valores vacíos
+                $total_copias = array_fill_keys(array_values($claves_copias), '');
 
-            $total_copias = array_filter(array(
-                'copia_afiliado' => $final_copia_afiliado,
-                'copia_empleador' => $final_copia_empleador,
-                'copia_eps' => $final_copia_eps,
-                'copia_afp' => $final_copia_afp,
-                'copia_arl' => $final_copia_arl,
-            )); 
+                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                foreach ($copiaComunicadosPcl as $elemento) {
+                    if (isset($claves_copias[$elemento])) {
+                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                    }
+                }
 
-            sleep(2);
-            
-            // Conversión de las key en variables con sus respectivos datos
-            extract($total_copias);
+                // Filtrar las claves que tienen valores vacíos
+                $total_copias = array_filter($total_copias);
+
+                // Convertir las claves en variables con sus respectivos valores
+                extract($total_copias);
+            }
             
             $Agregar_copias = [];
             if (isset($copia_afiliado)) {              
@@ -4545,29 +4617,55 @@ class CalificacionPCLController extends Controller
 
         }
         else{
-            // Validamos si los checkbox esta marcados
-            $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-            $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-            $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-            $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-            $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-            $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-            $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
-            $total_copias = array_filter(array(
-                'edit_copia_afiliado' => $edit_copias_afiliado,
-                'edit_copia_empleador' => $edit_copias_empleador,
-                'edit_copia_eps' => $edit_copias_eps,
-                'edit_copia_afp' => $edit_copias_afp,
-                'edit_copia_arl' => $edit_copias_arl,
-                'edit_copia_jrci' => $edit_copias_jrci,
-                'edit_copia_jnci' => $edit_copias_jnci,
-            ));   
-            sleep(2);
-            // Filtramos las llaves del array
-            extract($total_copias);
+            // Si la descarga se hace desde el Icono Descargar (Icono OJO)
+            if ($request->bandera_descarga == 'IconoDescarga') {
+                // Validamos si los checkbox esta marcados
+                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
+                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
+                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
+                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
+                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
+                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $total_copias = array_filter(array(
+                    'edit_copia_afiliado' => $edit_copias_afiliado,
+                    'edit_copia_empleador' => $edit_copias_empleador,
+                    'edit_copia_eps' => $edit_copias_eps,
+                    'edit_copia_afp' => $edit_copias_afp,
+                    'edit_copia_arl' => $edit_copias_arl,
+                    'edit_copia_jrci' => $edit_copias_jrci,
+                    'edit_copia_jnci' => $edit_copias_jnci,
+                ));   
+                sleep(2);
+                // Filtramos las llaves del array
+                extract($total_copias);
+                
+            } 
+            // La descarga se hace desde que se guarda el comunicado
+            elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
+                $copiaComunicadosPcl = $request->agregar_copia_editar;
+                $claves_copias = ['Afiliado' => 'edit_copia_afiliado', 'Empleador' => 'edit_copia_empleador', 'EPS' => 'edit_copia_eps', 'AFP' => 'edit_copia_afp', 'ARL' => 'edit_copia_arl', 'JRCI' => 'edit_copia_jrci', 'JNCI' => 'edit_copia_jnci'];
+
+                // Inicializar el array con todas las claves con valores vacíos
+                $total_copias = array_fill_keys(array_values($claves_copias), '');
+
+                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                foreach ($copiaComunicadosPcl as $elemento) {
+                    if (isset($claves_copias[$elemento])) {
+                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                    }
+                }
+
+                // Filtrar las claves que tienen valores vacíos
+                $total_copias = array_filter($total_copias);
+
+                // Convertir las claves en variables con sus respectivos valores
+                extract($total_copias);
+            }
+            
             // Creamos array para empezar a llenarlos con las copias
             $Agregar_copias = [];
-            if (isset($copia_afiliado)) {
+            if (isset($edit_copia_afiliado)) {
                 $AfiliadoData = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
@@ -4760,7 +4858,7 @@ class CalificacionPCLController extends Controller
             $pdf->loadView('/coordinador/comunicadoPdf', $data);
 
             // $fileName = 'Comunicado_'.$Id_comunicado.'_'.$N_radicado.'.pdf';
-            $fileName = 'Comunicado_'.$Id_comunicado.'_'.$N_radicado.'_'.$indicativo.'.pdf';
+            $fileName = 'Comunicado_'.$N_radicado.'_'.$Id_comunicado.'_'.$indicativo.'.pdf';
 
             /* Inserción del registro de que fue descargado */
             // // Extraemos el id del servicio asociado
