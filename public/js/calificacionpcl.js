@@ -3860,34 +3860,34 @@ $(document).ready(function(){
                             // console.log('entro a descargar documento');
                             
                             // Obtener el contenido codificado en base64 del PDF desde la respuesta
-                            var base64Pdf = response.pdf;
+                            // var base64Pdf = response.pdf;
     
-                            // Decodificar base64 en un array de bytes
-                            var binaryString = atob(base64Pdf);
-                            var len = binaryString.length;
-                            var bytes = new Uint8Array(len);
+                            // // Decodificar base64 en un array de bytes
+                            // var binaryString = atob(base64Pdf);
+                            // var len = binaryString.length;
+                            // var bytes = new Uint8Array(len);
         
-                            for (var i = 0; i < len; i++) {
-                                bytes[i] = binaryString.charCodeAt(i);
-                            }
+                            // for (var i = 0; i < len; i++) {
+                            //     bytes[i] = binaryString.charCodeAt(i);
+                            // }
         
-                            // Crear un Blob a partir del array de bytes
-                            var blob = new Blob([bytes], { type: 'application/pdf' });
+                            // // Crear un Blob a partir del array de bytes
+                            // var blob = new Blob([bytes], { type: 'application/pdf' });
     
-                            var nombre_pdf = response.nombre_pdf;
+                            // var nombre_pdf = response.nombre_pdf;
     
-                            // console.log(nombre_pdf);                        
-                            // Crear un enlace de descarga similar al ejemplo anterior
-                            var link = document.createElement('a');
-                            link.href = window.URL.createObjectURL(blob);
-                            link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
+                            // // console.log(nombre_pdf);                        
+                            // // Crear un enlace de descarga similar al ejemplo anterior
+                            // var link = document.createElement('a');
+                            // link.href = window.URL.createObjectURL(blob);
+                            // link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
                     
-                            // Adjuntar el enlace al documento y activar el evento de clic
-                            document.body.appendChild(link);
-                            link.click();
+                            // // Adjuntar el enlace al documento y activar el evento de clic
+                            // document.body.appendChild(link);
+                            // link.click();
                     
-                            // Eliminar el enlace del documento
-                            document.body.removeChild(link);
+                            // // Eliminar el enlace del documento
+                            // document.body.removeChild(link);
 
                             if (respuesta.parametro == 'agregar_comunicado') {
                                 $("#mostrar_barra_creacion_comunicado").addClass('d-none');
