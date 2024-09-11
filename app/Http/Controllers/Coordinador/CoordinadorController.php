@@ -524,8 +524,7 @@ class CoordinadorController extends Controller
                             ['Id_profesional', '=', $newId_user]
                         ])->where(function($query){
                             $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
-                        })
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        })->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                         ->get(); 
 
                     }else{
@@ -534,8 +533,9 @@ class CoordinadorController extends Controller
                         ->where([
                             ['Nombre_proceso_actual', '=', 'Calificación PCL'],
                             ['Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias],
-                        ])
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ])->where(function($query){
+                            $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
+                        })->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                         ->get(); 
                     }
                     
@@ -689,16 +689,16 @@ class CoordinadorController extends Controller
                             ['Id_profesional', '=', $newId_user]
                         ])->where(function($query){
                             $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
-                        })
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        })->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                         ->get(); 
 
                     }else{
                         $bandejaPCL = cndatos_bandeja_eventos::on('sigmel_gestiones')
                         ->where([
                             ['Nombre_proceso_actual', '=', 'Calificación PCL'],
-                        ])
-                        ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                        ])->where(function($query){
+                            $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
+                        })->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                         ->get(); 
                     }
                     // if (count($bandejaPCL)>0) {
@@ -1166,7 +1166,7 @@ class CoordinadorController extends Controller
                         'Nombre_profesional' => $nombre_profesional,
                         'Descripcion_bandeja' => $Descripcion_bandeja,
                         'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
-                        'N_de_orden' => $N_orden_evento,
+                        //'N_de_orden' => $N_orden_evento,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
@@ -1219,7 +1219,7 @@ class CoordinadorController extends Controller
                         'Id_proceso_anterior' => $array_id_procesos[$m],
                         'Id_servicio_anterior' => $array_id_servicios[$m],
                         'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
-                        'N_de_orden' => $N_orden_evento,
+                        //'N_de_orden' => $N_orden_evento,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
@@ -1275,7 +1275,7 @@ class CoordinadorController extends Controller
                         'Nombre_profesional' => $nombre_profesional,
                         'Descripcion_bandeja' => $Descripcion_bandeja,
                         'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
-                        'N_de_orden' => $N_orden_evento,
+                        //'N_de_orden' => $N_orden_evento,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
@@ -1337,7 +1337,7 @@ class CoordinadorController extends Controller
 
                 //Habilita edicion del proceso de correspodencia para el proceso de notificacion.
                 if(isset($estado_acorde_a_parametrica[0]->enviarA)){
-                    BandejaNotifiController::finalizarNotificacion($info_array_asignacion[0]['ID_evento'], $info_array_asignacion[0]['Id_Asignacion'],false);
+                    BandejaNotifiController::finalizarNotificacion($info_array_asignacion[0]['ID_evento'], $info_array_asignacion[0]['Id_Asignacion'],false.true);
                 }
             }
 

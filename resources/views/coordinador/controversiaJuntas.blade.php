@@ -1662,6 +1662,7 @@
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_f_estructuracion_jrci">Fecha Estructuracion JRCI</button>
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_decreto_calificador_jrci">Decreto Calificador JRCI</button>
                                                 <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci">Sustentación Concepto JRCI (Revisión ante concepto de la Junta Regional)</button>
+                                                <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_tipos_contro">Tipo Controversia Primera Calificación</button>
                                                 <?php if(count($array_comunicados_correspondencia) > 0): ?>
                                                     <button class="btn btn-sm btn-secondary mb-2" id="btn_insertar_sustentacion_jrci1">Sustentación Concepto JRCI (Revisión ante recurso de reposición de la Junta Regional)</button>
                                                 <?php endif ?>

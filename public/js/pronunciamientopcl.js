@@ -1133,7 +1133,7 @@ $(document).ready(function(){
             }
         });
         var sustenta_cali = $('#sustenta_cali').val();
-        sustenta_cali = sustenta_cali ? sustenta_cali.replace(/"/g, "'") : '';
+        sustenta_cali = sustenta_cali ? sustenta_cali.replace(/"/g, "'") : 'N/A';
 
         var formData = new FormData($('form')[0]);
         formData.append('datos_finales_diagnosticos_moticalifi', JSON.stringify(datos_finales_diagnosticos_moticalifi));

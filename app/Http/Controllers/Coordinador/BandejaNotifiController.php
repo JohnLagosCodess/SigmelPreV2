@@ -132,14 +132,14 @@ class BandejaNotifiController extends Controller
                     ])->where(function($query){
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'Si');
                     })
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 }else{
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where('Dias_transcurridos_desde_el_evento', '>=', $consultar_g_dias)->where(function($query){
                         $query->where('Enviar_bd_Notificacion', '=', 'Si');
                     })
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 }
 
@@ -163,13 +163,13 @@ class BandejaNotifiController extends Controller
                     ->where('Id_profesional', '=', $newId_user)->where(function($query){
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'Si');
                     })
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 
                 }else{
                     $bandejaNotifiFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
                     ->where('Enviar_bd_Notificacion', '=', 'Si')
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 }
 
@@ -281,7 +281,7 @@ class BandejaNotifiController extends Controller
         }
     }
 
-    public static function finalizarNotificacion(string $evento,int $id_asignacion,bool $estado){
+    public static function finalizarNotificacion(string $evento,int $id_asignacion,bool $estado, bool $agregar_n_orden = false){
         if(!$estado){
             sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')->where([
                 ['ID_evento',$evento],
@@ -293,6 +293,33 @@ class BandejaNotifiController extends Controller
                 ['Id_Asignacion',$id_asignacion]
             ])->update(['Estado_correspondencia' => '0']); //desactiva la correspondencia para ediccion
         }
+
+        if($agregar_n_orden){
+            self::actualizar_n_evento($evento,$id_asignacion);
+        }
+    }
+
+    public static function actualizar_n_evento(string $evento,$id_asignacion){
+        //consecutivo actual
+        $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
+        ->select('Numero_orden')
+        ->get();
+
+        //Consecutivo del evento
+        $n_ordenNotificacion = DB::table(getDatabaseName('sigmel_gestiones') . "sigmel_informacion_asignacion_eventos")
+        ->select('N_de_orden')->where([
+            ['ID_evento',$evento],
+            ['Id_Asignacion',$id_asignacion]
+        ])->get()->first();
+
+        //Asignar un consecutivo en caso de no tenga uno
+        $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? $n_orden[0]->Numero_orden;
+
+        DB::table(getDatabaseName('sigmel_gestiones') . "sigmel_informacion_asignacion_eventos")
+        ->where([
+            ['ID_evento',$evento],
+            ['Id_Asignacion',$id_asignacion]
+        ])->update(['N_de_orden' => $N_orden_evento]);
     }
 
     public static function evento_en_notificaciones(string $id_evento,int $id_asignacion,$comunicado = null){

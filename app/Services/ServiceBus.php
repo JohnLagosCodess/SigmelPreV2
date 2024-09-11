@@ -1,29 +1,50 @@
 <?php
 namespace App\Services;
 
-use App\Contracts\InterfazServicio;
+use App\Contracts\BaseServicio;
 
 class ServiceBus
 {
     protected $servicios = [];
+    
+    public $format;
 
-    public function despachar(string $NombreServicio){
+    public $agregarcomandos;
+
+    private $servicio;
+
+    public function registrarServicio(string $NombreServicio, $interfaz){
+        $this->servicios[$NombreServicio] = $interfaz;
+
+        $this->servicio = app($interfaz);
+
+        if ($this->servicio instanceof BaseServicio) {
+           $this->agregarcomandos[$NombreServicio] = $this->servicio->getParams();
+        }
+
+    }
+
+    public function despachar(string $NombreServicio,$param = []){
 
         if(!array_key_exists($NombreServicio,$this->servicios)){
             throw new \Exception("El serviciio $NombreServicio no se encuentra registrado");
         }
 
-        $servicio = app($this->servicios[$NombreServicio]);
+        $this->servicio = app($this->servicios[$NombreServicio]);
 
-        if(!$servicio instanceof InterfazServicio){
+        if(!$this->servicio instanceof BaseServicio){
             throw new \Exception("El servicio $NombreServicio no ha implementado la interfaz de servicios");
         }
 
-        return $servicio->ejecutar();
+        return $this->servicio->ejecutar($param);
     }
 
-    public function registrarServicio(string $NombreServicio, $interfaz){
-        $this->servicios[$NombreServicio] = $interfaz;
+    public function agregarParametros(string $nombreServicio){
+        return $this->agregarcomandos[$nombreServicio] ?? [];
+    }
+
+    public function format(){
+        $this->format = $this->servicio->getFormat();
     }
 }
 

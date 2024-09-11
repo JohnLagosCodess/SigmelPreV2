@@ -153,7 +153,7 @@ class DeterminacionOrigenATEL extends Controller
             ['Id_Asignacion',$Id_asignacion_dto_atel],
             ['Id_proceso',$Id_proceso_dto_atel],
             ['Estado', 'Activo']
-        ])
+        ])->orderBy('F_examen_interconsulta','DESC')
         ->get();
 
         // TRAER DATOS CIE10 (Diagnóstico motivo de calificación)

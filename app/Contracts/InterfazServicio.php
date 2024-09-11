@@ -1,7 +1,7 @@
 <?php 
 namespace App\Contracts;
 
-interface InterfazServicio{
-    public function ejecutar();
+interface InterfazServicio {
+    public function ejecutar($param);
 }
 ?>

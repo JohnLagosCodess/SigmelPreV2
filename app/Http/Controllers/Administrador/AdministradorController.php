@@ -5560,9 +5560,14 @@ class AdministradorController extends Controller
         //Cualquier documento que este cargado se comprimira para poder descargarlo
         foreach($documentos as $documento){
             if($documento->estado_documento == 'Cargado'){
+
                 //Limpiamos el nombre de manera que sea legible para el sistema
-                $nombreDoc = preg_replace('/[^\p{L}\p{N}_\-\.()]/u', '_', $documento->Nombre_documento);
-                $documentosZip[] = "{$nombreDoc}_IdEvento_{$request->IdEvento}_IdServicio_{$request->IdServicio}.{$documento->formato_documento}";
+                $nombreDoc = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_registro_documentos_eventos')
+                ->select('Nombre_documento')->where('Id_Registro_Documento',$documento->id_Registro_Documento)->first();
+
+                $nombreDoc = preg_replace('/[^\p{L}\p{N}_\-\.()]/u', '_',$nombreDoc->Nombre_documento);
+
+                $documentosZip[] = "{$nombreDoc}.{$documento->formato_documento}";
             }
         }
         

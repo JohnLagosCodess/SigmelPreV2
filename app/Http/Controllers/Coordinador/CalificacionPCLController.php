@@ -575,14 +575,17 @@ class CalificacionPCLController extends Controller
             ->select('Numero_orden')
             ->get();
 
+            $n_ordenNotificacion = DB::table(getDatabaseName('sigmel_gestiones') . "sigmel_informacion_asignacion_eventos")
+            ->select('N_de_orden')->where('Id_Asignacion', $newIdAsignacion)->get()->first();
+
             //Asignamos #n de orden cuado se envie un caso a notificaciones
             if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
                 BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
-                $N_orden_evento=$n_orden[0]->Numero_orden;
+                $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? $n_orden[0]->Numero_orden;
             }else{
 
                 BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
-                $N_orden_evento=null;
+                $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? null;
             }
 
             /* Verificación de que el check de detiene tiempo gestion este en sí acorde a la paramétrica */
@@ -1133,13 +1136,16 @@ class CalificacionPCLController extends Controller
             ->select('Numero_orden')
             ->get();
 
+            $n_ordenNotificacion = DB::table(getDatabaseName('sigmel_gestiones') . "sigmel_informacion_asignacion_eventos")
+            ->select('N_de_orden')->where('Id_Asignacion', $newIdAsignacion)->get()->first();
+
             //Asignamos #n de orden cuado se envie un caso a notificaciones
             if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
                 BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,false);
-                $N_orden_evento=$n_orden[0]->Numero_orden;
+                $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? $n_orden[0]->Numero_orden;
             }else{
                 BandejaNotifiController::finalizarNotificacion($newIdEvento,$newIdAsignacion,true);
-                $N_orden_evento=null;
+                $N_orden_evento= $n_ordenNotificacion->N_de_orden ?? null;
             }
 
             /* Verificación de que el check de detiene tiempo gestion este en sí acorde a la paramétrica */
@@ -4899,7 +4905,7 @@ class CalificacionPCLController extends Controller
             ['Id_Asignacion',$Id_asignacion_calitec],
             ['Id_proceso',$Id_proceso_cali],
             ['Estado', 'Activo']
-        ])
+        ])->orderBy('F_examen_interconsulta','DESC')
         ->get();
 
         $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')

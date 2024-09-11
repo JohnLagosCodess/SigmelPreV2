@@ -333,7 +333,7 @@ class BandejaJuntasController extends Controller
                     ])->where(function($query){
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
                     })
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 }else{
                     $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
@@ -343,7 +343,7 @@ class BandejaJuntasController extends Controller
                     ])->where(function($query){
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
                     })
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 }
                     // ->whereNull('Nombre_proceso_anterior')
@@ -381,7 +381,7 @@ class BandejaJuntasController extends Controller
                     ])->where(function($query){
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
                     })
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 
                 }else{
@@ -391,7 +391,7 @@ class BandejaJuntasController extends Controller
                     ])->where(function($query){
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
                     })
-                    ->whereBetween('F_registro_asignacion', [$consultar_f_desde ,$consultar_f_hasta])
+                    ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
                     ->get();
                 }
 
@@ -540,17 +540,6 @@ class BandejaJuntasController extends Controller
             ['sipc.Accion_ejecutar','=',  $Id_accion]
         ])->get();
 
-        //Trae El numero de orden actual
-        $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
-        ->select('Numero_orden')
-        ->get();
-
-        //Asignamos #n de orden cuado se envie un caso a notificaciones
-        if(!empty($estado_acorde_a_parametrica[0]->enviarA) && $estado_acorde_a_parametrica[0]->enviarA != 'No'){
-            $N_orden_evento=$n_orden[0]->Numero_orden;
-        }else{
-            $N_orden_evento=null;
-        }
 
         if(count($estado_acorde_a_parametrica)>0){
             $Id_Estado_evento = $estado_acorde_a_parametrica[0]->Estado;
@@ -627,7 +616,7 @@ class BandejaJuntasController extends Controller
                         'Nombre_profesional' => $nombre_profesional,
                         'Descripcion_bandeja' => $Descripcion_bandeja,
                         'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
-                        'N_de_orden' => $N_orden_evento,
+                        //'N_de_orden' => $N_orden_evento,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
@@ -676,7 +665,7 @@ class BandejaJuntasController extends Controller
                         'Id_proceso_anterior' => $array_id_procesos[$m],
                         'Id_servicio_anterior' => $array_id_servicios[$m],
                         'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
-                        'N_de_orden' => $N_orden_evento,
+                        //'N_de_orden' => $N_orden_evento,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
@@ -729,7 +718,7 @@ class BandejaJuntasController extends Controller
                         'Nombre_profesional' => $nombre_profesional,
                         'Descripcion_bandeja' => $Descripcion_bandeja,
                         'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
-                        'N_de_orden' => $N_orden_evento,
+                        //'N_de_orden' => $N_orden_evento,
                         'Nombre_usuario' => $usuario,
                         'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                         'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion
@@ -787,7 +776,7 @@ class BandejaJuntasController extends Controller
 
                 //Habilita edicion del proceso de correspodencia para el proceso de notificacion.
                 if(isset($estado_acorde_a_parametrica[0]->enviarA)){
-                    BandejaNotifiController::finalizarNotificacion($info_array_asignacion[0]['ID_evento'], $info_array_asignacion[0]['Id_Asignacion'],false);
+                    BandejaNotifiController::finalizarNotificacion($info_array_asignacion[0]['ID_evento'], $info_array_asignacion[0]['Id_Asignacion'],false,true);
                 }
             }
 

@@ -274,7 +274,7 @@
                                                 <div class="form-group">
                                                     <label for="accion">Acción <span style="color: red;">(*)</span></label>
                                                     <input type="hidden" id="bd_id_accion" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Id_accion)){echo $array_datos_calificacionJuntas[0]->Id_accion;}?>">
-                                                    <select class="custom-select accion" name="accion" id="accion" style="color: red;">
+                                                    <select class="custom-select accion" name="accion" id="accion" style="color: red;" required>
                                                         {{-- <option value="NO ESTA DEFINIDO">NO ESTA DEFINIDO</option> --}}
                                                     </select>
                                                 </div>
@@ -328,7 +328,9 @@
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <label for="descripcion_accion">Descripción acción</label>
-                                                    <textarea class="form-control" name="descripcion_accion" id="descripcion_accion" cols="30" rows="5" style="resize: none;">{{$array_datos_calificacionJuntas[0]->Descripcion_accion}}</textarea>                                                
+                                                    {{-- <textarea class="form-control" name="descripcion_accion" id="descripcion_accion" cols="30" rows="5" style="resize: none;">{{$array_datos_calificacionJuntas[0]->Descripcion_accion}}</textarea> --}}
+                                                    
+                                                    <textarea class="form-control" name="descripcion_accion" id="descripcion_accion" cols="30" rows="5" style="resize: none;"></textarea>                                         
                                                 </div>
                                             </div>
                                         </div>
@@ -529,14 +531,14 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="N_dictamen_controvertido">N° Dictamen controvertido<span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="N_dictamen_controvertido" id="N_dictamen_controvertido" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->N_dictamen_controvertido;} ?>" required>
+                                                <label for="N_dictamen_controvertido">N° Dictamen controvertido</label>
+                                                <input type="text" class="form-control" name="N_dictamen_controvertido" id="N_dictamen_controvertido" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->N_dictamen_controvertido;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="f_dictamen_controvertido">Fecha dictámen controvertido<span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_dictamen_controvertido" id="f_dictamen_controvertido" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->F_dictamen_controvertido;} ?>" required>
+                                                <label for="f_dictamen_controvertido">Fecha dictámen controvertido</label>
+                                                <input type="date" class="form-control" name="f_dictamen_controvertido" id="f_dictamen_controvertido" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->F_dictamen_controvertido;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -1134,7 +1136,7 @@
                                         </div>
                                         <div class="col">
                                             <label for="empresa_comunicado"><strong>Empresa</strong></label>
-                                            <input class="scalesR" type="radio" name="afiliado_comunicado" id="empresa_comunicado" value="Empresa" style="margin-left: revert;" required>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado" id="empresa_comunicado" value="Empleador" style="margin-left: revert;" required>
                                         </div>
                                         <div class="col">
                                             <label for="eps_comunicado"><strong>EPS</strong></label>
@@ -1559,7 +1561,7 @@
                                         </div>
                                         <div class="col">
                                             <label for="empresa_comunicado"><strong>Empresa</strong></label>
-                                            <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empresa" style="margin-left: revert;" required>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empleador" style="margin-left: revert;" required>
                                         </div>
                                         <div class="col">
                                             <label for="eps_comunicado_editar"><strong>EPS</strong></label>
@@ -1986,6 +1988,9 @@
     {{-- SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE LISTADOS DE DOCUMENTOS SOLICITADOS --}}
     <script type="text/javascript">
         $(document).ready(function(){
+            //Deshabilitar el btn de descarga del pdf general lista de chequeo
+            $("a[id^='btn_generar_descarga_15']").remove();
+
             $(".centrar").css('text-align', 'center');
             var listado_docs_solicitados = $('#listado_docs_solicitados').DataTable({
                 "responsive": true,

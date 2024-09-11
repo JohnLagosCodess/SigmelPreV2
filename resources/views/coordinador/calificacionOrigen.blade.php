@@ -353,7 +353,9 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="descripcion_accion">Descripción acción</label>
-                                                <textarea class="form-control" name="descripcion_accion" id="descripcion_accion" cols="30" rows="5" style="resize: none;">{{$array_datos_calificacionOrigen[0]->Descripcion_accion}}</textarea>                                                
+                                                {{-- <textarea class="form-control" name="descripcion_accion" id="descripcion_accion" cols="30" rows="5" style="resize: none;">{{$array_datos_calificacionOrigen[0]->Descripcion_accion}}</textarea>  --}}
+                                                
+                                                <textarea class="form-control" name="descripcion_accion" id="descripcion_accion" cols="30" rows="5" style="resize: none;"></textarea>                                                
                                             </div>
                                         </div>
                                     </div>
@@ -1411,6 +1413,8 @@
     {{-- SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE HISTORIAL DE SEGUIMIENTOS --}}
     <script type="text/javascript">
         $(document).ready(function(){
+            //Deshabilitar el btn de descarga del pdf general lista de chequeo
+            $("a[id^='btn_generar_descarga_15']").remove();
            var listado_histo_seguimiento = $('#listado_histori_seguimiento').DataTable({
                "responsive": true,
                "info": false,
