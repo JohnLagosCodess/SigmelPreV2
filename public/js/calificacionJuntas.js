@@ -1867,7 +1867,7 @@ $(document).ready(function(){
                         $("#div_select_jrci").addClass('d-none');
                         $('#jrci_califi_invalidez_comunicado').empty();  
                     }
-                }else if(data.destinatarioPrincipal == 'Empresa'){
+                }else if(data.destinatarioPrincipal == 'Empleador'){
                     //console.log(data.array_datos_destinatarios);
                     var Nombre_afiliado = $('#nombre_destinatario');
                     Nombre_afiliado.val(data.array_datos_destinatarios[0].Nombre_empresa);
@@ -4483,7 +4483,7 @@ $(document).ready(function(){
                         $("#jrci_califi_invalidez_comunicado_editar").val('');
                     }
                 }
-                else if(destino == 'Empresa'){
+                else if(destino == 'Empleador'){
                     $('#empresa_comunicado_editar').prop('checked', true);
                     document.querySelector("#nombre_destinatario_editar").disabled = true;
                     document.querySelector("#nic_cc_editar").disabled = true;
@@ -5418,7 +5418,7 @@ $(document).ready(function(){
                             $("#div_select_jrci_editar").addClass('d-none');
                             $('#jrci_califi_invalidez_comunicado_editar').empty();  
                         }
-                    }else if(data.destinatarioPrincipal == 'Empresa'){
+                    }else if(data.destinatarioPrincipal == 'Empleador'){
                         //console.log(data.array_datos_destinatarios);
                         var Nombre_afiliado = $('#nombre_destinatario_editar');
                         Nombre_afiliado.val(data.array_datos_destinatarios[0].Nombre_empresa);
@@ -7210,12 +7210,12 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     if (Copias != null && Copias.includes('empleador')) {
         var dato_empleador = 'empleador';
         var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
-        if(Destinatario.toLowerCase() === 'empresa'){
+        if(Destinatario.toLowerCase() === 'Empleador'){
             dato_empleador_form = Destinatario;
             dato_empleador = Destinatario.toLowerCase();
         }
     }else{
-        var dato_empleador = 'empresa';
+        var dato_empleador = 'Empleador';
         var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
         if(Destinatario.toLowerCase() === 'empleador'){
             dato_empleador_form = Destinatario;
@@ -7227,10 +7227,12 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     }
     //Función para agregar el subrayado al destinatario principal y aquellos que hayan sido seleccionados como copia
     function getUnderlineStyle(entity) {
+        console.log(Destinatario.toLowerCase(),entity);
         let negrita = (Correspondencia && Correspondencia?.includes(entity)) ? 'font-weight:700;' : '';
         let underline = (Destinatario.toLowerCase() === entity || (Copias && Copias?.includes(entity))) ? 'text-decoration-line: underline;' : '';
         return negrita + underline;
     }
+  
     let info_notificacion = {
         'Destinatarios': 
             `<a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Afiliado" \
@@ -7244,7 +7246,7 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle(dato_empleador)}">Empleador</a>
+                style="${getUnderlineStyle('empleador')}">Empleador</a>
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps" \
                 data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \

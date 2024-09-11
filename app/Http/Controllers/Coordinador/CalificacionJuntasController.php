@@ -2247,7 +2247,7 @@ class CalificacionJuntasController extends Controller
                     'info_medio_noti' => $info_medio_noti
                 ]);
             break;
-            case ($destinatarioPrincipal == 'Empresa'):                
+            case ($destinatarioPrincipal == 'Empleador'):                
                 $array_datos_destinatarios = cndatos_comunicado_eventos::on('sigmel_gestiones')
                 ->where([['ID_evento',$newIdEvento],['Nro_identificacion',$identificacion_comunicado_afiliado]])
                 ->limit(1)->get(); 
@@ -2512,7 +2512,7 @@ class CalificacionJuntasController extends Controller
             }
             elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado)
                 && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-                $destinatario = 'Empresa';
+                $destinatario = 'Empleador';
             }
             elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
                 && !empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
@@ -2830,7 +2830,7 @@ class CalificacionJuntasController extends Controller
         }
         elseif(empty($radiojrci_comunicado_editar) && empty($radiojnci_comunicado_editar) && empty($radioafiliado_comunicado_editar) && !empty($radioempresa_comunicado_editar)
             && empty($radioeps_comunicado_editar) && empty($radioafp_comunicado_editar) && empty($radioarl_comunicado_editar) && empty($radioOtro_editar)){
-                $destinatario = 'Empresa';
+                $destinatario = 'Empleador';
         }
         elseif(empty($radiojrci_comunicado_editar) && empty($radiojnci_comunicado_editar) && empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar)
             && !empty($radioeps_comunicado_editar) && empty($radioafp_comunicado_editar) && empty($radioarl_comunicado_editar) && empty($radioOtro_editar)){
