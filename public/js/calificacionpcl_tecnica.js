@@ -4074,7 +4074,34 @@ $(document).ready(function(){
                 if (response.parametro == 'insertar_correspondencia') {
                     $('#GuardarCorrespondencia').prop('disabled', true);
                     $('#div_alerta_Correspondencia').removeClass('d-none');
-                    $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');                                            
+                    $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');
+                    let Id_Comunicado = response.Id_Comunicado;
+                    let Bandera_boton_guardar_oficio = response.Bandera_boton_guardar_oficio;
+                    let datos_generar_oficios = {
+                        '_token': token,
+                        'ID_Evento_comuni_comite':Id_EventoDecreto,
+                        'Id_Proceso_comuni_comite':Id_ProcesoDecreto,
+                        'Id_Asignacion_comuni_comite':Id_Asignacion_Dcreto,
+                        'Firma_comuni_comite':firmar,
+                        'Radicado_comuni_comite':radicado,
+                        'Id_Comunicado':Id_Comunicado,
+                        'N_siniestro': N_siniestro ,
+                        'Bandera_boton_guardar_oficio':Bandera_boton_guardar_oficio,
+                    }
+                    // Llamar a la URL para generar el PDF después de que la primera solicitud que se completo
+                    $.ajax({
+                        type:'POST',
+                        url:'/generarOficios_Pcl',
+                        data: datos_generar_oficios,
+                        success: function(pdfResponse) {
+                            // la respuesta de generarPdfDictamenPcl
+                            console.log('PDF generado');
+                        },
+                        error: function(xhr) {
+                            console.error('Error al generar el PDF', xhr);
+                        }
+
+                    });
                     setTimeout(function(){
                         $('#div_alerta_Correspondencia').addClass('d-none');
                         $('.alerta_Correspondencia').empty();   
@@ -4083,14 +4110,40 @@ $(document).ready(function(){
                 }else if(response.parametro == 'actualizar_correspondencia'){
                     $('#ActualizarCorrespondencia').prop('disabled', true);
                     $('#div_alerta_Correspondencia').removeClass('d-none');
-                    $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');                                            
+                    $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');
+                    let Id_Comunicado = response.Id_Comunicado;
+                    let Bandera_boton_guardar_oficio = response.Bandera_boton_guardar_oficio;
+                    let datos_generar_oficios = {
+                        '_token': token,
+                        'ID_Evento_comuni_comite':Id_EventoDecreto,
+                        'Id_Proceso_comuni_comite':Id_ProcesoDecreto,
+                        'Id_Asignacion_comuni_comite':Id_Asignacion_Dcreto,
+                        'Firma_comuni_comite':firmar,
+                        'Radicado_comuni_comite':radicado,
+                        'Id_Comunicado':Id_Comunicado,
+                        'N_siniestro': N_siniestro ,
+                        'Bandera_boton_guardar_oficio':Bandera_boton_guardar_oficio,
+                    }
+                    // Llamar a la URL para generar el PDF después de que la primera solicitud que se completo
+                    $.ajax({
+                        type:'POST',
+                        url:'/generarOficios_Pcl',
+                        data: datos_generar_oficios,
+                        success: function(pdfResponse) {
+                            // la respuesta de generarPdfDictamenPcl
+                            console.log('PDF generado');
+                        },
+                        error: function(xhr) {
+                            console.error('Error al generar el PDF', xhr);
+                        }
+
+                    });                                            
                     setTimeout(function(){
                         $('#div_alerta_Correspondencia').addClass('d-none');
                         $('.alerta_Correspondencia').empty();   
                         location.reload();
                     }, 3000);  
                 }
-
             }          
         })
     }) 
@@ -4205,7 +4258,67 @@ $(document).ready(function(){
                 if (response.parametro == 'insertar_dictamen_pericial') {
                     document.querySelector('#GuardrDictamenPericial').disabled=true;
                     $('#div_alerta_dictamen_pericial').removeClass('d-none');
-                    $('.alerta_dictamen_pericial').append('<strong>'+response.mensaje+'</strong>');                                            
+                    $('.alerta_dictamen_pericial').append('<strong>'+response.mensaje+'</strong>'); 
+
+                    // retornamos la variables necesarios para poder generar el dictamen y guardarlo en el servidor
+                    let Id_Comunicado = response.Id_Comunicado;
+                    let radicado_dictamen = response.radicado_dictamen; 
+                    let Bandera_boton_guardar_dictamen = response.Bandera_boton_guardar_dictamen;
+
+                    let datos_generar_dictamenes = {
+                        '_token': token,
+                        'ID_Evento_comuni':Id_EventoDecreto,
+                        'Id_Proceso_comuni':Id_ProcesoDecreto,
+                        'Id_Asignacion_comuni':Id_Asignacion_Dcreto,
+                        'N_siniestro':n_siniestro,
+                        'Radicado_comuni': radicado_dictamen,
+                        'Id_Comunicado': Id_Comunicado,
+                        'Bandera_boton_guardar_dictamen': Bandera_boton_guardar_dictamen,
+
+                    };
+                    // Llamar a la URL para generar el PDF después de que la primera solicitud que se completo
+                    // Según el decreto
+                    if (Decreto_pericial == 1) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '/generarPdfDictamenesPcl',
+                            data: datos_generar_dictamenes,
+                            success: function(pdfResponse) {
+                                // la respuesta de generarPdfDictamenPcl
+                                // console.log('PDF generado');
+                            },
+                            error: function(xhr) {
+                                console.error('Error al generar el PDF', xhr);
+                            }
+                        });                        
+                    } else if (Decreto_pericial == 2){
+                        $.ajax({
+                            type: 'POST',
+                            url: '/generarPdfDictamenesPclCero',
+                            data: datos_generar_dictamenes,
+                            success: function(pdfResponse) {
+                                // la respuesta de generarPdfDictamenPcl
+                                // console.log('PDF generado');
+                            },
+                            error: function(xhr) {
+                                console.error('Error al generar el PDF', xhr);
+                            }
+                        }); 
+                    } else if (Decreto_pericial == 3){
+                        $.ajax({
+                            type: 'POST',
+                            url: '/generarPdfDictamenesPcl917',
+                            data: datos_generar_dictamenes,
+                            success: function(pdfResponse) {
+                                // la respuesta de generarPdfDictamenPcl
+                                // console.log('PDF generado');
+                            },
+                            error: function(xhr) {
+                                console.error('Error al generar el PDF', xhr);
+                            }
+                        }); 
+                    }
+
                     setTimeout(function(){
                         $('#div_alerta_dictamen_pericial').addClass('d-none');
                         $('.alerta_dictamen_pericial').empty();   
@@ -4213,7 +4326,7 @@ $(document).ready(function(){
                     }, 3000);   
                 }
             }          
-        })
+        });
     }) 
 
     // Funcionalidad para insertar las etiquetas de diagnosticos cie10 y origen Notificacion calificacion numerica
