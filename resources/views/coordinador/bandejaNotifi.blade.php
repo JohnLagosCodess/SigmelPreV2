@@ -128,52 +128,54 @@
                             </table>
                         </div>
                     </div>
-                    {{-- PBS014 la bandeja no debe cambiar el estado de la accion @if ($dato_rol<>'5' && $dato_rol<>'9')
+                   {{-- @if ($dato_rol<>'5' && $dato_rol<>'9') --}}
                         <div class="card-body" id="contenedor_selectores">
                             <div class="row">
                                 <div class="col-12">
-                                    <div class="mostrar_mensaje_actualizo_bandeja alert alert-success mt-2 mr-auto d-none" role="alert"></div>
-                                    <div class="mostrar_mensaje_No_actualizo_bandeja alert alert-danger mt-2 mr-auto d-none" role="alert"></div>        
+                                    <div class="alerta_completado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                    <div class="alerta_error alert alert-danger mt-2 mr-auto d-none" role="alert"></div>        
                                     <div class="row">
-                                        <div class="col-sm">
+                                        <div class="col-2">
                                             <div class="form-group">
-                                                <label for="procesos_parametrizados" class="col-form-label">Procesos</label>
-                                                <select class="procesos_parametrizados custom-select" id="procesos_parametrizados" name="procesos_parametrizados"></select>
+                                                <label for="f_accion" class="form-label col-form-label">Fecha de acción</label>
+                                                <input type="datetime" class="form-control" name="f_accion" id="f_accion" value="{{now()->format('Y-m-d h:s')}}" readonly>
                                             </div>
                                         </div>
-                                        <div class="col-sm">
+                                        <div class="col-3">
                                             <div class="form-group">
-                                                <label for="redireccionar" class="col-form-label">Redireccionar a</label>
-                                                <select class="redireccionar custom-select" id="redireccionar" name="redireccionar"></select>
+                                                <label for="accion_ejecutar" class="col-form-label">Acción</label>
+                                                <select class="custom-select initSelect2" id="accion_ejecutar" name="accion_ejecutar" style="width: 100%">
+                                                    <option value="1">Cerra Caso Notificado</option>
+                                                    <option value="2">Cerra Caso Notificado 2</option>
+                                                    <option value="3">Cerra Caso Notificado 3</option>
+                                                </select>
+                                            </div>
+                                        </div>   
+                                        <div class="col-4">
+                                            <div class="form-group">    
+                                                <label for="profesional" class="col-form-label">Descripcion</label>
+                                                <textarea name="descripcion" class="form-control" id="descripcion"  rows="3"></textarea>
                                             </div>
                                         </div>
-                                        <div class="col-sm">
+                                        <div class="col-3">
                                             <div class="form-group">
-                                                <label for="accion" class="col-form-label">Acción</label>
-                                                <select class="accion custom-select" id="accion" name="accion"></select>
-                                            </div>
-                                        </div>    
-                                        <div class="col-sm columna_selector_profesional">
-                                            <div class="form-group">
-                                                <label for="profesional" class="col-form-label">Profesional</label>
-                                                <select class="profesional custom-select" id="profesional"></select>
+                                                <label for="f_alerta" class="col-form-label">Fecha de alerta</label>
+                                                <input type="datetime-local" class="form-control" name="f_alerta" id="f_alerta">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    @endif --}}
+                    {{-- @endif --}}
                     <div class="card-footer">
                         <div class="alert alert-danger no_ejecutar_parametrica_bandeja_trabajo d-none" role="alert">
                             <i class="fas fa-info-circle"></i> <strong>Importante:</strong> No puede mover la información debido a que el proceso, servicio y/o acción seleccionados no tienen una parametrización
                             asociada. Debe configurar una.
                         </div>
                         <div class="grupo_botones" style="float: left;">
-                            @if ($dato_rol<>'5' && $dato_rol<>'9')
-                                <input type="button" id="btn_bandeja" class="btn btn-info d-none" value="Retornar Bandeja"> 
-                            @endif
                             <input type="button" id="btn_expor_datos" class="btn btn-info" value="Exportar datos"> 
+                            <input type="button" id="btn_ejecutar_accion" class="btn btn-info" value="Ejecutar accion"> 
                         </div>
                     </div>
                 </div>

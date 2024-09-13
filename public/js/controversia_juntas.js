@@ -3682,6 +3682,22 @@ $(document).ready(function(){
             'f_correspondencia':f_correspondencia,
             'radicado':radicado,
             'decision_dictamen':  decision_dictamen,
+            'id_cliente': $("#id_cliente").val(),
+            'id_servicio': $("#id_servicio").val(),
+            'tipo_identificacion':  $("#tipo_documento").val(),
+            'num_identificacion': $("#identificacion").val(),
+            'id_Jrci_califi_invalidez': $("#id_Jrci_califi_invalidez").val(),
+            'nombre_junta_regional': $("#jrci_califi_invalidez").val(),
+            'nro_dictamen': $("#n_dictamen_jrci_emitido").val(),
+            'f_dictamen_jrci_emitido': $("#f_dictamen_jrci_emitido").val(),
+            'porcentaje_pcl_jrci_emitido': $("#porcentaje_pcl_jrci_emitido").val(),
+            'origen_jrci_emitido': $("#origen_jrci_emitido option:selected").text(),
+            'f_estructuracion_contro_jrci_emitido': $("#f_estructuracion_contro_jrci_emitido").val(),
+            'N_siniestro' : $('#n_siniestro').val(),
+            'cuerpo': $("#cuerpo_comunicado").summernote('code'),
+            'manual_de_califi_jrci_emitido':  $("#manual_de_califi_jrci_emitido option:selected").text(),
+            'sustentacion_concepto_jrci': $("#sustentacion_concepto_jrci").val(),
+            'sustentacion_concepto_jrci1':  $("#sustentacion_concepto_repo_jrci").val(),
             'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar
         }
 
