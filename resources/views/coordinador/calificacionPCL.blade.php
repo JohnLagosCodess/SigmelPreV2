@@ -1348,6 +1348,12 @@
                                         <div class="col-12">
                                             <div class="alerta_editar_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                         </div>
+                                        <div class="text-center d-none" id="mostrar_barra_actualizacion_comunicado">                                
+                                            <button class="btn btn-info" type="button" disabled>
+                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                Actualizando Comunicado por favor espere...
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>                                
                             </form>                                                            
