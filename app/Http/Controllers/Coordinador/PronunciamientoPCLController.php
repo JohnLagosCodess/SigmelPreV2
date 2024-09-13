@@ -808,6 +808,7 @@ class PronunciamientoPCLController extends Controller
                 'Elaboro' => $request->elaboro,
                 'Reviso' => '0',
                 'Anexos' => $request->n_anexos,
+                'Agregar_copia' => $agregar_copias_comu,
                 'Tipo_descarga' => $request->decision_pr,
                 'Modulo_creacion' => 'pronunciamientoPCL',
                 'Reemplazado' => 0,

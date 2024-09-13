@@ -1374,7 +1374,7 @@ $(document).ready(function(){
     });
 
     $(document).on('click', "a[id^='verDocumento_']", function(){
-        var verDocumento = $(this);
+        var verDocumento = $(this);        
         var Id_Asignacion = this.getAttribute('id_asignacion');
         var num_identificacion = this.getAttribute('numero_identificacion');
         var Nradicado = this.getAttribute('numero_radicado');
@@ -1386,6 +1386,7 @@ $(document).ready(function(){
         var edit_copia_eps;
         var edit_copia_afp;
         var edit_copia_arl;
+        var bandera_descarga = 'IconoDescarga';
         if(this.getAttribute('agregar_copia')){
             if(this.getAttribute('agregar_copia').includes("Afiliado")){
                 edit_copia_afiliado = true;
@@ -1442,6 +1443,7 @@ $(document).ready(function(){
                 'edit_copia_afp':edit_copia_afp,
                 'edit_copia_arl':edit_copia_arl,
                 'n_siniestro_proforma_editar': this.getAttribute('numero_siniestro') !== 'null' ? this.getAttribute('numero_siniestro') : null,
+                'bandera_descarga':bandera_descarga,
             };
         }
         else{
@@ -1489,6 +1491,7 @@ $(document).ready(function(){
                 'edit_copia_afp':edit_copia_afp,
                 'edit_copia_arl':edit_copia_arl,
                 'n_siniestro_proforma_editar': this.getAttribute('numero_siniestro') !== 'null' ? this.getAttribute('numero_siniestro') : null,
+                'bandera_descarga':bandera_descarga,
             };
         }
         if(parseInt(Reemplazado) == 1){
@@ -1531,19 +1534,8 @@ $(document).ready(function(){
                     // Crear un Blob a partir del array de bytes
                     var blob = new Blob([bytes], { type: 'application/pdf' });
 
-                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-
-                    var indicativo = response.indicativo;
-
-                    if(TipoDescarga != 'Otro_Documento'){
-                        // var nombre_pdf = "PCL_SOL_DOC_"+Id_Asignacion+"_"+num_identificacion+".pdf";
-                        var nombre_pdf = response.nombre_pdf;
-                    }
-                    else{
-                        // var nombre_pdf = "Comunicado_"+Nradicado+".pdf";
-                        var nombre_pdf = "Comunicado_"+Nradicado+"_"+indicativo+".pdf";
-                    }
-                    
+                    var nombre_pdf = response.nombre_pdf;
+                                        
                     // Crear un enlace de descarga similar al ejemplo anterior
                     var link = document.createElement('a');
                     link.href = window.URL.createObjectURL(blob);
@@ -1823,7 +1815,7 @@ $(document).ready(function(){
                     showLoading();
                 },
                 success: function(response){
-                    console.log('TC ', tipo_correspondencia,' DP ', destinatarioPrincipal)
+                    // console.log('TC ', tipo_correspondencia,' DP ', destinatarioPrincipal)
                     if(response && response.datos){
                         $("#modalCorrespondencia #n_orden").val(response?.nro_orden);
                         $("#modalCorrespondencia #nombre_destinatario").val(response?.datos?.Nombre_destinatario);
@@ -2150,7 +2142,7 @@ $(document).ready(function(){
                     document.querySelector("#email_destinatario_editar").disabled = true;
                     document.querySelector("#departamento_destinatario_editar").disabled = true;
                     document.querySelector("#ciudad_destinatario_editar").disabled = true;
-                }else if(destino == 'Empresa'){
+                }else if(destino == 'Empleador'){
                     $('#empresa_comunicado_editar').prop('checked', true);
                     document.querySelector("#nombre_destinatario_editar").disabled = true;
                     document.querySelector("#nic_cc_editar").disabled = true;
@@ -2402,7 +2394,7 @@ $(document).ready(function(){
                         //     reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                         // }
                         // reviso.prop('required', true);
-                    }else if(data.destinatarioPrincipal == 'Empresa'){      
+                    }else if(data.destinatarioPrincipal == 'Empleador'){      
                         //console.log(data.array_datos_destinatarios);
                         var Nombre_afiliado = $('#nombre_destinatario_editar');
                         Nombre_afiliado.val(data.array_datos_destinatarios[0].Nombre_empresa);
@@ -3226,7 +3218,7 @@ $(document).ready(function(){
                         reviso.append('<option value="'+data.array_datos_lider[revisolider[i]]["id"]+'">'+data.array_datos_lider[revisolider[i]]["name"]+'</option>');
                     }
                     $("#reviso").prop("selectedIndex", 1);
-                }else if(data.destinatarioPrincipal == 'Empresa'){      
+                }else if(data.destinatarioPrincipal == 'Empleador'){      
                     //console.log(data.array_datos_destinatarios);
                     var Nombre_afiliado = $('#nombre_destinatario');
                     Nombre_afiliado.val(data.array_datos_destinatarios[0].Nombre_empresa);
@@ -3708,7 +3700,9 @@ $(document).ready(function(){
     // llenado del formulario para la captura de la modal de Generar Comunicado
     $('#form_generarComunicadoPcl').submit(function (e) {
         e.preventDefault();  
-
+        $("#Generar_comunicados").prop('disabled', true);
+        $("#Generar_comunicados").addClass('d-none');
+        $("#mostrar_barra_creacion_comunicado").removeClass('d-none');
         var ciudad = $('#ciudad').val();
         var Id_evento = $('#Id_evento').val();
         var Id_asignacion = $('#Id_asignacion').val();
@@ -3758,24 +3752,7 @@ $(document).ready(function(){
             }
         });
         cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
-        //console.log(firmarcomunicadoPcl);
-        // var arrayinputs = [];
-        // // Función para capturar los valores de todos los inputs de Agregar copia
-        // function capturarValores() {            
-        //     var contenedor = document.getElementById("contenedorCopia");                        
-        //     var inputs = contenedor.getElementsByTagName("input");                        
-        //     for (var i = 0; i < inputs.length; i++) {                
-        //         var valor = inputs[i].value;
-        //     arrayinputs.push(valor)
-        //     }
-        //     if (arrayinputs.length === 0) {
-        //         arrayinputs = ['CopiaVacia'];
-        //     }else{
-        //         arrayinputs;  
-        //     }
-        // }
-        // capturarValores();
-        //console.log(arrayinputs);        
+               
         var copiaComunicadosPcl = [];
 
         $('input[type="checkbox"]').each(function() {
@@ -3826,24 +3803,128 @@ $(document).ready(function(){
             'N_siniestro':N_siniestro,
         }
         // console.log("Cuerpo comunicado : ", cuerpo_comunicado);
-        document.querySelector("#Generar_comunicados").disabled = true;   
+           
         $.ajax({
             type:'POST',
             url:'/registrarComunicado',
             data: datos_generarComunicado,            
-            success:function(response){
-                if (response.parametro == 'agregar_comunicado') {
-                    $('.alerta_comunicado').removeClass('d-none');
-                    $('.alerta_comunicado').append('<strong>'+response.mensaje+'</strong>');
-                    setTimeout(function(){
-                        $('.alerta_comunicado').addClass('d-none');
-                        $('.alerta_comunicado').empty();
-                        localStorage.setItem("#Generar_comunicados", true);
-                        location.reload();
-                    }, 3000);
+            success:function(respuesta){
+                let comunicadosSigmel = respuesta.comunicadoSigmel;
+                if (comunicadosSigmel == 'DocumentoSigmel') {                    
+                    let Id_Comunicados = respuesta.Id_Comunicado;
+                    let bandera_descarga = 'BotonGuardarComunicado';     
+                    datos_comunicado = {
+                        '_token': token,
+                        'cliente_comunicado2_act': cliente_comunicado2,
+                        'nombre_afiliado_comunicado2_act': nombre_afiliado_comunicado2,
+                        'tipo_documento_comunicado2_act': tipo_documento_comunicado2,
+                        'identificacion_comunicado2_act': identificacion_comunicado2,
+                        'id_evento_comunicado2_act': Id_evento,
+                        'tipo_documento_descarga_califi_editar': tipo_descarga,
+                        'radioafiliado_comunicado':radioafiliado_comunicado,
+                        'radioempresa_comunicado':radioempresa_comunicado,
+                        'radioOtro':radioOtro,                        
+                        'nombre_destinatario_act2': nombre_destinatario,
+                        'nic_cc_act2': nic_cc,
+                        'direccion_destinatario_act2': direccion_destinatario,
+                        'telefono_destinatario_act2': telefono_destinatario,
+                        'email_destinatario_act2': email_destinatario,
+                        'departamento_pdf': departamento_destinatario,
+                        'ciudad_pdf': ciudad_destinatario,
+                        'asunto_act': asunto,
+                        'cuerpo_comunicado_act': cuerpo_comunicado,
+                        'files': null,
+                        'anexos_act': anexos,
+                        'forma_envio_act': forma_envio,
+                        'elaboro2_act': elaboro2,
+                        'reviso_act': reviso,
+                        'firmarcomunicado_editar': firmarcomunicadoPcl,
+                        'ciudad_comunicado_act': ciudad,
+                        'Id_comunicado_act': Id_Comunicados,
+                        'Id_evento_act': Id_evento,
+                        'Id_asignacion_act': Id_asignacion,
+                        'Id_procesos_act': Id_procesos,
+                        'fecha_comunicado2_act': fecha_comunicado2,
+                        'agregar_copia_editar':copiaComunicadosPcl,
+                        'radicado2_act': radicado2,                    
+                        'n_siniestro_proforma_editar': N_siniestro,
+                        'bandera_descarga':bandera_descarga,
+                    };
+                    
+                    // console.log(datos_comunicado);
+                    $.ajax({
+                        type:'POST',
+                        url:'/generarPdf',
+                        data: datos_comunicado,                                       
+                        success: function (response, status, xhr) {
+                            // console.log('entro a descargar documento');
+                            
+                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                            // var base64Pdf = response.pdf;
+    
+                            // // Decodificar base64 en un array de bytes
+                            // var binaryString = atob(base64Pdf);
+                            // var len = binaryString.length;
+                            // var bytes = new Uint8Array(len);
+        
+                            // for (var i = 0; i < len; i++) {
+                            //     bytes[i] = binaryString.charCodeAt(i);
+                            // }
+        
+                            // // Crear un Blob a partir del array de bytes
+                            // var blob = new Blob([bytes], { type: 'application/pdf' });
+    
+                            // var nombre_pdf = response.nombre_pdf;
+    
+                            // // console.log(nombre_pdf);                        
+                            // // Crear un enlace de descarga similar al ejemplo anterior
+                            // var link = document.createElement('a');
+                            // link.href = window.URL.createObjectURL(blob);
+                            // link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
+                    
+                            // // Adjuntar el enlace al documento y activar el evento de clic
+                            // document.body.appendChild(link);
+                            // link.click();
+                    
+                            // // Eliminar el enlace del documento
+                            // document.body.removeChild(link);
+
+                            if (respuesta.parametro == 'agregar_comunicado') {
+                                $("#mostrar_barra_creacion_comunicado").addClass('d-none');
+                                $('.alerta_comunicado').removeClass('d-none');
+                                $('.alerta_comunicado').append('<strong>'+respuesta.mensaje+'</strong>');
+                                setTimeout(function(){
+                                    $('.alerta_comunicado').addClass('d-none');
+                                    $('.alerta_comunicado').empty();
+                                    $("#Generar_comunicados").removeClass('d-none');
+                                    localStorage.setItem("#Generar_comunicados", true);
+                                    location.reload();
+                                }, 3000);
+                            }
+                        },
+                        error: function (error) {
+                            // Manejar casos de error
+                            console.error('Error al descargar el PDF:', error);
+                        }                    
+                    });
+                } else {
+
+                    if (respuesta.parametro == 'agregar_comunicado') {
+                        $("#mostrar_barra_creacion_comunicado").addClass('d-none');
+                        $('.alerta_comunicado').removeClass('d-none');
+                        $('.alerta_comunicado').append('<strong>'+respuesta.mensaje+'</strong>');
+                        setTimeout(function(){
+                            $('.alerta_comunicado').addClass('d-none');
+                            $('.alerta_comunicado').empty();
+                            $("#Generar_comunicados").removeClass('d-none');
+                            localStorage.setItem("#Generar_comunicados", true);
+                            location.reload();
+                        }, 3000);
+                    }
+                    
                 }
             }
-        })        
+        });        
     }) 
 
     // Abrir modal de agregar solictudes despues de guardar 
@@ -4585,6 +4666,8 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     if(Copias){
         Copias = Copias.split(',').map(copia => copia.trim().toLowerCase());
     }
+    // console.log(Destinatario);
+    
     // La copia del empleador y el destinanario empleador tienen valores distintos, por ende, se realiza la siguiente validación:
     // este dato finalmente irá en donde se construye los elementos a subrayados
 
@@ -4599,21 +4682,21 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     //     }
     // }
 
-    if (Copias != null && Copias.includes('empleador')) {
-        var dato_empleador = 'empleador';
-        var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
-        if(Destinatario.toLowerCase() === 'empresa'){
-            dato_empleador_form = Destinatario;
-            dato_empleador = Destinatario.toLowerCase();
-        }
-    }else{
-        var dato_empleador = 'empresa';
-        var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
-        if(Destinatario.toLowerCase() === 'empleador'){
-            dato_empleador_form = Destinatario;
-            dato_empleador = Destinatario.toLowerCase();
-        }
-    }
+    // if (Copias != null && Copias.includes('empleador')) {
+    //     var dato_empleador = 'empleador';
+    //     var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
+    //     if(Destinatario.toLowerCase() === 'empresa'){
+    //         dato_empleador_form = Destinatario;
+    //         dato_empleador = Destinatario.toLowerCase();
+    //     }
+    // }else{
+    //     var dato_empleador = 'empresa';
+    //     var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
+    //     if(Destinatario.toLowerCase() === 'empleador'){
+    //         dato_empleador_form = Destinatario;
+    //         dato_empleador = Destinatario.toLowerCase();
+    //     }
+    // }
     
     if(Correspondencia){
         Correspondencia = Correspondencia.split(',').map(correspondencia => correspondencia.trim().toLowerCase());
@@ -4632,12 +4715,12 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
                 style="${getUnderlineStyle('afiliado')}">Afiliado</a>
-            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="${dato_empleador_form}" \
+            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Empleador" \
                 data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                 data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
-                style="${getUnderlineStyle(dato_empleador)}">Empleador</a>
+                style="${getUnderlineStyle('empleador')}">Empleador</a>
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps" \
                 data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \

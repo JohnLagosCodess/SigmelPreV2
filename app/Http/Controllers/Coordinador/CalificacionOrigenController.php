@@ -2159,7 +2159,7 @@ class CalificacionOrigenController extends Controller
                 'F_registro' => $date,
             ];
 
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
+            $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_registrarComunicadoPcl);
     
             sleep(2);
             $datos_info_historial_acciones = [
@@ -2171,6 +2171,13 @@ class CalificacionOrigenController extends Controller
             ];
     
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+
+            $mensajes = array(
+                "parametro" => 'agregar_comunicado',
+                "mensaje" => 'Comunicado generado satisfactoriamente.',
+                "Id_Comunicado" => $Id_Comunicado,
+                "comunicadoSigmel" => 'DocumentoSigmel'
+            );
         }
         else if($tipo_descarga == 'Manual'){
             if($request->modulo){
@@ -2261,14 +2268,14 @@ class CalificacionOrigenController extends Controller
             ];
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+
+            $mensajes = array(
+                "parametro" => 'agregar_comunicado',
+                "mensaje" => 'Comunicado generado satisfactoriamente.',
+                "comunicadoSigmel" => 'DocumentoManual'
+            );
         }
         
-        
-        $mensajes = array(
-            "parametro" => 'agregar_comunicado',
-            "mensaje" => 'Comunicado generado satisfactoriamente.'
-        );
-
         return json_decode(json_encode($mensajes, true));
 
     }
