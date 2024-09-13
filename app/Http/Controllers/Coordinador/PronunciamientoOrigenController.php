@@ -27,6 +27,7 @@ use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_accion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use PhpOffice\PhpWord\PhpWord;
@@ -38,6 +39,13 @@ use Html2Text\Html2Text;
 class PronunciamientoOrigenController extends Controller
 {
     use GenerarRadicados;
+
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
 
     // TODO LO REFERENTE SERVICIO PRONUNCIAMIENTO
     public function mostrarVistaPronunciamientoOrigen(Request $request){
@@ -51,26 +59,8 @@ class PronunciamientoOrigenController extends Controller
         $array_datos_pronunciamientoOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_calitec));
         //Traer info informacion pronunciamiento
         // sigmel_informacion_pronunciamiento_eventos
-        $info_pronuncia= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_pronunciamiento_eventos as pr')
-        ->select('pr.ID_evento','pr.Id_Asignacion', 'Id_proceso', 'pr.Id_primer_calificador','c.Tipo_Entidad','pr.Id_nombre_calificador','e.Nombre_entidad'
-        ,'pr.Nit_calificador','pr.Dir_calificador','pr.Email_calificador','pr.Telefono_calificador','pr.Depar_calificador','pr.Ciudad_calificador'
-        ,'pr.Id_tipo_pronunciamiento','p.Nombre_parametro as Tpronuncia','pr.Id_tipo_evento','ti.Nombre_evento','pr.Id_tipo_origen','or.Nombre_parametro as T_origen'
-        ,'pr.Fecha_evento','pr.Dictamen_calificador','pr.Fecha_calificador','pr.N_siniestro','pr.Fecha_estruturacion','pr.Porcentaje_pcl','pr.Rango_pcl'
-        ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Destinatario_principal','pr.Tipo_entidad','pr.Nombre_entidad as Nombre_entidad_correspon',
-        'pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps','pr.Copia_afp','pr.Copia_arl','pr.Copia_junta_regional','pr.Copia_junta_nacional','pr.Junta_regional_cual',
-        'sie.Nombre_entidad as Ciudad_Junta','pr.N_anexos','pr.Elaboro_pronuncia','pr.Reviso_Pronuncia','pr.Ciudad_correspon','pr.N_radicado','pr.Firmar','pr.Fecha_correspondencia'
-        ,'pr.Archivo_pronuncia')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as c', 'c.Id_Entidad', '=', 'pr.Id_primer_calificador')
-        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as e', 'e.Id_Entidad', '=', 'pr.Id_nombre_calificador')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as p', 'p.Id_Parametro', '=', 'pr.Id_tipo_pronunciamiento')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as ti', 'ti.Id_Evento', '=', 'pr.Id_tipo_evento')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as or', 'or.Id_Parametro', '=', 'pr.Id_tipo_origen')
-        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'pr.Junta_regional_cual')
-        ->where([
-            ['pr.ID_evento', '=', $Id_evento_calitec],
-            ['pr.Id_Asignacion', '=', $Id_asignacion_calitec]
-        ])
-        ->get();
+        $info_pronuncia= $this->globalService->retornarInformacionPronunciamiento($Id_evento_calitec,$Id_asignacion_calitec);
+
         $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->select('side.Id_Diagnosticos_motcali', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
         'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as Nombre_parametro_lateralidad')
@@ -581,9 +571,9 @@ class PronunciamientoOrigenController extends Controller
             ->update($dato_actualizar_n_siniestro);
 
             sleep(2);
-
+            $id_comunicado = null;
             if($request->decision_pr != 'Silencio'){
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
@@ -663,6 +653,8 @@ class PronunciamientoOrigenController extends Controller
             ->where('ID_evento', $Id_EventoPronuncia)->update($datos_info_accion_evento);
 
             $mensajes = array(
+                "decision" => $request->decision_pr,
+                "Id_Comunicado" => $id_comunicado ? $id_comunicado : null,
                 "parametro" => 'agregar_pronunciamiento',
                 "parametro2" => 'guardo',
                 "mensaje" => 'Información guardada satisfactoriamente.'
@@ -671,6 +663,16 @@ class PronunciamientoOrigenController extends Controller
             return json_decode(json_encode($mensajes, true));
 
         }elseif($request->bandera_pronuncia_guardar_actualizar == 'Actualizar'){
+
+            //Capturamos el Id del comunicado para poder generarlo en el servidor
+            $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$Id_EventoPronuncia],
+                ['Id_Asignacion',$Id_Asignacion_Pronuncia],
+                ['Id_proceso', $Id_ProcesoPronuncia],
+                ['N_radicado',$request->n_radicado]
+                ])
+            ->value('Id_Comunicado');
 
             if ($request->tipo_evento == 2) {
                 $Fecha_evento = null;
@@ -771,16 +773,16 @@ class PronunciamientoOrigenController extends Controller
                 'F_registro' => $date,
             ];
             // dd($request->decision_pr);
-            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado){
+            if($request->decision_pr != 'Silencio' && $id_comunicado){
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
                     ['ID_evento', $Id_EventoPronuncia],
                     ['Id_Asignacion', $Id_Asignacion_Pronuncia],
-                    ['Id_Comunicado', $request->Id_Comunicado]
+                    ['Id_Comunicado', $id_comunicado]
                 ])->update($datos_info_comunicado_eventos);
                 sleep(2);
             }
-            else if($request->decision_pr == 'Silencio' && $request->Id_Comunicado){
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $request->Id_Comunicado)->delete();
+            else if($request->decision_pr == 'Silencio' && $id_comunicado){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $id_comunicado)->delete();
                 $archivos_a_eliminar = [
                     "ORI_ACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.pdf",
                     "ORI_DESACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.docx"
@@ -795,8 +797,8 @@ class PronunciamientoOrigenController extends Controller
                 }
                 sleep(2);
             }
-            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado == "null"){
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+            if($request->decision_pr != 'Silencio' && !$id_comunicado){
+                $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
@@ -879,9 +881,11 @@ class PronunciamientoOrigenController extends Controller
             ->where('ID_evento', $Id_EventoPronuncia)->update($datos_info_accion_evento);
 
             $mensajes = array(
+                "decision" => $request->decision_pr,
+                "Id_Comunicado" => $id_comunicado ? $id_comunicado : null,
                 "parametro" => 'update_pronunciamiento',
                 "parametro2" => 'guardo',
-                "mensaje2" => 'Información actualizada satisfactoriamente.'
+                "mensaje" => 'Información actualizada satisfactoriamente.'
             ); 
 
             return json_decode(json_encode($mensajes, true));
@@ -953,27 +957,46 @@ class PronunciamientoOrigenController extends Controller
     public function DescargarProformaPronunciamiento(Request $request){
         $time = time();
         $date = date("Y-m-d", $time);
-
+        $id_evento = $request->id_evento;
+        $Id_Asignacion_consulta_dx = $request->id_asignacion;
+        $Id_Proceso_consulta_dx = $request->id_proceso;
+        $Id_comunicado = $request->id_comunicado;
+        
+        $array_datos_pronunciamientoOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_Asignacion_consulta_dx));
+        $info_pronuncia = $this->globalService->retornarInformacionPronunciamiento($id_evento,$Id_Asignacion_consulta_dx);
+        $info_comunicado = $this->globalService->retornarInformacionComunicado($Id_comunicado);
+        if(!empty($info_comunicado[0]->Tipo_descarga)){
+            if($info_comunicado[0]->Tipo_descarga === 'Acuerdo'){
+                $bandera_tipo_proforma = "proforma_acuerdo";
+            }
+            else if($info_comunicado[0]->Tipo_descarga === 'Desacuerdo'){
+                $bandera_tipo_proforma = "proforma_desacuerdo";
+            }
+        }
+        else{
+            $bandera_tipo_proforma = '';
+        }
         /* Captura de variables que vienen del ajax */
-        $bandera_tipo_proforma = $request->bandera_tipo_proforma;
-
+        
         $ciudad = $request->ciudad;
         $fecha = $request->fecha;
-        $id_evento = $request->id_evento;
-        
         $nro_radicado = $request->nro_radicado;
-        $nombre_afiliado = $request->nombre_afiliado;
-        $tipo_identificacion = $request->tipo_identificacion;
-        $num_identificacion = $request->num_identificacion;
+        
+        // $nombre_afiliado = $request->nombre_afiliado;
+        $nombre_afiliado = !empty($array_datos_pronunciamientoOrigen[0]->Nombre_afiliado) ? $array_datos_pronunciamientoOrigen[0]->Nombre_afiliado : null;
+        
+        // $tipo_identificacion = $request->tipo_identificacion;
+        $tipo_identificacion = !empty($array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento) ?  $array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento : null;
+
+        // $num_identificacion = $request->num_identificacion;
+        $num_identificacion = !empty($array_datos_pronunciamientoOrigen[0]->Nro_identificacion) ? $array_datos_pronunciamientoOrigen[0]->Nro_identificacion : null;
+
         $fecha_dictamen = $request->fecha_dictamen;
 
         $origen = "<b>".$request->origen."</b>";
 
         $asunto = strtoupper($request->asunto);
         $sustentacion = $request->sustentacion;
-
-        $Id_Asignacion_consulta_dx = $request->Id_Asignacion_consulta_dx;
-        $Id_Proceso_consulta_dx = $request->Id_Proceso_consulta_dx;
 
         $destinatario_principal = $request->destinatario_principal;
         $tipo_entidad_correspon = $request->tipo_entidad_correspon;
@@ -989,10 +1012,14 @@ class PronunciamientoOrigenController extends Controller
         
         $firmar = $request->firmar;
         
-        $Id_cliente_firma = $request->Id_cliente_firma;
+        // $Id_cliente_firma = $request->Id_cliente_firma;
+        $Id_cliente_firma = !empty($array_datos_pronunciamientoOrigen[0]->Id_cliente) ? $array_datos_pronunciamientoOrigen[0]->Id_cliente : null;
+
         $nro_anexos = $request->nro_anexos;
         
-        $nombre_entidad = $request->nombre_entidad;
+        // $nombre_entidad = $request->nombre_entidad;
+        $nombre_entidad = !empty($info_pronuncia[0]->Nombre_entidad) ? $info_pronuncia[0]->Nombre_entidad : null;
+
         $email_entidad = $request->email_entidad;
         $direccion_entidad = $request->direccion_entidad;
         $telefono_entidad = $request->telefono_entidad;
@@ -1000,7 +1027,7 @@ class PronunciamientoOrigenController extends Controller
         $departamento_entidad = $request->departamento_entidad;
         $nro_dictamen_pri_cali = $request->nro_dictamen_pri_cali;
         $fecha_dictamen_pri_cali = $request->fecha_dictamen_pri_cali;
-        $Id_comunicado = $request->id_comunicado;
+        
 
         if (!empty($request->N_siniestro)) {
             $N_siniestro = $request->N_siniestro;

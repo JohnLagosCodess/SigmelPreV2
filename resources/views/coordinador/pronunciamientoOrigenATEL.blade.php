@@ -800,55 +800,9 @@
                                                             <td><textarea class="form-control nota-col" name="nota_comunicado_{{$comunicados->N_radicado}}" id="nota_comunicado_{{$comunicados->N_radicado}}" cols="70" rows="3" style="resize:none; width:200px;">{{$comunicados->Nota}}</textarea></td> {{-- campo Nota--}}
                                                             <td style="display: flex; flex-direction:row; justify-content:space-around;">
                                                                 @if ($comunicados->Tipo_descarga == "Acuerdo" || $comunicados->Tipo_descarga == "Desacuerdo")
-                                                                    <form id="archivo_{{$comunicados->Id_Comunicado}}" data-archivo="{{json_encode($comunicados)}}" method="POST">
+                                                                    <form id="archivo_{{$comunicados->Id_Comunicado}}" data-info_comunicado="{{ json_encode(['Id_Comunicado' => $comunicados->Id_Comunicado, 'Reemplazado' => $comunicados->Reemplazado, 'Nombre_documento' => $comunicados->Nombre_documento]) }}" method="POST">
                                                                         @csrf
-                                                                        <div class="d-none">
-                                                                            @if ($comunicados->Tipo_descarga == "Acuerdo")
-                                                                                {{-- tipo de proforma --}}
-                                                                                <input type="hidden" id="bandera_tipo_proforma" value="proforma_acuerdo">
-                                                                                {{-- Tipo de documento --}}
-                                                                                <input type="hidden" id="tipo_identificacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento;}?>">
-                                                                                {{-- Nro de documento --}}
-                                                                                <input type="hidden" id="num_identificacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nro_identificacion)){echo $array_datos_pronunciamientoOrigen[0]->Nro_identificacion;}?>">
-                                                                                {{-- Siniestro --}}
-                                                                                <input type="hidden" id="id_evento" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
-                                                                                {{-- Nombre afiliado --}}
-                                                                                <input type="hidden" id="nombre_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_afiliado)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_afiliado;}?>">
-                                                                                {{-- Nombre entidad calificadora --}}
-                                                                                <input type="hidden" id="nom_entidad_califi" value="<?php if(!empty($info_pronuncia[0]->Nombre_entidad)){echo $info_pronuncia[0]->Nombre_entidad;}?>">
-                                                                                {{-- Id asignacion para consultar los diagnosticos --}}
-                                                                                <input type="hidden" id="Id_Asignacion_consulta_dx" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_Asignacion)){echo $array_datos_pronunciamientoOrigen[0]->Id_Asignacion;}?>">
-                                                                                {{-- Id proceso para consultar los diagnosticos --}}
-                                                                                <input type="hidden" id="Id_Proceso_consulta_dx" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_proceso)){echo $array_datos_pronunciamientoOrigen[0]->Id_proceso;}?>">
-                                                                                {{-- Id del cliente para consultar el nombre del cliente --}}
-                                                                                <input type="hidden" id="Id_cliente_firma" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_cliente)){echo $array_datos_pronunciamientoOrigen[0]->Id_cliente;}?>">
-                                                                                {{-- Id del comunicado a editar --}}
-                                                                                <input type="hidden" id="id_comunicado_a_editar" value="<?php if(!empty($comunicados->Id_Comunicado)){echo $comunicados->Id_Comunicado;}?>">
-
-                                                                            @elseif ($comunicados->Tipo_descarga == "Desacuerdo")
-
-                                                                                {{-- Nombre entidad calificadora --}}
-                                                                                <input type="hidden" id="nom_entidad_califi" value="<?php if(!empty($info_pronuncia[0]->Nombre_entidad)){echo $info_pronuncia[0]->Nombre_entidad;}?>">
-                                                                                {{-- tipo de proforma --}}
-                                                                                <input type="hidden" id="bandera_tipo_proforma" value="proforma_desacuerdo">
-                                                                                {{-- Tipo de documento --}}
-                                                                                <input type="hidden" id="tipo_identificacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento;}?>">
-                                                                                {{-- Nro de documento --}}
-                                                                                <input type="hidden" id="num_identificacion" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nro_identificacion)){echo $array_datos_pronunciamientoOrigen[0]->Nro_identificacion;}?>">
-                                                                                {{-- Siniestro --}}
-                                                                                <input type="hidden" id="id_evento" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->ID_evento)){echo $array_datos_pronunciamientoOrigen[0]->ID_evento;} ?>">
-                                                                                {{-- Nombre afiliado --}}
-                                                                                <input type="hidden" id="nombre_afiliado" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Nombre_afiliado)){echo $array_datos_pronunciamientoOrigen[0]->Nombre_afiliado;}?>">
-                                                                                {{-- Id asignacion para consultar los diagnosticos --}}
-                                                                                <input type="hidden" id="Id_Asignacion_consulta_dx" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_Asignacion)){echo $array_datos_pronunciamientoOrigen[0]->Id_Asignacion;}?>">
-                                                                                {{-- Id proceso para consultar los diagnosticos --}}
-                                                                                <input type="hidden" id="Id_Proceso_consulta_dx" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_proceso)){echo $array_datos_pronunciamientoOrigen[0]->Id_proceso;}?>">
-                                                                                {{-- Id del cliente para consultar el nombre del cliente --}}
-                                                                                <input type="hidden" id="Id_cliente_firma" value="<?php if(!empty($array_datos_pronunciamientoOrigen[0]->Id_cliente)){echo $array_datos_pronunciamientoOrigen[0]->Id_cliente;}?>">
-                                                                                {{-- Id del comunicado a editar --}}
-                                                                                <input type="hidden" id="id_comunicado_a_editar" value="<?php if(!empty($comunicados->Id_Comunicado)){echo $comunicados->Id_Comunicado;}?>">
-                                                                            @endif
-                                                                        </div>
+                                                                        
                                                                         <button type="submit" id="btn_generar_proforma" style="border: none; background:transparent;">
                                                                             <i class="far fa-eye text-info"></i>
                                                                         </button>
