@@ -5305,11 +5305,13 @@ class RecalificacionPCLController extends Controller
                 'F_registro' => $date,
             ];
     
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+            $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
     
             $mensajes = array(
                 "parametro" => 'insertar_correspondencia',
-                "mensaje" => 'Correspondencia guardada satisfactoriamente.'
+                "mensaje" => 'Correspondencia guardada satisfactoriamente.',
+                "Id_Comunicado" => $Id_Comunicado,
+                "Bandera_boton_guardar_oficio" => 'boton_oficio'
             );
     
             return json_decode(json_encode($mensajes, true));
@@ -5407,9 +5409,23 @@ class RecalificacionPCLController extends Controller
                 ['N_radicado',$request->radicado]
             ])->update($datos_info_comunicado_eventos); 
     
+            $capturar_Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->select('Id_Comunicado')
+            ->where([
+                ['ID_evento', $Id_EventoDecreto],
+                ['Id_Asignacion',$Id_Asignacion_Dcreto],
+                ['Id_proceso', $Id_ProcesoDecreto],
+                ['N_radicado',$request->radicado]
+            ])
+            ->get();
+
+            $Id_Comunicado = $capturar_Id_Comunicado[0]->Id_Comunicado;
+            
             $mensajes = array(
                 "parametro" => 'actualizar_correspondencia',
-                "mensaje" => 'Correspondencia actualizada satisfactoriamente.'
+                "mensaje" => 'Correspondencia actualizada satisfactoriamente.',
+                "Id_Comunicado" => $Id_Comunicado,
+                "Bandera_boton_guardar_oficio" => 'boton_oficio'
             );
     
             return json_decode(json_encode($mensajes, true));
@@ -5558,7 +5574,7 @@ class RecalificacionPCLController extends Controller
                     'F_registro' => $date,
                 ];
         
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
     
             }else{
                 $datos_dictamenPericial =[
@@ -5643,12 +5659,15 @@ class RecalificacionPCLController extends Controller
                     'F_registro' => $date,
                 ];
         
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
             }    
             $mensajes = array(
                 "parametro" => 'insertar_dictamen_pericial',
-                "mensaje" => 'Concepto final del dictamen pericial guardado satisfactoriamente.'
-            );            
+                "mensaje" => 'Concepto final del dictamen pericial guardado satisfactoriamente.',
+                'Id_Comunicado' => $Id_Comunicado,
+                'radicado_dictamen' => $radicado_dictamen,
+                'Bandera_boton_guardar_dictamen' => 'boton_dictamen',                               
+            );          
         } elseif($bandera_dictamen_pericial == 'Actualizar') {
             if($Decreto_pericial == 3){
                 $datos_dictamenPericial =[
@@ -5733,10 +5752,24 @@ class RecalificacionPCLController extends Controller
                     ['N_radicado',$radicado_dictamen]
                     ])
             ->update($comunicado_reemplazado);
-            // dd($comunicado_reemplazado);
+            
+            $capturar_Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->select('Id_Comunicado')
+            ->where([
+                    ['ID_evento',$Id_EventoDecreto],
+                    ['Id_Asignacion',$Id_Asignacion_Dcreto],
+                    ['N_radicado',$radicado_dictamen]
+                    ])
+            ->get();
+            $Id_Comunicado = $capturar_Id_Comunicado[0]->Id_Comunicado;
+            
             $mensajes = array(
                 "parametro" => 'insertar_dictamen_pericial',
-                "mensaje" => 'Concepto final del dictamen pericial actualizado satisfactoriamente.'
+                "mensaje" => 'Concepto final del dictamen pericial actualizado satisfactoriamente.',
+                'Id_Comunicado' => $Id_Comunicado,
+                'radicado_dictamen' => $radicado_dictamen,
+                'Bandera_boton_guardar_dictamen' => 'boton_dictamen',                               
+
             );
         }
         return json_decode(json_encode($mensajes, true));
@@ -5753,11 +5786,21 @@ class RecalificacionPCLController extends Controller
         $nombre_usuario = Auth::user()->name;
         $cargo_profesional = Auth::user()->cargo;
 
-        $ID_Evento_comuni = $request->ID_Evento_comuni;
-        $Id_Asignacion_comuni = $request->Id_Asignacion_comuni;
-        $Id_Proceso_comuni = $request->Id_Proceso_comuni;
-        $Radicado_comuni = $request->Radicado_comuni;
-        $Id_Comunicado = $request->Id_Comunicado;
+        if ($request->Bandera_boton_guardar_dictamen == 'boton_dictamen') {
+            $ID_Evento_comuni = $request->ID_Evento_comuni;
+            $Id_Asignacion_comuni = $request->Id_Asignacion_comuni;
+            $Id_Proceso_comuni = $request->Id_Proceso_comuni;
+            $Radicado_comuni = $request->Radicado_comuni;
+            $Id_Comunicado = $request->Id_Comunicado;            
+        } else {
+            $ID_Evento_comuni = $request->ID_Evento_comuni;
+            $Id_Asignacion_comuni = $request->Id_Asignacion_comuni;
+            $Id_Proceso_comuni = $request->Id_Proceso_comuni;
+            $Radicado_comuni = $request->Radicado_comuni;
+            $Id_Comunicado = $request->Id_Comunicado;            
+        }
+        
+
         // $N_siniestro = $request->N_siniestro;
         
         $formattedData = "";
@@ -6777,14 +6820,22 @@ class RecalificacionPCLController extends Controller
         $nombre_usuario = Auth::user()->name;
         $cargo_profesional = Auth::user()->cargo;
 
-        $ID_Evento_comuni_comite = $request->ID_Evento_comuni_comite;
-        $Id_Asignacion_comuni_comite = $request->Id_Asignacion_comuni_comite;
-        $Id_Proceso_comuni_comite = $request->Id_Proceso_comuni_comite;
-        $Radicado_comuni_comite = $request->Radicado_comuni_comite;
-        $Firma_comuni_comite = $request->Firma_comuni_comite;
-        $Id_Comunicado = $request->Id_Comunicado;
+        if ($request->Bandera_boton_guardar_oficio == 'boton_oficio') {
+            $ID_Evento_comuni_comite = $request->ID_Evento_comuni_comite;
+            $Id_Asignacion_comuni_comite = $request->Id_Asignacion_comuni_comite;
+            $Id_Proceso_comuni_comite = $request->Id_Proceso_comuni_comite;
+            $Radicado_comuni_comite = $request->Radicado_comuni_comite;
+            $Firma_comuni_comite = $request->Firma_comuni_comite;
+            $Id_Comunicado = $request->Id_Comunicado;
+        } else {
+            $ID_Evento_comuni_comite = $request->ID_Evento_comuni_comite;
+            $Id_Asignacion_comuni_comite = $request->Id_Asignacion_comuni_comite;
+            $Id_Proceso_comuni_comite = $request->Id_Proceso_comuni_comite;
+            $Radicado_comuni_comite = $request->Radicado_comuni_comite;
+            $Firma_comuni_comite = $request->Firma_comuni_comite;
+            $Id_Comunicado = $request->Id_Comunicado;            
+        }
         // $N_siniestro = $request->N_siniestro;
-
         $formattedData = "";
 
         $dictamenPclQr = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
@@ -7309,7 +7360,7 @@ class RecalificacionPCLController extends Controller
         }
         
         
-        //Obtener los datos del formulario IF para el Oficio PCL y else para Oficio Incapacidad
+        //Obtener los datos del formulario IF para el Oficio PCL y elseif para Oficio Incapacidad demas oficios
 
         if ($Oficio_pcl ==  'Si') {            
             $data = [

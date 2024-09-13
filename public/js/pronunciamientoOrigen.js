@@ -1489,30 +1489,179 @@ $(document).ready(function(){
             data: formData,
             processData: false,
             contentType: false,
+            beforeSend:function(){
+                showLoading();
+            },
             success: function(response){
-                if (response.parametro == 'agregar_pronunciamiento') {
-                    $('#div_alerta_pronuncia').removeClass('d-none');
-                    $('.alerta_pronucia').append('<strong>'+response.mensaje+'</strong>');                                            
-                    setTimeout(function(){
-                    document.querySelector('#GuardarPronuncia').disabled=false;
-                        $('#div_alerta_pronuncia').addClass('d-none');
-                        $('.alerta_pronucia').empty();   
-                        location.reload();
-                    }, 3000);   
-                }else if(response.parametro == 'update_pronunciamiento'){
-                    $('#div_alerta_pronuncia').removeClass('d-none');
-                    $('.alerta_pronucia').append('<strong>'+response.mensaje2+'</strong>');                                           
-                    setTimeout(function(){
-                    document.querySelector('#ActualizarPronuncia').disabled=false;
-                        $('#div_alerta_pronuncia').addClass('d-none');
-                        $('.alerta_pronucia').empty();
+                console.log('Response : ', response);
+                if(response.decision !== 'Silencio'){
+                    if(response.Id_Comunicado){
+                        parametro = response.parametro;
+                        mensaje = response.mensaje;
+                        dato_proforma_pronunciamiento = retornarDatosProformaPronunciamiento(response.Id_Comunicado);
+                        $.ajax({    
+                            type:'POST',
+                            url:'/DescargarProformaPronunciamiento',
+                            data: dato_proforma_pronunciamiento,
+                            beforeSend:  function() {
+                                $("#btn_generar_proforma").addClass("descarga-deshabilitada");
+                            },
+                            success: function (response) {
+                                console.log('Response : ', response);
+                                if (parametro == 'agregar_pronunciamiento') {
+                                    $('#div_alerta_pronuncia').removeClass('d-none');
+                                    $('.alerta_pronucia').append('<strong>'+mensaje+'</strong>');                                            
+                                    setTimeout(function(){
+                                    document.querySelector('#GuardarPronuncia').disabled=false;
+                                        $('#div_alerta_pronuncia').addClass('d-none');
+                                        $('.alerta_pronucia').empty();   
+                                        location.reload();
+                                    }, 1500);   
+                                }else if(parametro == 'update_pronunciamiento'){
+                                    $('#div_alerta_pronuncia').removeClass('d-none');
+                                    $('.alerta_pronucia').append('<strong>'+mensaje+'</strong>');                                           
+                                    setTimeout(function(){
+                                    document.querySelector('#ActualizarPronuncia').disabled=false;
+                                        $('#div_alerta_pronuncia').addClass('d-none');
+                                        $('.alerta_pronucia').empty();
+                                        document.querySelector('#ActualizarPronuncia').disabled=false;
+                                        location.reload();
+                                    }, 1500);
+                                }
+                            },
+                            complete: function(){
+                                hideLoading();
+                            }        
+                        });
+                        
+                    }
+                }
+                else{
+                    console.log('Response : ', response);
+                    if (response.parametro == 'agregar_pronunciamiento') {
+                        $('#div_alerta_pronuncia').removeClass('d-none');
+                        $('.alerta_pronucia').append('<strong>'+response.mensaje+'</strong>');                                            
+                        setTimeout(function(){
+                        document.querySelector('#GuardarPronuncia').disabled=false;
+                            $('#div_alerta_pronuncia').addClass('d-none');
+                            $('.alerta_pronucia').empty();   
+                            location.reload();
+                        }, 1500);   
+                    }else if(response.parametro == 'update_pronunciamiento'){
+                        $('#div_alerta_pronuncia').removeClass('d-none');
+                        $('.alerta_pronucia').append('<strong>'+response.mensaje2+'</strong>');                                           
+                        setTimeout(function(){
                         document.querySelector('#ActualizarPronuncia').disabled=false;
-                        location.reload();
-                    }, 3000);
+                            $('#div_alerta_pronuncia').addClass('d-none');
+                            $('.alerta_pronucia').empty();
+                            document.querySelector('#ActualizarPronuncia').disabled=false;
+                            location.reload();
+                        }, 1500);
+                    }
                 }
             }
         })
     });
+
+    function retornarDatosProformaPronunciamiento(id_comunicado){
+        var token = $('input[name=_token]').val();
+        /* Captura de variables para enviar a la proforma */
+        var id_evento = $('#Id_Evento_pronuncia').val();
+        var id_asignacion = $('#Asignacion_Pronuncia').val();
+        var id_proceso = $('#Id_Proceso_pronuncia').val();
+
+        var bandera_tipo_proforma = $("#bandera_tipo_proforma").val();
+        var ciudad = $("#ciudad_correspon").val();
+        var fecha = $("#fecha_correspon").val();
+        var nro_radicado = $("#n_radicado").val();
+        var tipo_identificacion = $("#tipo_identificacion").val();
+        var num_identificacion = $("#num_identificacion").val();
+        var nombre_afiliado = $("#nombre_afiliado").val();
+        var fecha_dictamen = $("#fecha_calificador").val();
+        var origen = $("#tipo_origen option:selected").text();
+        var asunto = $("#asunto_cali").val();
+        var Id_Asignacion_consulta_dx = $("#Id_Asignacion_consulta_dx").val();
+        var Id_Proceso_consulta_dx = $("#Id_Proceso_consulta_dx").val();
+        /* Informacion destinatario principal */
+        if($("#destinatario_principal").filter(":checked").val() != undefined){
+            var destinatario_principal = "Si";
+        }else{
+            var destinatario_principal = "No";
+        }
+        
+        var sustentacion = $("#sustenta_cali").val();
+        sustentacion = sustentacion ? sustentacion.replace(/"/g, "'") : '';
+
+        var tipo_entidad_correspon = $("#tipo_entidad").val();
+        var nombre_entidad_correspon = $("#nombre_entidad").val();
+        
+        /* Checkbox de Copias a partes interesadas */
+        var copia_afiliado = $('#copia_afiliado').filter(":checked").val();
+        var copia_empleador = $('#copia_empleador').filter(":checked").val();
+        var copia_eps = $('#copia_eps').filter(":checked").val();
+        var copia_afp = $('#copia_afp').filter(":checked").val();
+        var copia_arl = $('#copia_arl').filter(":checked").val();
+        var copia_junta_regional = $('#junta_regional').filter(":checked").val();
+        var junta_regional_cual = $("#junta_regional_cual").val();
+        var copia_junta_nacional = $('#junta_nacional').filter(":checked").val();
+        var firmar = $('#firmar').filter(":checked").val();
+        var Id_cliente_firma = $('#Id_cliente_firma').val();
+        var nro_anexos = $("#n_anexos").val();
+
+        var nombre_entidad = $("#nom_entidad_califi").val();
+        var direccion_entidad = $("#dir_calificador").val();
+        var email_entidad = $("#mail_calificador").val();
+        var telefono_entidad = $("#telefono_calificador").val();
+        var ciudad_entidad = $("#ciudad_calificador").val();
+        var departamento_entidad = $("#depar_calificador").val();
+        var nro_dictamen_pri_cali = $("#dictamen_calificador").val();
+        var fecha_dictamen_pri_cali = $("#fecha_calificador").val();
+        var N_siniestro = $('#n_siniestro').val();
+
+        return {
+            '_token': token,
+            'bandera_tipo_proforma': bandera_tipo_proforma,
+            'ciudad': ciudad,
+            'fecha': fecha,
+            'nro_radicado': nro_radicado,
+            'tipo_identificacion': tipo_identificacion,
+            'num_identificacion': num_identificacion,
+            'id_evento': id_evento,
+            'id_asignacion': id_asignacion,
+            'id_proceso': id_proceso,
+            'nombre_afiliado': nombre_afiliado,
+            'fecha_dictamen': fecha_dictamen,
+            'origen': origen,
+            'asunto': asunto,
+            'sustentacion': sustentacion,
+            'Id_Asignacion_consulta_dx': Id_Asignacion_consulta_dx,
+            'Id_Proceso_consulta_dx': Id_Proceso_consulta_dx,
+            'destinatario_principal': destinatario_principal,
+            'tipo_entidad_correspon': tipo_entidad_correspon,
+            'nombre_entidad_correspon': nombre_entidad_correspon,
+            'copia_afiliado': copia_afiliado,
+            'copia_empleador': copia_empleador,
+            'copia_eps': copia_eps,
+            'copia_afp': copia_afp,
+            'copia_arl': copia_arl,
+            'copia_junta_regional': copia_junta_regional,
+            'junta_regional_cual' : junta_regional_cual,
+            'copia_junta_nacional': copia_junta_nacional,
+            'firmar': firmar,
+            'Id_cliente_firma': Id_cliente_firma,
+            'nro_anexos': nro_anexos,
+            'nombre_entidad': nombre_entidad,
+            'email_entidad': email_entidad,
+            'direccion_entidad': direccion_entidad,
+            'telefono_entidad': telefono_entidad,
+            'ciudad_entidad': ciudad_entidad,
+            'departamento_entidad': departamento_entidad,
+            'nro_dictamen_pri_cali': nro_dictamen_pri_cali,
+            'fecha_dictamen_pri_cali': fecha_dictamen_pri_cali,
+            'id_comunicado': id_comunicado,
+            'N_siniestro' : N_siniestro
+        }
+    }
 
     $("form[id^='form_editar_comunicado_']").click(function(event){
         event.preventDefault();
@@ -1717,106 +1866,13 @@ $(document).ready(function(){
     /* Generar proforma ACUERDO O DESACUERDO */
     $("form[id^='archivo_']").click(function(event){
         event.preventDefault();
-
-        var token = $('input[name=_token]').val();
-        let comunicado = $(this).data('archivo');
-        /* Captura de variables para enviar a la proforma */
-        var bandera_tipo_proforma = $("#bandera_tipo_proforma").val();
-        var ciudad = $("#ciudad_correspon").val();
-        var fecha = $("#fecha_correspon").val();
-        var nro_radicado = $("#n_radicado").val();
-        var tipo_identificacion = $("#tipo_identificacion").val();
-        var num_identificacion = $("#num_identificacion").val();
-        var id_evento = $("#id_evento").val();
-        var nombre_afiliado = $("#nombre_afiliado").val();
-        var fecha_dictamen = $("#fecha_calificador").val();
-        var origen = $("#tipo_origen option:selected").text();
-        var asunto = $("#asunto_cali").val();
-        var sustentacion = $("#sustenta_cali").val();
-        var Id_Asignacion_consulta_dx = $("#Id_Asignacion_consulta_dx").val();
-        var Id_Proceso_consulta_dx = $("#Id_Proceso_consulta_dx").val();
-        /* Informacion destinatario principal */
-        if($("#destinatario_principal").filter(":checked").val() != undefined){
-            var destinatario_principal = "Si";
-        }else{
-            var destinatario_principal = "No";
-        }
-
-        sustentacion = sustentacion ? sustentacion.replace(/"/g, "'") : '';
-
-        var tipo_entidad_correspon = $("#tipo_entidad").val();
-        var nombre_entidad_correspon = $("#nombre_entidad").val();
+        var Id_Evento = $('#Id_Evento_pronuncia').val();
+        var informacion_comunicado = $(this).data("info_comunicado");
         
-        /* Checkbox de Copias a partes interesadas */
-        var copia_afiliado = $('#copia_afiliado').filter(":checked").val();
-        var copia_empleador = $('#copia_empleador').filter(":checked").val();
-        var copia_eps = $('#copia_eps').filter(":checked").val();
-        var copia_afp = $('#copia_afp').filter(":checked").val();
-        var copia_arl = $('#copia_arl').filter(":checked").val();
-        var copia_junta_regional = $('#junta_regional').filter(":checked").val();
-        var junta_regional_cual = $("#junta_regional_cual").val();
-        var copia_junta_nacional = $('#junta_nacional').filter(":checked").val();
-        var firmar = $('#firmar').filter(":checked").val();
-        var Id_cliente_firma = $('#Id_cliente_firma').val();
-        var nro_anexos = $("#n_anexos").val();
-
-        var nombre_entidad = $("#nom_entidad_califi").val();
-        var direccion_entidad = $("#dir_calificador").val();
-        var email_entidad = $("#mail_calificador").val();
-        var telefono_entidad = $("#telefono_calificador").val();
-        var ciudad_entidad = $("#ciudad_calificador").val();
-        var departamento_entidad = $("#depar_calificador").val();
-        var nro_dictamen_pri_cali = $("#dictamen_calificador").val();
-        var fecha_dictamen_pri_cali = $("#fecha_calificador").val();
-        var N_siniestro = $('#n_siniestro').val();
-
-        var datos_generacion_proforma = {
-            '_token': token,
-            'bandera_tipo_proforma': bandera_tipo_proforma,
-            'ciudad': ciudad,
-            'fecha': fecha,
-            'nro_radicado': nro_radicado,
-            'tipo_identificacion': tipo_identificacion,
-            'num_identificacion': num_identificacion,
-            'id_evento': id_evento,
-            'nombre_afiliado': nombre_afiliado,
-            'fecha_dictamen': fecha_dictamen,
-            'origen': origen,
-            'asunto': asunto,
-            'sustentacion': sustentacion,
-            'Id_Asignacion_consulta_dx': Id_Asignacion_consulta_dx,
-            'Id_Proceso_consulta_dx': Id_Proceso_consulta_dx,
-            'destinatario_principal': destinatario_principal,
-            'tipo_entidad_correspon': tipo_entidad_correspon,
-            'nombre_entidad_correspon': nombre_entidad_correspon,
-            'copia_afiliado': copia_afiliado,
-            'copia_empleador': copia_empleador,
-            'copia_eps': copia_eps,
-            'copia_afp': copia_afp,
-            'copia_arl': copia_arl,
-            'copia_junta_regional': copia_junta_regional,
-            'junta_regional_cual' : junta_regional_cual,
-            'copia_junta_nacional': copia_junta_nacional,
-            'firmar': firmar,
-            'Id_cliente_firma': Id_cliente_firma,
-            'nro_anexos': nro_anexos,
-            'nombre_entidad': nombre_entidad,
-            'email_entidad': email_entidad,
-            'direccion_entidad': direccion_entidad,
-            'telefono_entidad': telefono_entidad,
-            'ciudad_entidad': ciudad_entidad,
-            'departamento_entidad': departamento_entidad,
-            'nro_dictamen_pri_cali': nro_dictamen_pri_cali,
-            'fecha_dictamen_pri_cali': fecha_dictamen_pri_cali,
-            'id_comunicado': comunicado.Id_Comunicado,
-            'N_siniestro' : N_siniestro
-        }
-        
-        if(comunicado.Reemplazado == 1){
-            var nombre_doc = comunicado.Nombre_documento;
-            var idEvento = comunicado.ID_evento;
+        if(informacion_comunicado.Reemplazado == 1){
+            var nombre_doc = informacion_comunicado.Nombre_documento;
             var enlaceDescarga = document.createElement('a');
-            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+Id_Evento;     
             enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
             enlaceDescarga.style.display = 'none';
             document.body.appendChild(enlaceDescarga);
@@ -1825,85 +1881,95 @@ $(document).ready(function(){
                 document.body.removeChild(enlaceDescarga);
             }, 1000);
         }else{
-            $.ajax({    
-                type:'POST',
-                url:'/DescargarProformaPronunciamiento',
-                data: datos_generacion_proforma,
-                // xhrFields: {
-                //     responseType: 'blob' // Indica que la respuesta es un blob
-                // },
-                beforeSend:  function() {
-                    $("#btn_generar_proforma").addClass("descarga-deshabilitada");
-                },
-                success: function (response, status, xhr) {
+            var nombre_doc = informacion_comunicado.Nombre_documento;
+            var enlaceDescarga = document.createElement('a');
+            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+Id_Evento;     
+            enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+            enlaceDescarga.style.display = 'none';
+            document.body.appendChild(enlaceDescarga);
+            enlaceDescarga.click();
+            setTimeout(function() {
+                document.body.removeChild(enlaceDescarga);
+            }, 1000);
+            // $.ajax({    
+            //     type:'POST',
+            //     url:'/DescargarProformaPronunciamiento',
+            //     data: datos_generacion_proforma,
+            //     // xhrFields: {
+            //     //     responseType: 'blob' // Indica que la respuesta es un blob
+            //     // },
+            //     beforeSend:  function() {
+            //         $("#btn_generar_proforma").addClass("descarga-deshabilitada");
+            //     },
+            //     success: function (response, status, xhr) {
 
-                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+            //         // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
             
-                    var indicativo = response.indicativo;
-                    // Crear un enlace de descarga similar al ejemplo anterior
-                    if (bandera_tipo_proforma == "proforma_acuerdo") {
-                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
-                        var base64Pdf = response.pdf;
+            //         var indicativo = response.indicativo;
+            //         // Crear un enlace de descarga similar al ejemplo anterior
+            //         if (bandera_tipo_proforma == "proforma_acuerdo") {
+            //             // Obtener el contenido codificado en base64 del PDF desde la respuesta
+            //             var base64Pdf = response.pdf;
 
-                        // Decodificar base64 en un array de bytes
-                        var binaryString = atob(base64Pdf);
-                        var len = binaryString.length;
-                        var bytes = new Uint8Array(len);
+            //             // Decodificar base64 en un array de bytes
+            //             var binaryString = atob(base64Pdf);
+            //             var len = binaryString.length;
+            //             var bytes = new Uint8Array(len);
 
-                        for (var i = 0; i < len; i++) {
-                            bytes[i] = binaryString.charCodeAt(i);
-                        }
+            //             for (var i = 0; i < len; i++) {
+            //                 bytes[i] = binaryString.charCodeAt(i);
+            //             }
 
-                        // Crear un Blob a partir del array de bytes
-                        var blob = new Blob([bytes], { type: 'application/pdf' });
+            //             // Crear un Blob a partir del array de bytes
+            //             var blob = new Blob([bytes], { type: 'application/pdf' });
 
-                        // var nombre_documento = "ORI_ACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
-                        var nombre_documento = "ORI_ACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+"_"+indicativo+".pdf";
+            //             // var nombre_documento = "ORI_ACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
+            //             var nombre_documento = "ORI_ACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+"_"+indicativo+".pdf";
 
-                    } else {
-                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
-                        var base64Word = response.word;
+            //         } else {
+            //             // Obtener el contenido codificado en base64 del PDF desde la respuesta
+            //             var base64Word = response.word;
                 
-                        // Decodificar base64 en un array de bytes
-                        var binaryString = atob(base64Word);
-                        var len = binaryString.length;
-                        var bytes = new Uint8Array(len);
+            //             // Decodificar base64 en un array de bytes
+            //             var binaryString = atob(base64Word);
+            //             var len = binaryString.length;
+            //             var bytes = new Uint8Array(len);
                 
-                        for (var i = 0; i < len; i++) {
-                            bytes[i] = binaryString.charCodeAt(i);
-                        }
+            //             for (var i = 0; i < len; i++) {
+            //                 bytes[i] = binaryString.charCodeAt(i);
+            //             }
 
-                        var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+            //             var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
 
-                        // var nombre_documento = "ORI_DESACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".docx";              
-                        var nombre_documento = "ORI_DESACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+"_"+indicativo+".docx";
+            //             // var nombre_documento = "ORI_DESACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".docx";              
+            //             var nombre_documento = "ORI_DESACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+"_"+indicativo+".docx";
                                       
-                    }
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+            //         }
+            //         var link = document.createElement('a');
+            //         link.href = window.URL.createObjectURL(blob);
+            //         link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
             
-                    // Adjuntar el enlace al documento y activar el evento de clic
-                    document.body.appendChild(link);
-                    link.click();
+            //         // Adjuntar el enlace al documento y activar el evento de clic
+            //         document.body.appendChild(link);
+            //         link.click();
             
-                    // Eliminar el enlace del documento
-                    document.body.removeChild(link);
-                },
-                error: function (error) {
-                    // Manejar casos de error
+            //         // Eliminar el enlace del documento
+            //         document.body.removeChild(link);
+            //     },
+            //     error: function (error) {
+            //         // Manejar casos de error
 
-                    if (bandera_tipo_proforma == "proforma_acuerdo") {
-                        console.error('Error al descargar el PDF:', error);
-                    } else {
-                        console.error('Error al descargar el WORD:', error);
-                    }
-                },
-                complete: function(){
-                    $("#btn_generar_proforma").removeClass("descarga-deshabilitada");
-                    location.reload();
-                }        
-            });
+            //         if (bandera_tipo_proforma == "proforma_acuerdo") {
+            //             console.error('Error al descargar el PDF:', error);
+            //         } else {
+            //             console.error('Error al descargar el WORD:', error);
+            //         }
+            //     },
+            //     complete: function(){
+            //         $("#btn_generar_proforma").removeClass("descarga-deshabilitada");
+            //         location.reload();
+            //     }        
+            // });
         }
         
     });

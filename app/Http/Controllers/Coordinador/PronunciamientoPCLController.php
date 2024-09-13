@@ -635,7 +635,7 @@ class PronunciamientoPCLController extends Controller
             sleep(2);
 
             if($request->decision_pr != 'Silencio'){
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
@@ -713,7 +713,8 @@ class PronunciamientoPCLController extends Controller
             $mensajes = array(
                 "parametro" => 'agregar_pronunciamiento',
                 "parametro2" => 'guardo',
-                "mensaje" => 'Información guardada satisfactoriamente.'
+                "mensaje" => 'Información guardada satisfactoriamente.',
+                "Id_Comunicado" => $Id_Comunicado
             ); 
 
             return json_decode(json_encode($mensajes, true));
@@ -808,6 +809,7 @@ class PronunciamientoPCLController extends Controller
                 'Elaboro' => $request->elaboro,
                 'Reviso' => '0',
                 'Anexos' => $request->n_anexos,
+                'Agregar_copia' => $agregar_copias_comu,
                 'Tipo_descarga' => $request->decision_pr,
                 'Modulo_creacion' => 'pronunciamientoPCL',
                 'Reemplazado' => 0,
@@ -819,10 +821,11 @@ class PronunciamientoPCLController extends Controller
             ];
             // dd($request->decision_pr);
             if($request->decision_pr != 'Silencio' && $request->Id_Comunicado){
+                $Id_Comunicado = $request->Id_Comunicado;
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
                     ['ID_evento', $Id_EventoPronuncia],
                     ['Id_Asignacion', $Id_Asignacion_Pronuncia],
-                    ['Id_Comunicado', $request->Id_Comunicado]
+                    ['Id_Comunicado', $Id_Comunicado]
                 ])->update($datos_info_comunicado_eventos);
                 sleep(2);
             }
@@ -843,7 +846,7 @@ class PronunciamientoPCLController extends Controller
                 sleep(2);
             }
             if($request->decision_pr != 'Silencio' && $request->Id_Comunicado == "null"){
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
@@ -922,7 +925,8 @@ class PronunciamientoPCLController extends Controller
             $mensajes = array(
                 "parametro" => 'update_pronunciamiento',
                 "parametro2" => 'guardo',
-                "mensaje2" => 'Información actualizada satisfactoriamente.'
+                "mensaje2" => 'Información actualizada satisfactoriamente.',
+                "Id_Comunicado" => $Id_Comunicado
             ); 
 
             return json_decode(json_encode($mensajes, true));
