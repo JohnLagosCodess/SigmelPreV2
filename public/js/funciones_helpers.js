@@ -597,6 +597,11 @@ $(document).ready(function () {
     $("#recargar_ventana").click(function(){
         location.reload();
     });
+
+    $(".initSelect2").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
 });
 
 /* Función para ajustar un Datatable cuando este tenga un scroll vertical */

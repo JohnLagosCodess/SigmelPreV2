@@ -4869,6 +4869,16 @@ class CalificacionPCLController extends Controller
             // $fileName = 'Comunicado_'.$Id_comunicado.'_'.$N_radicado.'.pdf';
             $fileName = 'Comunicado_'.$N_radicado.'_'.$Id_comunicado.'_'.$indicativo.'.pdf';
 
+            $output = $pdf->output();
+            file_put_contents(public_path("Documentos_Eventos/{$ID_evento}/{$fileName}"), $output);
+
+            $actualizar_nombre_documento = [
+                'Nombre_documento' => $fileName
+            ];
+
+            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
+            ->update($actualizar_nombre_documento);
+
             /* Inserción del registro de que fue descargado */
             // // Extraemos el id del servicio asociado
             // $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')

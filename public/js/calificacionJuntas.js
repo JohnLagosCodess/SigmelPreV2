@@ -2821,6 +2821,8 @@ $(document).ready(function(){
     $('#form_generarComunicadoJuntas').submit(function (e) {
         e.preventDefault();  
 
+        $("#Generar_comunicados").remove();
+        $("#mostrar_barra_creacion_comunicado").removeClass('d-none');
         var ciudad = $('#ciudad').val();
         var Id_evento = $('#Id_evento').val();
         var Id_asignacion = $('#Id_asignacion').val();
@@ -2896,6 +2898,7 @@ $(document).ready(function(){
         var tipo_descarga = $("[name='tipo_de_preforma']").filter(":checked").val();
         //Copias Interesadas Origen
         var copiaComunicadoTotal = [];
+        let copias = {};
         cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
 
         $('input[type="checkbox"]').each(function() {
@@ -2903,9 +2906,12 @@ $(document).ready(function(){
             if (copiaComunicado === 'copia_afiliado' || copiaComunicado === 'copia_empleador' || 
                 copiaComunicado === 'copia_eps' || copiaComunicado === 'copia_afp' || 
                 copiaComunicado === 'copia_arl' || copiaComunicado === 'copia_jrci' || copiaComunicado === 'copia_jnci') {                
-                if ($(this).is(':checked')) {                
-                var relacionCopiaValor = $(this).val();
-                copiaComunicadoTotal.push(relacionCopiaValor);
+                if ($(this).is(':checked')) {     
+                    var relacionCopiaValor = $(this).val();
+                    copiaComunicadoTotal.push(relacionCopiaValor);
+                    copias[$(this).val()] = true;
+                }else{
+                    copias[$(this).val()] = false;
                 }
             }
         });
@@ -2935,15 +2941,15 @@ $(document).ready(function(){
             'nombre_afiliado_comunicado2':nombre_afiliado_comunicado2,
             'tipo_documento_comunicado2':tipo_documento_comunicado2,
             'identificacion_comunicado2':identificacion_comunicado2,
-            'radiojrci_comunicado': radiojrci_comunicado,
+            'radiojrci_comunicado': radiojrci_comunicado ?? null,
             'JRCI_Destinatario': JRCI_Destinatario,  
-            'radiojnci_comunicado': radiojnci_comunicado,        
-            'radioafiliado_comunicado':radioafiliado_comunicado,
-            'radioempresa_comunicado':radioempresa_comunicado,
-            'radioeps_comunicado': radioeps_comunicado,
-            'radioafp_comunicado': radioafp_comunicado,
-            'radioarl_comunicado': radioarl_comunicado,
-            'radioOtro':radioOtro,
+            'radiojnci_comunicado': radiojnci_comunicado ?? null,        
+            'radioafiliado_comunicado':radioafiliado_comunicado ?? null,
+            'radioempresa_comunicado':radioempresa_comunicado ?? null,
+            'radioeps_comunicado': radioeps_comunicado ?? null,
+            'radioafp_comunicado': radioafp_comunicado ?? null,
+            'radioarl_comunicado': radioarl_comunicado ?? null,
+            'radioOtro':radioOtro ?? null,
             'nombre_destinatario':nombre_destinatario,
             'nic_cc':nic_cc,
             'direccion_destinatario':direccion_destinatario,
@@ -2963,15 +2969,32 @@ $(document).ready(function(){
             'tipo_descarga': tipo_descarga,
             'modulo_creacion':'calificacionJuntas',
             'N_siniestro':N_siniestro,
+            'Nombre_junta_act': $('#Nombre_junta_act').val(),
+            'F_estructuracion_act': $('#F_estructuracion_act').val(),
+            'F_dictamen_act' : $('#F_dictamen_act').val(),
+            'input_jrci_seleccionado_copia_editar' : JRCI_copia,
+            'id_jrci_del_input': $('#Id_junta_act').val(),
+            'F_radicacion_contro_pri_cali_act' : $('#F_radicacion_contro_pri_cali_act').val(),
+            'F_notifi_afiliado_act' : $('#F_notifi_afiliado_act').val(),
+            'Id_junta_act' : $('#Id_junta_act').val(),
+            "edit_copia_afiliado" : copias['Afiliado'] ,
+            "edit_copia_empleador" : copias['Empleador'],
+            "edit_copia_eps" : copias['EPS'],
+            "edit_copia_afp" : copias['AFP'],
+            "edit_copia_arl" : copias['ARL'],
+            "edit_copia_jrci" : copias['JRCI'],
+            "edit_copia_jnci" : copias['JNCI'],
+            'tipo_de_preforma_editar': tipo_descarga
         }
-        
-        document.querySelector("#Generar_comunicados").disabled = true;   
+
+
         $.ajax({
             type:'POST',
             url:'/registrarComunicadoJuntas',
             data: datos_generarComunicado,            
             success:function(response){
                 if (response.parametro == 'agregar_comunicado') {
+                    $("#mostrar_barra_creacion_comunicado").addClass('d-none');
                     $('.alerta_comunicado').removeClass('d-none');
                     $('.alerta_comunicado').append('<strong>'+response.mensaje+'</strong>');
                     setTimeout(function(){
@@ -6550,7 +6573,9 @@ $(document).ready(function(){
     // Actualiza comunicado de origen
     $('#Editar_comunicados').click(function (e) {
         e.preventDefault();  
-        $('#Pdf').prop('disabled', false);     
+        $('#Pdf').prop('disabled', false);
+        $("#Editar_comunicados").remove();
+        $("#mostrar_barra_creacion_comunicado").removeClass('d-none');     
         var Id_comunicado = $('#Id_comunicado_act').val();
         var ciudad = $('#ciudad_comunicado_editar').val();
         var Id_evento = $('#Id_evento_act').val();
@@ -6626,6 +6651,7 @@ $(document).ready(function(){
         var N_siniestro = $("#n_siniestro_proforma_editar").val();
        //Copias Interesadas Origen
        var EditComunicadoTotal = [];
+       let copias = {};
        cuerpo_comunicado = cuerpo_comunicado ? cuerpo_comunicado.replace(/"/g, "'") : '';
        $('input[type="checkbox"]').each(function() {
             var copiaComunicado2 = $(this).attr('id');            
@@ -6635,6 +6661,9 @@ $(document).ready(function(){
                 if ($(this).is(':checked')) {                
                 var relacionCopiaValor2 = $(this).val();
                 EditComunicadoTotal.push(relacionCopiaValor2);
+                copias[$(this).val()] = true;
+                }else{
+                    copias[$(this).val()] = false;
                 }
             }
        });
@@ -6664,15 +6693,15 @@ $(document).ready(function(){
             'nombre_afiliado_comunicado2_editar':nombre_afiliado_comunicado2,
             'tipo_documento_comunicado2_editar':tipo_documento_comunicado2,
             'identificacion_comunicado2_editar':identificacion_comunicado2,            
-            'radiojrci_comunicado_editar': radiojrci_comunicado,
+            'radiojrci_comunicado_editar': radiojrci_comunicado ?? null,
             'JRCI_Destinatario_editar': JRCI_Destinatario,
-            'radiojnci_comunicado_editar': radiojnci_comunicado,
-            'radioafiliado_comunicado_editar':radioafiliado_comunicado,
-            'radioempresa_comunicado_editar':radioempresa_comunicado,
-            'radioeps_comunicado_editar': radioeps_comunicado,
-            'radioafp_comunicado_editar': radioafp_comunicado,
-            'radioarl_comunicado_editar': radioarl_comunicado,
-            'radioOtro_editar':radioOtro,
+            'radiojnci_comunicado_editar': radiojnci_comunicado ?? null,
+            'radioafiliado_comunicado_editar':radioafiliado_comunicado ?? null,
+            'radioempresa_comunicado_editar':radioempresa_comunicado ?? null,
+            'radioeps_comunicado_editar': radioeps_comunicado ?? null,
+            'radioafp_comunicado_editar': radioafp_comunicado ?? null,
+            'radioarl_comunicado_editar': radioarl_comunicado ?? null,
+            'radioOtro_editar':radioOtro ?? null,
             'nombre_destinatario_editar':nombre_destinatario,
             'nic_cc_editar':nic_cc,
             'direccion_destinatario_editar':direccion_destinatario,
@@ -6692,21 +6721,36 @@ $(document).ready(function(){
             'tipo_descarga': tipo_descarga,
             'modulo_creacion':'calificacionJuntas',
             'N_siniestro':N_siniestro,
+            'Nombre_junta_act': $('#Nombre_junta_act').val(),
+            'F_estructuracion_act': $('#F_estructuracion_act').val(),
+            'F_dictamen_act' : $('#F_dictamen_act').val(),
+            'input_jrci_seleccionado_copia_editar' : JRCI_copia,
+            'id_jrci_del_input': $('#Id_junta_act').val(),
+            'F_radicacion_contro_pri_cali_act' : $('#F_radicacion_contro_pri_cali_act').val(),
+            'F_notifi_afiliado_act' : $('#F_notifi_afiliado_act').val(),
+            'Id_junta_act' : $('#Id_junta_act').val(),
+            "edit_copia_afiliado" : copias['Afiliado'] ,
+            "edit_copia_empleador" : copias['Empleador'],
+            "edit_copia_eps" : copias['EPS'],
+            "edit_copia_afp" : copias['AFP'],
+            "edit_copia_arl" : copias['ARL'],
+            "edit_copia_jrci" : copias['JRCI'],
+            "edit_copia_jnci" : copias['JNCI'],
+            'tipo_de_preforma_editar': tipo_descarga
         }
 
-        document.querySelector("#Editar_comunicados").disabled = true; 
         $.ajax({
             type:'POST',
             url:'/actualizarComunicadoJuntas',
             data: datos_actualizarComunicado,            
             success:function(response){
                 if (response.parametro == 'actualizar_comunicado') {
+                    $("#mostrar_barra_creacion_comunicado").addClass('d-none');
                     $('.alerta_editar_comunicado').removeClass('d-none');
                     $('.alerta_editar_comunicado').append('<strong>'+response.mensaje+'</strong>');
                     setTimeout(function(){
                         $('.alerta_editar_comunicado').addClass('d-none');
                         $('.alerta_editar_comunicado').empty();
-                        document.querySelector("#Editar_comunicados").disabled = false;
                         localStorage.setItem("#Generar_comunicados", true);
                         location.reload();
                     }, 3000);
@@ -7329,7 +7373,6 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     }
     //Función para agregar el subrayado al destinatario principal y aquellos que hayan sido seleccionados como copia
     function getUnderlineStyle(entity) {
-        console.log(Destinatario.toLowerCase(),entity);
         let negrita = (Correspondencia && Correspondencia?.includes(entity)) ? 'font-weight:700;' : '';
         let underline = (Destinatario.toLowerCase() === entity || (Copias && Copias?.includes(entity))) ? 'text-decoration-line: underline;' : '';
         return negrita + underline;

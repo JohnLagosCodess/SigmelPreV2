@@ -1194,6 +1194,28 @@ $(document).ready(function(){
                 formData.append('Id_Comunicado',null);
             }
         }
+        // Se captura data para la generacion y guardado de la proforma en el servidor
+        var token = $("input[name='_token']").val();
+        var fecha = $('#fecha_correspon').val();
+        var nro_radicado = $('#n_radicado').val();
+        var Id_Evento_pronuncia_corre =  $('#Id_Evento_pronuncia').val();
+        var Id_Proceso_pronuncia_corre = $('#Id_Proceso_pronuncia').val();
+        var Asignacion_Pronuncia_corre = $('#Asignacion_Pronuncia').val();
+        var Nombre_afiliado_corre = $('#nombre_afiliado').val();
+        var Iden_afiliado_corre = $('#identificacion').val()
+        var copia_afiliado = $('#copia_afiliado').filter(":checked").val();
+        var copia_empleador = $('#copia_empleador').filter(":checked").val();
+        var copia_eps = $('#copia_eps').filter(":checked").val();
+        var copia_afp = $('#copia_afp').filter(":checked").val();
+        var copia_arl = $('#copia_arl').filter(":checked").val();
+        var firmar = $('#firmar').filter(":checked").val();
+        var desicion_proforma_pro = $("[id^='di_']").filter(":checked").val();
+        if (desicion_proforma_pro == 'Acuerdo') {
+            var desicion_proforma = 'proforma_acuerdo';            
+        } else if(desicion_proforma_pro == 'Desacuerdo'){
+            var desicion_proforma = 'proforma_desacuerdo';            
+        }
+        var N_siniestro = $('#n_siniestro').val();
         $.ajax({
             type:'POST',
             url:'/guardarInfoServiPronuncia',
@@ -1202,6 +1224,45 @@ $(document).ready(function(){
             contentType: false,
             success: function(response){
                 if (response.parametro == 'agregar_pronunciamiento') {
+                    // Envio de data para generar y guardar proforma en el servidor
+                    // Si la desicion es distinta a Silencio
+                    if (desicion_proforma_pro != 'Silencio') {
+                        let Bandera_boton_guardar_pronunciamiento = 'boton_pronunciamiento'
+                        let Id_Comunicado = response.Id_Comunicado;
+                        let datos_proforma_pro = {
+                            '_token': token,
+                            'fecha': fecha,
+                            'nro_radicado': nro_radicado,
+                            'Id_Evento_pronuncia_corre': Id_Evento_pronuncia_corre,
+                            'Id_Proceso_pronuncia_corre': Id_Proceso_pronuncia_corre,
+                            'Asignacion_Pronuncia_corre': Asignacion_Pronuncia_corre,
+                            'Nombre_afiliado_corre':Nombre_afiliado_corre,
+                            'Iden_afiliado_corre':Iden_afiliado_corre,
+                            'Sustenta_cali': sustenta_cali,
+                            'copia_afiliado':copia_afiliado,
+                            'copia_empleador':copia_empleador,
+                            'copia_eps':copia_eps,
+                            'copia_afp':copia_afp,
+                            'copia_arl':copia_arl,
+                            'Firma_corre':firmar,
+                            'desicion_proforma':desicion_proforma,
+                            'id_comunicado': Id_Comunicado,
+                            'N_siniestro' : N_siniestro,
+                            'Bandera_boton_guardar_pronunciamiento': Bandera_boton_guardar_pronunciamiento,
+                        };
+                        $.ajax({
+                            type:'POST',
+                            url:'/generarPdfProformaspro',
+                            data:datos_proforma_pro,                        
+                            success: function(pdfResponse) {
+                                // la respuesta de generarPdfProformaPro
+                                // console.log('PDF generado');
+                            },
+                            error: function(xhr) {
+                                console.error('Error al generar el PDF', xhr);
+                            } 
+                        });                        
+                    }
                     $('#div_alerta_pronuncia').removeClass('d-none');
                     $('.alerta_pronucia').append('<strong>'+response.mensaje+'</strong>');                                            
                     setTimeout(function(){
@@ -1211,6 +1272,45 @@ $(document).ready(function(){
                         location.reload();
                     }, 3000);   
                 }else if(response.parametro == 'update_pronunciamiento'){
+                    // Envio de data para generar y guardar proforma en el servidor
+                    // Si la desicion es distinta a Silencio
+                    if (desicion_proforma_pro != 'Silencio') {
+                        let Bandera_boton_guardar_pronunciamiento = 'boton_pronunciamiento'
+                        let Id_Comunicado = response.Id_Comunicado;
+                        let datos_proforma_pro = {
+                            '_token': token,
+                            'fecha': fecha,
+                            'nro_radicado': nro_radicado,
+                            'Id_Evento_pronuncia_corre': Id_Evento_pronuncia_corre,
+                            'Id_Proceso_pronuncia_corre': Id_Proceso_pronuncia_corre,
+                            'Asignacion_Pronuncia_corre': Asignacion_Pronuncia_corre,
+                            'Nombre_afiliado_corre':Nombre_afiliado_corre,
+                            'Iden_afiliado_corre':Iden_afiliado_corre,
+                            'Sustenta_cali': sustenta_cali,
+                            'copia_afiliado':copia_afiliado,
+                            'copia_empleador':copia_empleador,
+                            'copia_eps':copia_eps,
+                            'copia_afp':copia_afp,
+                            'copia_arl':copia_arl,
+                            'Firma_corre':firmar,
+                            'desicion_proforma':desicion_proforma,
+                            'id_comunicado': Id_Comunicado,
+                            'N_siniestro' : N_siniestro,
+                            'Bandera_boton_guardar_pronunciamiento': Bandera_boton_guardar_pronunciamiento,
+                        };
+                        $.ajax({
+                            type:'POST',
+                            url:'/generarPdfProformaspro',
+                            data:datos_proforma_pro,                        
+                            success: function(pdfResponse) {
+                                // la respuesta de generarPdfProformaPro
+                                // console.log('PDF generado');
+                            },
+                            error: function(xhr) {
+                                console.error('Error al generar el PDF', xhr);
+                            } 
+                        });                        
+                    }
                     $('#div_alerta_pronuncia').removeClass('d-none');
                     $('.alerta_pronucia').append('<strong>'+response.mensaje2+'</strong>');                                           
                     setTimeout(function(){
@@ -1238,7 +1338,7 @@ $(document).ready(function(){
 
         if (desicion_proforma_di_acuerdo_pr.prop('checked')) {
             var desicion_proforma = 'proforma_acuerdo';
-        }else if(desicion_proforma_di_acuerdo_pr.prop('checked')){
+        }else if(desicion_proforma_di_desacuerdo_pr.prop('checked')){
             var desicion_proforma = 'proforma_desacuerdo';
         }
         var fecha = $("#fecha_correspon").val();

@@ -1829,6 +1829,12 @@
                                                 <div class="alerta_Correspondencia alert alert-success mt-2 mr-auto" role="alert"></div>
                                             </div>
                                         </div>
+                                        <div class="text-center d-none" id="mostrar_barra_creacion_comunicado">                                
+                                            <button class="btn btn-info" type="button" disabled>
+                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                Guardando Comunicado por favor espere...
+                                            </button>
+                                        </div>
                                     </div>
 
                                 </div>

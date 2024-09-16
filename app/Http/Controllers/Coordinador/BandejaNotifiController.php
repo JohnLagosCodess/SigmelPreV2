@@ -106,8 +106,6 @@ class BandejaNotifiController extends Controller
                 ->get();
 
             }
-
-            $arraybandejaNotifi = json_decode(json_encode($bandejaNotifi, true));
             return response()->json($bandejaNotifi);
 
         }
