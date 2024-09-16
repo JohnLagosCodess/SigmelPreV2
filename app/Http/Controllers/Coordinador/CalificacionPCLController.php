@@ -70,6 +70,7 @@ use App\Models\sigmel_lista_regional_juntas;
 use App\Models\sigmel_auditorias_informacion_accion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
 use App\Services\GenerarDictamenesPcl;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use DateTime;
@@ -80,6 +81,13 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class CalificacionPCLController extends Controller
 {
     use GenerarRadicados;
+
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
 
     public function mostrarVistaCalificacionPCL(Request $request){
         if(!Auth::check()){
@@ -8069,6 +8077,15 @@ class CalificacionPCLController extends Controller
         }
         $bandera_dictamen_pericial = $request->bandera_dictamen_pericial;
 
+        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
+        if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+            $agregar_copias_dml = "EPS, AFP, ARL, AFP_Conocimiento";
+        }
+        else{
+            $agregar_copias_dml = "EPS, AFP, ARL";
+        }
+        $Destinatario = 'Afiliado';
+
         // eL número de identificacion siempre será el del afiliado.
         $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
         ->select('Nro_identificacion')
@@ -8143,7 +8160,7 @@ class CalificacionPCLController extends Controller
                     'Nombre_afiliado' => 'N/A',
                     'T_documento' => 'N/A',
                     'N_identificacion' => $nro_identificacion,
-                    'Destinatario' => 'N/A',
+                    'Destinatario' => $Destinatario,
                     'Nombre_destinatario' => 'N/A',
                     'Nit_cc' => 'N/A',
                     'Direccion_destinatario' => 'N/A',
@@ -8157,6 +8174,7 @@ class CalificacionPCLController extends Controller
                     'Elaboro' => $nombre_usuario,
                     'Reviso' => 'N/A',
                     'Anexos' => 'N/A',
+                    'Agregar_copia' => $agregar_copias_dml,
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'calificacionTecnicaPCL',
                     'Reemplazado' => 0,
@@ -8229,7 +8247,7 @@ class CalificacionPCLController extends Controller
                     'Nombre_afiliado' => 'N/A',
                     'T_documento' => 'N/A',
                     'N_identificacion' => $nro_identificacion,
-                    'Destinatario' => 'N/A',
+                    'Destinatario' => $Destinatario,
                     'Nombre_destinatario' => 'N/A',
                     'Nit_cc' => 'N/A',
                     'Direccion_destinatario' => 'N/A',
@@ -8243,6 +8261,7 @@ class CalificacionPCLController extends Controller
                     'Elaboro' => $nombre_usuario,
                     'Reviso' => 'N/A',
                     'Anexos' => 'N/A',
+                    'Agregar_copia' => $agregar_copias_dml,
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'calificacionTecnicaPCL',
                     'Reemplazado' => 0,
@@ -8336,6 +8355,8 @@ class CalificacionPCLController extends Controller
             
 
             $comunicado_reemplazado = [
+                'Destinatario' => $Destinatario,
+                'Agregar_copia' => $agregar_copias_dml,
                 'Reemplazado' => 0,
                 'N_siniestro' => $n_siniestro,
             ];

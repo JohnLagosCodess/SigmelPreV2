@@ -1627,14 +1627,14 @@
                                                                 function subrayado($entidad, $destinatario, $array_copias, $array_correspondencia, $tipo_descarga = null) {
 
                                                                     $array_copias = implode(',', $array_copias);
+                                                                    // Se valida si la elección fue Beneficiario
+                                                                    if (stripos($array_copias, 'Beneficiario') !== false) {
+                                                                        $array_copias = str_ireplace('Beneficiario', 'Afiliado', $array_copias);
+                                                                    }
                                                                     $array_correspondencia = implode(',', $array_correspondencia);
 
                                                                     $negrita = (isset($array_correspondencia) && strpos($array_correspondencia, $entidad) !== false) ? 'font-weight:700;' : '';
                                                                     $underline = ($destinatario === strtolower($entidad) || (isset($array_copias) && strpos(strtolower($array_copias), strtolower($entidad)) !== false)) ? 'text-decoration-line: underline;' : '';
-                                                                    if($tipo_descarga === 'Dictamen'){
-                                                                        $negrita = (isset($array_correspondencia) && strpos($array_correspondencia, $entidad) !== false) ? 'font-weight:700;' : '';
-                                                                        $underline = 'text-decoration-line: underline;';
-                                                                    }
                                                                     return $negrita.$underline;
                                                                 }
                                                             }
