@@ -2820,24 +2820,27 @@ class CalificacionPCLController extends Controller
             // La descarga se hace desde que se guarda el comunicado
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
 
-                $copiaComunicadosPcl = $request->agregar_copia_editar;
+                $copiaComunicadosOrigen = $request->agregar_copia_editar;
                 $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
 
-                // Inicializar el array con todas las claves con valores vacíos
-                $total_copias = array_fill_keys(array_values($claves_copias), '');
-
-                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
-                foreach ($copiaComunicadosPcl as $elemento) {
-                    if (isset($claves_copias[$elemento])) {
-                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                if ($copiaComunicadosOrigen > 0) {
+                    
+                    // Inicializar el array con todas las claves con valores vacíos
+                    $total_copias = array_fill_keys(array_values($claves_copias), '');
+    
+                    // Iterar sobre cada copia en $copiaComunicadosOrigen y asignar su valor correspondiente
+                    foreach ($copiaComunicadosOrigen as $elemento) {
+                        if (isset($claves_copias[$elemento])) {
+                            $total_copias[$claves_copias[$elemento]] = $elemento;
+                        }
                     }
+    
+                    // Filtrar las claves que tienen valores vacíos
+                    $total_copias = array_filter($total_copias);
+    
+                    // Convertir las claves en variables con sus respectivos valores
+                    extract($total_copias);
                 }
-
-                // Filtrar las claves que tienen valores vacíos
-                $total_copias = array_filter($total_copias);
-
-                // Convertir las claves en variables con sus respectivos valores
-                extract($total_copias);
             }
                         
             $Agregar_copias = [];
@@ -3187,23 +3190,25 @@ class CalificacionPCLController extends Controller
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
-
-                // Inicializar el array con todas las claves con valores vacíos
-                $total_copias = array_fill_keys(array_values($claves_copias), '');
-
-                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
-                foreach ($copiaComunicadosPcl as $elemento) {
-                    if (isset($claves_copias[$elemento])) {
-                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                
+                if ($copiaComunicadosPcl > 0) {
+                    // Inicializar el array con todas las claves con valores vacíos
+                    $total_copias = array_fill_keys(array_values($claves_copias), '');
+    
+                    // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                    foreach ($copiaComunicadosPcl as $elemento) {
+                        if (isset($claves_copias[$elemento])) {
+                            $total_copias[$claves_copias[$elemento]] = $elemento;
+                        }
                     }
-                }
-
-                // Filtrar las claves que tienen valores vacíos
-                $total_copias = array_filter($total_copias);
-
-                // Convertir las claves en variables con sus respectivos valores
-                extract($total_copias);
-
+    
+                    // Filtrar las claves que tienen valores vacíos
+                    $total_copias = array_filter($total_copias);
+    
+                    // Convertir las claves en variables con sus respectivos valores
+                    extract($total_copias);
+                    
+                } 
             }
             
             $Agregar_copias = [];
@@ -3541,22 +3546,24 @@ class CalificacionPCLController extends Controller
             elseif($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
-
-                // Inicializar el array con todas las claves con valores vacíos
-                $total_copias = array_fill_keys(array_values($claves_copias), '');
-
-                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
-                foreach ($copiaComunicadosPcl as $elemento) {
-                    if (isset($claves_copias[$elemento])) {
-                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                
+                if ($copiaComunicadosPcl > 0) {
+                    // Inicializar el array con todas las claves con valores vacíos
+                    $total_copias = array_fill_keys(array_values($claves_copias), '');
+    
+                    // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                    foreach ($copiaComunicadosPcl as $elemento) {
+                        if (isset($claves_copias[$elemento])) {
+                            $total_copias[$claves_copias[$elemento]] = $elemento;
+                        }
                     }
+    
+                    // Filtrar las claves que tienen valores vacíos
+                    $total_copias = array_filter($total_copias);
+    
+                    // Convertir las claves en variables con sus respectivos valores
+                    extract($total_copias);                    
                 }
-
-                // Filtrar las claves que tienen valores vacíos
-                $total_copias = array_filter($total_copias);
-
-                // Convertir las claves en variables con sus respectivos valores
-                extract($total_copias);
             }
             
             $Agregar_copias = [];
@@ -3890,22 +3897,24 @@ class CalificacionPCLController extends Controller
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
-
-                // Inicializar el array con todas las claves con valores vacíos
-                $total_copias = array_fill_keys(array_values($claves_copias), '');
-
-                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
-                foreach ($copiaComunicadosPcl as $elemento) {
-                    if (isset($claves_copias[$elemento])) {
-                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                
+                if ($copiaComunicadosPcl > 0) {
+                    // Inicializar el array con todas las claves con valores vacíos
+                    $total_copias = array_fill_keys(array_values($claves_copias), '');
+    
+                    // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                    foreach ($copiaComunicadosPcl as $elemento) {
+                        if (isset($claves_copias[$elemento])) {
+                            $total_copias[$claves_copias[$elemento]] = $elemento;
+                        }
                     }
+    
+                    // Filtrar las claves que tienen valores vacíos
+                    $total_copias = array_filter($total_copias);
+    
+                    // Convertir las claves en variables con sus respectivos valores
+                    extract($total_copias);                    
                 }
-
-                // Filtrar las claves que tienen valores vacíos
-                $total_copias = array_filter($total_copias);
-
-                // Convertir las claves en variables con sus respectivos valores
-                extract($total_copias);
             }
 
             $email_afiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
@@ -4248,21 +4257,23 @@ class CalificacionPCLController extends Controller
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
 
-                // Inicializar el array con todas las claves con valores vacíos
-                $total_copias = array_fill_keys(array_values($claves_copias), '');
-
-                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
-                foreach ($copiaComunicadosPcl as $elemento) {
-                    if (isset($claves_copias[$elemento])) {
-                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                if ($copiaComunicadosPcl > 0) {                    
+                    // Inicializar el array con todas las claves con valores vacíos
+                    $total_copias = array_fill_keys(array_values($claves_copias), '');
+    
+                    // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                    foreach ($copiaComunicadosPcl as $elemento) {
+                        if (isset($claves_copias[$elemento])) {
+                            $total_copias[$claves_copias[$elemento]] = $elemento;
+                        }
                     }
+    
+                    // Filtrar las claves que tienen valores vacíos
+                    $total_copias = array_filter($total_copias);
+    
+                    // Convertir las claves en variables con sus respectivos valores
+                    extract($total_copias);
                 }
-
-                // Filtrar las claves que tienen valores vacíos
-                $total_copias = array_filter($total_copias);
-
-                // Convertir las claves en variables con sus respectivos valores
-                extract($total_copias);
             }
             
             $Agregar_copias = [];
@@ -4644,24 +4655,26 @@ class CalificacionPCLController extends Controller
             } 
             // La descarga se hace desde que se guarda el comunicado
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
-                $copiaComunicadosPcl = $request->agregar_copia_editar;
+                $copiaComunicados = $request->agregar_copia_editar;
                 $claves_copias = ['Afiliado' => 'edit_copia_afiliado', 'Empleador' => 'edit_copia_empleador', 'EPS' => 'edit_copia_eps', 'AFP' => 'edit_copia_afp', 'ARL' => 'edit_copia_arl', 'JRCI' => 'edit_copia_jrci', 'JNCI' => 'edit_copia_jnci'];
 
-                // Inicializar el array con todas las claves con valores vacíos
-                $total_copias = array_fill_keys(array_values($claves_copias), '');
-
-                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
-                foreach ($copiaComunicadosPcl as $elemento) {
-                    if (isset($claves_copias[$elemento])) {
-                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                if ($copiaComunicados > 0) {
+                    // Inicializar el array con todas las claves con valores vacíos
+                    $total_copias = array_fill_keys(array_values($claves_copias), '');
+    
+                    // Iterar sobre cada copia en $copiaComunicados y asignar su valor correspondiente
+                    foreach ($copiaComunicados as $elemento) {
+                        if (isset($claves_copias[$elemento])) {
+                            $total_copias[$claves_copias[$elemento]] = $elemento;
+                        }
                     }
+    
+                    // Filtrar las claves que tienen valores vacíos
+                    $total_copias = array_filter($total_copias);
+    
+                    // Convertir las claves en variables con sus respectivos valores
+                    extract($total_copias);                    
                 }
-
-                // Filtrar las claves que tienen valores vacíos
-                $total_copias = array_filter($total_copias);
-
-                // Convertir las claves en variables con sus respectivos valores
-                extract($total_copias);
             }
             
             // Creamos array para empezar a llenarlos con las copias
