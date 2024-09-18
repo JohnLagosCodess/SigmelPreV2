@@ -968,6 +968,13 @@
                             <div class="mensaje_agrego_dto_atel alert alert-success" role="alert"></div>
                         </div>
                     </div>
+                </div>
+                <div class="row d-none" id="mostrar_mensaje_error">
+                    <div  class="col-12">
+                        <div class="form-group">
+                            <div class="mostrar_mensaje_error alert alert-danger" role="alert"></div>
+                        </div>
+                    </div>
                 </div>                
             </div>
         </form>
@@ -1024,7 +1031,7 @@
                                 <div class="form-group"> 
                                     <div class="alerta_comiteInter alert alert-success mt-2 mr-auto" role="alert"></div>
                                 </div>
-                            </div>                                    
+                            </div>                                        
                         </div>                                                                
                     </div>
                 </form>
@@ -1431,6 +1438,11 @@
                                     <div class="alerta_Correspondencia alert alert-success mt-2 mr-auto" role="alert"></div>
                                 </div>
                             </div>
+                            <div  class="col-12 d-none" id="mostrar_mensaje_error_correspondencia">
+                                <div class="form-group">
+                                    <div class="mostrar_mensaje_error_correspondencia alert alert-danger" role="alert"></div>
+                                </div>
+                            </div>
                         </div> 
                     </div>
                 </form>
@@ -1527,10 +1539,6 @@
 
                                                                         $negrita = (isset($array_correspondencia) && strpos($array_correspondencia, $entidad) !== false) ? 'font-weight:700;' : '';
                                                                         $underline = ($destinatario === strtolower($entidad) || (isset($array_copias) && strpos(strtolower($array_copias), strtolower($entidad)) !== false)) ? 'text-decoration-line: underline;' : '';
-                                                                        if($tipo_descarga === 'Dictamen'){
-                                                                            $negrita = (isset($array_correspondencia) && strpos($array_correspondencia, $entidad) !== false) ? 'font-weight:700;' : '';
-                                                                            $underline = 'text-decoration-line: underline;';
-                                                                        }
                                                                         return $negrita.$underline;
                                                                     }
                                                                 }

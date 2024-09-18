@@ -42,6 +42,7 @@ use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_lista_tablas_1507_decretos;
 use App\Models\sigmel_lista_tipo_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -50,7 +51,12 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class RecalificacionPCLController extends Controller
 {
     use GenerarRadicados;
+    protected $globalService;
 
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
     public function mostrarVistaRecalificacionPCL(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -5479,6 +5485,15 @@ class RecalificacionPCLController extends Controller
         }
         $bandera_dictamen_pericial = $request->bandera_dictamen_pericial;
 
+        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
+        if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+            $agregar_copias_dml = "EPS, AFP, ARL, AFP_Conocimiento";
+        }
+        else{
+            $agregar_copias_dml = "EPS, AFP, ARL";
+        }
+        $Destinatario = 'Afiliado';
+
         // eL número de identificacion siempre será el del afiliado.
         $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
         ->select('Nro_identificacion')
@@ -5553,7 +5568,7 @@ class RecalificacionPCLController extends Controller
                     'Nombre_afiliado' => 'N/A',
                     'T_documento' => 'N/A',
                     'N_identificacion' => $nro_identificacion,
-                    'Destinatario' => 'N/A',
+                    'Destinatario' => $Destinatario,
                     'Nombre_destinatario' => 'N/A',
                     'Nit_cc' => 'N/A',
                     'Direccion_destinatario' => 'N/A',
@@ -5567,6 +5582,7 @@ class RecalificacionPCLController extends Controller
                     'Elaboro' => $nombre_usuario,
                     'Reviso' => 'N/A',
                     'Anexos' => 'N/A',
+                    'Agregar_copia' => $agregar_copias_dml,
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'recalificacionPCL',
                     'N_siniestro' => $n_siniestro,
@@ -5638,7 +5654,7 @@ class RecalificacionPCLController extends Controller
                     'Nombre_afiliado' => 'N/A',
                     'T_documento' => 'N/A',
                     'N_identificacion' => $nro_identificacion,
-                    'Destinatario' => 'N/A',
+                    'Destinatario' => $Destinatario,
                     'Nombre_destinatario' => 'N/A',
                     'Nit_cc' => 'N/A',
                     'Direccion_destinatario' => 'N/A',
@@ -5652,6 +5668,7 @@ class RecalificacionPCLController extends Controller
                     'Elaboro' => $nombre_usuario,
                     'Reviso' => 'N/A',
                     'Anexos' => 'N/A',
+                    'Agregar_copia' => $agregar_copias_dml,
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'recalificacionPCL',
                     'N_siniestro' => $n_siniestro,
@@ -5742,6 +5759,8 @@ class RecalificacionPCLController extends Controller
             sleep(2);
 
             $comunicado_reemplazado = [
+                'Destinatario' => $Destinatario,
+                'Agregar_copia' => $agregar_copias_dml,
                 'Reemplazado' => 0,
                 'N_siniestro' => $n_siniestro,
             ];

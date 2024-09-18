@@ -1491,20 +1491,39 @@ $(document).ready(function(){
                             url:'/ADescargaProformaDMLPrev',
                             data: datos_adx,
                             success: function (response) {
-                                $("#GuardarAdicionDx").addClass('d-none');
-                                $("#ActualizarAdicionDx").addClass('d-none');
-                                $("#mostrar_mensaje_agrego_adicion_dx").removeClass('d-none');
-                                $(".mensaje_agrego_adicion_dx").append('<strong>'+mensaje+'</strong>');
-                                setTimeout(() => {
-                                    $("#mostrar_mensaje_agrego_adicion_dx").addClass('d-none');
-                                    $(".mensaje_agrego_adicion_dx").empty();
-                                    location.reload();
-                                }, 1500);
+                                if(response.nombre_documento){  
+                                    $("#GuardarAdicionDx").addClass('d-none');
+                                    $("#ActualizarAdicionDx").addClass('d-none');
+                                    $("#mostrar_mensaje_agrego_adicion_dx").removeClass('d-none');
+                                    $(".mensaje_agrego_adicion_dx").append('<strong>'+mensaje+'</strong>');
+                                    setTimeout(() => {
+                                        $("#mostrar_mensaje_agrego_adicion_dx").addClass('d-none');
+                                        $(".mensaje_agrego_adicion_dx").empty();
+                                        location.reload();
+                                    }, 1500);
+                                }
+                                else{
+                                    $("#mostrar_mensaje_error").removeClass('d-none');
+                                    $(".mostrar_mensaje_error").append('<strong>Ha ocurrido un error</strong>');
+                                    setTimeout(() => {
+                                        $("#mostrar_mensaje_error").addClass('d-none');
+                                        $(".mostrar_mensaje_error").empty();
+                                    }, 1000);
+                                }
                             },
                             complete:  function() {
                                 hideLoading();
                             },       
                         });
+                    }
+                    else{
+                        hideLoading();
+                        $("#mostrar_mensaje_error").removeClass('d-none');
+                        $(".mostrar_mensaje_error").append('<strong>Ha ocurrido un error</strong>');
+                        setTimeout(() => {
+                            $("#mostrar_mensaje_error").addClass('d-none');
+                            $(".mostrar_mensaje_error").empty();
+                        }, 1000);
                     }
                 }
             });
@@ -1701,6 +1720,7 @@ $(document).ready(function(){
          $("#beneficiario").prop('checked', true);
          $("#empleador").prop('checked', true);
          $("#eps").prop('checked', true);
+         $("#afp").prop('checked', true);
          $("#arl").prop('checked', true);
 
          // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
@@ -1728,6 +1748,7 @@ $(document).ready(function(){
             $("#beneficiario").prop('checked', false);
             $("#empleador").prop('checked', false);
             $("#eps").prop('checked', false);
+            $("#afp").prop('checked', false);
             $("#arl").prop('checked', false);
 
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
@@ -2104,20 +2125,39 @@ $(document).ready(function(){
                             $("#enviar_form_noti_previsional").addClass("descarga-deshabilitada");
                         },
                         success: function (response) {
-                            $('#GuardarCorrespondencia').prop('disabled', true);
-                            $('#ActualizarCorrespondencia').prop('disabled', true);
-                            $('#div_alerta_Correspondencia').removeClass('d-none');
-                            $('.alerta_Correspondencia').append('<strong>'+mensaje+'</strong>');                                            
-                            setTimeout(function(){
-                                $('#div_alerta_Correspondencia').addClass('d-none');
-                                $('.alerta_Correspondencia').empty();   
-                                location.reload();
-                            }, 1500);   
+                            if(response.nombre_documento){
+                                $('#GuardarCorrespondencia').prop('disabled', true);
+                                $('#ActualizarCorrespondencia').prop('disabled', true);
+                                $('#div_alerta_Correspondencia').removeClass('d-none');
+                                $('.alerta_Correspondencia').append('<strong>'+mensaje+'</strong>');                                            
+                                setTimeout(function(){
+                                    $('#div_alerta_Correspondencia').addClass('d-none');
+                                    $('.alerta_Correspondencia').empty();   
+                                    location.reload();
+                                }, 1500);  
+                            }
+                            else{
+                                $("#mostrar_mensaje_error_correspondencia").removeClass('d-none');
+                                $(".mostrar_mensaje_error_correspondencia").append('<strong>Ha ocurrido un error</strong>');
+                                setTimeout(() => {
+                                    $("#mostrar_mensaje_error_correspondencia").addClass('d-none');
+                                    $(".mostrar_mensaje_error_correspondencia").empty();
+                                }, 1000);
+                            }
                         },
                         complete:  function() {
                             hideLoading();
                         },       
                     });
+                }
+                else{
+                    hideLoading();
+                    $("#mostrar_mensaje_error_correspondencia").removeClass('d-none');
+                    $(".mostrar_mensaje_error_correspondencia").append('<strong>Ha ocurrido un error</strong>');
+                    setTimeout(() => {
+                        $("#mostrar_mensaje_error_correspondencia").addClass('d-none');
+                        $(".mostrar_mensaje_error_correspondencia").empty();
+                    }, 1000);
                 }
             }          
         })
@@ -2271,6 +2311,11 @@ $(document).ready(function(){
         
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
+
+        //BENEFICIARIO
+        if((destinatarioPrincipal !== 'afiliado' && destinatarioPrincipal !== 'Afiliado') && copias && (copias.includes('beneficiario') || copias.includes('Beneficiario'))){
+            copias = copias.replace('beneficiario','afiliado');
+        }
 
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
@@ -2462,23 +2507,12 @@ $(document).ready(function(){
                         $("#modalCorrespondencia #folios").val(anexos);
                         $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
                         $("#modalCorrespondencia #radicado").val(N_radicado);
-                        
-                        if(tipo_descarga === 'Dictamen' && tipo_correspondencia.toLowerCase() === 'afp'){
+                        if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
                             $("#modalCorrespondencia #check_principal").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga === 'Dictamen' && (tipo_correspondencia.toLowerCase() === 'afiliado' || tipo_correspondencia.toLowerCase() === 'eps' || tipo_correspondencia.toLowerCase() === 'arl' || tipo_correspondencia.toLowerCase() === 'afp_conocimiento')){
-                            $("#modalCorrespondencia #check_copia").prop('checked', true);
-                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                            $("#modalCorrespondencia #check_principal").prop('required', false);
-                        }
-                        else if(tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
-                            $("#modalCorrespondencia #check_principal").prop('checked', true);
-                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                            $("#modalCorrespondencia #check_copia").prop('required', false);
-                        }
-                        else if(tipo_descarga != 'Manual' && tipo_descarga != 'Dictamen' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.includes(tipo_correspondencia.toLowerCase())){
+                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias.includes(tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -2887,51 +2921,7 @@ $(document).ready(function(){
     });
     // Captura Formulario DML ORIGEN PREVISIONAL (DICTAMEN)
     $("form[id^='Form_dml_origen_previsional_']").submit(function (e){
-        e.preventDefault();              
-        // var tupla_comunicado = $(this).data("tupla_comunicado");
-        // var infoComunicado = $(this).data("archivo");
-        // var id_cliente = $("#Id_cliente_"+tupla_comunicado).val();
-        // var num_identificacion = $("#num_identificacion_"+tupla_comunicado).val();
-        // var fecha_dictamen = $("#f_dictamen_"+tupla_comunicado).val();
-        // var nro_siniestro = $("#nro_siniestro_"+tupla_comunicado).val();
-        // var Id_Asignacion = $("#Id_Asignacion_"+tupla_comunicado).val();
-        // var Id_Proceso = $("#Id_Proceso_"+tupla_comunicado).val();
-        // var f_dictamen = $("#f_dictamen_"+tupla_comunicado).val();
-        // var empresa_laboral = $("#empresa_laboral_"+tupla_comunicado).val();
-        // var nit_cc_laboral = $("#nit_cc_laboral_"+tupla_comunicado).val();
-        // var cargo_laboral = $("#cargo_laboral_"+tupla_comunicado).val();
-        // var antiguedad_cargo_laboral = $("#antiguedad_cargo_laboral_"+tupla_comunicado).val();
-        // var act_economica_laboral = $("#act_economica_laboral_"+tupla_comunicado).val();
-        // var justificacion_revision_origen = $("#justificacion_revision_origen_"+tupla_comunicado).val();
-        // var nombre_evento = $("#nombre_evento_"+tupla_comunicado).val();
-        // var f_evento = $("#f_evento_"+tupla_comunicado).val();
-        // var f_fallecimiento = $("#f_fallecimiento_"+tupla_comunicado).val();
-        // var sustentacion_califi_origen = $("#sustentacion_califi_origen_"+tupla_comunicado).val();
-        // var origen = $("#origen_dto_atel option:selected").text(); 
-        // var N_siniestro = $("#n_siniestro").val();
-
-        // datos_generacion_proforma_dml_previsional = {
-        //     '_token': token,
-        //     'id_cliente': id_cliente,
-        //     'nro_siniestro': nro_siniestro,
-        //     'Id_Asignacion': Id_Asignacion,
-        //     'Id_Proceso': Id_Proceso,
-        //     'f_dictamen': f_dictamen,
-        //     'empresa_laboral': empresa_laboral,
-        //     'nit_cc_laboral': nit_cc_laboral,
-        //     'cargo_laboral': cargo_laboral,
-        //     'antiguedad_cargo_laboral': antiguedad_cargo_laboral,
-        //     'act_economica_laboral': act_economica_laboral,
-        //     'justificacion_revision_origen': justificacion_revision_origen,
-        //     'nombre_evento': nombre_evento,
-        //     'f_evento': f_evento,
-        //     'f_fallecimiento': f_fallecimiento,
-        //     'sustentacion_califi_origen': sustentacion_califi_origen,
-        //     'origen': origen,
-        //     'id_comunicado': infoComunicado.Id_Comunicado,
-        //     'N_siniestro': N_siniestro,
-        // };
-        
+        e.preventDefault();          
         var Id_Evento = $("#Id_Evento").val();
         var informacion_comunicado = $(this).data("info_comunicado");
         
@@ -2948,157 +2938,75 @@ $(document).ready(function(){
             }, 1000);
         }
         else{
-            var nombre_doc = informacion_comunicado.Nombre_documento;
-            var enlaceDescarga = document.createElement('a');
-            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+Id_Evento;     
-            enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
-            enlaceDescarga.style.display = 'none';
-            document.body.appendChild(enlaceDescarga);
-            enlaceDescarga.click();
-            setTimeout(function() {
-                document.body.removeChild(enlaceDescarga);
-            }, 1000);
-            // $.ajax({    
-            //     type:'POST',
-            //     url:'/ADescargaProformaDMLPrev',
-            //     data: datos_generacion_proforma_dml_previsional,
-            //     // xhrFields: {
-            //     //     responseType: 'blob' // Indica que la respuesta es un blob
-            //     // },
-            //     beforeSend:  function() {
-            //         $("#btn_enviar_dictamen_previsional").addClass("descarga-deshabilitada");
-            //     },
-            //     success: function (response, status, xhr) {
-
-            //         // Obtener el contenido codificado en base64 del PDF desde la respuesta
-            //         var base64Pdf = response.pdf;
-
-            //         // Decodificar base64 en un array de bytes
-            //         var binaryString = atob(base64Pdf);
-            //         var len = binaryString.length;
-            //         var bytes = new Uint8Array(len);
-
-            //         for (var i = 0; i < len; i++) {
-            //             bytes[i] = binaryString.charCodeAt(i);
-            //         }
-
-            //         // Crear un Blob a partir del array de bytes
-            //         var blob = new Blob([bytes], { type: 'application/pdf' });
-                     
-            //         // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-            
-            //         var indicativo = response.indicativo;
-
-            //         // var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+".pdf";
-            //         var nombre_pdf = "ORI_DML_"+Id_Asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
-
-            //         // Crear un enlace de descarga similar al ejemplo anterior
-            //         var link = document.createElement('a');
-            //         link.href = window.URL.createObjectURL(blob);
-            //         link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
-            
-            //         // Adjuntar el enlace al documento y activar el evento de clic
-            //         document.body.appendChild(link);
-            //         link.click();
-            
-            //         // Eliminar el enlace del documento
-            //         document.body.removeChild(link);
-            //     },
-            //     error: function (error) {
-            //         // Manejar casos de error
-            //         console.error('Error al descargar el PDF:', error);
-            //     },
-            //     complete:  function() {
-            //         $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
-            //         if(infoComunicado.Nombre_documento == null){
-            //             location.reload();
-            //         }
-            //     },       
-            // });
+            if(informacion_comunicado.Nombre_documento){
+                var nombre_doc = informacion_comunicado.Nombre_documento;
+                var enlaceDescarga = document.createElement('a');
+                enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+Id_Evento;     
+                enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+                enlaceDescarga.style.display = 'none';
+                document.body.appendChild(enlaceDescarga);
+                enlaceDescarga.click();
+                setTimeout(function() {
+                    document.body.removeChild(enlaceDescarga);
+                }, 1000);
+            }
+            else{
+                datos_generacion_proforma_dml_previsional = dataCreacionDMLADX(informacion_comunicado.Id_Comunicado);
+                $.ajax({    
+                    type:'POST',
+                    url:'/ADescargaProformaDMLPrev',
+                    data: datos_generacion_proforma_dml_previsional,
+                    beforeSend:  function() {
+                        $("#btn_enviar_dictamen_previsional").addClass("descarga-deshabilitada");
+                    },
+                    success: function (response, status, xhr) {
+    
+                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                        var base64Pdf = response.pdf;
+    
+                        // Decodificar base64 en un array de bytes
+                        var binaryString = atob(base64Pdf);
+                        var len = binaryString.length;
+                        var bytes = new Uint8Array(len);
+    
+                        for (var i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+    
+                        // Crear un Blob a partir del array de bytes
+                        var blob = new Blob([bytes], { type: 'application/pdf' });
+    
+                        // Crear un enlace de descarga similar al ejemplo anterior
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = response.nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+                
+                        // Adjuntar el enlace al documento y activar el evento de clic
+                        document.body.appendChild(link);
+                        link.click();
+                
+                        // Eliminar el enlace del documento
+                        document.body.removeChild(link);
+                    },
+                    error: function (error) {
+                        // Manejar casos de error
+                        console.error('Error al descargar el PDF:', error);
+                    },
+                    complete:  function() {
+                        $("#btn_enviar_dictamen_previsional").removeClass("descarga-deshabilitada");
+                        if(informacion_comunicado.Nombre_documento == null){
+                            location.reload();
+                        }
+                    },       
+                });
+            }
         }
 
     });
 
     // Captura Formulario PDF Notificación del DML previsional (OFICIO)
     $("form[id^='Form_noti_dml_previsional_']").submit(function (e){
-        e.preventDefault();              
-        // var tupla_comunicado = $(this).data("tupla_comunicado");
-        // var infoComunicado = $(this).data("archivo");
-        // // Captura de variables del formulario
-        // var id_tupla_comunicado = $("#id_tupla_comunicado_"+tupla_comunicado).val();
-        // var id_com_inter = $("#id_com_inter_"+tupla_comunicado).val();
-        // var ciudad = $("#ciudad_"+tupla_comunicado).val();
-        // var fecha = $("#fecha_"+tupla_comunicado).val();
-        // var asunto = $("#asunto_proforma_dml_"+tupla_comunicado).val();
-        // var cuerpo = $("#cuerpo_comunicado").val();
-        // var tipo_identificacion = $("#tipo_identificacion_"+tupla_comunicado).val();
-        // var num_identificacion = $("#num_identificacion_"+tupla_comunicado).val();
-        // var nro_siniestro = $("#nro_siniestro_"+tupla_comunicado).val();
-        // var nombre_afiliado = $("#nombre_afiliado_"+tupla_comunicado).val();
-        // var direccion_afiliado = $("#direccion_afiliado_"+tupla_comunicado).val();
-        // var telefono_afiliado = $("#telefono_afiliado_"+tupla_comunicado).val();
-        // var ciudad_afiliado = $("#ciudad_afiliado_"+tupla_comunicado).val();
-        // var nombre_afp = $("#nombre_afp_"+tupla_comunicado).val();
-        // var email_afp = $("#email_afp_"+tupla_comunicado).val();
-        // var direccion_afp = $("#direccion_afp_"+tupla_comunicado).val();
-        // var telefono_afp = $("#telefono_afp_"+tupla_comunicado).val();
-        // var ciudad_afp = $("#ciudad_afp_"+tupla_comunicado).val();
-        // var Id_asignacion = $("#Id_Asignacion_consulta_"+tupla_comunicado).val();
-        // var Id_cliente_firma = $('#Id_cliente_firma_'+tupla_comunicado).val();
-        // var origen = $("#origen_dto_atel option:selected").text();
-        // //checkbox de Copias de partes interesadas
-        // var copia_beneficiario = $('#beneficiario').filter(":checked").val();
-        // var copia_empleador = $('#empleador').filter(":checked").val();
-        // var copia_eps = $('#eps').filter(":checked").val();
-        // var copia_afp = $('#afp').filter(":checked").val();
-        // var tipo_evento = $('#nombre_evento_guardado').val();
-        // var N_siniestro = $("#n_siniestro").val();
-        // cuerpo = cuerpo ? cuerpo.replace(/"/g, "'") : '';
-        // // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
-        // var copia_afp_conocimiento = '';
-        // if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
-        //     copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
-        // }
-
-        // var copia_arl = $('#arl').filter(":checked").val();
-        // var firmar = $('#firmar').filter(":checked").val();
-        // var anexos = $('#anexos').val();
-
-        // datos_pdf_noti_dml_previsional = {
-        //     '_token': token, 
-        //     'id_tupla_comunicado': id_tupla_comunicado,
-        //     'id_com_inter': id_com_inter,
-        //     'ciudad': ciudad,
-        //     'fecha': fecha,
-        //     'asunto': asunto,
-        //     'cuerpo': cuerpo,
-        //     'tipo_identificacion': tipo_identificacion,
-        //     'num_identificacion': num_identificacion,
-        //     'nro_siniestro': nro_siniestro,
-        //     'nombre_afiliado': nombre_afiliado,
-        //     'direccion_afiliado': direccion_afiliado,
-        //     'telefono_afiliado': telefono_afiliado,
-        //     'ciudad_afiliado': ciudad_afiliado,
-        //     'nombre_afp': nombre_afp,
-        //     'email_afp' : email_afp,
-        //     'direccion_afp': direccion_afp,
-        //     'telefono_afp': telefono_afp,
-        //     'ciudad_afp': ciudad_afp,
-        //     'Id_asignacion': Id_asignacion,
-        //     'Id_cliente_firma': Id_cliente_firma,
-        //     'origen': origen,
-        //     'copia_beneficiario': copia_beneficiario,
-        //     'copia_empleador': copia_empleador,
-        //     'copia_eps': copia_eps,
-        //     'copia_afp': copia_afp,
-        //     'copia_afp_conocimiento': copia_afp_conocimiento,
-        //     'tipo_evento': tipo_evento,
-        //     'copia_arl': copia_arl,
-        //     'firmar': firmar,
-        //     'anexos': anexos,
-        //     'tipo_evento': tipo_evento,
-        //     'N_siniestro': N_siniestro,
-        // };
+        e.preventDefault();   
         var Id_Evento = $("#Id_Evento").val();
         var informacion_comunicado = $(this).data("info_comunicado");
 
@@ -3115,71 +3023,68 @@ $(document).ready(function(){
             }, 1000);
         }
         else{
-            var nombre_doc = informacion_comunicado.Nombre_documento;
-            var enlaceDescarga = document.createElement('a');
-            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+Id_Evento;     
-            enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
-            enlaceDescarga.style.display = 'none';
-            document.body.appendChild(enlaceDescarga);
-            enlaceDescarga.click();
-            setTimeout(function() {
-                document.body.removeChild(enlaceDescarga);
-            }, 1000);
-            // $.ajax({    
-            //     type:'POST',
-            //     url:'/ADescargaProformaNotiDMLPrev',
-            //     data: datos_pdf_noti_dml_previsional,
-            //     // xhrFields: {
-            //     //     responseType: 'blob' // Indica que la respuesta es un blob
-            //     // },
-            //     beforeSend:  function() {
-            //         $("#enviar_form_noti_previsional").addClass("descarga-deshabilitada");
-            //     },
-            //     success: function (response, status, xhr) {
-
-            //         // Obtener el contenido codificado en base64 del PDF desde la respuesta
-            //         var base64Pdf = response.pdf;
-
-            //         // Decodificar base64 en un array de bytes
-            //         var binaryString = atob(base64Pdf);
-            //         var len = binaryString.length;
-            //         var bytes = new Uint8Array(len);
-
-            //         for (var i = 0; i < len; i++) {
-            //             bytes[i] = binaryString.charCodeAt(i);
-            //         }
-
-            //         // Crear un Blob a partir del array de bytes
-            //         var blob = new Blob([bytes], { type: 'application/pdf' });
-
-            //         // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-            
-            //         var indicativo = response.indicativo;
-            //         var nombre_pdf = "ORI_OFICIO_"+Id_asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
-
-            //         // Crear un enlace de descarga similar al ejemplo anterior
-            //         var link = document.createElement('a');
-            //         link.href = window.URL.createObjectURL(blob);
-            //         link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
-            
-            //         // Adjuntar el enlace al documento y activar el evento de clic
-            //         document.body.appendChild(link);
-            //         link.click();
-            
-            //         // Eliminar el enlace del documento
-            //         document.body.removeChild(link);
-            //     },
-            //     error: function (error) {
-            //         // Manejar casos de error
-            //         console.error('Error al descargar el PDF:', error);
-            //     },
-            //     complete:  function() {
-            //         $("#enviar_form_noti_previsional").removeClass("descarga-deshabilitada");
-            //         if(infoComunicado.Nombre_documento == null){
-            //             location.reload();
-            //         }
-            //     },       
-            // });
+            if(informacion_comunicado.Nombre_documento){
+                var nombre_doc = informacion_comunicado.Nombre_documento;
+                var enlaceDescarga = document.createElement('a');
+                enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+Id_Evento;     
+                enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+                enlaceDescarga.style.display = 'none';
+                document.body.appendChild(enlaceDescarga);
+                enlaceDescarga.click();
+                setTimeout(function() {
+                    document.body.removeChild(enlaceDescarga);
+                }, 1000);
+            }
+            else{
+                datos_pdf_noti_dml_previsional = dataCreacionOficioNotificacionADX(informacion_comunicado.Id_Comunicado);
+                $.ajax({    
+                    type:'POST',
+                    url:'/ADescargaProformaNotiDMLPrev',
+                    data: datos_pdf_noti_dml_previsional,
+                    beforeSend:  function() {
+                        $("#enviar_form_noti_previsional").addClass("descarga-deshabilitada");
+                    },
+                    success: function (response, status, xhr) {
+    
+                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                        var base64Pdf = response.pdf;
+    
+                        // Decodificar base64 en un array de bytes
+                        var binaryString = atob(base64Pdf);
+                        var len = binaryString.length;
+                        var bytes = new Uint8Array(len);
+    
+                        for (var i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+    
+                        // Crear un Blob a partir del array de bytes
+                        var blob = new Blob([bytes], { type: 'application/pdf' });
+    
+                        // Crear un enlace de descarga similar al ejemplo anterior
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = response.nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+                
+                        // Adjuntar el enlace al documento y activar el evento de clic
+                        document.body.appendChild(link);
+                        link.click();
+                
+                        // Eliminar el enlace del documento
+                        document.body.removeChild(link);
+                    },
+                    error: function (error) {
+                        // Manejar casos de error
+                        console.error('Error al descargar el PDF:', error);
+                    },
+                    complete:  function() {
+                        $("#enviar_form_noti_previsional").removeClass("descarga-deshabilitada");
+                        if(informacion_comunicado.Nombre_documento == null){
+                            location.reload();
+                        }
+                    },       
+                });
+            }
         }
     });
 

@@ -74,4 +74,12 @@ class GlobalService
             ->where([['Id_Comunicado',$id_comunicado]])
             ->get();
     }
+
+    public function retornarcuentaConAfpConocimiento($id_evento){
+        return DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
+        ->select('siae.Entidad_conocimiento')
+        ->where([['siae.ID_evento', $id_evento]])
+        ->get();
+    }
 }
