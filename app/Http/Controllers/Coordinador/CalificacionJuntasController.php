@@ -2835,13 +2835,13 @@ class CalificacionJuntasController extends Controller
             'fecha_comunicado2_act' => $data_comunicado->{$params[$tipo_proceso]['p29']},
             'agregar_copia_editar' => $data_comunicado->{$params[$tipo_proceso]['p30']},
             'radicado2_act' => $data_comunicado->{$params[$tipo_proceso]['p31']},
-            'edit_copia_afiliado' => $data_comunicado->{$params[$tipo_proceso]['p32']},
-            'edit_copia_empleador' => $data_comunicado->{$params[$tipo_proceso]['p33']},
-            'edit_copia_eps' => $data_comunicado->{$params[$tipo_proceso]['p34']},
-            'edit_copia_afp' => $data_comunicado->{$params[$tipo_proceso]['p35']},
-            'edit_copia_arl' => $data_comunicado->{$params[$tipo_proceso]['p36']},
-            'edit_copia_jrci' => $data_comunicado->{$params[$tipo_proceso]['p37']},
-            'edit_copia_jnci' => $data_comunicado->{$params[$tipo_proceso]['p38']},
+            'edit_copia_afiliado' => ($data_comunicado->{$params[$tipo_proceso]['p32']} == 'true'),
+            'edit_copia_empleador' => ($data_comunicado->{$params[$tipo_proceso]['p33']} == 'true'),
+            'edit_copia_eps' => ($data_comunicado->{$params[$tipo_proceso]['p34']} == 'true'),
+            'edit_copia_afp' => ($data_comunicado->{$params[$tipo_proceso]['p35']} == 'true'),
+            'edit_copia_arl' => ($data_comunicado->{$params[$tipo_proceso]['p36']} == 'true'),
+            'edit_copia_jrci' => ($data_comunicado->{$params[$tipo_proceso]['p37']} == 'true'),
+            'edit_copia_jnci' => ($data_comunicado->{$params[$tipo_proceso]['p38']} == 'true'),
             'n_siniestro_proforma_editar' => $data_comunicado->{$params[$tipo_proceso]['p39']},
             'Nombre_junta_act' => $data_comunicado->{$params[$tipo_proceso]['p40']},
             'F_estructuracion_act' => $data_comunicado->{$params[$tipo_proceso]['p41']},
@@ -3219,13 +3219,13 @@ class CalificacionJuntasController extends Controller
                 $nombre_junta = $request->Nombre_junta_act;
 
                 // Validamos si los checkbox esta marcados
-                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $edit_copias_afiliado = $request->edit_copia_afiliado ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empleador ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copia_eps ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copia_afp ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
                     'edit_copia_empleador' => $edit_copias_empleador,
@@ -4201,13 +4201,13 @@ class CalificacionJuntasController extends Controller
                 }
 
                 // Copias a partes interesadas
-                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $edit_copias_afiliado = $request->edit_copia_afiliado ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empleador ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copia_eps ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copia_afp ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
 
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
@@ -4716,13 +4716,13 @@ class CalificacionJuntasController extends Controller
                 }
 
                 // Copias a partes interesadas
-                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $edit_copias_afiliado = $request->edit_copia_afiliado ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empleador ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copia_eps ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copia_afp ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
 
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
@@ -5429,13 +5429,13 @@ class CalificacionJuntasController extends Controller
                 }
 
                 // Copias a partes interesadas
-                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $edit_copias_afiliado = $request->edit_copia_afi ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empl ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copi ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copi ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copi ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia ? 'JNCI': '';
 
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
