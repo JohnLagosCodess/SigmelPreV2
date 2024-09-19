@@ -838,6 +838,13 @@ class PronunciamientoPCLController extends Controller
                     ['Id_Comunicado', $Id_Comunicado]
                 ])->update($datos_info_comunicado_eventos);
                 sleep(2);
+
+                $mensajes = array(
+                    "parametro" => 'update_pronunciamiento',
+                    "parametro2" => 'guardo',
+                    "mensaje2" => 'Información actualizada satisfactoriamente.',
+                    "Id_Comunicado" => $Id_Comunicado
+                );
             }
             else if($request->decision_pr == 'Silencio' && $request->Id_Comunicado){
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $request->Id_Comunicado)->delete();
@@ -854,6 +861,12 @@ class PronunciamientoPCLController extends Controller
                     }
                 }
                 sleep(2);
+
+                $mensajes = array(
+                    "parametro" => 'update_pronunciamiento',
+                    "parametro2" => 'guardo',
+                    "mensaje2" => 'Información actualizada satisfactoriamente.',                    
+                );
             }
             if($request->decision_pr != 'Silencio' && $request->Id_Comunicado == "null"){
                 //Se asignan los IDs de destinatario por cada posible destinatario
@@ -862,6 +875,13 @@ class PronunciamientoPCLController extends Controller
 
                 $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
+
+                $mensajes = array(
+                    "parametro" => 'update_pronunciamiento',
+                    "parametro2" => 'guardo',
+                    "mensaje2" => 'Información actualizada satisfactoriamente.',
+                    "Id_Comunicado" => $Id_Comunicado
+                );
             }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
             $Id_Pronuncia = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->select('Id_Pronuncia','Id_Asignacion')->latest('Id_Pronuncia')->first();
@@ -936,13 +956,7 @@ class PronunciamientoPCLController extends Controller
                     sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->insert($insertar_diagnostico);
                 } 
             }
-            $mensajes = array(
-                "parametro" => 'update_pronunciamiento',
-                "parametro2" => 'guardo',
-                "mensaje2" => 'Información actualizada satisfactoriamente.',
-                "Id_Comunicado" => $Id_Comunicado
-            ); 
-
+            
             return json_decode(json_encode($mensajes, true));
 
         } 
