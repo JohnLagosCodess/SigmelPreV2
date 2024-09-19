@@ -2689,7 +2689,7 @@ class CalificacionJuntasController extends Controller
 
         $mensajes = array(
             "parametro" => 'agregar_comunicado',
-            'status_pdf' => $this->generarPDF($request, $id_comunicado,$principalDestinatario($entidades,$destinatario),'guardar'),
+            'status_pdf' => $this->generarPDF($request, $id_comunicado,$principalDestinatario($entidades,$destinatario ?? null),'guardar'),
             "mensaje" => 'Comunicado generado satisfactoriamente.'
         );
 
