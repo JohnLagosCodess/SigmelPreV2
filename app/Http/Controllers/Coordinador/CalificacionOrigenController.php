@@ -33,6 +33,7 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_laboral_eventos;
 use App\Models\sigmel_lista_departamentos_municipios;
 use App\Models\sigmel_numero_orden_eventos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use DateTime;
@@ -40,6 +41,12 @@ use DateTime;
 class CalificacionOrigenController extends Controller
 {
     use GenerarRadicados;
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
 
     public function mostrarVistaCalificacionOrigen(Request $request){
         if(!Auth::check()){
@@ -2094,6 +2101,13 @@ class CalificacionOrigenController extends Controller
                     $radicado = $this->disponible($request->radicado2,$request->Id_evento)->getRadicado('origen',$request->Id_evento);
                 break;
         }
+        
+        //Se asignan los IDs de destinatario por cada posible destinatario
+        if($request->modulo_creacion === 'controversiaJuntas'){
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario(true,true);
+        }else{
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+        }
 
         if($tipo_descarga != 'Manual'){
             $radioafiliado_comunicado = $request->radioafiliado_comunicado;
@@ -2155,6 +2169,7 @@ class CalificacionOrigenController extends Controller
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => $request->modulo_creacion,
                 'N_siniestro' => $request->N_siniestro,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -2251,6 +2266,7 @@ class CalificacionOrigenController extends Controller
                 'Modulo_creacion' => $request->modulo_creacion,
                 // 'Nombre_documento' => $request->Nombre_documento,
                 'Nombre_documento' => $nombre_final_documento,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -2300,7 +2316,7 @@ class CalificacionOrigenController extends Controller
             $enviar_notificacion = BandejaNotifiController::evento_en_notificaciones($newId_evento,$newId_asignacion);
 
             foreach ($hitorialAgregarComunicado as &$comunicado) {
-                if ($comunicado['Tipo_descarga'] === 'Documento_Origen') {
+                if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
                     $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
                     if(File::exists($filePath)){
                         $comunicado['Existe'] = true;
@@ -2325,10 +2341,7 @@ class CalificacionOrigenController extends Controller
                 if($comunicado["Id_Comunicado"]){
                     $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($newId_evento,$newId_asignacion,$comunicado["Id_Comunicado"]);
                 }
-                
-
             }
-            
             return response()->json([
                 'hitorialAgregarComunicado' => $hitorialAgregarComunicado,
                 'enviar_notificacion' => $enviar_notificacion

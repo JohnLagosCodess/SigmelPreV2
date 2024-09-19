@@ -1648,6 +1648,9 @@ class AdicionDxDTO extends Controller
 
             sleep(2);
 
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $request->ID_Evento,
                 'Id_proceso' => $request->Id_proceso,
@@ -1678,6 +1681,7 @@ class AdicionDxDTO extends Controller
                 'Modulo_creacion' => 'adicionDxDtoOrigen',
                 'Reemplazado' => 0,
                 'N_siniestro' => $request->N_siniestro,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -2006,7 +2010,10 @@ class AdicionDxDTO extends Controller
             ->where([
                 ['ID_evento',$Id_Evento],
                 ['Id_Asignacion',$Id_Asignacion_adicion_dx]
-            ])->update($datos_correspondencia);       
+            ])->update($datos_correspondencia);    
+            
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
     
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $Id_Evento,
@@ -2039,6 +2046,7 @@ class AdicionDxDTO extends Controller
                 'Modulo_creacion' => 'adicionDxDtoOrigen',
                 'Reemplazado' => 0,
                 'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];

@@ -737,6 +737,9 @@ class DeterminacionOrigenATEL extends Controller
             }
             $Destinatario = 'Afp';
 
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $request->ID_Evento,
                 'Id_proceso' => $request->Id_proceso,
@@ -767,6 +770,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Modulo_creacion' => 'determinacionOrigenATEL',
                 'Reemplazado' => 0,
                 'N_siniestro' => $request->N_siniestro,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -1197,6 +1201,9 @@ class DeterminacionOrigenATEL extends Controller
                 ['ID_evento',$Id_Evento_dto_atel],
                 ['Id_Asignacion',$Id_Asignacion_dto_atel]
             ])->update($datos_correspondencia);       
+
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
     
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $Id_Evento_dto_atel,
@@ -1229,6 +1236,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Modulo_creacion' => 'determinacionOrigenATEL',
                 'Reemplazado' => 0,
                 'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];

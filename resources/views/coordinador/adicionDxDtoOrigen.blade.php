@@ -1646,7 +1646,7 @@
                                                             data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                             data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
                                                             data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('afiliado', $destinatario, $array_copias, $array_correspondencia,$comunicados->Tipo_descarga); ?>"
-                                                        >Afiliado</a>
+                                                            data-ids_destinatario="{{$comunicados->Id_Destinatarios}}">Afiliado</a>
 
                                                         <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Empleador"
                                                         data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
@@ -1654,7 +1654,7 @@
                                                         data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                         data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
                                                         data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('empleador', $destinatario, $array_copias, $array_correspondencia); ?>"
-                                                        >Empleador</a>
+                                                        data-ids_destinatario="{{$comunicados->Id_Destinatarios}}">Empleador</a>
 
                                                         <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps"
                                                         data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
@@ -1662,7 +1662,7 @@
                                                         data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                         data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
                                                         data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('eps', $destinatario, $array_copias, $array_correspondencia,$comunicados->Tipo_descarga); ?>"
-                                                        >EPS</a>
+                                                        data-ids_destinatario="{{$comunicados->Id_Destinatarios}}">EPS</a>
 
                                                         <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp"
                                                         data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
@@ -1670,7 +1670,7 @@
                                                         data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                         data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
                                                         data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('afp', $destinatario, $array_copias, $array_correspondencia,$comunicados->Tipo_descarga); ?>"
-                                                        >AFP</a>
+                                                        data-ids_destinatario="{{$comunicados->Id_Destinatarios}}">AFP</a>
 
                                                         <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="arl"
                                                         data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
@@ -1678,23 +1678,7 @@
                                                         data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                         data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
                                                         data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('arl', $destinatario, $array_copias, $array_correspondencia,$comunicados->Tipo_descarga); ?>"
-                                                        >ARL</a>
-                                                        
-                                                        {{-- <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jrci"
-                                                        data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
-                                                        data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
-                                                        data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
-                                                        data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
-                                                        data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('jrci', $destinatario, $array_copias, $array_correspondencia); ?>"
-                                                        >JRCI</a>
-
-                                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jnci"
-                                                        data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
-                                                        data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
-                                                        data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
-                                                        data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
-                                                        style="<?php echo subrayado('jnci', $destinatario, $array_copias, $array_correspondencia); ?>"
-                                                        >JNCI</a> --}}
+                                                        data-ids_destinatario="{{$comunicados->Id_Destinatarios}}">ARL</a>
 
                                                         <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp_conocimiento"
                                                         data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" data-id_comunicado="{{$comunicados->Id_Comunicado}}" data-n_radicado="{{$comunicados->N_radicado}}" data-copias="<?php echo implode(',', $array_copias); ?>" 
@@ -1702,7 +1686,7 @@
                                                         data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                         data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
                                                         style="<?php echo subrayado('afp_conocimiento', $destinatario, $array_copias, $array_correspondencia,$comunicados->Tipo_descarga); ?>"
-                                                        >AFP Conocimiento</a>
+                                                        data-ids_destinatario="{{$comunicados->Id_Destinatarios}}">AFP Conocimiento</a>
                                                     </td>
                                                 @endif
                                                 <td><select class="custom-select" id="status_notificacion_{{$comunicados->N_radicado}}" style="width:100%;" data-deshabilitar={{$deshabilitarSelector ?? '1'}}  data-default={{$comunicados->Estado_Notificacion}}></select></td>

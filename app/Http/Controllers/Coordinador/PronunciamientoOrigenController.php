@@ -478,6 +478,8 @@ class PronunciamientoOrigenController extends Controller
         }
         //valida la acción del botón
         if ($request->bandera_pronuncia_guardar_actualizar == 'Guardar') {
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
         
             $datos_info_pronunciamiento_eventos = [
                 'ID_Evento' => $Id_EventoPronuncia,
@@ -556,6 +558,7 @@ class PronunciamientoOrigenController extends Controller
                 'N_siniestro' => $request->n_siniestro,
                 //Siempre va a ser otro destinatario, debido a que el destinatario es el primer calificador.
                 'Otro_destinatario' => 1,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -798,6 +801,10 @@ class PronunciamientoOrigenController extends Controller
                 sleep(2);
             }
             if($request->decision_pr != 'Silencio' && !$id_comunicado){
+                //Se asignan los IDs de destinatario por cada posible destinatario
+                $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+                $datos_info_comunicado_eventos['Id_Destinatarios'] = $ids_destinatarios;
+
                 $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }

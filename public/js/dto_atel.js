@@ -1261,9 +1261,9 @@ $(document).ready(function(){
         formData.append('fecha_comunicado2',null);
         formData.append('radicado2',$('#radicado_comunicado_manual').val());
         formData.append('cliente_comunicado2','N/A');
-        formData.append('nombre_afiliado_comunicado2','N/A');
+        formData.append('nombre_afiliado_comunicado2',$('#nombre_afiliado').val());
         formData.append('tipo_documento_comunicado2','N/A');
-        formData.append('identificacion_comunicado2','N/A');
+        formData.append('identificacion_comunicado2',$("#nro_identificacion").val());
         formData.append('destinatario', 'N/A');
         formData.append('nombre_destinatario','N/A');
         formData.append('nic_cc','N/A');
@@ -1307,18 +1307,6 @@ $(document).ready(function(){
             }
         });  
     });
-    
-    //pbs014
-    // $("#listado_agregar_comunicados").on('click', '#CorrespondenciaNotificacion', function() {
-    //     let id = $(this);
-    //     let destinatario = $(id).data('destinatario');
-        
-    //     // Modificar el título de la modal
-    //     $("#modalCorrespondencia").attr('title', 'Correspondencia ' + destinatario);
-        
-    //     // Mostrar la modal
-    //     $("#modalCorrespondencia").show();
-    // });
 
     function cleanModalCorrespondencia(){
         $("#btn_guardar_actualizar_correspondencia").val('Guardar');
@@ -1345,7 +1333,7 @@ $(document).ready(function(){
         $("#modalCorrespondencia #id_asignacion").val('');
         $("#modalCorrespondencia #id_proceso").val('');
         $("#modalCorrespondencia #id_comunicado").val('');
-        
+        $("#modalCorrespondencia #id_destinatario").val('');
     }
 
     function cargarSelectorModalCorrespondencia(){
@@ -1402,6 +1390,7 @@ $(document).ready(function(){
         let correspondencia = $(id).data('correspondencia');
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
+        let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
         //BENEFICIARIO
         if((destinatarioPrincipal !== 'afiliado' && destinatarioPrincipal !== 'Afiliado') && copias && (copias.includes('beneficiario') || copias.includes('Beneficiario'))){
             copias = copias.replace('beneficiario','afiliado');
@@ -1444,6 +1433,7 @@ $(document).ready(function(){
             $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
         }
         
+        $("#modalCorrespondencia #id_destinatario").val(id_destinatario);
         $("#modalCorrespondencia #id_evento").val($(id).data('id_evento'));
         $("#modalCorrespondencia #enlace_ed_evento").text($(id).data('id_evento'));
         
@@ -1673,6 +1663,7 @@ $(document).ready(function(){
             'id_proceso': $('#modalCorrespondencia #id_proceso').val(),
             'id_evento': $('#modalCorrespondencia #id_evento').val(),
             'id_comunicado': $('#modalCorrespondencia #id_comunicado').val(),
+            'id_destinatario': $('#modalCorrespondencia #id_destinatario').val(),
             'n_radicado': $('#modalCorrespondencia #radicado').val(),
             'n_orden': $('#modalCorrespondencia #n_orden').val(),
             'tipo_destinatario': tipoDestinatario,

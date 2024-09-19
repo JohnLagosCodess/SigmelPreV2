@@ -5227,6 +5227,9 @@ class RecalificacionPCLController extends Controller
             }
         }
 
+        //Se asignan los IDs de destinatario por cada posible destinatario
+        $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
                 'Oficio_pcl' => $oficiopcl,
@@ -5307,6 +5310,7 @@ class RecalificacionPCLController extends Controller
                 'N_siniestro' => $N_siniestro,
                 'Reemplazado' => 0,
                 'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -5507,6 +5511,10 @@ class RecalificacionPCLController extends Controller
         }
 
         if ($bandera_dictamen_pericial == 'Guardar') {
+
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+
             if($Decreto_pericial == 3){
                 $datos_dictamenPericial =[
                     'Suma_combinada' => $suma_combinada,
@@ -5586,6 +5594,7 @@ class RecalificacionPCLController extends Controller
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'recalificacionPCL',
                     'N_siniestro' => $n_siniestro,
+                    'Id_Destinatarios' => $ids_destinatarios,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -5672,6 +5681,7 @@ class RecalificacionPCLController extends Controller
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'recalificacionPCL',
                     'N_siniestro' => $n_siniestro,
+                    'Id_Destinatarios' => $ids_destinatarios,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];

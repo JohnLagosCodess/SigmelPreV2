@@ -40,6 +40,7 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_auditorias_informacion_accion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use DateTime;
@@ -51,6 +52,13 @@ use PhpOffice\PhpWord\Style\Image;
 class CalificacionJuntasController extends Controller
 {
     use GenerarRadicados;
+
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
 
     public function mostrarVistaCalificacionJuntas(Request $request){
         if(!Auth::check()){
@@ -2481,6 +2489,9 @@ class CalificacionJuntasController extends Controller
 
         $radicado = $this->disponible($request->radicado2,$Id_evento)->getRadicado('juntas',$Id_evento);
 
+        //Se asignan los IDs de destinatario por cada posible destinatario
+        $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario(true,true);
+
         if($tipo_descarga != 'Manual'){
             $radiojrci_comunicado = $request->radiojrci_comunicado;
             $radiojnci_comunicado = $request->radiojnci_comunicado;
@@ -2574,6 +2585,7 @@ class CalificacionJuntasController extends Controller
                 'Modulo_creacion' => $request->modulo_creacion,
                 'Otro_destinatario' => $otro_destinatario_jrci,
                 'N_siniestro' => $request->N_siniestro,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -2664,6 +2676,7 @@ class CalificacionJuntasController extends Controller
                 // 'Nombre_documento' => $request->Nombre_documento,
                 'Otro_destinatario' => 0,
                 'Nombre_documento' => $nombre_final_documento,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];

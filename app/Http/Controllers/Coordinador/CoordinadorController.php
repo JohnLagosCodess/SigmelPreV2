@@ -1707,6 +1707,7 @@ class CoordinadorController extends Controller
         $id_asignacion = $request->id_asignacion;
         $id_proceso = $request->id_proceso;
         $id_comunicado = $request->id_comunicado;
+        $id_destinatario = $request->id_destinatario;
         $correspondencia = $request->correspondencia;
         $tipo_correspondencia = $request->tipo_correspondencia;
         $accion = $request->accion;
@@ -1730,6 +1731,7 @@ class CoordinadorController extends Controller
                 'Id_proceso' => $id_proceso,
                 'Id_servicio' => $id_servicio,
                 'Id_comunicado' => $id_comunicado,
+                'Id_destinatario' => $id_destinatario,
                 'Nombre_afiliado' => $request->nombre_afiliado,
                 'N_identificacion' => $request->n_identificacion_afiliado,
                 'N_radicado' => $request->n_radicado,
@@ -1773,6 +1775,7 @@ class CoordinadorController extends Controller
                 'Id_proceso' => $id_proceso,
                 'Id_servicio' => $id_servicio,
                 'Id_comunicado' => $id_comunicado,
+                'Id_destinatario' => $id_destinatario,
                 'Nombre_afiliado' => $request->nombre_afiliado,
                 'N_identificacion' => $request->n_identificacion_afiliado,
                 'N_radicado' => $request->n_radicado,
