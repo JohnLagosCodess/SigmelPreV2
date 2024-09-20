@@ -1391,10 +1391,6 @@ $(document).ready(function(){
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
         let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
-        //BENEFICIARIO
-        if((destinatarioPrincipal !== 'afiliado' && destinatarioPrincipal !== 'Afiliado') && copias && (copias.includes('beneficiario') || copias.includes('Beneficiario'))){
-            copias = copias.replace('beneficiario','afiliado');
-        }
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
             $("#btn_guardar_actualizar_correspondencia").addClass('d-none');

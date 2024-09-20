@@ -84,45 +84,15 @@ class GlobalService
         ->get();
     }
     
-    public function generacionConsecutivoIdDestinatario($id_destinatario_actual){
-        $letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // Letras del alfabeto
-        $maxNumero = 9999999999; // Máximo número en la parte numérica (10 dígitos)
-        
-        // Separar la parte de letras y la parte numérica
-        preg_match('/[A-Z]+/', $id_destinatario_actual, $matches); // Obtener la parte alfabética
-        $parteLetras = $matches[0]; // Parte alfabética (A, AA, etc.)
-        
-        preg_match('/\d+/', $id_destinatario_actual, $matches); // Obtener la parte numérica
-        $parteNumerica = (int) $matches[0]; // Parte numérica
-        
-        // Incrementar la parte numérica
-        if ($parteNumerica < $maxNumero) {
-            $parteNumerica++;
-        } else {
-            // Si se llega al máximo número, reiniciar el contador numérico y avanzar la parte alfabética
-            $parteNumerica = 0;
-            
-            $ultimaLetraIndex = strlen($parteLetras) - 1;
-            while ($ultimaLetraIndex >= 0) {
-                $letraIndex = strpos($letras, $parteLetras[$ultimaLetraIndex]);
-                
-                if ($letraIndex < strlen($letras) - 1) {
-                    // Incrementar la letra
-                    $parteLetras = substr($parteLetras, 0, $ultimaLetraIndex) . $letras[$letraIndex + 1] . substr($parteLetras, $ultimaLetraIndex + 1);
-                    break;
-                } else {
-                    // Volver la letra a 'A' si ya es 'Z'
-                    $parteLetras = substr($parteLetras, 0, $ultimaLetraIndex) . 'A' . substr($parteLetras, $ultimaLetraIndex + 1);
-                    if ($ultimaLetraIndex == 0) {
-                        $parteLetras = 'A' . $parteLetras; // Añadir una nueva letra al principio si se completó la secuencia
-                    }
-                    $ultimaLetraIndex--;
-                }
-            }
+    public function generacionConsecutivoIdDestinatario(){
+        $letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $randomString = '';
+
+        for ($i = 0; $i < 5; $i++) {
+            $randomIndex = rand(0, strlen($letras) - 1); // Genera un índice aleatorio
+            $randomString .= $letras[$randomIndex]; // Añade la letra correspondiente a la cadena
         }
-        
-        // Formatear la parte numérica con ceros a la izquierda
-        return $parteLetras . str_pad($parteNumerica, 10, '0', STR_PAD_LEFT);
+        return $randomString.microtime(true);
     }
 
     public function asignacionConsecutivoIdDestinatario($is_jrci = false, $is_jnci = false){
@@ -151,26 +121,20 @@ class GlobalService
 
         //Se inicia una transacción en la cual lo que nos interesa es que si ocurre un error en el proceso de inserción, automaticamente haga un rollback
         DB::beginTransaction();
-        try {
+        try{
             for($i = 0; $i < count($prefijos); $i++){
-                //Se consulta el id_destinatario_actual, y se bloquea el registro con el fin de que no haya otro registro que lo actualice mientras se esta haciendo la actualización
-                $idActual = sigmel_consecutivos_destinatarios::on('sigmel_gestiones')
-                    ->where([['Id',1],['Estado','activo']])
-                    ->lockForUpdate()
-                    ->value('Consecutivo_Destinatario');
                 $actualizar_id_destinatario = [
-                    'Consecutivo_Destinatario' => $this->generacionConsecutivoIdDestinatario($idActual)
+                    'Consecutivo_Destinatario' => $this->generacionConsecutivoIdDestinatario()
                 ];
                 //Se actualiza el id_destinatario en la base de datos.
                 sigmel_consecutivos_destinatarios::on('sigmel_gestiones')->where([['Id',1],['Estado','activo']])->update($actualizar_id_destinatario);
                 //Creamos una tupla con los ids_de_destinatario 
                 array_push($id_destinatarios, $prefijos[$i].$actualizar_id_destinatario['Consecutivo_Destinatario']);
             }
-            DB::commit();
+        DB::commit();
         }catch (\Exception $e) {
             // Si ocurre un error, deshacer la transacción
             DB::rollBack();
-            dd("Ha ocurrido un error ", $e);
             throw $e;
         }
         if(!empty($id_destinatarios)){

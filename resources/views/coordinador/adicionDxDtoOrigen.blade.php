@@ -1330,9 +1330,9 @@
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                 @if (!empty($array_comite_interdisciplinario[0]->Copia_afiliado))
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="beneficiario" name="beneficiario" value="Beneficiario" checked>
+                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="beneficiario" name="beneficiario" value="Afiliado" checked>
                                                 @else
-                                                    <input class="custom-control-input" type="checkbox" id="beneficiario" name="beneficiario" value="Beneficiario">                                                    
+                                                    <input class="custom-control-input" type="checkbox" id="beneficiario" name="beneficiario" value="Afiliado">                                                    
                                                 @endif
                                                 <label for="beneficiario" class="custom-control-label">Beneficiario</label>
                                             </div>
@@ -1627,10 +1627,6 @@
                                                                 function subrayado($entidad, $destinatario, $array_copias, $array_correspondencia, $tipo_descarga = null) {
 
                                                                     $array_copias = implode(',', $array_copias);
-                                                                    // Se valida si la elección fue Beneficiario
-                                                                    if (stripos($array_copias, 'Beneficiario') !== false) {
-                                                                        $array_copias = str_ireplace('Beneficiario', 'Afiliado', $array_copias);
-                                                                    }
                                                                     $array_correspondencia = implode(',', $array_correspondencia);
 
                                                                     $negrita = (isset($array_correspondencia) && strpos($array_correspondencia, $entidad) !== false) ? 'font-weight:700;' : '';
