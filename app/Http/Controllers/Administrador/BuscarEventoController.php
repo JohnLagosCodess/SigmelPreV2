@@ -2904,6 +2904,8 @@ class BuscarEventoController extends Controller
             Log::channel('seguimiento_juntas')->info("Finalizo el copiado para controvertido");
             DB::table('sigmel_gestiones.sigmel_informacion_controversia_juntas_eventos')->insert($Controvertido);
             sleep(1);
+        }else{
+            Log::channel('seguimiento_juntas')->info("No se insertaron datos para la informacion del controvertido");
         }
 
         //Siempre y cuando el diagnostico no este vacio se insertera la informacion en la tabla
@@ -2911,9 +2913,11 @@ class BuscarEventoController extends Controller
             Log::channel('seguimiento_juntas')->info("Finalizo el copiado para los diagnosticos");
             $diagnostico = json_decode(json_encode($diagnostico->toArray()),true);
             DB::table('sigmel_gestiones.sigmel_informacion_diagnosticos_eventos')->insert($diagnostico);
+        }else{
+            Log::channel('seguimiento_juntas')->info("No se insertaron diagnosticos para el servicio");
         }
 
-        Log::channel('seguimiento_juntas')->info("Finalizo el proceso de copiado");
+        Log::channel('seguimiento_juntas')->info("Finalizo el proceso de copiado /n");
     }
 
     /**
