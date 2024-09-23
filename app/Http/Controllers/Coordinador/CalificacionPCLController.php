@@ -70,6 +70,7 @@ use App\Models\sigmel_lista_regional_juntas;
 use App\Models\sigmel_auditorias_informacion_accion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
 use App\Services\GenerarDictamenesPcl;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use DateTime;
@@ -80,6 +81,13 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class CalificacionPCLController extends Controller
 {
     use GenerarRadicados;
+
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
 
     public function mostrarVistaCalificacionPCL(Request $request){
         if(!Auth::check()){
@@ -2187,6 +2195,9 @@ class CalificacionPCLController extends Controller
         $tipo_descarga = $request->tipo_descarga;
 
         $radicado = $this->disponible($request->radicado2,$Id_evento)->getRadicado('pcl',$Id_evento);
+
+        //Se asignan los IDs de destinatario por cada posible destinatario
+        $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
         
         if($tipo_descarga != 'Manual'){
             $radioafiliado_comunicado = $request->radioafiliado_comunicado;
@@ -2255,6 +2266,7 @@ class CalificacionPCLController extends Controller
                 'Modulo_creacion' => 'calificacionPCL',
                 'Reemplazado'=> 0,
                 'N_siniestro' => $request->N_siniestro,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -2354,6 +2366,7 @@ class CalificacionPCLController extends Controller
                 'Reemplazado' => 0,
                 // 'Nombre_documento' => $request->Nombre_documento,
                 'Nombre_documento' => $nombre_final_documento,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -2402,7 +2415,7 @@ class CalificacionPCLController extends Controller
             $enviar_notificacion =  BandejaNotifiController::evento_en_notificaciones($newId_evento,$newId_asignacion);
             
             foreach ($hitorialAgregarComunicado as &$comunicado) {
-                if ($comunicado['Tipo_descarga'] === 'Documento_PCL') {
+                if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
                     $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
                     if(File::exists($filePath)){
                         $comunicado['Existe'] = true;
@@ -2820,24 +2833,27 @@ class CalificacionPCLController extends Controller
             // La descarga se hace desde que se guarda el comunicado
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
 
-                $copiaComunicadosPcl = $request->agregar_copia_editar;
+                $copiaComunicadosOrigen = $request->agregar_copia_editar;
                 $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
 
-                // Inicializar el array con todas las claves con valores vacíos
-                $total_copias = array_fill_keys(array_values($claves_copias), '');
-
-                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
-                foreach ($copiaComunicadosPcl as $elemento) {
-                    if (isset($claves_copias[$elemento])) {
-                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                if ($copiaComunicadosOrigen > 0) {
+                    
+                    // Inicializar el array con todas las claves con valores vacíos
+                    $total_copias = array_fill_keys(array_values($claves_copias), '');
+    
+                    // Iterar sobre cada copia en $copiaComunicadosOrigen y asignar su valor correspondiente
+                    foreach ($copiaComunicadosOrigen as $elemento) {
+                        if (isset($claves_copias[$elemento])) {
+                            $total_copias[$claves_copias[$elemento]] = $elemento;
+                        }
                     }
+    
+                    // Filtrar las claves que tienen valores vacíos
+                    $total_copias = array_filter($total_copias);
+    
+                    // Convertir las claves en variables con sus respectivos valores
+                    extract($total_copias);
                 }
-
-                // Filtrar las claves que tienen valores vacíos
-                $total_copias = array_filter($total_copias);
-
-                // Convertir las claves en variables con sus respectivos valores
-                extract($total_copias);
             }
                         
             $Agregar_copias = [];
@@ -3187,23 +3203,25 @@ class CalificacionPCLController extends Controller
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
-
-                // Inicializar el array con todas las claves con valores vacíos
-                $total_copias = array_fill_keys(array_values($claves_copias), '');
-
-                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
-                foreach ($copiaComunicadosPcl as $elemento) {
-                    if (isset($claves_copias[$elemento])) {
-                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                
+                if ($copiaComunicadosPcl > 0) {
+                    // Inicializar el array con todas las claves con valores vacíos
+                    $total_copias = array_fill_keys(array_values($claves_copias), '');
+    
+                    // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                    foreach ($copiaComunicadosPcl as $elemento) {
+                        if (isset($claves_copias[$elemento])) {
+                            $total_copias[$claves_copias[$elemento]] = $elemento;
+                        }
                     }
-                }
-
-                // Filtrar las claves que tienen valores vacíos
-                $total_copias = array_filter($total_copias);
-
-                // Convertir las claves en variables con sus respectivos valores
-                extract($total_copias);
-
+    
+                    // Filtrar las claves que tienen valores vacíos
+                    $total_copias = array_filter($total_copias);
+    
+                    // Convertir las claves en variables con sus respectivos valores
+                    extract($total_copias);
+                    
+                } 
             }
             
             $Agregar_copias = [];
@@ -3541,22 +3559,24 @@ class CalificacionPCLController extends Controller
             elseif($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
-
-                // Inicializar el array con todas las claves con valores vacíos
-                $total_copias = array_fill_keys(array_values($claves_copias), '');
-
-                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
-                foreach ($copiaComunicadosPcl as $elemento) {
-                    if (isset($claves_copias[$elemento])) {
-                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                
+                if ($copiaComunicadosPcl > 0) {
+                    // Inicializar el array con todas las claves con valores vacíos
+                    $total_copias = array_fill_keys(array_values($claves_copias), '');
+    
+                    // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                    foreach ($copiaComunicadosPcl as $elemento) {
+                        if (isset($claves_copias[$elemento])) {
+                            $total_copias[$claves_copias[$elemento]] = $elemento;
+                        }
                     }
+    
+                    // Filtrar las claves que tienen valores vacíos
+                    $total_copias = array_filter($total_copias);
+    
+                    // Convertir las claves en variables con sus respectivos valores
+                    extract($total_copias);                    
                 }
-
-                // Filtrar las claves que tienen valores vacíos
-                $total_copias = array_filter($total_copias);
-
-                // Convertir las claves en variables con sus respectivos valores
-                extract($total_copias);
             }
             
             $Agregar_copias = [];
@@ -3890,22 +3910,24 @@ class CalificacionPCLController extends Controller
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
-
-                // Inicializar el array con todas las claves con valores vacíos
-                $total_copias = array_fill_keys(array_values($claves_copias), '');
-
-                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
-                foreach ($copiaComunicadosPcl as $elemento) {
-                    if (isset($claves_copias[$elemento])) {
-                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                
+                if ($copiaComunicadosPcl > 0) {
+                    // Inicializar el array con todas las claves con valores vacíos
+                    $total_copias = array_fill_keys(array_values($claves_copias), '');
+    
+                    // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                    foreach ($copiaComunicadosPcl as $elemento) {
+                        if (isset($claves_copias[$elemento])) {
+                            $total_copias[$claves_copias[$elemento]] = $elemento;
+                        }
                     }
+    
+                    // Filtrar las claves que tienen valores vacíos
+                    $total_copias = array_filter($total_copias);
+    
+                    // Convertir las claves en variables con sus respectivos valores
+                    extract($total_copias);                    
                 }
-
-                // Filtrar las claves que tienen valores vacíos
-                $total_copias = array_filter($total_copias);
-
-                // Convertir las claves en variables con sus respectivos valores
-                extract($total_copias);
             }
 
             $email_afiliado = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
@@ -4248,21 +4270,23 @@ class CalificacionPCLController extends Controller
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
 
-                // Inicializar el array con todas las claves con valores vacíos
-                $total_copias = array_fill_keys(array_values($claves_copias), '');
-
-                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
-                foreach ($copiaComunicadosPcl as $elemento) {
-                    if (isset($claves_copias[$elemento])) {
-                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                if ($copiaComunicadosPcl > 0) {                    
+                    // Inicializar el array con todas las claves con valores vacíos
+                    $total_copias = array_fill_keys(array_values($claves_copias), '');
+    
+                    // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
+                    foreach ($copiaComunicadosPcl as $elemento) {
+                        if (isset($claves_copias[$elemento])) {
+                            $total_copias[$claves_copias[$elemento]] = $elemento;
+                        }
                     }
+    
+                    // Filtrar las claves que tienen valores vacíos
+                    $total_copias = array_filter($total_copias);
+    
+                    // Convertir las claves en variables con sus respectivos valores
+                    extract($total_copias);
                 }
-
-                // Filtrar las claves que tienen valores vacíos
-                $total_copias = array_filter($total_copias);
-
-                // Convertir las claves en variables con sus respectivos valores
-                extract($total_copias);
             }
             
             $Agregar_copias = [];
@@ -4644,24 +4668,26 @@ class CalificacionPCLController extends Controller
             } 
             // La descarga se hace desde que se guarda el comunicado
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
-                $copiaComunicadosPcl = $request->agregar_copia_editar;
+                $copiaComunicados = $request->agregar_copia_editar;
                 $claves_copias = ['Afiliado' => 'edit_copia_afiliado', 'Empleador' => 'edit_copia_empleador', 'EPS' => 'edit_copia_eps', 'AFP' => 'edit_copia_afp', 'ARL' => 'edit_copia_arl', 'JRCI' => 'edit_copia_jrci', 'JNCI' => 'edit_copia_jnci'];
 
-                // Inicializar el array con todas las claves con valores vacíos
-                $total_copias = array_fill_keys(array_values($claves_copias), '');
-
-                // Iterar sobre cada copia en $copiaComunicadosPcl y asignar su valor correspondiente
-                foreach ($copiaComunicadosPcl as $elemento) {
-                    if (isset($claves_copias[$elemento])) {
-                        $total_copias[$claves_copias[$elemento]] = $elemento;
+                if ($copiaComunicados > 0) {
+                    // Inicializar el array con todas las claves con valores vacíos
+                    $total_copias = array_fill_keys(array_values($claves_copias), '');
+    
+                    // Iterar sobre cada copia en $copiaComunicados y asignar su valor correspondiente
+                    foreach ($copiaComunicados as $elemento) {
+                        if (isset($claves_copias[$elemento])) {
+                            $total_copias[$claves_copias[$elemento]] = $elemento;
+                        }
                     }
+    
+                    // Filtrar las claves que tienen valores vacíos
+                    $total_copias = array_filter($total_copias);
+    
+                    // Convertir las claves en variables con sus respectivos valores
+                    extract($total_copias);                    
                 }
-
-                // Filtrar las claves que tienen valores vacíos
-                $total_copias = array_filter($total_copias);
-
-                // Convertir las claves en variables con sus respectivos valores
-                extract($total_copias);
             }
             
             // Creamos array para empezar a llenarlos con las copias
@@ -7830,6 +7856,10 @@ class CalificacionPCLController extends Controller
         }
 
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
+
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+
             $datos_correspondencia = [
                 'Oficio_pcl' => $oficiopcl,
                 'Oficio_incapacidad' => $oficioinca,
@@ -7905,6 +7935,7 @@ class CalificacionPCLController extends Controller
                 'N_siniestro' => $N_siniestro,
                 'Reemplazado' => 0,
                 'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -7958,7 +7989,6 @@ class CalificacionPCLController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];
-    
             sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
             ->where([
                 ['ID_evento',$Id_EventoDecreto],
@@ -8079,6 +8109,15 @@ class CalificacionPCLController extends Controller
         }
         $bandera_dictamen_pericial = $request->bandera_dictamen_pericial;
 
+        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
+        if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+            $agregar_copias_dml = "EPS, AFP, ARL, AFP_Conocimiento";
+        }
+        else{
+            $agregar_copias_dml = "EPS, AFP, ARL";
+        }
+        $Destinatario = 'Afiliado';
+
         // eL número de identificacion siempre será el del afiliado.
         $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
         ->select('Nro_identificacion')
@@ -8091,7 +8130,10 @@ class CalificacionPCLController extends Controller
             $nro_identificacion = 'N/A';
         }
         
-        if ($bandera_dictamen_pericial == 'Guardar') {            
+        if ($bandera_dictamen_pericial == 'Guardar') { 
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+                       
             if($Decreto_pericial == 3){
                 $datos_dictamenPericial =[
                     'Suma_combinada' => $suma_combinada,
@@ -8153,7 +8195,7 @@ class CalificacionPCLController extends Controller
                     'Nombre_afiliado' => 'N/A',
                     'T_documento' => 'N/A',
                     'N_identificacion' => $nro_identificacion,
-                    'Destinatario' => 'N/A',
+                    'Destinatario' => $Destinatario,
                     'Nombre_destinatario' => 'N/A',
                     'Nit_cc' => 'N/A',
                     'Direccion_destinatario' => 'N/A',
@@ -8167,10 +8209,12 @@ class CalificacionPCLController extends Controller
                     'Elaboro' => $nombre_usuario,
                     'Reviso' => 'N/A',
                     'Anexos' => 'N/A',
+                    'Agregar_copia' => $agregar_copias_dml,
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'calificacionTecnicaPCL',
                     'Reemplazado' => 0,
                     'N_siniestro' => $n_siniestro,
+                    'Id_Destinatarios' => $ids_destinatarios,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -8239,7 +8283,7 @@ class CalificacionPCLController extends Controller
                     'Nombre_afiliado' => 'N/A',
                     'T_documento' => 'N/A',
                     'N_identificacion' => $nro_identificacion,
-                    'Destinatario' => 'N/A',
+                    'Destinatario' => $Destinatario,
                     'Nombre_destinatario' => 'N/A',
                     'Nit_cc' => 'N/A',
                     'Direccion_destinatario' => 'N/A',
@@ -8253,10 +8297,12 @@ class CalificacionPCLController extends Controller
                     'Elaboro' => $nombre_usuario,
                     'Reviso' => 'N/A',
                     'Anexos' => 'N/A',
+                    'Agregar_copia' => $agregar_copias_dml,
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'calificacionTecnicaPCL',
                     'Reemplazado' => 0,
                     'N_siniestro' => $n_siniestro,
+                    'Id_Destinatarios' => $ids_destinatarios,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -8346,6 +8392,8 @@ class CalificacionPCLController extends Controller
             
 
             $comunicado_reemplazado = [
+                'Destinatario' => $Destinatario,
+                'Agregar_copia' => $agregar_copias_dml,
                 'Reemplazado' => 0,
                 'N_siniestro' => $n_siniestro,
             ];

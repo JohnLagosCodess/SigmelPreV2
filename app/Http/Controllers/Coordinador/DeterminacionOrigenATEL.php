@@ -246,11 +246,7 @@ class DeterminacionOrigenATEL extends Controller
         $afp_afiliado = $this->globalService->retornarInformaciónEntidad($array_datos_calificacion_origen[0]->Id_afp);
 
         /* Traer datos de la AFP de Conocimiento */
-        $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
-        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
-        ->select('siae.Entidad_conocimiento')
-        ->where([['siae.ID_evento', $Id_evento_dto_atel]])
-        ->get();
+        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_evento_dto_atel);
 
         // Consultamos si el caso está en la bandeja de Notificaciones
         $array_caso_notificado = BandejaNotifiController::evento_en_notificaciones($Id_evento_dto_atel,$Id_asignacion_dto_atel);
@@ -732,6 +728,18 @@ class DeterminacionOrigenATEL extends Controller
 
             sleep(2);
 
+            $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($request->ID_Evento);
+            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL, AFP_Conocimiento";
+            }
+            else{
+                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL";
+            }
+            $Destinatario = 'Afp';
+
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $request->ID_Evento,
                 'Id_proceso' => $request->Id_proceso,
@@ -743,7 +751,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Nombre_afiliado' => 'N/A',
                 'T_documento' => 'N/A',
                 'N_identificacion' => 'N/A',
-                'Destinatario' => 'N/A',
+                'Destinatario' => $Destinatario,
                 'Nombre_destinatario' => 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
@@ -757,10 +765,12 @@ class DeterminacionOrigenATEL extends Controller
                 'Elaboro' => $nombre_usuario,
                 'Reviso' => 'N/A',
                 'Anexos' => 'N/A',
+                'Agregar_copia' => $agregar_copias_dml,
                 'Tipo_descarga' => 'Dictamen',
                 'Modulo_creacion' => 'determinacionOrigenATEL',
                 'Reemplazado' => 0,
                 'N_siniestro' => $request->N_siniestro,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -793,7 +803,19 @@ class DeterminacionOrigenATEL extends Controller
 
             sleep(2);
 
+            //Copias y destinatario de un dictamen segun la ficha PBS054
+            $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($request->ID_Evento);
+            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL, AFP_Conocimiento";
+            }
+            else{
+                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL";
+            }
+            $Destinatario = 'Afp';
+
             $comunicado_reemplazado = [
+                'Destinatario' => $Destinatario,
+                'Agregar_copia' => $agregar_copias_dml,
                 'Reemplazado' => 0,
                 'N_siniestro' => $request->N_siniestro,
             ];
@@ -1179,6 +1201,9 @@ class DeterminacionOrigenATEL extends Controller
                 ['ID_evento',$Id_Evento_dto_atel],
                 ['Id_Asignacion',$Id_Asignacion_dto_atel]
             ])->update($datos_correspondencia);       
+
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
     
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $Id_Evento_dto_atel,
@@ -1211,6 +1236,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Modulo_creacion' => 'determinacionOrigenATEL',
                 'Reemplazado' => 0,
                 'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -1608,9 +1634,10 @@ class DeterminacionOrigenATEL extends Controller
 
         $datos = [
             'nombre_documento' => $nombre_pdf,
-            'mensaje' => 'Dictamen generado satisfactoriamente'
-            // 'indicativo' => $indicativo,
-            // 'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
+            'mensaje' => 'Dictamen generado satisfactoriamente',
+            'indicativo' => $indicativo,
+            'n_identificacion' => $nro_ident_afiliado,
+            'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
         ];
         
         return response()->json($datos);
@@ -2091,8 +2118,9 @@ class DeterminacionOrigenATEL extends Controller
         $datos = [
             'nombre_documento' => $nombre_pdf,
             'mensaje' => 'Correspondencia generada satisfactoriamente',
-            // 'indicativo' => $indicativo,
-            // 'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
+            'n_identificacion' => $num_identificacion,
+            'indicativo' => $indicativo,
+            'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
         ];
         
         return response()->json($datos);

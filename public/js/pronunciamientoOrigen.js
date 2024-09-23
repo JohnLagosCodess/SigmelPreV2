@@ -802,9 +802,9 @@ $(document).ready(function(){
         formData.append('fecha_comunicado2',null);
         formData.append('radicado2',$('#radicado_comunicado_manual').val());
         formData.append('cliente_comunicado2','N/A');
-        formData.append('nombre_afiliado_comunicado2','N/A');
+        formData.append('nombre_afiliado_comunicado2',$('#nombre_afiliado').val());
         formData.append('tipo_documento_comunicado2','N/A');
-        formData.append('identificacion_comunicado2','N/A');
+        formData.append('identificacion_comunicado2',$('#identificacion').val());
         formData.append('destinatario', 'N/A');
         formData.append('nombre_destinatario','N/A');
         formData.append('nic_cc','N/A');
@@ -886,6 +886,7 @@ $(document).ready(function(){
         $("#modalCorrespondencia #id_asignacion").val('');
         $("#modalCorrespondencia #id_proceso").val('');
         $("#modalCorrespondencia #id_comunicado").val('');
+        $("#modalCorrespondencia #id_destinatario").val('');
         
     }
 
@@ -941,14 +942,15 @@ $(document).ready(function(){
         let id_asignacion = $(id).data('id_asignacion');
         let anexos = $(id).data('anexos');
         let correspondencia = $(id).data('correspondencia');
+        let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
         //Información superior del modal 
         $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
         $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
         $("#modalCorrespondencia #id_evento").val($(id).data('id_evento'));
         $("#modalCorrespondencia #enlace_ed_evento").text($(id).data('id_evento'));
+        $("#modalCorrespondencia #id_destinatario").val(id_destinatario);
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
-
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
             $("#btn_guardar_actualizar_correspondencia").remove();
@@ -1201,6 +1203,7 @@ $(document).ready(function(){
             'id_proceso': $('#modalCorrespondencia #id_proceso').val(),
             'id_evento': $('#modalCorrespondencia #id_evento').val(),
             'id_comunicado': $('#modalCorrespondencia #id_comunicado').val(),
+            'id_destinatario': $('#modalCorrespondencia #id_destinatario').val(),
             'n_radicado': $('#modalCorrespondencia #radicado').val(),
             'n_orden': $('#modalCorrespondencia #n_orden').val(),
             'tipo_destinatario': tipoDestinatario,
@@ -1493,7 +1496,6 @@ $(document).ready(function(){
                 showLoading();
             },
             success: function(response){
-                console.log('Response : ', response);
                 if(response.decision !== 'Silencio'){
                     if(response.Id_Comunicado){
                         parametro = response.parametro;
@@ -1507,7 +1509,6 @@ $(document).ready(function(){
                                 $("#btn_generar_proforma").addClass("descarga-deshabilitada");
                             },
                             success: function (response) {
-                                console.log('Response : ', response);
                                 if (parametro == 'agregar_pronunciamiento') {
                                     $('#div_alerta_pronuncia').removeClass('d-none');
                                     $('.alerta_pronucia').append('<strong>'+mensaje+'</strong>');                                            
@@ -1537,7 +1538,6 @@ $(document).ready(function(){
                     }
                 }
                 else{
-                    console.log('Response : ', response);
                     if (response.parametro == 'agregar_pronunciamiento') {
                         $('#div_alerta_pronuncia').removeClass('d-none');
                         $('.alerta_pronucia').append('<strong>'+response.mensaje+'</strong>');                                            
@@ -1549,7 +1549,7 @@ $(document).ready(function(){
                         }, 1500);   
                     }else if(response.parametro == 'update_pronunciamiento'){
                         $('#div_alerta_pronuncia').removeClass('d-none');
-                        $('.alerta_pronucia').append('<strong>'+response.mensaje2+'</strong>');                                           
+                        $('.alerta_pronucia').append('<strong>'+response.mensaje+'</strong>');                                           
                         setTimeout(function(){
                         document.querySelector('#ActualizarPronuncia').disabled=false;
                             $('#div_alerta_pronuncia').addClass('d-none');
@@ -1881,95 +1881,80 @@ $(document).ready(function(){
                 document.body.removeChild(enlaceDescarga);
             }, 1000);
         }else{
-            var nombre_doc = informacion_comunicado.Nombre_documento;
-            var enlaceDescarga = document.createElement('a');
-            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+Id_Evento;     
-            enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
-            enlaceDescarga.style.display = 'none';
-            document.body.appendChild(enlaceDescarga);
-            enlaceDescarga.click();
-            setTimeout(function() {
-                document.body.removeChild(enlaceDescarga);
-            }, 1000);
-            // $.ajax({    
-            //     type:'POST',
-            //     url:'/DescargarProformaPronunciamiento',
-            //     data: datos_generacion_proforma,
-            //     // xhrFields: {
-            //     //     responseType: 'blob' // Indica que la respuesta es un blob
-            //     // },
-            //     beforeSend:  function() {
-            //         $("#btn_generar_proforma").addClass("descarga-deshabilitada");
-            //     },
-            //     success: function (response, status, xhr) {
-
-            //         // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-            
-            //         var indicativo = response.indicativo;
-            //         // Crear un enlace de descarga similar al ejemplo anterior
-            //         if (bandera_tipo_proforma == "proforma_acuerdo") {
-            //             // Obtener el contenido codificado en base64 del PDF desde la respuesta
-            //             var base64Pdf = response.pdf;
-
-            //             // Decodificar base64 en un array de bytes
-            //             var binaryString = atob(base64Pdf);
-            //             var len = binaryString.length;
-            //             var bytes = new Uint8Array(len);
-
-            //             for (var i = 0; i < len; i++) {
-            //                 bytes[i] = binaryString.charCodeAt(i);
-            //             }
-
-            //             // Crear un Blob a partir del array de bytes
-            //             var blob = new Blob([bytes], { type: 'application/pdf' });
-
-            //             // var nombre_documento = "ORI_ACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".pdf";
-            //             var nombre_documento = "ORI_ACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+"_"+indicativo+".pdf";
-
-            //         } else {
-            //             // Obtener el contenido codificado en base64 del PDF desde la respuesta
-            //             var base64Word = response.word;
+            if(informacion_comunicado.Nombre_documento){
+                var nombre_doc = informacion_comunicado.Nombre_documento;
+                var enlaceDescarga = document.createElement('a');
+                enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+Id_Evento;     
+                enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+                enlaceDescarga.style.display = 'none';
+                document.body.appendChild(enlaceDescarga);
+                enlaceDescarga.click();
+                setTimeout(function() {
+                    document.body.removeChild(enlaceDescarga);
+                }, 1000);
+            }
+            else{
+                datos_generacion_proforma = retornarDatosProformaPronunciamiento(informacion_comunicado.Id_Comunicado);
+                $.ajax({    
+                    type:'POST',
+                    url:'/DescargarProformaPronunciamiento',
+                    data: datos_generacion_proforma,
+                    beforeSend:  function() {
+                        $("#btn_generar_proforma").addClass("descarga-deshabilitada");
+                    },
+                    success: function (response, status, xhr) {
+                        // Crear un enlace de descarga similar al ejemplo anterior
+                        if (response.tipo_proforma == "proforma_acuerdo") {
+                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                            var base64Pdf = response.pdf;
+    
+                            // Decodificar base64 en un array de bytes
+                            var binaryString = atob(base64Pdf);
+                            var len = binaryString.length;
+                            var bytes = new Uint8Array(len);
+    
+                            for (var i = 0; i < len; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+    
+                            // Crear un Blob a partir del array de bytes
+                            var blob = new Blob([bytes], { type: 'application/pdf' });
+                        } else {
+                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                            var base64Word = response.word;
+                    
+                            // Decodificar base64 en un array de bytes
+                            var binaryString = atob(base64Word);
+                            var len = binaryString.length;
+                            var bytes = new Uint8Array(len);
+                    
+                            for (var i = 0; i < len; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+    
+                            var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+                        }
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = response.nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
                 
-            //             // Decodificar base64 en un array de bytes
-            //             var binaryString = atob(base64Word);
-            //             var len = binaryString.length;
-            //             var bytes = new Uint8Array(len);
+                        // Adjuntar el enlace al documento y activar el evento de clic
+                        document.body.appendChild(link);
+                        link.click();
                 
-            //             for (var i = 0; i < len; i++) {
-            //                 bytes[i] = binaryString.charCodeAt(i);
-            //             }
-
-            //             var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-
-            //             // var nombre_documento = "ORI_DESACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+".docx";              
-            //             var nombre_documento = "ORI_DESACUERDO_"+Id_Asignacion_consulta_dx+"_"+num_identificacion+"_"+indicativo+".docx";
-                                      
-            //         }
-            //         var link = document.createElement('a');
-            //         link.href = window.URL.createObjectURL(blob);
-            //         link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
-            
-            //         // Adjuntar el enlace al documento y activar el evento de clic
-            //         document.body.appendChild(link);
-            //         link.click();
-            
-            //         // Eliminar el enlace del documento
-            //         document.body.removeChild(link);
-            //     },
-            //     error: function (error) {
-            //         // Manejar casos de error
-
-            //         if (bandera_tipo_proforma == "proforma_acuerdo") {
-            //             console.error('Error al descargar el PDF:', error);
-            //         } else {
-            //             console.error('Error al descargar el WORD:', error);
-            //         }
-            //     },
-            //     complete: function(){
-            //         $("#btn_generar_proforma").removeClass("descarga-deshabilitada");
-            //         location.reload();
-            //     }        
-            // });
+                        // Eliminar el enlace del documento
+                        document.body.removeChild(link);
+                    },
+                    error: function (error) {
+                        // Manejar casos de error
+                        console.error('Ha ocurrido un error al descargar el documento:', error);
+                    },
+                    complete: function(){
+                        $("#btn_generar_proforma").removeClass("descarga-deshabilitada");
+                        location.reload();
+                    }        
+                });
+            }
         }
         
     });

@@ -9,22 +9,22 @@
                             @csrf
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
-                                            <label for="fecha_seguimiento">Nombre de afiliado</label>
+                                            <label for="nombre_afiliado">Nombre de afiliado</label>
                                             <input class="form-control" type="text" name="nombre_afiliado"
                                                 id="nombre_afiliado" readonly>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
-                                            <label for="fecha_seguimiento">N° de Identificacion</label>
+                                            <label for="n_identificacion">N° de Identificacion</label>
                                             <input class="form-control" type="text" name="n_identificacion"
                                                 id="n_identificacion"
                                                 readonly>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="id_evento">ID evento</label>
                                             <br>
@@ -34,6 +34,12 @@
                                             <a onclick="document.getElementById('botonVerEdicionEvento').click();"
                                                 id="enlace_ed_evento" style="cursor:pointer; font-weight: bold;"
                                                 class="btn text-info" type="button"></a>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="id_destinatario">ID Destinatario</label>
+                                            <input class="form-control" type="text" name="id_destinatario" id="id_destinatario" readonly>
                                         </div>
                                     </div>
                                 </div>

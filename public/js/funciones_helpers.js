@@ -749,3 +749,27 @@ function ubicacionEvento() {
         });
     });
 }
+    /*
+        * Recibe una cadena string con todos los IDs de destinatario de un comunicado y el 'destinatario' con el fin d
+        * @returns string | null
+    */
+    function retornarIdDestinatario(ids_destinatario, destinatario){
+        console.log('DESTINATARIO : ', destinatario);
+        //Se usa split para armar un array con todos los ids de destinatario
+        let ids = ids_destinatario.split(',');
+        //Se validan los prefijos en base al destinatario
+        const prefijos = {
+            'Afiliado': 'AFI',
+            'Empleador': 'EMP',
+            'eps': 'EPS',
+            'afp': 'AFP',
+            'arl': 'ARL',
+            'afp_conocimiento': 'FPC',
+            'jrci': 'JRC',
+            'jnci': 'JNC'
+        };
+        // Se busca el prefijo con el que deberia venir el ID en base al destinatario
+        let Id_Destinatario = ids.find(finder => finder !== '' && finder.startsWith(prefijos[destinatario]));
+        
+        return Id_Destinatario && Id_Destinatario !== '' ? Id_Destinatario.split('_')[1] : null
+    }

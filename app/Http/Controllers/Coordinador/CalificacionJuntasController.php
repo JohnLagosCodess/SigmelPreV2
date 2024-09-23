@@ -40,6 +40,7 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_auditorias_informacion_accion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use DateTime;
@@ -51,6 +52,13 @@ use PhpOffice\PhpWord\Style\Image;
 class CalificacionJuntasController extends Controller
 {
     use GenerarRadicados;
+
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
 
     public function mostrarVistaCalificacionJuntas(Request $request){
         if(!Auth::check()){
@@ -2481,6 +2489,9 @@ class CalificacionJuntasController extends Controller
 
         $radicado = $this->disponible($request->radicado2,$Id_evento)->getRadicado('juntas',$Id_evento);
 
+        //Se asignan los IDs de destinatario por cada posible destinatario
+        $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario(true,true);
+
         if($tipo_descarga != 'Manual'){
             $radiojrci_comunicado = $request->radiojrci_comunicado;
             $radiojnci_comunicado = $request->radiojnci_comunicado;
@@ -2574,6 +2585,7 @@ class CalificacionJuntasController extends Controller
                 'Modulo_creacion' => $request->modulo_creacion,
                 'Otro_destinatario' => $otro_destinatario_jrci,
                 'N_siniestro' => $request->N_siniestro,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -2664,6 +2676,7 @@ class CalificacionJuntasController extends Controller
                 // 'Nombre_documento' => $request->Nombre_documento,
                 'Otro_destinatario' => 0,
                 'Nombre_documento' => $nombre_final_documento,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -2689,7 +2702,7 @@ class CalificacionJuntasController extends Controller
 
         $mensajes = array(
             "parametro" => 'agregar_comunicado',
-            'status_pdf' => $this->generarPDF($request, $id_comunicado,$principalDestinatario($entidades,$destinatario),'guardar'),
+            'status_pdf' => $this->generarPDF($request, $id_comunicado,$principalDestinatario($entidades,$destinatario ?? null),'guardar'),
             "mensaje" => 'Comunicado generado satisfactoriamente.'
         );
 
@@ -2835,13 +2848,13 @@ class CalificacionJuntasController extends Controller
             'fecha_comunicado2_act' => $data_comunicado->{$params[$tipo_proceso]['p29']},
             'agregar_copia_editar' => $data_comunicado->{$params[$tipo_proceso]['p30']},
             'radicado2_act' => $data_comunicado->{$params[$tipo_proceso]['p31']},
-            'edit_copia_afiliado' => $data_comunicado->{$params[$tipo_proceso]['p32']},
-            'edit_copia_empleador' => $data_comunicado->{$params[$tipo_proceso]['p33']},
-            'edit_copia_eps' => $data_comunicado->{$params[$tipo_proceso]['p34']},
-            'edit_copia_afp' => $data_comunicado->{$params[$tipo_proceso]['p35']},
-            'edit_copia_arl' => $data_comunicado->{$params[$tipo_proceso]['p36']},
-            'edit_copia_jrci' => $data_comunicado->{$params[$tipo_proceso]['p37']},
-            'edit_copia_jnci' => $data_comunicado->{$params[$tipo_proceso]['p38']},
+            'edit_copia_afiliado' => ($data_comunicado->{$params[$tipo_proceso]['p32']} == 'true'),
+            'edit_copia_empleador' => ($data_comunicado->{$params[$tipo_proceso]['p33']} == 'true'),
+            'edit_copia_eps' => ($data_comunicado->{$params[$tipo_proceso]['p34']} == 'true'),
+            'edit_copia_afp' => ($data_comunicado->{$params[$tipo_proceso]['p35']} == 'true'),
+            'edit_copia_arl' => ($data_comunicado->{$params[$tipo_proceso]['p36']} == 'true'),
+            'edit_copia_jrci' => ($data_comunicado->{$params[$tipo_proceso]['p37']} == 'true'),
+            'edit_copia_jnci' => ($data_comunicado->{$params[$tipo_proceso]['p38']} == 'true'),
             'n_siniestro_proforma_editar' => $data_comunicado->{$params[$tipo_proceso]['p39']},
             'Nombre_junta_act' => $data_comunicado->{$params[$tipo_proceso]['p40']},
             'F_estructuracion_act' => $data_comunicado->{$params[$tipo_proceso]['p41']},
@@ -3219,13 +3232,13 @@ class CalificacionJuntasController extends Controller
                 $nombre_junta = $request->Nombre_junta_act;
 
                 // Validamos si los checkbox esta marcados
-                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $edit_copias_afiliado = $request->edit_copia_afiliado ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empleador ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copia_eps ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copia_afp ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
                     'edit_copia_empleador' => $edit_copias_empleador,
@@ -4201,13 +4214,13 @@ class CalificacionJuntasController extends Controller
                 }
 
                 // Copias a partes interesadas
-                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $edit_copias_afiliado = $request->edit_copia_afiliado ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empleador ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copia_eps ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copia_afp ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
 
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
@@ -4716,13 +4729,13 @@ class CalificacionJuntasController extends Controller
                 }
 
                 // Copias a partes interesadas
-                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $edit_copias_afiliado = $request->edit_copia_afiliado ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empleador ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copia_eps ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copia_afp ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
 
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
@@ -5429,13 +5442,13 @@ class CalificacionJuntasController extends Controller
                 }
 
                 // Copias a partes interesadas
-                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $edit_copias_afiliado = $request->edit_copia_afi ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empl ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copi ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copi ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copi ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia ? 'JNCI': '';
 
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,

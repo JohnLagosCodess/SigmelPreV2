@@ -478,6 +478,8 @@ class PronunciamientoOrigenController extends Controller
         }
         //valida la acción del botón
         if ($request->bandera_pronuncia_guardar_actualizar == 'Guardar') {
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
         
             $datos_info_pronunciamiento_eventos = [
                 'ID_Evento' => $Id_EventoPronuncia,
@@ -556,6 +558,7 @@ class PronunciamientoOrigenController extends Controller
                 'N_siniestro' => $request->n_siniestro,
                 //Siempre va a ser otro destinatario, debido a que el destinatario es el primer calificador.
                 'Otro_destinatario' => 1,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -798,6 +801,10 @@ class PronunciamientoOrigenController extends Controller
                 sleep(2);
             }
             if($request->decision_pr != 'Silencio' && !$id_comunicado){
+                //Se asignan los IDs de destinatario por cada posible destinatario
+                $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+                $datos_info_comunicado_eventos['Id_Destinatarios'] = $ids_destinatarios;
+
                 $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }
@@ -1458,78 +1465,10 @@ class PronunciamientoOrigenController extends Controller
 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
             ->update($actualizar_nombre_documento);
-
-            /* Inserción del registro de que fue descargado */
-            // Extraemos el id del servicio asociado
-            // $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
-            // ->select('siae.Id_servicio')
-            // ->where([
-            //     ['siae.Id_Asignacion', $Id_Asignacion_consulta_dx],
-            //     ['siae.ID_evento', $id_evento],
-            //     ['siae.Id_proceso', $Id_Proceso_consulta_dx],
-            // ])->get();
-
-            // $Id_servicio = $dato_id_servicio[0]->Id_servicio;
-
-            // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-            // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            // ->select('Nombre_documento')
-            // ->where([
-            //     ['Nombre_documento', $nombre_pdf],
-            // ])->get();
             
-            // if(count($verficar_documento) == 0){
-                
-            //     // Se valida si antes de insertar la info del doc de acuerdo ya hay un doc de desacuerdo
-            //     $nombre_docu_desacuerdo = "ORI_DESACUERDO_{$Id_Asignacion_consulta_dx}_{$num_identificacion}.docx";
-            //     $verificar_docu_desacuerdo = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            //     ->select('Nombre_documento')
-            //     ->where([
-            //         ['Nombre_documento', $nombre_docu_desacuerdo],
-            //     ])->get();
-
-            //     // Si no existe info del documento de desacuerdo, inserta la info del documento de acuerdo
-            //     // De lo contrario hace una actualización de la info
-            //     if (count($verificar_docu_desacuerdo) == 0) {
-            //         $info_descarga_documento = [
-            //             'Id_Asignacion' => $Id_Asignacion_consulta_dx,
-            //             'Id_proceso' => $Id_Proceso_consulta_dx,
-            //             'Id_servicio' => $Id_servicio,
-            //             'ID_evento' => $id_evento,
-            //             'Nombre_documento' => $nombre_pdf,
-            //             'N_radicado_documento' => $nro_radicado,
-            //             'F_elaboracion_correspondencia' => $fecha,
-            //             'F_descarga_documento' => $date,
-            //             'Nombre_usuario' => Auth::user()->name,
-            //         ];
-                    
-            //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-            //     }else{
-            //         $info_descarga_documento = [
-            //             'Id_Asignacion' => $Id_Asignacion_consulta_dx,
-            //             'Id_proceso' => $Id_Proceso_consulta_dx,
-            //             'Id_servicio' => $Id_servicio,
-            //             'ID_evento' => $id_evento,
-            //             'Nombre_documento' => $nombre_pdf,
-            //             'N_radicado_documento' => $nro_radicado,
-            //             'F_elaboracion_correspondencia' => $fecha,
-            //             'F_descarga_documento' => $date,
-            //             'Nombre_usuario' => Auth::user()->name,
-            //         ];
-                    
-            //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            //         ->where([
-            //             ['Id_Asignacion', $Id_Asignacion_consulta_dx],
-            //             ['N_radicado_documento', $nro_radicado],
-            //             ['ID_evento', $id_evento]
-            //         ])
-            //         ->update($info_descarga_documento);
-            //     }
-
-            // }
-
-            // return $pdf->download($nombre_pdf);
             $datos = [
+                'nombre_documento' => $nombre_pdf,
+                'tipo_proforma' => "proforma_acuerdo",
                 'indicativo' => $indicativo,
                 'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
             ];
@@ -1825,80 +1764,12 @@ class PronunciamientoOrigenController extends Controller
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
             ->update($actualizar_nombre_documento);
 
-            /* Inserción del registro de que fue descargado */
-            // Extraemos el id del servicio asociado
-            // $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
-            // ->select('siae.Id_servicio')
-            // ->where([
-            //     ['siae.Id_Asignacion', $Id_Asignacion_consulta_dx],
-            //     ['siae.ID_evento', $id_evento],
-            //     ['siae.Id_proceso', $Id_Proceso_consulta_dx],
-            // ])->get();
-
-            // $Id_servicio = $dato_id_servicio[0]->Id_servicio;
-
-            // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-            // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            // ->select('Nombre_documento')
-            // ->where([
-            //     ['Nombre_documento', $nombre_docx],
-            // ])->get();
-            
-            // if(count($verficar_documento) == 0){
-
-            //     // Se valida si antes de insertar la info del doc de desacuerdo ya hay un doc de acuerdo
-            //     $nombre_docu_acuerdo = "ORI_ACUERDO_{$Id_Asignacion_consulta_dx}_{$num_identificacion}.pdf";
-            //     $verificar_docu_acuerdo = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            //     ->select('Nombre_documento')
-            //     ->where([
-            //         ['Nombre_documento', $nombre_docu_acuerdo],
-            //     ])->get();
-
-            //     // Si no existe info del documento de acuerdo, inserta la info del documento de desacuerdo
-            //     // De lo contrario hace una actualización de la info
-            //     if (count($verificar_docu_acuerdo) == 0) {
-            //         $info_descarga_documento = [
-            //             'Id_Asignacion' => $Id_Asignacion_consulta_dx,
-            //             'Id_proceso' => $Id_Proceso_consulta_dx,
-            //             'Id_servicio' => $Id_servicio,
-            //             'ID_evento' => $id_evento,
-            //             'Nombre_documento' => $nombre_docx,
-            //             'N_radicado_documento' => $nro_radicado,
-            //             'F_elaboracion_correspondencia' => $fecha,
-            //             'F_descarga_documento' => $date,
-            //             'Nombre_usuario' => Auth::user()->name,
-            //         ];
-                    
-            //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-            //     }else{
-            //         $info_descarga_documento = [
-            //             'Id_Asignacion' => $Id_Asignacion_consulta_dx,
-            //             'Id_proceso' => $Id_Proceso_consulta_dx,
-            //             'Id_servicio' => $Id_servicio,
-            //             'ID_evento' => $id_evento,
-            //             'Nombre_documento' => $nombre_docx,
-            //             'N_radicado_documento' => $nro_radicado,
-            //             'F_elaboracion_correspondencia' => $fecha,
-            //             'F_descarga_documento' => $date,
-            //             'Nombre_usuario' => Auth::user()->name,
-            //         ];
-                    
-            //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            //         ->where([
-            //             ['Id_Asignacion', $Id_Asignacion_consulta_dx],
-            //             ['N_radicado_documento', $nro_radicado],
-            //             ['ID_evento', $id_evento]
-            //         ])
-            //         ->update($info_descarga_documento);
-            //     }
-            // }
-
-            // return response()->download(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
-
             // Leer el contenido del archivo guardado y codificarlo en base64
             $contenidoWord = File::get(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
 
             $datos = [
+                'nombre_documento' => $nombre_docx,
+                'tipo_proforma' => "proforma_desacuerdo",
                 'indicativo' => $indicativo,
                 'word' => base64_encode($contenidoWord)
             ];

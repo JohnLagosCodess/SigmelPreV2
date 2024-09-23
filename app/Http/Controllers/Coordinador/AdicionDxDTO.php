@@ -1622,7 +1622,15 @@ class AdicionDxDTO extends Controller
         $documentos = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$request->ID_Evento], ['Id_Asignacion',$request->Id_Asignacion], ['T_documento','N/A'], ['Modulo_creacion','adicionDxDtoOrigen']])->get();
         
-
+        //Copias y destinatario
+        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($request->ID_Evento);
+            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL, AFP_Conocimiento";
+            }
+            else{
+                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL";
+            }
+            $Destinatario = 'Afp';
 
         if ($Id_Adiciones_Dx == "" || count($documentos) == 0) {
             //Asigna radicado correspondiente al nuevo comunicado
@@ -1640,6 +1648,9 @@ class AdicionDxDTO extends Controller
 
             sleep(2);
 
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $request->ID_Evento,
                 'Id_proceso' => $request->Id_proceso,
@@ -1651,7 +1662,7 @@ class AdicionDxDTO extends Controller
                 'Nombre_afiliado' => 'N/A',
                 'T_documento' => 'N/A',
                 'N_identificacion' => 'N/A',
-                'Destinatario' => 'N/A',
+                'Destinatario' => $Destinatario,
                 'Nombre_destinatario' => 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
@@ -1665,10 +1676,12 @@ class AdicionDxDTO extends Controller
                 'Elaboro' => $nombre_usuario,
                 'Reviso' => 'N/A',
                 'Anexos' => 'N/A',
+                'Agregar_copia' => $agregar_copias_dml,
                 'Tipo_descarga' => 'Dictamen',
                 'Modulo_creacion' => 'adicionDxDtoOrigen',
                 'Reemplazado' => 0,
                 'N_siniestro' => $request->N_siniestro,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -1701,8 +1714,10 @@ class AdicionDxDTO extends Controller
             ->update($dato_actualizar_n_siniestro);
 
             sleep(2);
-
+            //Copias y destinatario de un dictamen segun la ficha PBS054
             $comunicado_reemplazado = [
+                'Destinatario' => $Destinatario,
+                'Agregar_copia' => $agregar_copias_dml,
                 'Reemplazado' => 0,
                 'N_siniestro' => $request->N_siniestro,
             ];
@@ -1995,7 +2010,10 @@ class AdicionDxDTO extends Controller
             ->where([
                 ['ID_evento',$Id_Evento],
                 ['Id_Asignacion',$Id_Asignacion_adicion_dx]
-            ])->update($datos_correspondencia);       
+            ])->update($datos_correspondencia);    
+            
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
     
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $Id_Evento,
@@ -2028,6 +2046,7 @@ class AdicionDxDTO extends Controller
                 'Modulo_creacion' => 'adicionDxDtoOrigen',
                 'Reemplazado' => 0,
                 'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -2475,6 +2494,8 @@ class AdicionDxDTO extends Controller
         // return $pdf->download($nombre_pdf); 
 
         $datos = [
+            'nombre_documento' => $nombre_pdf,
+            'n_identificacion' => $nro_ident_afiliado,
             'indicativo' => $indicativo,
             'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
         ];
@@ -3047,6 +3068,8 @@ class AdicionDxDTO extends Controller
         // return $pdf->download($nombre_pdf); 
 
         $datos = [
+            'nombre_documento' => $nombre_pdf,
+            'n_identificacion' => $num_identificacion,
             'indicativo' => $indicativo,
             'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
         ];

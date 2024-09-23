@@ -24,6 +24,7 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
 use App\Models\sigmel_informacion_correspondencia_eventos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use PhpOffice\PhpWord\PhpWord;
@@ -34,7 +35,12 @@ use PhpOffice\PhpWord\Style\Image;
 class ControversiaJuntasController extends Controller
 {
     use GenerarRadicados;
-    
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
     public function mostrarVistaPronunciamientoJuntas(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -1819,6 +1825,10 @@ class ControversiaJuntasController extends Controller
             // Si el array está vacío, asignamos una cadena vacía
             $Agregar_copias = '';
         }
+
+        //Se asignan los IDs de destinatario por cada posible destinatario
+        $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario(true, true);
+
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
                 'ID_evento' => $newId_evento,
@@ -1895,6 +1905,7 @@ class ControversiaJuntasController extends Controller
                 'Modulo_creacion' => 'controversiaJuntas',
                 'Reemplazado' => 0,
                 'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
