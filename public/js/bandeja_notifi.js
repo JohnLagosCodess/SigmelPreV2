@@ -33,6 +33,7 @@ $(document).ready(function () {
         'newId_rol': $("#newId_rol").val(),
         'newId_user': $("#newId_user").val(),
     };
+    var Bandeja_Notifi;
 
     sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token);
 
@@ -41,10 +42,178 @@ $(document).ready(function () {
 
     $('#btn_expor_datos').click(function () {
         $('.dt-button').click();
-
     });
 
+    $("#accion_ejecutar").on("change",function(){
+        procesar_accion($("#accion_ejecutar :selected").text(),procesos);
+    });
+
+    var datos_acciones = [];
+
+    $('#toggleButton').click(function(event) {   
+        console.log('Buenas');
+        if(this.checked) {
+            $(':checkbox').each(function() {
+                this.checked = true;                        
+            });
+        } else {
+            $(':checkbox').each(function() {
+                this.checked = false;                       
+            });
+
+            datos_acciones = [];
+        }
+    }); 
+
+    //Almacena los datos del evento que se esta checkeando
+    $(document).on('click',"input:checkbox",function (){
+
+        let form = $(this).closest('form');
+        let Id_Asignacion = form.find('input[name="newIdAsignacion"]').val();
+        let Id_evento = form.find('input[name="newIdEvento"]').val();
+        let Id_servicio = form.find('input[name="Id_Servicio"]').val();
+        let Id_proceso = form.find('input[name="Id_proceso"]').val();
+
+        //check all
+        let check_all = $(this).data('id');
+        if (check_all !== undefined) {
+            $(':checkbox').prop('checked', this.checked);
+    
+            if (this.checked) {
+                datos_acciones = $(':checkbox:checked').map(function () {
+                    let form = $(this).closest('form');
+                    return {
+                        [form.find('input[name="newIdAsignacion"]').val()]: {
+                            'proceso': form.find('input[name="Id_proceso"]').val(),
+                            'servicio': form.find('input[name="Id_Servicio"]').val(),
+                            'id_evento': form.find('input[name="newIdEvento"]').val(),
+                        }
+                    };
+                }).get();
+            } else {
+                datos_acciones = [];
+            }
+            datos_acciones.splice(0, 2);
+            return;
+        }
+
+
+        if ($(this).is(':checked')) {
+            datos_acciones.push({
+                [Id_Asignacion]: {
+                    'proceso': Id_proceso,
+                    'servicio': Id_servicio,
+                    'id_evento': Id_evento,
+                }
+            });
+        } else {
+            // Remove from datos_acciones if unchecked
+            datos_acciones = datos_acciones.filter(item => Object.keys(item)[0] !== Id_Asignacion);
+        }
+    });
+
+
+    $("#btn_ejecutar_accion").click(function(){
+
+        $("#btn_ejecutar_accion").prop('disabled',true);
+        if(datos_acciones.length == 0){
+            $(".no_ejecutar_accion").removeClass("d-none");
+            setTimeout(function(){
+                $('.no_ejecutar_accion').addClass('d-none');
+                $('.no_ejecutar_accion').empty();                   
+            }, 3000);
+
+            $("#btn_ejecutar_accion").prop('disabled',false);
+            return;
+        }
+
+        const ahora = new Date();
+        let fechaHoraFormateada = ahora.toISOString().slice(0, 16).replace('T', ' ');
+
+        let ejecutar_accion = {
+            '_token' :  $('input[name=_token]').val(),
+            'bandera' : 'ejecutar_accion',
+            'f_accion': fechaHoraFormateada,
+           'accion_ejecutar': $("#accion_ejecutar :selected").val(),
+           'descripcion': $("#descripcion").val(),
+           'f_alerta': $("#f_alerta").val(),
+           'datos_evento': datos_acciones
+        }
+
+        $.post('/proceso_notificaciones',ejecutar_accion,function(data){
+ 
+            $('.alerta_completado').removeClass('d-none');
+            $('.alerta_completado').append("<strong> Accion ejecutada correctamente</strong>");
+                setTimeout(function(){
+                    $('.alerta_completado').addClass('d-none');
+                    $('.alerta_completado').empty(); 
+                    location.reload();                       
+                }, 3000);
+        });
+    });
 });
+
+/**
+ * Carga los eventos asociados a la accion selecionada
+ */
+function procesar_accion(id,procesos){
+    $(".Bandeja_Notifi, #sindatos_bandeja").addClass('d-none');
+    
+    $("#actualizando_bandeja").removeClass('d-none');
+    let datos = {
+        "_token": $('input[name=_token]').val(),
+        "bandera" : "getEventos",
+        "id_acion_ejecutar": id,
+        'newId_rol': $("#newId_rol").val(),
+        'newId_user': $("#newId_user").val(),
+    };
+
+    $.post("/proceso_notificaciones",datos,function(e){
+
+        let data = e.datos;
+        $('#num_registros').empty();
+        $('#num_registros').append(data.length);
+
+        if(!e.estado == 'ok'){
+            return;
+        }
+
+        obtenerAlertasNaranja().then(alertasNaranja => {
+            const alertasNaranjaMap = new Map(alertasNaranja.map(alerta => [
+                alerta.Id_Asignacion, 
+                {
+                    naranja: alerta.F_accion_alerta_naranja,
+                    roja: alerta.F_accion_alerta_roja
+                }
+            ]));
+
+            let cellCss = [];
+
+            for (let i = 0; i < data.length; i++) {
+
+                let dataTMP = crearHipervinculos(data[i],alertasNaranjaMap,procesos,false);
+                data[i] = dataTMP.datos;
+                cellCss.push(dataTMP.estilos);
+            }
+
+            capturar_informacion_bandejaNotifi(data,cellCss)
+
+            $(".dt-buttons").addClass('d-none');
+        }).catch(error => {
+            console.error('Error al obtener alertas naranja:', error);
+        });
+    }).done(function(e){
+
+        if(e.estado == 'ok'){
+            $(".Bandeja_Notifi").removeClass('d-none');
+            $("#actualizando_bandeja, #sindatos_bandeja").addClass('d-none');
+        }else{
+            $(".Bandeja_Notifi, #actualizando_bandeja").addClass('d-none');
+            $("#sindatos_bandeja").removeClass("d-none");
+        }
+
+    });
+}
 
 /**
  * Consulta sin filtro
@@ -65,8 +234,6 @@ function sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token) {
             $('#num_registros').empty();
             $('#num_registros').append(data.length);
             obtenerAlertasNaranja().then(alertasNaranja => {
-                const start = performance.now();
-
                 const alertasNaranjaMap = new Map(alertasNaranja.map(alerta => [
                     alerta.Id_Asignacion, 
                     {
@@ -77,70 +244,15 @@ function sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token) {
 
                 let cellCss = [];
 
-                var enlaceModuloPrincipal = '';
-
                 for (let i = 0; i < data.length; i++) {
-                if (data[i]['Id_Asignacion'] != '') {
-                    //Seteamos los datos y construimos el formulario para cada fila en funcion del proceso actual.
-                    let action = procesos[data[i]['Nombre_proceso_actual']]().url;
-                    let idInput = procesos[data[i]['Nombre_proceso_actual']]().id + data[i]["Id_Asignacion"];
-                    let nombreInput = procesos[data[i]['Nombre_proceso_actual']]().Nombre;
 
-                    enlaceModuloPrincipal = `<form action="${action}" method="POST">
-                                            <input type="hidden" name="_token" value="${token}">
-                                            <input class="btn btn-sm text-info"  id=${idInput} value="Modulo ${nombreInput}" type="submit" style="font-weight: bold; padding-left: inherit;">
-                                            <input type="hidden" name="bd_notificacion" value="true">
-                                            <input type="hidden" name="newIdAsignacion" value="${data[i]["Id_Asignacion"]}">
-                                            <input type="hidden" name="newIdEvento" id="newIdEvento" value="${data[i]["ID_evento"]}">
-                                            <input type="hidden" name="Id_Servicio" id="Id_Servicio" value="${data[i]["Id_Servicio"]}">
-                                        </form>`;
-                    data[i]['moduloNotifi'] = enlaceModuloPrincipal;
-
-                    if (alertasNaranjaMap.has(data[i]['Id_Asignacion'])) {
-                        let alertaFechas = alertasNaranjaMap.get(data[i]['Id_Asignacion']);
-                        let currentTime = new Date();
-
-                        // Verificar alerta naranja
-                        if (alertaFechas.naranja) {
-                            
-                            let alertaFechaNaranja = new Date(alertaFechas.naranja);
-                            // let diferenciaNaranja = Math.abs(currentTime - alertaFechaNaranja);
-        
-                            if (currentTime >= alertaFechaNaranja) {  
-                                cellCss.push({
-                                    color: 'orange',
-                                    evento: data[i]["ID_evento"],
-                                    id_aignacion: data[i]['Id_Asignacion']
-                                });
-                            }
-                        }
-        
-                        // Verificar alerta roja
-                        if (alertaFechas.roja) {
-                            let alertaFechaRoja = new Date(alertaFechas.roja);
-                            // let diferenciaRoja = Math.abs(currentTime - alertaFechaRoja);
-                            if (currentTime >= alertaFechaRoja) { 
-                                cellCss.push({
-                                    color: 'red',
-                                    evento: data[i]["ID_evento"],
-                                    id_aignacion: data[i]['Id_Asignacion']
-                                });
-                            }
-                        }
-                    }
-                } else {
-                    data[i]['moduloNotifi'] = "";
+                    let dataTMP = crearHipervinculos(data[i],alertasNaranjaMap,procesos);
+                    data[i] = dataTMP.datos;
+                    cellCss.push(dataTMP.estilos);
                 }
-                }
-                //const end = performance.now();
-                //console.log(`Execution time Bucle: ${end - start} ms`);
-                //const startDatatable = performance.now();
-                //$.each(data, function (index, value) {
-                    capturar_informacion_bandejaNotifi(data,cellCss)
-                //});
-                //const endDatatable = performance.now();
-                //console.log(`Execution time datatable: ${endDatatable - startDatatable} ms`);
-                //Oculta btn de exporta datatable
+
+                capturar_informacion_bandejaNotifi(data,cellCss)
+
                 $(".dt-buttons").addClass('d-none');
             }).catch(error => {
                 console.error('Error al obtener alertas naranja:', error);
@@ -153,6 +265,74 @@ function sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token) {
         }
 
     });
+}
+
+function crearHipervinculos(data,alertasNaranjaMap,procesos,deshabilitar_check = true){
+    let check = 'disabled';
+
+    if(!deshabilitar_check){
+        check = '';
+        $(".principal").prop('disabled',false);
+    }
+    let cellCss = {};
+    if (data['Id_Asignacion'] != '') {
+        let token = $('input[name=_token]').val();
+        //Seteamos los datos y construimos el formulario para cada fila en funcion del proceso actual.
+        let action = procesos[data['Nombre_proceso_actual']]().url;
+        let idInput = procesos[data['Nombre_proceso_actual']]().id + data["Id_Asignacion"];
+        let nombreInput = procesos[data['Nombre_proceso_actual']]().Nombre;
+
+        data['moduloNotifi'] = `<form action="${action}" method="POST">
+                                <input type="hidden" name="_token" value="${token}">
+                                <input type="checkbox" name="procesar_accion" id="enviar_accion" ${check}>
+                                <input class="btn btn-sm text-info"  id=${idInput} value="Modulo ${nombreInput}" type="submit" style="font-weight: bold; padding-left: inherit;">
+                                <input type="hidden" name="bd_notificacion" value="true">
+                                <input type="hidden" name="newIdAsignacion" value="${data["Id_Asignacion"]}">
+                                <input type="hidden" name="newIdEvento" id="newIdEvento" value="${data["ID_evento"]}">
+                                <input type="hidden" name="Id_Servicio" id="Id_Servicio" value="${data["Id_Servicio"]}">
+                                <input type="hidden" name="Id_proceso" id="Id_proceso" value="${data["Id_proceso"]}">
+                            </form>`;
+
+        if (alertasNaranjaMap.has(data['Id_Asignacion'])) {
+            let alertaFechas = alertasNaranjaMap.get(data['Id_Asignacion']);
+            let currentTime = new Date();
+
+            // Verificar alerta naranja
+            if (alertaFechas.naranja) {
+                
+                let alertaFechaNaranja = new Date(alertaFechas.naranja);
+                // let diferenciaNaranja = Math.abs(currentTime - alertaFechaNaranja);
+
+                if (currentTime >= alertaFechaNaranja) {  
+                    cellCss = {
+                        color: 'orange',
+                        evento: data["ID_evento"],
+                        id_aignacion: data['Id_Asignacion']
+                    };
+                }
+            }
+
+            // Verificar alerta roja
+            if (alertaFechas.roja) {
+                let alertaFechaRoja = new Date(alertaFechas.roja);
+                // let diferenciaRoja = Math.abs(currentTime - alertaFechaRoja);
+                if (currentTime >= alertaFechaRoja) { 
+                    cellCss = {
+                        color: 'red',
+                        evento: data["ID_evento"],
+                        id_aignacion: data['Id_Asignacion']
+                    };
+                }
+            }
+        }
+    } else {
+        data['moduloNotifi'] = "";
+    }
+
+    return {
+        "datos": data,
+        "estilos": cellCss
+    };
 }
 
 function filtro_bandejaNotifi(procesos) {
@@ -220,7 +400,7 @@ function filtro_bandejaNotifi(procesos) {
                         $('#btn_bandeja').removeClass('d-none');
 
                         var enlaceModuloPrincipal = '';
-                        let cellCss = [];
+                        var cellCss = [];
                         obtenerAlertasNaranja().then(alertasNaranja => {
                             const alertasNaranjaMap = new Map(alertasNaranja.map(alerta => [
                                 alerta.Id_Asignacion, 
@@ -240,6 +420,7 @@ function filtro_bandejaNotifi(procesos) {
                             if (data[i]['Id_Asignacion'] != '') {
                                 enlaceModuloPrincipal = `<form action="${action}" method="POST">
                                                         <input type="hidden" name="_token" value="${token}">
+                                                        <input type="checkbox" name="procesar_accion" id="enviar_accion" disabled>
                                                         <input class="btn btn-sm text-info"  id=${idInput} value="Modulo ${nombreInput}" type="submit" style="font-weight: bold; padding-left: inherit;">
                                                         <input type="hidden" name="bd_notificacion" value="true">
                                                         <input type="hidden" name="newIdAsignacion" value="${data[i]["Id_Asignacion"]}">
@@ -306,10 +487,10 @@ function filtro_bandejaNotifi(procesos) {
     });
 }
 
-//Datatable Bandeja Notifi
-$('#Bandeja_Notifi thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Notifi thead');
 function capturar_informacion_bandejaNotifi(response,estilos) {
-      let Bandeja_Notifi =   $('#Bandeja_Notifi').DataTable({
+    //Datatable Bandeja Notifi
+    $('#Bandeja_Notifi thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Notifi thead');
+    Bandeja_Notifi =  $('#Bandeja_Notifi').DataTable({
             orderCellsTop: true,
             fixedHeader: true,
             scrollY: 350,
@@ -333,7 +514,8 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
                         var title = $(cell).text().trim();
 
                         if(title == 'Detalle'){
-                            $(cell).text('');
+                            $(cell).empty();
+                            $(cell).append('<input type="checkbox" class="principal" data-id="principal" id="toggleButton" disabled/>');
                         }
 
                         if(title != '' && title != 'Detalle') {
@@ -397,12 +579,7 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
             "pageLength": 20,
             "order": [[5, 'desc']],
             "columns": [
-                {
-                    data: null,
-                    render: function (data) {
-                        return data.moduloNotifi;
-                    }
-                },
+                {"data": "moduloNotifi"},
                 { "data": "Nombre_Cliente" },
                 { "data": "Nombre_afiliado" },
                 { "data": "Nro_identificacion" },
@@ -487,8 +664,6 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
                 "infoEmpty": "No se encontró información",
             }
         });
-
-
     autoAdjustColumns(Bandeja_Notifi);
 }
 

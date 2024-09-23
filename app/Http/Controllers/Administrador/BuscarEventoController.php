@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\cndatos_eventos;
 use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_asignacion_eventos;
@@ -2707,15 +2708,25 @@ class BuscarEventoController extends Controller
     
         $date = date("Y-m-d", time());
         $nombre_usuario = Auth::user()->name;
+
+        Log::channel('seguimiento_juntas')->info("Iniciando copiado hacia el sercio $servicioNuevo desde  el servvicio $servicioOrigen");
     
-        //Info del servico a partir del cual se esta creando el nuevo proceso.
-        $servicio = (array) DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_procesos_servicios as lps')
-            ->leftJoin('sigmel_gestiones.sigmel_informacion_historial_accion_eventos as ihae', 'ihae.id_servicio', 'lps.id_servicio')
-            ->select('Nombre_proceso', 'Nombre_servicio')
-            ->where([['ihae.ID_evento', $evento], ['ihae.Id_Asignacion', $Id_Asignacion_origen]])
-            ->first();
+        // Info del servicio a partir del cual se está creando el nuevo proceso.
+        $query = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_procesos_servicios as lps')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_historial_accion_eventos as ihae', 'ihae.id_servicio', 'lps.id_servicio')
+        ->select('Nombre_proceso', 'Nombre_servicio')
+        ->where([['ihae.ID_evento', $evento], ['ihae.Id_Asignacion', $Id_Asignacion_origen]]);
+
+        // Obtener la consulta SQL generada
+        $sql = $query->toSql();
+        $bindings = $query->getBindings();
+        $fullQuery = vsprintf(str_replace('?', "'%s'", $sql), $bindings);
+
+        // Ejecutar la consulta
+        $servicio = (Array) $query->first();
 
         if(empty($servicio)){
+            Log::channel('seguimiento_juntas')->notice("No es posible continuar con el proceso dado que no el servicio destino no fue encontrado. Query: " . $fullQuery);
             return;
         }
         foreach ($reglas as $regla) {
@@ -2746,6 +2757,7 @@ class BuscarEventoController extends Controller
                     ];
                 }
     
+                Log::channel('seguimiento_juntas')->notice("Se agregaron los datos inciales para la junta: " . json_encode($Controvertido));
                 break;
             }
         }
@@ -2837,6 +2849,9 @@ class BuscarEventoController extends Controller
                         $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen);
                     }
 
+                    Log::channel('seguimiento_juntas')->notice("Se agregaron datos para la junta en PCL: " . json_encode($Controvertido));
+                    Log::channel('seguimiento_juntas')->notice("Se agregaron los diagnosticoss para la junta en PCL: " . json_encode($diagnostico));
+
                 } elseif ($regla['servicio_nuevo'] == 12) {
                     //Caso Origen
                     //Informacion diagonostico
@@ -2876,6 +2891,9 @@ class BuscarEventoController extends Controller
                     //Se copian los documentos siempre y cuando no se una controversia y cumpla las reglas.
                     $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen);
 
+                    Log::channel('seguimiento_juntas')->notice("Se agregaron datos para la junta en Origen: " . json_encode($Controvertido));
+                    Log::channel('seguimiento_juntas')->notice("Se agregaron los diagnosticoss para la junta en Origen: " . json_encode($diagnostico));
+
                     break;
                 }
 
@@ -2883,15 +2901,23 @@ class BuscarEventoController extends Controller
         }
 
         if(isset($Controvertido)){
+            Log::channel('seguimiento_juntas')->info("Finalizo el copiado para controvertido");
             DB::table('sigmel_gestiones.sigmel_informacion_controversia_juntas_eventos')->insert($Controvertido);
             sleep(1);
+        }else{
+            Log::channel('seguimiento_juntas')->info("No se insertaron datos para la informacion del controvertido");
         }
 
         //Siempre y cuando el diagnostico no este vacio se insertera la informacion en la tabla
         if(isset($diagnostico) && !$diagnostico->isEmpty()){
+            Log::channel('seguimiento_juntas')->info("Finalizo el copiado para los diagnosticos");
             $diagnostico = json_decode(json_encode($diagnostico->toArray()),true);
             DB::table('sigmel_gestiones.sigmel_informacion_diagnosticos_eventos')->insert($diagnostico);
+        }else{
+            Log::channel('seguimiento_juntas')->info("No se insertaron diagnosticos para el servicio");
         }
+
+        Log::channel('seguimiento_juntas')->info("Finalizo el proceso de copiado /n");
     }
 
     /**
@@ -2927,6 +2953,9 @@ class BuscarEventoController extends Controller
                 // Copia el archivo si existe en el origen
                 if (file_exists($documentoOrigen)) {
                     copy($documentoOrigen, $documentoDestino);
+                    Log::channel('seguimiento_juntas')->info("Se copio el archivo $documentoOrigen >>> $documentoDestino ");
+                }else{
+                    Log::channel('seguimiento_juntas')->info("Se intento copiar el archivo $documentoOrigen >>> $documentoDestino pero el documento origen no se encontro");
                 }
 
                 $infoDocumento[$contador]['Nombre_documento'] = $nuevoNombre;
