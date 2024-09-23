@@ -2990,7 +2990,7 @@ $(document).ready(function(){
                         comunicado_reemplazar = response[0];
                         let nombre_doc = comunicado_reemplazar.Nombre_documento;
                         if(nombre_doc != null && nombre_doc != "null" && comunicado_reemplazar.Tipo_descarga !== 'Manual'){
-                            extensionDoc = `.${ nombre_doc.split('.').pop()}`;
+                            extensionDoc = ['.pdf','.doc','.docx','.xlsx']//`.${ nombre_doc.split('.').pop()}`;
                             document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
                         }
                         else if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
@@ -3057,7 +3057,7 @@ $(document).ready(function(){
                     }
                 });
             }
-            else if(comunicado_reemplazar.Tipo_descarga !== 'Manual' && extensionDoc === extensionDocCargado){
+            else if(comunicado_reemplazar.Tipo_descarga !== 'Manual' && extensionDoc.includes(extensionDocCargado)){
                 var formData = new FormData($('form')[0]);
                 formData.append('doc_de_reemplazo', archivo);
                 formData.append('token', $('input[name=_token]').val());

@@ -1427,6 +1427,12 @@ class CoordinadorController extends Controller
             }
             else {
                 $nombre_final_documento = $request -> nombre_documento;
+                if($nombre_final_documento){
+                    File::delete($path.'/'.$nombre_final_documento);
+                }
+                $nameWithoutExtension = pathinfo($nombre_final_documento, PATHINFO_FILENAME);
+                $extension = $archivo->getClientOriginalExtension();
+                $nombre_final_documento = "{$nameWithoutExtension}.{$extension}";
             }
             Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
         } 
@@ -1445,6 +1451,7 @@ class CoordinadorController extends Controller
             $datos_comunicado_actualizar=[
                 'F_comunicado' => $date,
                 'Elaboro' => $nombre_usuario,
+                'Nombre_documento' => $nombre_final_documento,
                 'Reemplazado' => 1,
             ];
         }
