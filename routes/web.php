@@ -656,6 +656,8 @@ Route::post('/informacionBandejaNotifi', [BandejaNotifiController::class, 'infom
 Route::post('/sinfiltrosBandejaNotifi', [BandejaNotifiController::class, 'sinFiltroBandejaNotifi']);
 // Accion: Capturar data según los filtros
 Route::post('/filtrosBandejaNotifi', [BandejaNotifiController::class, 'filtrosBandejaNotifi']);
+Route::post('/proceso_notificaciones', [BandejaNotifiController::class, 'proceso_notificaciones']);
+
 Route::post('/alertasNaranjasRojasNotif', [BandejaJuntasController::class, 'alertaNaranjasRojasJuntas']);
 
 // Accion: Actualizar el profesional y redireccionar el servicio

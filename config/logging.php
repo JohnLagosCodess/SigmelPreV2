@@ -72,6 +72,13 @@ return [
             'days' => 14,
             'replace_placeholders' => true,
         ],
+        'seguimiento_juntas' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/seguimiento_juntas.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 10,
+            'replace_placeholders' => true,
+        ],
 
         'slack' => [
             'driver' => 'slack',

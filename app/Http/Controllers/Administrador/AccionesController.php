@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 // Cargue de modelos
 use App\Models\sigmel_lista_parametros;
 use App\Models\sigmel_informacion_acciones;
-
+use App\Models\sigmel_informacion_parametrizaciones_clientes;
 
 class AccionesController extends Controller
 {
@@ -151,6 +151,19 @@ class AccionesController extends Controller
             "mensaje" => 'Acción editada satisfactoriamente.'
         );
         return json_decode(json_encode($mensajes, true));
+    }
+
+    /**
+     * Obtiene las acciones disponibles para ejecutar dentro del proceso de notificaciones
+     */
+    public static function getAccionesNotificacion(){
+        return DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes as sipc')
+        ->select('sipc.Servicio_asociado','sipc.Accion_ejecutar','sipc.Id_proceso','lp.Accion')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as lp','lp.Id_Accion','sipc.Accion_ejecutar')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp','lp.Estado_accion','slp.Id_Parametro')
+        ->where('slp.Tipo_lista','=','Acciones')
+        ->where('slp.Nombre_parametro','=','Notificado')->groupBy('lp.Accion')
+        ->get();   
     }
 
 }

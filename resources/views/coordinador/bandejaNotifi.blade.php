@@ -89,7 +89,21 @@
                     &nbsp; <label for="nro_registros" class="col-form-label" id="num_registroslabel">Se encontraron <span id="num_registros"></span> registros</label>
                     <br>&nbsp;<label for="nro_orden" class="col-form-label" id="num_ordenlabel">N° de orden: {{$n_orden[0]->Numero_orden}}</label>
                     <div class="card-body" id="contenedorTable">
-                        <div class="table table-responsive">
+                        <div class="col-12">
+                            <div class="text-center">                                
+                                <div class="alert alert-primary d-none"  id="actualizando_bandeja">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Actualizando bandeja <span id="formato_descarga"></span> por favor espere...
+                                </div>
+                            </div>
+                            <div class="text-center">                                
+                                <div class="alert alert-warning d-none"  id="sindatos_bandeja">
+                                    No  se encontraron registros para la acción selecionada. 
+                                    <input type="button" class="btn btn-info" onClick="history.go(0);" value="Recargar bandeja">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table table-responsive Bandeja_Notifi">
                             <table id="Bandeja_Notifi" class="table table-striped table-bordered" style="width:100%;">
                                 <thead>
                                     <tr class="bg-info">
@@ -143,11 +157,12 @@
                                         </div>
                                         <div class="col-3">
                                             <div class="form-group">
-                                                <label for="accion_ejecutar" class="col-form-label">Acción</label>
-                                                <select class="custom-select initSelect2" id="accion_ejecutar" name="accion_ejecutar" style="width: 100%">
-                                                    <option value="1">Cerra Caso Notificado</option>
-                                                    <option value="2">Cerra Caso Notificado 2</option>
-                                                    <option value="3">Cerra Caso Notificado 3</option>
+                                                <label for="accion_ejecutar" class="col-form-label">Acción <span style="color:red;">(*)</span></label>
+                                                <select class="custom-select initSelect2" id="accion_ejecutar" name="accion_ejecutar" style="width: 100%" required>
+                                                    <option value=""></option>
+                                                    @foreach ($listado_Acciones as $acciones )
+                                                        <option value="{{$acciones->Accion_ejecutar}}">{{$acciones->Accion}}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
                                         </div>   
@@ -169,9 +184,8 @@
                         </div>
                     {{-- @endif --}}
                     <div class="card-footer">
-                        <div class="alert alert-danger no_ejecutar_parametrica_bandeja_trabajo d-none" role="alert">
-                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> No puede mover la información debido a que el proceso, servicio y/o acción seleccionados no tienen una parametrización
-                            asociada. Debe configurar una.
+                        <div class="alert alert-danger no_ejecutar_accion d-none" role="alert">
+                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> No puede ejecutar la accion seleccionada, ya que no ha seleccionado ningun evento
                         </div>
                         <div class="grupo_botones" style="float: left;">
                             <input type="button" id="btn_expor_datos" class="btn btn-info" value="Exportar datos"> 
