@@ -2096,16 +2096,11 @@ $(document).ready(function(){
             $('#medio_notificacion_laboral').prop('required',true);
 
             /* Mostrarmos el span de obligatoriedad */
-            $(".si_nom_empresa").removeClass('d-none');
-            $(".no_nom_empresa").addClass('d-none');
-            $(".si_nom_nitcc").removeClass('d-none');
-            $(".no_nom_nitcc").addClass('d-none');
-            $(".si_nom_tel_empresa").removeClass('d-none');
-            $(".no_nom_tel_empresa").addClass('d-none');
-            $(".si_nom_email").removeClass('d-none');
-            $(".no_nom_email").addClass('d-none');
-            $(".si_nom_direccion").removeClass('d-none');
-            $(".no_nom_direccion").addClass('d-none');
+            $(".si_nom_empresa").parent().find('span').removeClass('d-none');
+            $(".si_nom_nitcc").parent().find('span').removeClass('d-none');
+            $(".si_nom_tel_empresa").parent().find('span').removeClass('d-none');
+            $(".si_nom_email").parent().find('span').removeClass('d-none');
+            $(".si_nom_direccion").parent().find('span').removeClass('d-none');
             $(".si_nom_departamento").removeClass('d-none');
             $(".no_nom_departamento").addClass('d-none');
             $(".si_nom_ciudad").removeClass('d-none');
@@ -2136,25 +2131,14 @@ $(document).ready(function(){
             $('#medio_notificacion_laboral').prop('required',false);
 
             /* Quitamos el span de obligatoriedad */
-            $(".si_nom_empresa").addClass('d-none');
-            $(".no_nom_empresa").removeClass('d-none');
-            $(".si_nom_nitcc").addClass('d-none');
-            $(".no_nom_nitcc").removeClass('d-none');
-            $(".si_nom_tel_empresa").addClass('d-none');
-            $(".no_nom_tel_empresa").removeClass('d-none');
-            $(".si_nom_email").addClass('d-none');
-            $(".no_nom_email").removeClass('d-none');
-            $(".si_nom_direccion").addClass('d-none');
-            $(".no_nom_direccion").removeClass('d-none');
-            $(".si_nom_departamento").addClass('d-none');
-            $(".no_nom_departamento").removeClass('d-none');
-            $(".si_nom_ciudad").addClass('d-none');
-            $(".no_nom_ciudad").removeClass('d-none');
-         
-            $(".si_medio_noti").addClass('d-none');
-            $(".no_medio_noti").removeClass('d-none');
+            $(".si_nom_empresa").parent().find('span').addClass('d-none');
+            $(".si_nom_nitcc").parent().find('span').addClass('d-none');
+            $(".si_nom_tel_empresa").parent().find('span').addClass('d-none');
+            $(".si_nom_email").parent().find('span').addClass('d-none');
+            $(".si_nom_direccion").parent().find('span').addClass('d-none');
+
         }
-    }); 
+    });
 
     $("#beneficiario").change(function(){
         let opt_tipoempleo = $('#beneficiario').val();
@@ -2176,23 +2160,12 @@ $(document).ready(function(){
             $('#medio_notificacion_laboral').prop('required',false);
 
             /* Quitamos el span de obligatoriedad */
-            $(".si_nom_empresa").addClass('d-none');
-            $(".no_nom_empresa").removeClass('d-none');
-            $(".si_nom_nitcc").addClass('d-none');
-            $(".no_nom_nitcc").removeClass('d-none');
-            $(".si_nom_tel_empresa").addClass('d-none');
-            $(".no_nom_tel_empresa").removeClass('d-none');
-            $(".si_nom_email").addClass('d-none');
-            $(".no_nom_email").removeClass('d-none');
-            $(".si_nom_direccion").addClass('d-none');
-            $(".no_nom_direccion").removeClass('d-none');
-            $(".si_nom_departamento").addClass('d-none');
-            $(".no_nom_departamento").removeClass('d-none');
-            $(".si_nom_ciudad").addClass('d-none');
-            $(".no_nom_ciudad").removeClass('d-none');
+            $(".si_nom_empresa").parent().find('span').addClass('d-none');
+            $(".si_nom_nitcc").parent().find('span').addClass('d-none');
+            $(".si_nom_tel_empresa").parent().find('span').addClass('d-none');
+            $(".si_nom_email").parent().find('span').addClass('d-none');
+            $(".si_nom_direccion").parent().find('span').addClass('d-none');
 
-            $(".si_medio_noti").addClass('d-none');
-            $(".no_medio_noti").removeClass('d-none');
 
             /* Seteamos a vacío los campos del formulario */
             $('#arl_info_laboral').append('<option value="" selected>Seleccione</option>');
