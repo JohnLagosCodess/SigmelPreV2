@@ -649,6 +649,7 @@ $(document).ready(function () {
         
         //Se ejecuta la accion
         $("#c_ejecutar_accion").off('click').on('click', function() {
+            $("#c_ejecutar_accion").prop("disabled",true);
             let id_accion = $("#accion option:selected").val();
 
             validarAccion_ejecutar(id_accion).then(response => {

@@ -186,7 +186,8 @@ class AccionesController extends Controller
             ['sihae.Id_Asignacion', $request->Id_Asignacion],
             ['sipc.Accion_ejecutar', $request->accion_ejecutar],
             ['sipc.Id_cliente', $request->Id_cliente],
-            ['sipc.Servicio_asociado', $request->Id_servicio]
+            ['sipc.Servicio_asociado', $request->Id_servicio],
+            ['sipc.Estado_facturacion', '!=', 'null'] //Debe tener un estado de facturacion para aplicar el filtro
         ])->get();
 
         $response = $accion_ejecutada->count() == 0 ? "sin_ejecutar" : "ejecutada";
