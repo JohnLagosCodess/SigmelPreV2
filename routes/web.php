@@ -359,6 +359,8 @@ Route::post('/generarPdf', [CalificacionPCLController::class, 'generarPdf'])->na
 Route::post('/consultarHistorialAcciones', [CalificacionPCLController::class, 'historialAcciones']);
 // Acción: Traer historial de acciones del evento de la tabla sigmel_informacion_historial_accion_eventos
 Route::post('/historialAccionesEventosPcl', [CalificacionPCLController::class, 'historialAccionesEventoPcl']);
+// Acción: Valida si una accion ya ha sido ejecutada
+Route::post('/validar_acciones', [AccionesController::class, 'validar_acciones']);
 
 
 // 01/08/2023

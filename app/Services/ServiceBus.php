@@ -1,51 +1,52 @@
 <?php
 namespace App\Services;
-
+use App\Services\Consola;
 use App\Contracts\BaseServicio;
 
 class ServiceBus
 {
+    /**
+     * @var Array Servicios disponibles a ser invocados
+     */
     protected $servicios = [];
-    
-    public $format;
 
-    public $agregarcomandos;
+    /**
+     * @var Object Instancia del servicio que se esta ejecutando
+     */
+    protected $servicio;
 
-    private $servicio;
-
-    public function registrarServicio(string $NombreServicio, $interfaz){
-        $this->servicios[$NombreServicio] = $interfaz;
-
-        $this->servicio = app($interfaz);
-
-        if ($this->servicio instanceof BaseServicio) {
-           $this->agregarcomandos[$NombreServicio] = $this->servicio->getParams();
+    /**
+     * Registra el servicio para poder ser invocado.
+     *
+     * Permite registrar una o más clases de servicio, 
+     * donde cada clase se asocia a una referencia que puede ser utilizada
+     * posteriormente para invocarlas.
+     * @param array $class Contiene la clase del servicio en el formato { 'nombre' => 'referencia' }.
+     * @return this
+     */
+    public function registrarServicio(Array $class){
+        foreach($class as $referencia => $obj){
+            $this->servicios[$referencia] = $obj;
         }
 
+        return $this;
     }
 
-    public function despachar(string $NombreServicio,$param = []){
-
-        if(!array_key_exists($NombreServicio,$this->servicios)){
-            throw new \Exception("El serviciio $NombreServicio no se encuentra registrado");
+    /**
+     * Invoca al servicio digitado por el usuario
+     * @param string Nombre del servicio
+     * @param string Metodo a ser invocado para el servicio
+     * @param Array Parametros del servicio
+     */
+    public function llamar($servicio){
+        if (!isset($this->servicios[$servicio])) {
+            throw new \Exception("El servico $servicio no se encuentra registrado");
         }
 
-        $this->servicio = app($this->servicios[$NombreServicio]);
+        return app($this->servicios[$servicio]);
 
-        if(!$this->servicio instanceof BaseServicio){
-            throw new \Exception("El servicio $NombreServicio no ha implementado la interfaz de servicios");
-        }
-
-        return $this->servicio->ejecutar($param);
     }
 
-    public function agregarParametros(string $nombreServicio){
-        return $this->agregarcomandos[$nombreServicio] ?? [];
-    }
-
-    public function format(){
-        $this->format = $this->servicio->getFormat();
-    }
 }
 
 ?>

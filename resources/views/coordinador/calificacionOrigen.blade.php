@@ -402,13 +402,13 @@
             <div class="grupo_botones">
                 {{-- <input type="reset" id="Borrar" class="btn btn-info" value="Restablecer"> --}}
                 @if (empty($array_datos_calificacionOrigen[0]->Accion_realizar))
-                    <input type="submit" id="Edicion" class="btn btn-info" value="Guardar">
+                    <input type="button" id="Edicion"  label="Open Modal" data-toggle="modal" data-target="#confirmar_accion" class="btn btn-info" value="Guardar">
                     <div class="col-12">
                         <div class="alerta_calificacion alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                     </div>
                     <input type="hidden" id="bandera_accion_guardar_actualizar" value="Guardar">
                 @else 
-                    <input type="submit" id="Edicion" class="btn btn-info" value="Actualizar">
+                    <input type="button" id="Edicion" label="Open Modal" data-toggle="modal" data-target="#confirmar_accion" class="btn btn-info" value="Actualizar">
                     <div class="col-12">
                         <div class="alerta_calificacion alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                     </div>
@@ -1348,6 +1348,7 @@
 @include('//.administrador.modalProgressbar')
 @include('//.coordinador.modalReemplazarArchivos')
 @include('//.coordinador.modalCorrespondencia')
+@include('//.modals.confirmacionAccion')
 @stop
 @section('js')
 

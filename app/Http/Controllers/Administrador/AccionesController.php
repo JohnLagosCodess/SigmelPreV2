@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 // Cargue de modelos
 use App\Models\sigmel_lista_parametros;
 use App\Models\sigmel_informacion_acciones;
+use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 
 class AccionesController extends Controller
@@ -164,6 +165,33 @@ class AccionesController extends Controller
         ->where('slp.Tipo_lista','=','Acciones')
         ->where('slp.Nombre_parametro','=','Notificado')->groupBy('lp.Accion')
         ->get();   
+    }
+
+    /**
+     * Valida si una accion ya ha sido ejecutada para el servicio actual
+     */
+    public function validar_acciones(Request $request){
+        $request->validate([
+            'bandera' => "required|string",
+            'ID_evento' => "required|string",
+            'accion_ejecutar' => "required|int",
+            'Id_Asignacion' => "required|int",
+            'Id_cliente' => "required|int",
+        ]);
+
+        $accion_ejecutada = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_historial_accion_eventos as sihae')
+        ->leftjoin('sigmel_gestiones.sigmel_informacion_parametrizaciones_clientes as sipc','sipc.Id_proceso','sihae.Id_proceso')
+        ->where([
+            ['sihae.ID_evento', $request->ID_evento],
+            ['sihae.Id_Asignacion', $request->Id_Asignacion],
+            ['sipc.Accion_ejecutar', $request->accion_ejecutar],
+            ['sipc.Id_cliente', $request->Id_cliente],
+            ['sipc.Servicio_asociado', $request->Id_servicio]
+        ])->get();
+
+        $response = $accion_ejecutada->count() == 0 ? "sin_ejecutar" : "ejecutada";
+
+        return response()->json($response);
     }
 
 }

@@ -602,7 +602,96 @@ $(document).ready(function () {
         placeholder:"Seleccione una opción",
         allowClear:false
     });
+
+    $(document).on('click',"#Edicion",function(e){
+        e.preventDefault();
+
+        /**
+         * Datos que se incluiran en la modal
+         */
+        const ahora = new Date();
+        let f_accion =  ahora.toISOString().slice(0, 16).replace('T', ' ');
+        let accion_ejecutar = $("#accion option:selected").text();
+        let estado_facturacion = $("#estado_facturacion").val();
+        let profecional_asignado = $("#profesional option:selected").text();
+        let id_profecional_asignado = $("#profesional option:selected").val();
+        let servicio = $("#servicio").val();
+
+        //Limpiamos los campos de la modal
+        $("#c_accion_ejecutar, #c_f_accion, #c_e_facturacion, #c_profesional, #c_servicio, #alerta_accion").empty();
+
+        /**
+         * De no haber una accion y/o profesional seleccionado no se habilitara el boton de ejecucion
+         */
+        if(accion_ejecutar == "" || id_profecional_asignado == ""){
+           $("#alerta_accion").removeClass('d-none');
+           $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong> No se puede ejecutar la accion debio a que no ha seleccionado una accion y/o profesional");
+           $("#c_ejecutar_accion").prop('disabled',true);
+           profecional_asignado = "";
+        }else{
+            $("#alerta_accion").addClass('d-none');
+            $("#c_ejecutar_accion").prop('disabled',false);
+        }
+
+        //Muestra el campo de facturacion si este esta presente
+        if(estado_facturacion == ""){
+            $("#c_estado_facturacion, #n_confirmarAccion").addClass("d-none");
+        }else{
+            $("#c_estado_facturacion, #n_confirmarAccion").removeClass("d-none");
+            $("#c_e_facturacion").append(estado_facturacion);
+        }
+
+        //Se agregan los datos a la modal
+        $("#c_accion_ejecutar").append(accion_ejecutar);
+        $("#c_f_accion").append(f_accion);
+        $("#c_profesional").append(profecional_asignado);
+        $("#c_servicio").append(servicio);
+        
+        //Se ejecuta la accion
+        $("#c_ejecutar_accion").off('click').on('click', function() {
+            let id_accion = $("#accion option:selected").val();
+
+            validarAccion_ejecutar(id_accion).then(response => {
+
+                /**
+                 * Siempre y cuando la accion este sin ejecutar para el servicio actual podra ser ejecutada, de no ser asi se bloqueara.
+                 */
+                if (response === "sin_ejecutar") {
+                    $("#alerta_accion_ejecutando").removeClass('d-none');
+
+                    let id_formulario = getId_formulario();
+                    $(`#${id_formulario}`).submit();
+
+                    setTimeout(() => {
+                        $("#alerta_accion_ejecutando").addClass('d-none');
+                        location.reload();
+                    }, 1500);
+
+                } else {
+                    $("#alerta_accion").removeClass('d-none');
+                    $("#c_ejecutar_accion").prop('disabled', true);
+                    $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong> Ésta acción solo puede ser ejecutada una única vez. Por favor valide el historial de acciones del servicio.");
+                }
+
+            });
+        });
+
+
+    });
 });
+
+/**
+ * Obtiene el id del formulario para el modulo principal actual
+ * @returns Id del formulario cargado en el dom
+ */
+function getId_formulario(){
+    let disponibles = ["#form_calificacionJuntas","#form_calificacionPcl","#form_calificacionOrigen"];
+    // Busca el primer ID que esté presente en el DOM
+    let formularioPresente = $(disponibles.join(',')).filter(':visible').first();
+
+    // Retorna el ID o null si no se encontró ninguno
+    return formularioPresente.length > 0 ? formularioPresente.attr('id') : null;
+}
 
 /* Función para ajustar un Datatable cuando este tenga un scroll vertical */
 function autoAdjustColumns(table) {
@@ -749,11 +838,11 @@ function ubicacionEvento() {
         });
     });
 }
-    /*
-        * Recibe una cadena string con todos los IDs de destinatario de un comunicado y el 'destinatario' con el fin d
-        * @returns string | null
-    */
-    function retornarIdDestinatario(ids_destinatario, destinatario){
+/*
+* Recibe una cadena string con todos los IDs de destinatario de un comunicado y el 'destinatario' con el fin d
+* @returns string | null
+*/
+function retornarIdDestinatario(ids_destinatario, destinatario){
         console.log('DESTINATARIO : ', destinatario);
         //Se usa split para armar un array con todos los ids de destinatario
         let ids = ids_destinatario.split(',');
@@ -772,4 +861,36 @@ function ubicacionEvento() {
         let Id_Destinatario = ids.find(finder => finder !== '' && finder.startsWith(prefijos[destinatario]));
         
         return Id_Destinatario && Id_Destinatario !== '' ? Id_Destinatario.split('_')[1] : null
-    }
+}
+
+/**
+ * 
+ * @param {int} id_accion Id de la accion que se va a ejecutar 
+ * @returns Estado de la accion: sin_ejecutar - ejecutada
+ */
+function validarAccion_ejecutar(id_accion) {
+    return new Promise((resolve, reject) => {
+        if (id_accion === "") {
+            reject("ID de acción vacío");
+            return;
+        }
+        
+        let datos = {
+            '_token': $('input[name=_token]').val(),
+            'bandera': 'validar_accion',
+            'accion_ejecutar': id_accion,
+            'Id_cliente': $("#cliente").data('id'),
+            'Id_servicio': $("#Id_servicio").val(),
+            'ID_evento': $("#newIdEvento").val(),
+            'Id_Asignacion': $("#newIdAsignacion").val()
+        };
+
+        $.post("/validar_acciones", datos)
+            .done(function(response) {
+                resolve(response);
+            })
+            .fail(function(error) {
+                reject(error);
+            });
+    });
+}
