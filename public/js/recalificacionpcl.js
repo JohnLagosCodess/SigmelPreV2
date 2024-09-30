@@ -4775,6 +4775,7 @@ $(document).ready(function(){
     // Formulario para guardar Dictamen pericial
     $('#form_dictamen_pericial').submit(function (e){
         e.preventDefault();
+        document.querySelector('#GuardrDictamenPericial').disabled=true;
         // Abrir modal para mostrar alerta y retornar al input
         var validarsuma_combinada = $('#suma_combinada').val();
         var validarTotal_Deficiencia50 = $('#Total_Deficiencia50').val();
@@ -4855,7 +4856,7 @@ $(document).ready(function(){
             data: datos_dictamenPericial,
             success: function(response){
                 if (response.parametro == 'insertar_dictamen_pericial') {
-                    document.querySelector('#GuardrDictamenPericial').disabled=true;
+                    // document.querySelector('#GuardrDictamenPericial').disabled=true;
                     $('#div_alerta_dictamen_pericial').removeClass('d-none');
                     $('.alerta_dictamen_pericial').append('<strong>'+response.mensaje+'</strong>'); 
 
