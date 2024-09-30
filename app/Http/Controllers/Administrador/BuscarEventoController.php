@@ -2428,6 +2428,24 @@ class BuscarEventoController extends Controller
 
         sleep(1);
 
+        //Si el servicio es una DTO insertamos el CIE-10 que debe tener por defecto
+        if($request->selector_nuevo_servicio == 1 && $request->selector_nuevo_proceso == 1){
+            $diagnostico_default_dto = [
+                'ID_evento' => $request->id_evento,
+                'Id_Asignacion' => $Id_Asignacion,
+                'Id_proceso' => $request->selector_nuevo_proceso,
+                'CIE10' => '7198',
+                "Nombre_CIE10" => "Muerte sin asistencia",
+                "Deficiencia_motivo_califi_condiciones" => "Accidente mortal",
+                "Lateralidad_CIE10" => null,
+                "Origen_CIE10" => null,
+                "Principal" => "Si",
+                "Nombre_usuario" => $nombre_usuario,
+                'F_registro' => $date
+            ];
+            sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->insert($diagnostico_default_dto);
+        }
+
         // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
         $datos_historial_accion_eventos = [

@@ -2289,7 +2289,7 @@ $(document).ready(function(){
     }
     
     let correspondencia_array = [];
-    $("#listado_comunicados_adx").on('click', "#CorrespondenciaNotificacion", function() {
+    $("#listado_comunicados_adx").on('click', "#CorrespondenciaNotificacion", async function() {
         //Reestablecer modal
         cleanModalCorrespondencia();
         //Cargar selectores modal con Pendiente como valor por defecto
@@ -2313,6 +2313,8 @@ $(document).ready(function(){
         let tipo_descarga = $(id).data('tipo_descarga');
 
         let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
+        //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
+        let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
             $("#btn_guardar_actualizar_correspondencia").remove();
@@ -2365,7 +2367,7 @@ $(document).ready(function(){
         $("#modalCorrespondencia #id_proceso").val(id_proceso);
         $("#modalCorrespondencia #id_comunicado").val(idComunicado);
 
-        if(correspondencia_array.includes(tipo_correspondencia)){
+        if(correspondencia_array.includes(tipo_correspondencia) || correspondencias_guardadas === tipo_correspondencia){
             data_comunicado = {
                 _token: token,
                 id_comunicado: idComunicado,
