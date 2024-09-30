@@ -580,9 +580,9 @@ $(document).ready(function(){
 
             $("#asunto_cali").val("RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN FRENTE A DICTAMEN N° {{$nro_dictamen_pri_cali}} DEL {{$fecha_dictamen_pri_cali}}");
             
-            // var texto_insertar = "<p>Respetados Señores,</p><p>Yo, HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. Aseguradora que expidió el seguro previsional a la AFP PORVENIR S.A., debidamente facultado para ello, en atención al dictamen de la referencia, estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN ante la Junta, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de ORIGEN dictaminada al afiliado {{$nombre_afiliado}} {{$tipo_documento}} {{$nro_identificacion}}, donde califican los diagnósticos: {{$cie10_nombrecie10_origencie10}}.</p><p>1. (Descripción de recurso)</p><p>Por lo anterior, presentamos el recurso de reposición en subsidio de apelación, contra el origen de la patología de {{$cie10_nombrecie10_origencie10}}, con el fin que la Junta dictamine el origen de la patología del paciente dando aplicación a la Ley 1562 de 2012 y Decreto 1477 de 2014 como normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e informarnos con el fin de consignar los honorarios respectivos.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas del paciente. En caso que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C.</p><p>Cualquier Información adicional con gusto le será suministrada,</p>";
+            // var texto_insertar = "<p>Respetados Señores,</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. Aseguradora que expidió el seguro previsional a la AFP PORVENIR S.A., debidamente facultado para ello, en atención al dictamen de la referencia, estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN ante la Junta, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de ORIGEN dictaminada al afiliado {{$nombre_afiliado}} {{$tipo_documento}} {{$nro_identificacion}}, donde califican los diagnósticos: {{$cie10_nombrecie10_origencie10}}.</p><p>1. (Descripción de recurso)</p><p>Por lo anterior, presentamos el recurso de reposición en subsidio de apelación, contra el origen de la patología de {{$cie10_nombrecie10_origencie10}}, con el fin que la Junta dictamine el origen de la patología del paciente dando aplicación a la Ley 1562 de 2012 y Decreto 1477 de 2014 como normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e informarnos con el fin de consignar los honorarios respectivos.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas del paciente. En caso que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C.</p><p>Cualquier Información adicional con gusto le será suministrada,</p>";
 
-            var texto_insertar = "<p>Respetados Señores,</p><p>Yo, HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. Aseguradora que expidió el seguro previsional a la AFP PORVENIR S.A., debidamente facultado para ello, en atención al dictamen de la referencia, estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN ante la Junta, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de ORIGEN dictaminada al afiliado {{$nombre_afiliado}} {{$tipo_documento}} {{$nro_identificacion}}, donde califican los diagnósticos: {{$cie10_nombrecie10_origencie10}}.</p><p>1. (Descripción de recurso)</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas del paciente. En caso que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e informarnos con el fin de consignar los honorarios respectivos.</p><p>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p>NOTIFICACIONES:</p><p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C.</p><p>Cualquier Información adicional con gusto le será suministrada,</p>";
+            var texto_insertar = "<p>Respetados Señores,</p><p>HUGO IGNACIO GÓMEZ DAZA, identificado como aparece al pie de mi firma, actuando en nombre y representación de SEGUROS DE VIDA ALFA S.A. Aseguradora que expidió el <b><u>seguro previsional a la AFP PORVENIR S.A</u></b>., debidamente facultado para ello, en atención al dictamen de la referencia, estando dentro de los términos de ley, me permito interponer RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN ante la Junta, por los siguientes motivos:</p><p>Nuestra inconformidad se dirige a la calificación de ORIGEN dictaminada al (la) afiliado(a): {{$nombre_afiliado}} {{$tipo_documento}} {{$nro_identificacion}}, donde califican los diagnósticos: {{$cie10_nombrecie10_origencie10}}.</p><p>1. (Descripción de recurso)</p><p>Por lo anterior, presentamos el recurso de reposición y en subsidio el de apelación, contra el origen, con el fin que se dictamine el valor correspondiente a las patologías del paciente dando aplicación a la normatividad vigente.</p><p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas del paciente. En caso que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación.</p><p>Por último, se informa que esta Administradora realizó pago de honorarios pertinentes, el cual se efectuó de manera efectiva y por lo tanto se anexará en los próximos días el soporte del mismo.</p><p style='text-align:center;'>ANEXO:</p><p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera.</p><p style='text-align:center;'>NOTIFICACIONES:</p><p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C.</p><p>Cualquier Información adicional con gusto le será suministrada,</p>";
 
             $('#sustenta_cali').summernote('code', texto_insertar);
 
@@ -923,7 +923,7 @@ $(document).ready(function(){
     }
     
     let correspondencia_array = [];
-    $("#listado_comunicado_pronu_origen").on('click', "#CorrespondenciaNotificacion", function() {
+    $("#listado_comunicado_pronu_origen").on('click', "#CorrespondenciaNotificacion", async function() {
         //Reestablecer modal
         cleanModalCorrespondencia();
         //Cargar selectores modal con Pendiente como valor por defecto
@@ -943,6 +943,8 @@ $(document).ready(function(){
         let anexos = $(id).data('anexos');
         let correspondencia = $(id).data('correspondencia');
         let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
+        //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
+        let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
         //Información superior del modal 
         $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
         $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
@@ -991,7 +993,7 @@ $(document).ready(function(){
         $("#modalCorrespondencia #id_proceso").val(id_proceso);
         $("#modalCorrespondencia #id_comunicado").val(idComunicado);
 
-        if(correspondencia_array.includes(tipo_correspondencia)){
+        if(correspondencia_array.includes(tipo_correspondencia) || correspondencias_guardadas === tipo_correspondencia){
             data_comunicado = {
                 _token: token,
                 id_comunicado: idComunicado,
@@ -1732,7 +1734,7 @@ $(document).ready(function(){
                     comunicado_reemplazar = response[0];
                     let nombre_doc = comunicado_reemplazar.Nombre_documento;
                     if(nombre_doc != null && nombre_doc != "null" && comunicado_reemplazar.Tipo_descarga !== 'Manual'){
-                        extensionDoc = `.${ nombre_doc.split('.').pop()}`;
+                        extensionDoc = ['.pdf','.doc','.docx','.xlsx'];//`.${ nombre_doc.split('.').pop()}`;
                         document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
                     }
                     else if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
@@ -1799,7 +1801,7 @@ $(document).ready(function(){
                 }
             });
         }
-        else if(comunicado_reemplazar.Tipo_descarga !== 'Manual' && extensionDoc === extensionDocCargado){
+        else if(comunicado_reemplazar.Tipo_descarga !== 'Manual' && extensionDoc.includes(extensionDocCargado)){
             var formData = new FormData($('form')[0]);
             formData.append('doc_de_reemplazo', archivo);
             formData.append('token', $('input[name=_token]').val());

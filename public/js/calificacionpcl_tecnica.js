@@ -3363,7 +3363,7 @@ $(document).ready(function(){
     }
 
     let correspondencia_array = [];
-    $(document).on('click', "#CorrespondenciaNotificacion", function() {
+    $(document).on('click', "#CorrespondenciaNotificacion", async function() {
         //Reestablecer modal
         cleanModalCorrespondencia();
         //Cargar selectores modal con Pendiente como valor por defecto
@@ -3385,6 +3385,8 @@ $(document).ready(function(){
         let tipo_descarga = $(id).data('tipo_descarga');
 
         let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
+        //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
+        let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
 
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
@@ -3418,7 +3420,7 @@ $(document).ready(function(){
         $("#modalCorrespondencia #id_asignacion").val(id_asignacion);
         $("#modalCorrespondencia #id_proceso").val(id_proceso);
         $("#modalCorrespondencia #id_comunicado").val(idComunicado);
-        if(correspondencia_array.includes(tipo_correspondencia)){
+        if(correspondencia_array.includes(tipo_correspondencia) || correspondencias_guardadas === tipo_correspondencia){
             data_comunicado = {
                 _token: token,
                 id_comunicado: idComunicado,
@@ -3757,7 +3759,7 @@ $(document).ready(function(){
                     comunicado_reemplazar = response[0];
                     let nombre_doc = comunicado_reemplazar.Nombre_documento;
                     if(nombre_doc != null && nombre_doc != "null" && comunicado_reemplazar.Tipo_descarga !== 'Manual'){
-                        extensionDoc = `.${ nombre_doc.split('.').pop()}`;
+                        extensionDoc = ['.pdf','.doc','.docx','.xlsx'];//`.${ nombre_doc.split('.').pop()}`;
                         document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
                     }
                     else if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
@@ -3824,7 +3826,7 @@ $(document).ready(function(){
                 }
             });
         }
-        else if(comunicado_reemplazar.Tipo_descarga !== 'Manual' && extensionDoc === extensionDocCargado){
+        else if(comunicado_reemplazar.Tipo_descarga !== 'Manual' && extensionDoc.includes(extensionDocCargado)){
             var formData = new FormData($('form')[0]);
             formData.append('doc_de_reemplazo', archivo);
             formData.append('token', $('input[name=_token]').val());

@@ -69,6 +69,7 @@ use App\Models\sigmel_informacion_entidades;
 /* Parametrizaciones */
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
+use App\Models\sigmel_informacion_diagnosticos_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
@@ -3704,6 +3705,24 @@ class AdministradorController extends Controller
 
         // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
         sleep(2);
+
+        //Si el servicio es una DTO insertamos el CIE-10 que debe tener por defecto
+        if($request->servicio == 1 && $request->proceso == 1){
+            $diagnostico_default_dto = [
+                'ID_evento' => $Id_evento,
+                'Id_Asignacion' => $Id_Asignacion,
+                'Id_proceso' => $request->proceso,
+                'CIE10' => '7198',
+                "Nombre_CIE10" => "Muerte sin asistencia",
+                "Deficiencia_motivo_califi_condiciones" => "Accidente mortal",
+                "Lateralidad_CIE10" => null,
+                "Origen_CIE10" => null,
+                "Principal" => "Si",
+                "Nombre_usuario" => $nombre_usuario,
+                'F_registro' => $date
+            ];
+            sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->insert($diagnostico_default_dto);
+        }
 
         /* RECOLECCIÓN INFORMACIÓN PARA LA TABLA: sigmel_historial_acciones_eventos */
         $datos_historial_acciones = [

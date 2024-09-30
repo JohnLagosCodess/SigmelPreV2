@@ -22,18 +22,18 @@
             /* background: green; */
         }
         .codigo_qr{
-            position: absolute;
-            top: 5px; 
-            left: 5px; 
+            /* position: absolute; */
+            /* top: 5px;  */
+            /* left: 5px;  */
             max-width: 90px; 
             max-height: 70px; 
         }
 
         .logo_header{
-            position: absolute;
+            /* position: absolute; */
             max-width: 40%;
             height: auto;
-            left: 535px;
+            /* left: 535px; */
             max-height: 75px; 
         } 
         #footer{
@@ -146,10 +146,12 @@
         <table class="tabla_header">
             <tbody>
                 <tr>
-                    <td>
+                    <!-- Columna izquierda (alineada a la izquierda) -->
+                    <td style="width:50%; text-align: left;">
                         <img src="data:image/png;base64,{{ base64_encode($codigoQR) }}" class="codigo_qr" alt="Código QR">
                     </td>
-                    <td>
+                    <!-- Columna derecha (alineada a la derecha) -->
+                    <td style="width:50%; text-align: right;">
                         <?php if($logo_header == "Sin logo"): ?>
                             <p>No logo</p>
                         <?php else: ?>
@@ -160,7 +162,7 @@
                                 $imagenBase64_header = base64_encode($imagenData_header);
                             ?>
                             <img src="data:image/png;base64,{{ $imagenBase64_header }}" class="logo_header">
-                        <?php endif ?>                    
+                        <?php endif ?>  
                     </td>
                 </tr>
             </tbody>
@@ -205,7 +207,7 @@
                     <td colspan="2"><span class="titulo_labels">Tipo Documento: </span><span class="dato_dinamico">{{$tipo_doc_afiliado}}</span></td>
                     <td colspan="2"><span class="titulo_labels">No. Identificación: </span><span class="dato_dinamico">{{$nro_ident_afiliado}}</span></td>
                     <td colspan="2"><span class="titulo_labels">Fecha nacimiento: </span><span class="dato_dinamico">{{$fecha_nacimiento_afiliado}}</span></td>
-                    <td colspan="2"><span class="titulo_labels">Edad: </span><span class="dato_dinamico">{{$edad_afiliado}}</span></td>
+                    <td colspan="2"><span class="titulo_labels">Edad: </span><span class="dato_dinamico">{{$edad_afiliado}} años</span></td>
                 </tr>
                 <tr>
                     <td colspan="3"><span class="titulo_labels">Género: </span><span class="dato_dinamico">{{$genero_afiliado}}</span></td>
@@ -240,7 +242,7 @@
                     <td colspan="8" class="titulo_tablas">4.1. JUSTIFICACIÓN PARA EMISIÓN DE CONCEPTO DE PRESUNTO ORIGEN DE EVENTO</td>
                 </tr>
                 <tr>
-                    <td colspan="8" class="dato_dinamico">{{$justificacion_revision_origen}}</td>
+                    <td colspan="8" class="dato_dinamico">{!! nl2br(e($justificacion_revision_origen)) !!}</td>
                 </tr>
                 <tr>
                     <td colspan="8" class="titulo_tablas">4.2 RELACIÓN DE DOCUMENTOS</td>
@@ -272,7 +274,7 @@
                     <td colspan="8"><span class="titulo_labels">FECHA DE FALLECIMIENTO: </span><span class="dato_dinamico">{{$fecha_fallecimiento}}</span></td>
                 </tr>
                 <tr>
-                    <td colspan="8"><span class="titulo_labels">SUSTENTACIÓN: </span><span class="dato_dinamico">{{$sustentacion_califi_origen}}</span></td>
+                    <td colspan="8"><span class="titulo_labels">SUSTENTACIÓN: </span><span class="dato_dinamico">{!! nl2br(e($sustentacion_califi_origen)) !!}</span></td>
                 </tr>
                 <tr>
                     <td colspan="8">

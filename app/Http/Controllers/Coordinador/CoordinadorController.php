@@ -1427,6 +1427,12 @@ class CoordinadorController extends Controller
             }
             else {
                 $nombre_final_documento = $request -> nombre_documento;
+                if($nombre_final_documento){
+                    File::delete($path.'/'.$nombre_final_documento);
+                }
+                $nameWithoutExtension = pathinfo($nombre_final_documento, PATHINFO_FILENAME);
+                $extension = $archivo->getClientOriginalExtension();
+                $nombre_final_documento = "{$nameWithoutExtension}.{$extension}";
             }
             Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
         } 
@@ -1445,6 +1451,7 @@ class CoordinadorController extends Controller
             $datos_comunicado_actualizar=[
                 'F_comunicado' => $date,
                 'Elaboro' => $nombre_usuario,
+                'Nombre_documento' => $nombre_final_documento,
                 'Reemplazado' => 1,
             ];
         }
@@ -1694,6 +1701,21 @@ class CoordinadorController extends Controller
 
             return response()->json($info_correspondencia);
         }
+    }
+
+    public function getInformacionPorIdDestinatario(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        $id_destinatario = $request->id_destinatario;
+        $registros_correspondencias = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')
+            ->select('Tipo_correspondencia')
+            ->where([['Id_destinatario',$id_destinatario]])
+            ->get();
+        return response()->json($registros_correspondencias);
     }
 
     public function guardarInformacionCorrespondencia(Request $request){

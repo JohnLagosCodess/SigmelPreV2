@@ -1595,7 +1595,7 @@ $(document).ready(function(){
                     comunicado_reemplazar = response[0];
                     let nombre_doc = comunicado_reemplazar.Nombre_documento;
                     if(nombre_doc != null && nombre_doc != "null" && comunicado_reemplazar.Tipo_descarga !== 'Manual'){
-                        extensionDoc = `.${ nombre_doc.split('.').pop()}`;
+                        extensionDoc = ['.pdf','.doc','.docx','.xlsx'];//`.${ nombre_doc.split('.').pop()}`;
                         document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
                     }
                     else if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
@@ -1662,7 +1662,7 @@ $(document).ready(function(){
                 }
             });
         }
-        else if(comunicado_reemplazar.Tipo_descarga !== 'Manual' && extensionDoc === extensionDocCargado){
+        else if(comunicado_reemplazar.Tipo_descarga !== 'Manual' && extensionDoc.includes(extensionDocCargado)){
             var formData = new FormData($('form')[0]);
             formData.append('doc_de_reemplazo', archivo);
             formData.append('token', $('input[name=_token]').val());
@@ -3792,7 +3792,7 @@ $(document).ready(function(){
     }
     
     let correspondencia_array = [];
-    $("#tabla_comunicados_juntas").on('click', "#CorrespondenciaNotificacion", function() {
+    $("#tabla_comunicados_juntas").on('click', "#CorrespondenciaNotificacion", async function() {
         //Reestablecer modal
         cleanModalCorrespondencia();
         //Cargar selectores modal con Pendiente como valor por defecto
@@ -3814,6 +3814,8 @@ $(document).ready(function(){
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
         let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
+        //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
+        let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
             $("#btn_guardar_actualizar_correspondencia").remove();
@@ -3868,7 +3870,7 @@ $(document).ready(function(){
         $("#modalCorrespondencia #id_proceso").val(id_proceso);
         $("#modalCorrespondencia #id_comunicado").val(idComunicado);
 
-        if(correspondencia_array?.includes(tipo_correspondencia)){
+        if(correspondencia_array?.includes(tipo_correspondencia) || correspondencias_guardadas === tipo_correspondencia){
             data_comunicado = {
                 _token: token,
                 id_comunicado: idComunicado,

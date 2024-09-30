@@ -14,7 +14,7 @@
         #header {
             position: fixed; 
             /* esta ligado con el primer valor del margin */
-            top: -3cm;
+            top: -2cm;
             left: 0cm;
             width: 100%;
             text-align: right; 
@@ -29,7 +29,7 @@
             bottom: -2.4cm;
             left: 0cm;
             width: 100%;
-            height: 12%;
+            height: auto;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -41,7 +41,7 @@
         .footer_image{
             max-width: 100%;
             max-height: 80%;
-            margin-bottom: -5px;
+            margin-bottom: -2px;
         }
         .footer_content {
             position: relative;
@@ -77,7 +77,12 @@
             margin: 0;
             padding: 0;
         }
-
+        .fuente_cuadro_inferior{
+            font-family: sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 0;
+        }
         .tabla1{
             width: 80%;
             margin-left: -3.5px;
@@ -98,10 +103,10 @@
         }
 
         .cuadro{
-            border: 3px solid black;
-            padding-left: 6px;
-            width: 5cm;
-            height: 2cm;
+            border: 2px solid black;
+            width: 4cm;
+            padding: 1px;
+            height: auto;
         }
 
         .copias{
@@ -170,28 +175,22 @@
         {{-- @for ($i=0; $i<40; $i++)
             <div class="hijo">{{$i}}</div>
         @endfor --}}
-
-        <p class="fuente_todo_texto derecha"><span class="negrita">{{$ciudad}} {{$fecha}}</span></p>
-        <br>
         <table class="tabla2">
             <tbody>
                 <tr>
-                    <td style="width:100%;">
-                        <div class="fuente_todo_texto">
-                            <span class="negrita">Señores:</span><br>
-                            {{$nombre_destinatario_principal}}
+                    <td style="width:100%; display:table; justify-content: space-between;">
+                        <p class="fuente_todo_texto derecha"><span class="negrita">{{$ciudad}} {{$fecha}}</span></p>
+                        <div>
+                            <div class="fuente_todo_texto">
+                                <span class="negrita">Señores:</span><br>
+                                {{$nombre_destinatario_principal}}
+                            </div>
+                            <div class="fuente_todo_texto">{{$email_destinatario_principal}}</div>
+                            <div class="fuente_todo_texto">{{$direccion_destinatario_principal}}</div>
+                            <div class="fuente_todo_texto">{{$telefono_destinatario_principal}}</div>
+                            <div class="fuente_todo_texto">{{$ciudad_destinatario_principal}}</div>
                         </div>
-                        <div class="fuente_todo_texto">{{$email_destinatario_principal}}</div>
-                        <div class="fuente_todo_texto">{{$direccion_destinatario_principal}}</div>
-                        <div class="fuente_todo_texto">{{$telefono_destinatario_principal}}</div>
-                        <div class="fuente_todo_texto">{{$ciudad_destinatario_principal}}</div>
-                    </td>
-                    <td>
-                        <div class="cuadro">
-                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado : <br>{{$nro_radicado}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
-                        </div>
+                        
                     </td>
                 </tr>
             </tbody>
@@ -202,16 +201,15 @@
                 <tr>
                     <td>
                         <span class="fuente_todo_texto"><span class="negrita">Asunto: {{$asunto}}</span></span><br>
-                        <div style="margin-left: 3cm;">
+                        <div style="margin-left: 1.3cm;">
+                            <span class="fuente_todo_texto"><span class="negrita">PACIENTE: {{$nombre_afiliado}} {{$tipo_identificacion}} {{$num_identificacion}} </span></span><br>
                             <span class="fuente_todo_texto"><span class="negrita">Ramo: </span>{{$ramo}}</span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}} {{$nombre_afiliado}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: </span>{{$N_siniestro}}</span>
+                            {{-- <span class="fuente_todo_texto"><span class="negrita">Siniestro: </span>{{$N_siniestro}}</span> --}}
                         </div>
                     </td>
                 </tr>
             </tbody>
         </table>
-        <br>
         <section class="fuente_todo_texto">
             <?php 
                 $patron1 = '/\{\{\$nombre_afiliado\}\}/';
@@ -220,8 +218,8 @@
                 if (preg_match($patron1, $cuerpo) && preg_match($patron2, $cuerpo) && preg_match($patron3, $cuerpo)) {
                     $nombre_afiliado = "<b>".strtoupper($nombre_afiliado)."</b>";
                     $texto_modificado = str_replace('{{$nombre_afiliado}}', $nombre_afiliado, $cuerpo);
-                    $texto_modificado = str_replace('{{$origen_evento}}', strtoupper($origen), $texto_modificado);
-                    $texto_modificado = str_replace('{{$tipo_evento}}', strtoupper($tipo_evento), $texto_modificado);
+                    $texto_modificado = str_replace('{{$origen_evento}}', "<b>".mb_strtoupper($origen)."</b>", $texto_modificado);
+                    $texto_modificado = str_replace('{{$tipo_evento}}', "<b>".strtoupper($tipo_evento)."</b>", $texto_modificado);
                     $cuerpo = $texto_modificado;
                 } else {
                     $cuerpo = "";
@@ -250,11 +248,11 @@
             <table style="text-align: justify; width:100%; margin-left: -3px;">
                 @if (count($Agregar_copia) == 0)
                     <tr>
-                        <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
+                        <td class="copias"><span class="negrita">Copias: </span>No se registran copias</td>                                                                                
                     </tr>
                 @else
                     <tr>
-                        <td class="justificado"><span class="negrita">Copia:</span></td>                            
+                        <td class="justificado copias"><span class="negrita">Copias:</span></td>                            
                     </tr>
                     <?php 
                         $Beneficiario = 'Beneficiario';
@@ -327,6 +325,13 @@
                 @endif
             </table>
         </section>
+
+        <div class="cuadro fuente_cuadro_inferior" style="margin: 0 auto">
+            <span class="fuente_cuadro_inferior"><span class="negrita">Nro. Radicado : <br>{{$nro_radicado}}</span></span><br>
+            <span class="fuente_cuadro_inferior"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
+            <span class="fuente_cuadro_inferior"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
+        </div>
+        
     </div>
     <script type="text/php">
         if ( isset($pdf) ) {

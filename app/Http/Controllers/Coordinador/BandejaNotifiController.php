@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Administrador\AccionesController;
 use App\Models\User;
 
 use App\Models\sigmel_lista_procesos_servicios;
@@ -14,24 +15,42 @@ use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
 use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_correspondencia_eventos;
+use App\Models\sigmel_informacion_historial_accion_eventos;
+use App\Models\sigmel_informacion_eventos;
+
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use App\Services\AccionesAutomaticas;
+use App\Services\ServiceBus;
 
 class BandejaNotifiController extends Controller
 {
+    private $BaseBandeja;
+
+    /*public function __construct(ServiceBus $serviceBus)
+    {
+
+        $serviceBus->registrarServicio([
+            'BaseBandeja' => \App\Services\BaseBandeja::class
+        ]);
+        
+        $this->BaseBandeja = $serviceBus->llamar('BaseBandeja');
+
+    }*/
+
     // Bandeja Notifiacion Coordinador
     public function mostrarVistaBandejaNotifi(){
-        if(!Auth::check()){
-            return redirect('/');
-        }
         $user = Auth::user();    
         // consulta numero de orden
         $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
         ->select('Numero_orden')
         ->get();
-        return view('coordinador.bandejaNotifi', compact('user','n_orden'));
+
+        $listado_Acciones = AccionesController::getAccionesNotificacion();
+
+        return view('coordinador.bandejaNotifi', compact('user','n_orden','listado_Acciones'));
     }
 
     //Selectores Bandeja Notifi
@@ -355,4 +374,128 @@ class BandejaNotifiController extends Controller
             return $estadoCorrespondencia->Estado_correspondencia;
         }
     }
+
+    /**
+     * Despacha los diferentes procesos relacionados a la bandeja de notificaciones
+     */
+    public function proceso_notificaciones(Request $request){
+
+        switch($request->bandera){
+            case 'ejecutar_accion': 
+                    $request->validate([
+                        'accion_ejecutar' => 'required|int',
+                        'datos_evento' => 'required|array',
+                        'datos_evento.*.*.proceso' => 'required',
+                        'datos_evento.*.*.servicio' => 'required',
+                        'datos_evento.*.*.id_evento' => 'required'
+                    ]);
+
+                    return response()->json(
+                    $this->ejecutar_accion($request->accion_ejecutar,$request->f_accion,
+                    $request->descripcion,$request->f_alerta,$request->datos_evento));
+                break;
+            case 'getEventos':
+                    return $this->getEventos($request);
+                break;
+        }
+
+    }
+
+    /**
+     * Obtiene los eventos disponibles para ejecutar la accion seleccionada por el usuario
+     */
+    private function getEventos(Request $request){
+        //Obtiene las acciones antecesoras cuya accion pertenezca a la seleccionada por el usuario
+        $acciones_antesesora = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes')
+        ->select('sia.Accion','Servicio_asociado')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia','sia.Id_Accion','Accion_antecesora') //Accion antecesora
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia2','sia2.Id_Accion','Accion_ejecutar') //Accion actual
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp','sia2.Estado_accion','slp.Id_Parametro')
+         ->where([
+             ['sia2.Accion',$request->id_acion_ejecutar],
+             ['slp.Nombre_parametro','=','Notificado']
+         ])->get()->toArray();
+
+         //Filtra los eventos de acuerdo a las  acciones antecesoras
+         $accion_antesesora = array_column($acciones_antesesora,'Accion');
+         $servicios_asociados = array_column($acciones_antesesora,'Servicio_asociado');
+ 
+         if(!is_null($acciones_antesesora[0])){
+            $query = DB::table(getDatabaseName('sigmel_gestiones') . 'cndatos_bandeja_eventos')
+                ->whereIn('Accion',$accion_antesesora)
+                ->whereIn('Id_Servicio',$servicios_asociados)
+                ->where(function($query){
+                    $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'Si');
+                });
+
+            //Filtra los eventos de acuerdo al usuario
+            if (in_array($request->newId_rol, ['3', '5', '10'])) {
+                $query->where('Id_profesional', $request->newId_user);
+            }
+
+            $eventos = $query->get();
+         }
+ 
+         $response = [
+             'estado' => $eventos->isEmpty() ? 'Sin datos' : 'ok',
+             'datos' => $eventos ?? null
+         ];
+ 
+         return response()->json($response);
+    }
+
+    /**
+     * @param int accion Accion a ejecutar
+     * @param string f_accion Fecha en la que se ejecuto dicha accion
+     * @param string descripcion Descripcion de la accion a ejecutar
+     * @param string f_alerta fecha de alerta para ejecutar
+     * @param Array datosEvento
+     * @return string
+     */
+    private function ejecutar_accion(int $accion,string $f_accion, string $descripcion = null, string $f_alerta = null, Array $datosEvento){
+
+        $nombre_usuario = Auth::user()->name;
+        $estado_ejecucion = [];
+
+        foreach($datosEvento as $evento => $id_asignacion){
+            foreach($id_asignacion as $id => $values){
+                $dataActualizar['Id_accion'] = $accion;
+                $dataActualizar['Descripcion'] = $descripcion;
+                $dataActualizar['F_alerta'] = $f_alerta;
+                $dataActualizar['F_accion'] = $f_accion;
+                $dataActualizar['Nombre_usuario'] = $nombre_usuario;
+
+                sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->where('Id_Asignacion', $id)
+                ->update($dataActualizar);
+
+                unset($dataActualizar['F_alerta']);
+                sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
+                ->where('Id_Asignacion', $id)
+                ->update($dataActualizar);
+
+                    $id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')->select('Cliente')->where('ID_evento',$values["id_evento"])->first();
+                    $data = Array($f_accion,$accion,$id_cliente->Cliente,$values["proceso"],$values["servicio"],$values["id_evento"],$id);
+                    $acciones_automaticas = new AccionesAutomaticas();
+                    
+                    //Despacha las acciones a ejecutar
+                    $acciones_automaticas->registrarAccion([
+                        'MovimientosAutomaticos' => \App\Services\MovimientosAutomaticas::class,
+                        'AlertasNaranjas' => \App\Services\AlertasNaranjas::class,
+                    ])->with($data)->llamarAcciones();
+
+                    $estado_ejecucion[] = [
+                        'idevento' => $values["id_evento"],
+                        'idasignacion' => $id,
+                        'detalles' => $acciones_automaticas->response
+                    ];
+                    
+            }
+        }
+
+        return $estado_ejecucion;
+
+    }
+
 }
+
