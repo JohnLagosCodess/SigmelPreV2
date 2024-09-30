@@ -23,14 +23,25 @@ use App\Models\sigmel_informacion_acciones;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Services\AccionesAutomaticas;
+use App\Services\ServiceBus;
 
 class BandejaNotifiController extends Controller
 {
+    private $BaseBandeja;
+
+    /*public function __construct(ServiceBus $serviceBus)
+    {
+
+        $serviceBus->registrarServicio([
+            'BaseBandeja' => \App\Services\BaseBandeja::class
+        ]);
+        
+        $this->BaseBandeja = $serviceBus->llamar('BaseBandeja');
+
+    }*/
+
     // Bandeja Notifiacion Coordinador
     public function mostrarVistaBandejaNotifi(){
-        if(!Auth::check()){
-            return redirect('/');
-        }
         $user = Auth::user();    
         // consulta numero de orden
         $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')

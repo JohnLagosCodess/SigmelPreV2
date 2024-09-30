@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\ServiceBus;
+use App\Services\Consola;
 use App\Services\EliminarEventos;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -35,14 +35,14 @@ class sigmel_gestiones extends Command
         "EliminarEvento" => \App\Services\EliminarEventos::class
     ];
 
-    public function __construct(ServiceBus $ServiceBus)
+    public function __construct(Consola $ServiceBus)
     {
         parent::__construct();
 
         $this->servicebus = $ServiceBus;
 
         foreach ($this->registarServicios as $nombre => $servicio) {
-            $this->servicebus->registrarServicio($nombre, $servicio);
+            $this->servicebus->registrarServicioConsola($nombre, $servicio);
 
             $opciones = $this->servicebus->agregarParametros($nombre);
             foreach ($opciones as $atributo => $comando) {
@@ -84,7 +84,8 @@ class sigmel_gestiones extends Command
         }
 
         try {
-            $resultado = $this->servicebus->despachar($nombre_servicio, $opciones);
+            //Invoca al servicio registrado por el usuario
+            $resultado = $this->servicebus->despacharConsola($nombre_servicio, $opciones);
 
             if($this->format == "string"){
                 $this->info((string) $resultado);
@@ -111,6 +112,10 @@ class sigmel_gestiones extends Command
         return $opciones;
     }
 
+    /**
+     *  Dibuja el resultado a mostrar en la interfaz
+     * 
+    */ 
     protected function dibujarTabla(array $resultado)
     {
         // Crear una instancia de Table
