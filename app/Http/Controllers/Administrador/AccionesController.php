@@ -184,6 +184,7 @@ class AccionesController extends Controller
         ->where([
             ['sihae.ID_evento', $request->ID_evento],
             ['sihae.Id_Asignacion', $request->Id_Asignacion],
+            ['sihae.Id_accion', $request->accion_ejecutar],
             ['sipc.Accion_ejecutar', $request->accion_ejecutar],
             ['sipc.Id_cliente', $request->Id_cliente],
             ['sipc.Servicio_asociado', $request->Id_servicio],
