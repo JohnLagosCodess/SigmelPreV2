@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Response;
 use App\Models\sigmel_numero_orden_eventos;
 use App\Models\cndatos_reportes_notificaciones;
 use App\Models\cndatos_reportes_notificaciones_manuales;
+use App\Models\cnvista_reportes_notificaciones_uniones;
+use App\Models\sigmel_lista_parametros;
 use Maatwebsite\Excel\Facades\Excel;
 
 use ZipArchive;
@@ -37,6 +39,10 @@ class ReporteNotificacionesController extends Controller
         $fecha_desde = $request->fecha_desde;
         $fecha_hasta = $request->fecha_hasta;
 
+        // Variables NO Obligatorias
+        $estado_general_calificacion = $request->estado_general_calificacion;
+        $numero_orden = $request->numero_orden;
+
         // Validaciones
         /* 
             1: Fecha desde está vacío y Fecha hasta tiene dato = No hay reporte.
@@ -60,86 +66,268 @@ class ReporteNotificacionesController extends Controller
             return json_decode(json_encode($mensajes, true));
 
         }
-        elseif (empty($fecha_desde) && empty($fecha_hasta)) {
-            
-            // $reporte_notificaciones = cndatos_reporte_notificaciones_v5s::on('sigmel_gestiones')
-            // ->select('Fecha_envio', 'No_identificacion', 'No_guia_asignado', 'Orden_impresion', 'Proceso', 'Servicio', 'Ultima_Accion',
-            // 'Estado', 'No_OIP', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion', 'Telefono', 'Departamento', 'Ciudad',
-            // 'Folios_entregados', 'Medio_Notificacion', 'Correo_electronico', 'Archivo_1', 'Archivo_2')
-            // ->get();
-            // $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true));
-            // return response()->json($array_reporte_notificaciones);
+        elseif (empty($fecha_desde) && empty($fecha_hasta)) {            
             $mensajes = array(
                 "parametro" => 'falta_un_parametro',
                 "mensaje" => 'Debe seleccionar las dos fechas para realizar la consulta.'
             );
             return json_decode(json_encode($mensajes, true));
         }
-        else if (!empty($fecha_desde) && !empty($fecha_hasta)){
-            // $reporte_notificaciones = cndatos_reportes_notificaciones::on('sigmel_gestiones')
-            // ->select(
-            //     'F_comunicado',
-            //     'N_radicado',
-            //     'Nombre_documento',
-            //     'Carpeta_impresion',
-            //     'Observaciones',
-            //     'N_identificacion',
-            //     'Destinatario',
-            //     'Nombre_destinatario',
-            //     'Direccion_destinatario',
-            //     'Telefono_destinatario',
-            //     'Ciudad',
-            //     'Departamento',
-            //     'Email_destinatario',
-            //     'Proceso',
-            //     'Servicio',
-            //     'Accion',
-            //     'Estado',
-            //     'N_orden',
-            //     'Tipo_destinatario',
-            //     'N_guia',
-            //     'Folios',
-            //     'F_envio',
-            //     'F_notificacion',
-            //     'Estado_correspondencia')
-            // ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
-            // // ->orderBy('ID_evento', 'desc')
-            // ->get();
+        else if (!empty($fecha_desde) && !empty($fecha_hasta)){   
+            
+            // Validacion del estado general de calificacion y numero de orden para descargar los reportes            
 
-            $reporte_notificaciones = DB::table('sigmel_gestiones.cndatos_reportes_notificaciones')
-            ->select('Id_Correspondencia', 'Id_comunicado', 'Id_Asignacion', 'Id_proceso', 'Id_servicio', 'ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion', 'Observaciones', 'N_identificacion',
-                     'Destinatario', 'Nombre_destinatario', 'Direccion_destinatario', 'Telefono_destinatario', 'Ciudad', 'Departamento', 'Email_destinatario', 'Proceso', 'Servicio', 'Accion', 'Estado',
-                     'N_orden', 'Tipo_destinatario', 'N_guia', 'Folios', 'F_envio', 'F_notificacion', 'Estado_correspondencia')
-                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
-            ->union(
-                DB::table('sigmel_gestiones.cndatos_reportes_notificaciones_manuales')
-                    ->select('Id_Correspondencia', 'Id_comunicado', 'Id_Asignacion', 'Id_proceso', 'Id_servicio', 'ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion', 'Observaciones', 'N_identificacion',
-                             'Destinatario', 'Nombre_destinatario', 'Direccion_destinatario', 'Telefono_destinatario', 'Ciudad', 'Departamento', 'Email_destinatario', 'Proceso', 'Servicio', 'Accion', 'Estado',
-                             'N_orden', 'Tipo_destinatario', 'N_guia', 'Folios', 'F_envio', 'F_notificacion', 'Estado_correspondencia')
-                    ->where('Carpeta_impresion', 'CARGADO_MANUALMENTE')
-                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
-            )
-            ->orderByDesc('F_comunicado')
-            ->orderBy('N_radicado')
-            ->get();
+            //Case 1: Si el estado general de calificacion es igual a Pendiente (359) y viene vacio numero de orden
+            //Case 2: Si el estado general de calificacion es igual a Pendiente (359) y viene numero de orden
+            //Case 3: Si el estado general de calificacion es distinto a Todos (365), Pendiente (359) y viene vacio numero de orden
+            //Case 4: Si el estado general de calificacion es distinto a Todos (365), Pendiente (359) y viene numero de orden
+            //Case 5: Si el estado general de calificacion es igual a Todos (365) y viene vacio numero de orden
+            //Case 6: Si el estado general de calificacion es igual a Todos (365) y viene numero de orden
 
-            $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true)); 
-
-            /* Consultamos el nro de orden */
-            $array_n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
+            $validar_numero_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
             ->select('Numero_orden')
+            ->where([
+                ['Proceso', 'Notificaciones']
+            ])
             ->get();
 
-            $n_orden = $array_n_orden[0]->Numero_orden;
+            $numero_orden_actual = $validar_numero_orden[0]->Numero_orden;            
+            switch (true) {
+                case (!empty($estado_general_calificacion) && $estado_general_calificacion == 359 && empty($numero_orden)):                    
+                    $reporte_notificaciones = cnvista_reportes_notificaciones_uniones::on('sigmel_gestiones')
+                    ->select('ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion',
+                    'Observaciones', 'N_identificacion', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion_destinatario',
+                    'Telefono_destinatario', 'Ciudad_departamento', 'Email_destinatario', 'Proceso_servicio', 
+                    'Ultima_accion', 'Estado', 'N_de_orden', 'Id_destinatario', 'Tipo_correspondencia', 'N_guia',
+                    'Folios', 'F_envio', 'F_notificacion')
+                    ->where([
+                        ['Estado_general_notificacion', $estado_general_calificacion],
+                        ['Bandeja_notificaciones', 'Si']                    
+                    ])
+                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                    ->orderBy('F_comunicado')
+                    ->orderBy('N_radicado') 
+                    ->get();
 
-            $datos = [
-                'n_orden' => $n_orden,
-                'reporte' => $array_reporte_notificaciones
-            ];
+                    $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true)); 
+    
+                    $datos = [
+                        'n_orden' => $numero_orden_actual,
+                        'reporte' => $array_reporte_notificaciones
+                    ];
 
-            return response()->json($datos);
+                    return response()->json($datos);
+                break;
+                case (!empty($estado_general_calificacion) && $estado_general_calificacion == 359 && !empty($numero_orden)):                        
+                    if (!empty($numero_orden_actual)) {
+                        
+                        if ($numero_orden > $numero_orden_actual) {
+                            $mensajes = array(
+                                "parametro" => 'Numero_orden_NoVigente',
+                                "mensaje" => 'El número de orden aún no se encuentra vigente en Sigmel'
+                            );
+                            return response()->json($mensajes);
+                        } elseif ($numero_orden <= $numero_orden_actual) {
+                            $numero_orden_inicial = 00000000000001;
+                            if ($numero_orden < $numero_orden_inicial) {                                
+                                $mensajes = array(
+                                    "parametro" => 'Numero_orden_NoExiste',
+                                    "mensaje" => 'El número de orden es menor a los que se encuentran en Sigmel'
+                                );
+                                return response()->json($mensajes);
+                            } else {
+                                
+                                $reporte_notificaciones = cnvista_reportes_notificaciones_uniones::on('sigmel_gestiones')
+                                ->select('ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion',
+                                'Observaciones', 'N_identificacion', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion_destinatario',
+                                'Telefono_destinatario', 'Ciudad_departamento', 'Email_destinatario', 'Proceso_servicio', 
+                                'Ultima_accion', 'Estado', 'N_de_orden', 'Id_destinatario', 'Tipo_correspondencia', 'N_guia',
+                                'Folios', 'F_envio', 'F_notificacion')
+                                ->where([
+                                    ['Estado_general_notificacion', $estado_general_calificacion],
+                                    ['Bandeja_notificaciones', 'Si'],
+                                    ['N_de_orden', $numero_orden]
+                                ])
+                                ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                                ->orderBy('F_comunicado')
+                                ->orderBy('N_radicado') 
+                                ->get();
+    
+                                $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true)); 
+    
+                                $datos = [
+                                    'n_orden' => $numero_orden_actual,
+                                    'reporte' => $array_reporte_notificaciones
+                                ];
+    
+                                return response()->json($datos);
+                            }
+                            
+                        }
+                    } else {
+                        $mensajes = array(
+                            "parametro" => 'falta_numero_orden_DB',
+                            "mensaje" => 'No existe número orden para la bandeja de Notificaciones'
+                        );
+                        return response()->json($mensajes);
+                    }
+                break;
+                case (!empty($estado_general_calificacion) && $estado_general_calificacion == 356 && empty($numero_orden) 
+                    || !empty($estado_general_calificacion) && $estado_general_calificacion == 357 && empty($numero_orden)
+                    || !empty($estado_general_calificacion) && $estado_general_calificacion == 358 && empty($numero_orden)):                    
+                    $reporte_notificaciones = cnvista_reportes_notificaciones_uniones::on('sigmel_gestiones')
+                    ->select('ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion',
+                    'Observaciones', 'N_identificacion', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion_destinatario',
+                    'Telefono_destinatario', 'Ciudad_departamento', 'Email_destinatario', 'Proceso_servicio', 
+                    'Ultima_accion', 'Estado', 'N_de_orden', 'Id_destinatario', 'Tipo_correspondencia', 'N_guia',
+                    'Folios', 'F_envio', 'F_notificacion')
+                    ->where([
+                        ['Estado_general_notificacion', $estado_general_calificacion]                        
+                    ])
+                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                    ->orderBy('F_comunicado')
+                    ->orderBy('N_radicado') 
+                    ->get();
 
-            // return response()->json($array_reporte_notificaciones);
+                    $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true)); 
+    
+                    $datos = [
+                        'n_orden' => $numero_orden_actual,
+                        'reporte' => $array_reporte_notificaciones
+                    ];
+
+                    return response()->json($datos);
+                break;
+                case (!empty($estado_general_calificacion) && $estado_general_calificacion == 356 && !empty($numero_orden) 
+                    || !empty($estado_general_calificacion) && $estado_general_calificacion == 357 && !empty($numero_orden)
+                    || !empty($estado_general_calificacion) && $estado_general_calificacion == 358 && !empty($numero_orden)):
+                    
+                    if (!empty($numero_orden_actual)) {
+                        
+                        if ($numero_orden > $numero_orden_actual) {
+                            $mensajes = array(
+                                "parametro" => 'Numero_orden_NoVigente',
+                                "mensaje" => 'El número de orden aún no se encuentra vigente en Sigmel'
+                            );
+                            return response()->json($mensajes);
+                        } elseif ($numero_orden <= $numero_orden_actual) {
+                            $numero_orden_inicial = 00000000000001;
+                            if ($numero_orden < $numero_orden_inicial) {                                
+                                $mensajes = array(
+                                    "parametro" => 'Numero_orden_NoExiste',
+                                    "mensaje" => 'El número de orden es menor a los que se encuentran en Sigmel'
+                                );
+                                return response()->json($mensajes);
+                            } else {
+                                
+                                $reporte_notificaciones = cnvista_reportes_notificaciones_uniones::on('sigmel_gestiones')
+                                ->select('ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion',
+                                'Observaciones', 'N_identificacion', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion_destinatario',
+                                'Telefono_destinatario', 'Ciudad_departamento', 'Email_destinatario', 'Proceso_servicio', 
+                                'Ultima_accion', 'Estado', 'N_de_orden', 'Id_destinatario', 'Tipo_correspondencia', 'N_guia',
+                                'Folios', 'F_envio', 'F_notificacion')
+                                ->where([
+                                    ['Estado_general_notificacion', $estado_general_calificacion],
+                                    ['N_de_orden', $numero_orden]
+                                ])
+                                ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                                ->orderBy('F_comunicado')
+                                ->orderBy('N_radicado') 
+                                ->get();
+    
+                                $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true)); 
+    
+                                $datos = [
+                                    'n_orden' => $numero_orden_actual,
+                                    'reporte' => $array_reporte_notificaciones
+                                ];
+    
+                                return response()->json($datos);
+                            }
+                            
+                        }
+                    } else {
+                        $mensajes = array(
+                            "parametro" => 'falta_numero_orden_DB',
+                            "mensaje" => 'No existe número orden para la bandeja de Notificaciones'
+                        );
+                        return response()->json($mensajes);
+                    }                    
+                break;
+                case (!empty($estado_general_calificacion) && $estado_general_calificacion == 365 && empty($numero_orden)):                    
+                    $reporte_notificaciones = cnvista_reportes_notificaciones_uniones::on('sigmel_gestiones')
+                    ->select('ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion',
+                    'Observaciones', 'N_identificacion', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion_destinatario',
+                    'Telefono_destinatario', 'Ciudad_departamento', 'Email_destinatario', 'Proceso_servicio', 
+                    'Ultima_accion', 'Estado', 'N_de_orden', 'Id_destinatario', 'Tipo_correspondencia', 'N_guia',
+                    'Folios', 'F_envio', 'F_notificacion')
+                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                    ->orderBy('F_comunicado')
+                    ->orderBy('N_radicado') 
+                    ->get();                    
+                    $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true)); 
+    
+                    $datos = [
+                        'n_orden' => $numero_orden_actual,
+                        'reporte' => $array_reporte_notificaciones
+                    ];
+
+                    return response()->json($datos);
+                break;
+                case (!empty($estado_general_calificacion) && $estado_general_calificacion == 365 && !empty($numero_orden)):                    
+                    if (!empty($numero_orden_actual)) {
+                        
+                        if ($numero_orden > $numero_orden_actual) {
+                            $mensajes = array(
+                                "parametro" => 'Numero_orden_NoVigente',
+                                "mensaje" => 'El número de orden aún no se encuentra vigente en Sigmel'
+                            );
+                            return response()->json($mensajes);
+                        } elseif ($numero_orden <= $numero_orden_actual) {
+                            $numero_orden_inicial = 00000000000001;
+                            if ($numero_orden < $numero_orden_inicial) {                                
+                                $mensajes = array(
+                                    "parametro" => 'Numero_orden_NoExiste',
+                                    "mensaje" => 'El número de orden es menor a los que se encuentran en Sigmel'
+                                );
+                                return response()->json($mensajes);
+                            } else {
+                                
+                                $reporte_notificaciones = cnvista_reportes_notificaciones_uniones::on('sigmel_gestiones')
+                                ->select('ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion',
+                                'Observaciones', 'N_identificacion', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion_destinatario',
+                                'Telefono_destinatario', 'Ciudad_departamento', 'Email_destinatario', 'Proceso_servicio', 
+                                'Ultima_accion', 'Estado', 'N_de_orden', 'Id_destinatario', 'Tipo_correspondencia', 'N_guia',
+                                'Folios', 'F_envio', 'F_notificacion')
+                                ->where([
+                                    ['N_de_orden', $numero_orden]
+                                ])
+                                ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                                ->orderBy('F_comunicado')
+                                ->orderBy('N_radicado')                    
+                                ->get();
+    
+                                $array_reporte_notificaciones = json_decode(json_encode($reporte_notificaciones, true)); 
+    
+                                $datos = [
+                                    'n_orden' => $numero_orden_actual,
+                                    'reporte' => $array_reporte_notificaciones
+                                ];
+    
+                                return response()->json($datos);
+                            }
+                            
+                        }
+                    } else {
+                        $mensajes = array(
+                            "parametro" => 'falta_numero_orden_DB',
+                            "mensaje" => 'No existe número orden para la bandeja de Notificaciones'
+                        );
+                        return response()->json($mensajes);
+                    }  
+                    
+                break;
+            }           
         }
     }
 
@@ -157,6 +345,10 @@ class ReporteNotificacionesController extends Controller
         $fecha_desde = $request->fecha_desde;
         $fecha_hasta = $request->fecha_hasta;
         $nro_orden = $request->nro_orden;
+
+        // Variables NO Obligatorias
+        $estado_general_calificacion = $request->estado_general_calificacion;
+        $numero_orden = $request->numero_orden;
 
         // Validaciones
         /* 
@@ -192,23 +384,122 @@ class ReporteNotificacionesController extends Controller
         }
         else if (!empty($fecha_desde) && !empty($fecha_hasta)){
 
-            /* Consultamos unicamente las columnas de Nombre_documento y Carpeta_impresion y ID_evento */
-            // $datos_reporte_notificaciones = cndatos_reportes_notificaciones::on('sigmel_gestiones')
-            // ->select('ID_evento', 'Nombre_documento', 'Carpeta_impresion')
-            // ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
-            // ->get();
+            // Validacion del estado general de calificacion y numero de orden para descargar los documentos
 
-            $datos_reporte_notificaciones = DB::table('sigmel_gestiones.cndatos_reportes_notificaciones')
-            ->select('ID_evento', 'Nombre_documento', 'Carpeta_impresion')
-                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
-            ->union(
-                DB::table('sigmel_gestiones.cndatos_reportes_notificaciones_manuales')
-                    ->select('ID_evento', 'Nombre_documento', 'Carpeta_impresion')
-                    ->where('Carpeta_impresion', 'CARGADO_MANUALMENTE')
-                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
-            )            
-            ->get();
+            //Case 1: Si el estado general de calificacion es igual a Pendiente (359) y viene vacio numero de orden
+            //Case 2: Si el estado general de calificacion es igual a Pendiente (359) y viene numero de orden
+            //Case 3: Si el estado general de calificacion es distinto a Todos (365), Pendiente (359) y viene vacio numero de orden
+            //Case 4: Si el estado general de calificacion es distinto a Todos (365), Pendiente (359) y viene numero de orden
+            //Case 5: Si el estado general de calificacion es igual a Todos (365) y viene vacio numero de orden
+            //Case 6: Si el estado general de calificacion es igual a Todos (365) y viene numero de orden
 
+            switch (true) {
+                case (!empty($estado_general_calificacion) && $estado_general_calificacion == 359 && empty($numero_orden)):                    
+                    $datos_reporte_notificaciones = cnvista_reportes_notificaciones_uniones::on('sigmel_gestiones')
+                    ->select('ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion',
+                    'Observaciones', 'N_identificacion', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion_destinatario',
+                    'Telefono_destinatario', 'Ciudad_departamento', 'Email_destinatario', 'Proceso_servicio', 
+                    'Ultima_accion', 'Estado', 'N_de_orden', 'Id_destinatario', 'Tipo_correspondencia', 'N_guia',
+                    'Folios', 'F_envio', 'F_notificacion')
+                    ->where([
+                        ['Estado_general_notificacion', $estado_general_calificacion],
+                        ['Bandeja_notificaciones', 'Si']                    
+                    ])
+                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                    ->orderBy('F_comunicado')
+                    ->orderBy('N_radicado') 
+                    ->get();
+
+                break;
+                case (!empty($estado_general_calificacion) && $estado_general_calificacion == 359 && !empty($numero_orden)):                    
+                    if (!empty($nro_orden)) {                                                
+                                                                                    
+                        $datos_reporte_notificaciones = cnvista_reportes_notificaciones_uniones::on('sigmel_gestiones')
+                        ->select('ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion',
+                        'Observaciones', 'N_identificacion', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion_destinatario',
+                        'Telefono_destinatario', 'Ciudad_departamento', 'Email_destinatario', 'Proceso_servicio', 
+                        'Ultima_accion', 'Estado', 'N_de_orden', 'Id_destinatario', 'Tipo_correspondencia', 'N_guia',
+                        'Folios', 'F_envio', 'F_notificacion')
+                        ->where([
+                            ['Estado_general_notificacion', $estado_general_calificacion],
+                            ['Bandeja_notificaciones', 'Si'],
+                            ['N_de_orden', $numero_orden]
+                        ])
+                        ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                        ->orderBy('F_comunicado')
+                        ->orderBy('N_radicado') 
+                        ->get();                        
+                    }
+                break;
+                case (!empty($estado_general_calificacion) && $estado_general_calificacion == 356 && empty($numero_orden) 
+                    || !empty($estado_general_calificacion) && $estado_general_calificacion == 357 && empty($numero_orden)
+                    || !empty($estado_general_calificacion) && $estado_general_calificacion == 358 && empty($numero_orden)):                    
+                    $datos_reporte_notificaciones = cnvista_reportes_notificaciones_uniones::on('sigmel_gestiones')
+                    ->select('ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion',
+                    'Observaciones', 'N_identificacion', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion_destinatario',
+                    'Telefono_destinatario', 'Ciudad_departamento', 'Email_destinatario', 'Proceso_servicio', 
+                    'Ultima_accion', 'Estado', 'N_de_orden', 'Id_destinatario', 'Tipo_correspondencia', 'N_guia',
+                    'Folios', 'F_envio', 'F_notificacion')
+                    ->where([
+                        ['Estado_general_notificacion', $estado_general_calificacion]                        
+                    ])
+                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                    ->orderBy('F_comunicado')
+                    ->orderBy('N_radicado') 
+                    ->get();
+                break;
+                case (!empty($estado_general_calificacion) && $estado_general_calificacion == 356 && !empty($numero_orden) 
+                    || !empty($estado_general_calificacion) && $estado_general_calificacion == 357 && !empty($numero_orden)
+                    || !empty($estado_general_calificacion) && $estado_general_calificacion == 358 && !empty($numero_orden)):                    
+                    if (!empty($nro_orden)) {                                                
+                            
+                            $datos_reporte_notificaciones = cnvista_reportes_notificaciones_uniones::on('sigmel_gestiones')
+                            ->select('ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion',
+                            'Observaciones', 'N_identificacion', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion_destinatario',
+                            'Telefono_destinatario', 'Ciudad_departamento', 'Email_destinatario', 'Proceso_servicio', 
+                            'Ultima_accion', 'Estado', 'N_de_orden', 'Id_destinatario', 'Tipo_correspondencia', 'N_guia',
+                            'Folios', 'F_envio', 'F_notificacion')
+                            ->where([
+                                ['Estado_general_notificacion', $estado_general_calificacion],
+                                ['N_de_orden', $numero_orden]
+                            ])
+                            ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                            ->orderBy('F_comunicado')
+                            ->orderBy('N_radicado') 
+                            ->get();                        
+                    }                    
+                break;
+                case (!empty($estado_general_calificacion) && $estado_general_calificacion == 365 && empty($numero_orden)):                    
+                    $datos_reporte_notificaciones = cnvista_reportes_notificaciones_uniones::on('sigmel_gestiones')
+                    ->select('ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion',
+                    'Observaciones', 'N_identificacion', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion_destinatario',
+                    'Telefono_destinatario', 'Ciudad_departamento', 'Email_destinatario', 'Proceso_servicio', 
+                    'Ultima_accion', 'Estado', 'N_de_orden', 'Id_destinatario', 'Tipo_correspondencia', 'N_guia',
+                    'Folios', 'F_envio', 'F_notificacion')
+                    ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                    ->orderBy('F_comunicado')
+                    ->orderBy('N_radicado') 
+                    ->get();                                        
+                break;
+                case (!empty($estado_general_calificacion) && $estado_general_calificacion == 365 && !empty($numero_orden)):                    
+                    if (!empty($nro_orden)) {                       
+                            
+                        $datos_reporte_notificaciones = cnvista_reportes_notificaciones_uniones::on('sigmel_gestiones')
+                        ->select('ID_evento', 'F_comunicado', 'N_radicado', 'Nombre_documento', 'Carpeta_impresion',
+                        'Observaciones', 'N_identificacion', 'Tipo_destinatario', 'Nombre_destinatario', 'Direccion_destinatario',
+                        'Telefono_destinatario', 'Ciudad_departamento', 'Email_destinatario', 'Proceso_servicio', 
+                        'Ultima_accion', 'Estado', 'N_de_orden', 'Id_destinatario', 'Tipo_correspondencia', 'N_guia',
+                        'Folios', 'F_envio', 'F_notificacion')
+                        ->where([
+                            ['N_de_orden', $numero_orden]
+                        ])
+                        ->whereBetween('F_comunicado', [$fecha_desde , $fecha_hasta])
+                        ->orderBy('F_comunicado')
+                        ->orderBy('N_radicado')                    
+                        ->get();
+                    }
+                break;
+            }   
             /* guardarmos los datos en un array */
             $array_datos_reporte_notificaciones = json_decode(json_encode($datos_reporte_notificaciones, true));
 
@@ -333,6 +624,27 @@ class ReporteNotificacionesController extends Controller
             return back()->with('success', 'Cargue correspondencias realizado exitosamente.');
         } catch (\Exception $e) {
             return back()->with('error', 'Error al procesar el archivo: ' . $e->getMessage());
+        }
+    }
+
+    // Select Reporte notificaciones
+
+    public function cargueListadoSelectoresReporteNoti(Request $request){
+        $parametro = $request->parametro;
+
+        // Llenado de select Estado general de calificación
+        if ($parametro == "lista_estado_general_calificacion") {
+
+            //356 (Devuelto), 357 (Notificado efectivamente), 358 (Notificado parcialmente), 359 (Pendiente) y 365 (Todos) 
+            
+            $lista_estado_general_califi = sigmel_lista_parametros::on('sigmel_gestiones')
+            ->select('Id_Parametro', 'Nombre_parametro')
+            ->whereIn('Id_Parametro', [356, 357, 358, 359, 365])
+            ->get();
+
+            $info_lista_estado_general_califi = json_decode(json_encode($lista_estado_general_califi, true));
+            return response()->json($info_lista_estado_general_califi);
+
         }
     }
 }

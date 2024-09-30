@@ -5294,11 +5294,11 @@
                                     </div>
                                 </div>                                
                             </form>
-                            <div class="row">
+                            {{-- <div class="row">
                                 <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert" style="text-align: initial;">
                                     <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <b>Si realizó algún cambio en las secciones anteriores que involucre % PCL, debe actualizar nuevamente el Concepto final del Dictamen Pericial</b>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <!-- Libro II Calificación de las discapacidades (20%) Decreto Muci-->
@@ -6840,11 +6840,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                {{-- <div class="row">
                                     <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert" style="text-align: initial;">
                                         <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <b>Si realizó algún cambio en las secciones anteriores que involucre % PCL, debe actualizar nuevamente el Concepto final del Dictamen Pericial</b>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>                            
                         </div>                        
                     </form>                    

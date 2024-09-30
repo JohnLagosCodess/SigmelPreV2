@@ -5454,61 +5454,73 @@ class RecalificacionPCLController extends Controller
         $time = time();
         $nombre_usuario = Auth::user()->name;
         $date = date("Y-m-d", $time);
-        $Decreto_pericial = $request->Decreto_pericial;
-        $Id_EventoDecreto = $request->Id_EventoDecreto;
-        $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
-        $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
-        $suma_combinada = $request->suma_combinada;
-        $Total_Deficiencia50 = $request->Total_Deficiencia50;
-        $total_discapacidades = $request->total_discapacidades;
-        $total_minusvalia = $request->total_minusvalia;
-        $total_porcentajePcl = $Total_Deficiencia50 + $total_discapacidades + $total_minusvalia;
-        $radicado_dictamen = $request->radicado_dictamen;
-        $porcentaje_pcl = $request->porcentaje_pcl;  
-        $rango_pcl = $request->rango_pcl;     
-        $monto_inde = $request->monto_inde;        
-        $tipo_evento = $request->tipo_evento;        
-        $tipo_origen = $request->tipo_origen;  
-        $f_evento_pericial = $request->f_evento_pericial;
-        $f_estructura_pericial = $request->f_estructura_pericial;
-        $n_siniestro = $request->n_siniestro;
-        $requiere_rev_pension = $request->requiere_rev_pension;
-        $sustenta_fecha = $request->sustenta_fecha;        
-        $detalle_califi = $request->detalle_califi;        
-        $enfermedad_catastrofica = $request->enfermedad_catastrofica;        
-        $enfermedad_congenita = $request->enfermedad_congenita;        
-        $tipo_enfermedad = $request->tipo_enfermedad;        
-        $requiere_persona = $request->requiere_persona;        
-        $requiere_decisiones_persona = $request->requiere_decisiones_persona;        
-        $requiere_dispositivo_apoyo = $request->requiere_dispositivo_apoyo;        
-        $justi_dependencia = $request->justi_dependencia; 
-        if (empty($requiere_persona) && empty($requiere_decisiones_persona) && empty($requiere_dispositivo_apoyo)) {
-            $justi_dependencia = '';
-        } else {
-            $justi_dependencia = $justi_dependencia;
-        }
         $bandera_dictamen_pericial = $request->bandera_dictamen_pericial;
-
-        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
-        if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-            $agregar_copias_dml = "EPS, AFP, ARL, AFP_Conocimiento";
-        }
-        else{
-            $agregar_copias_dml = "EPS, AFP, ARL";
-        }
-        $Destinatario = 'Afiliado';
-
-        // eL número de identificacion siempre será el del afiliado.
-        $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-        ->select('Nro_identificacion')
-        ->where([['ID_evento', $Id_EventoDecreto]])
-        ->get();
-
-        if (count($array_nro_ident_afi) > 0) {
-            $nro_identificacion = $array_nro_ident_afi[0]->Nro_identificacion;
-        }else{
-            $nro_identificacion = 'N/A';
-        }
+        //if validacion para actualizar siempre el pcl, rango, monto y else actualizacion normal desde el form del dictamen pericial
+        if ($bandera_dictamen_pericial == 'bandera_Pcl_rango_monto') {
+            $Decreto_pericial = $request->Decreto_pericial;
+            $Id_EventoDecreto = $request->Id_EventoDecreto;
+            $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
+            $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
+            $porcentaje_pcl = $request->porcentaje_pcl;
+            $rango_pcl = $request->rango_pcl;
+            $monto_inde = $request->monto_inde;
+        } else {
+            
+            $Decreto_pericial = $request->Decreto_pericial;
+            $Id_EventoDecreto = $request->Id_EventoDecreto;
+            $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
+            $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
+            $suma_combinada = $request->suma_combinada;
+            $Total_Deficiencia50 = $request->Total_Deficiencia50;
+            $total_discapacidades = $request->total_discapacidades;
+            $total_minusvalia = $request->total_minusvalia;
+            $total_porcentajePcl = $Total_Deficiencia50 + $total_discapacidades + $total_minusvalia;
+            $radicado_dictamen = $request->radicado_dictamen;
+            $porcentaje_pcl = $request->porcentaje_pcl;  
+            $rango_pcl = $request->rango_pcl;     
+            $monto_inde = $request->monto_inde;        
+            $tipo_evento = $request->tipo_evento;        
+            $tipo_origen = $request->tipo_origen;  
+            $f_evento_pericial = $request->f_evento_pericial;
+            $f_estructura_pericial = $request->f_estructura_pericial;
+            $n_siniestro = $request->n_siniestro;
+            $requiere_rev_pension = $request->requiere_rev_pension;
+            $sustenta_fecha = $request->sustenta_fecha;        
+            $detalle_califi = $request->detalle_califi;        
+            $enfermedad_catastrofica = $request->enfermedad_catastrofica;        
+            $enfermedad_congenita = $request->enfermedad_congenita;        
+            $tipo_enfermedad = $request->tipo_enfermedad;        
+            $requiere_persona = $request->requiere_persona;        
+            $requiere_decisiones_persona = $request->requiere_decisiones_persona;        
+            $requiere_dispositivo_apoyo = $request->requiere_dispositivo_apoyo;        
+            $justi_dependencia = $request->justi_dependencia; 
+            if (empty($requiere_persona) && empty($requiere_decisiones_persona) && empty($requiere_dispositivo_apoyo)) {
+                $justi_dependencia = '';
+            } else {
+                $justi_dependencia = $justi_dependencia;
+            }
+            
+            $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
+            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+                $agregar_copias_dml = "EPS, AFP, ARL, AFP_Conocimiento";
+            }
+            else{
+                $agregar_copias_dml = "EPS, AFP, ARL";
+            }
+            $Destinatario = 'Afiliado';
+    
+            // eL número de identificacion siempre será el del afiliado.
+            $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+            ->select('Nro_identificacion')
+            ->where([['ID_evento', $Id_EventoDecreto]])
+            ->get();
+    
+            if (count($array_nro_ident_afi) > 0) {
+                $nro_identificacion = $array_nro_ident_afi[0]->Nro_identificacion;
+            }else{
+                $nro_identificacion = 'N/A';
+            }
+        }        
 
         if ($bandera_dictamen_pericial == 'Guardar') {
 
@@ -5694,8 +5706,11 @@ class RecalificacionPCLController extends Controller
                 'Id_Comunicado' => $Id_Comunicado,
                 'radicado_dictamen' => $radicado_dictamen,
                 'Bandera_boton_guardar_dictamen' => 'boton_dictamen',                               
-            );          
-        } elseif($bandera_dictamen_pericial == 'Actualizar') {
+            );
+            
+            return json_decode(json_encode($mensajes, true));
+
+        } elseif ($bandera_dictamen_pericial == 'Actualizar') {
             if($Decreto_pericial == 3){
                 $datos_dictamenPericial =[
                     'Suma_combinada' => $suma_combinada,
@@ -5800,8 +5815,25 @@ class RecalificacionPCLController extends Controller
                 'Bandera_boton_guardar_dictamen' => 'boton_dictamen',                               
 
             );
+
+            return json_decode(json_encode($mensajes, true));
+
+        } else if ($bandera_dictamen_pericial == 'bandera_Pcl_rango_monto'){
+
+            $datos_dictamenPericial =[                
+                'Porcentaje_pcl' => $porcentaje_pcl,
+                'Rango_pcl' => $rango_pcl,
+                'Monto_indemnizacion' => $monto_inde,                
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+    
+            sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial); 
+            
+            // return 'Se actualizo porcentaje pcl: '.$porcentaje_pcl.', rango: '.$rango_pcl.' y monto: '.$monto_inde.' de la Asignacion: '.$Id_Asignacion_Dcreto;
+
         }
-        return json_decode(json_encode($mensajes, true));
     }
 
     // Generar PDF del Dictamen de PCL 1507

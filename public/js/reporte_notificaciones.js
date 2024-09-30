@@ -1,6 +1,37 @@
 $(document).ready(function () {
+
+    // Inicializacion de select estado_general_calificacion
+    $(".estado_general_calificacion").select2({
+        allowClear: false
+    });
     // captura token
     var token = $('input[name=_token]').val();
+
+    // Llenado del selector estado_general_calificacion
+
+    let datos_lista_estado_general_calificacion = {
+        '_token': token,
+        'parametro': "lista_estado_general_calificacion"
+    };    
+    $.ajax({
+        type:'POST',
+        url:'/cargueListadoSelectorReporteNoti',
+        data:datos_lista_estado_general_calificacion,
+        success:function (data) {
+            let estado_noti_califi = Object.keys(data);
+            for (let i = 0; i < estado_noti_califi.length; i++) {
+                let idParametro = data[estado_noti_califi[i]]["Id_Parametro"];
+                let nombreParametro = data[estado_noti_califi[i]]["Nombre_parametro"];
+                // Verifica si el Id_Parametro es 359 (Pendiente para dejarlo selected)
+                let selected = idParametro == 359 ? 'selected' : ''; 
+                $('#estado_general_calificacion').append('<option value="' + idParametro + '" ' + selected + '>' + nombreParametro + '</option>');
+            }
+        }
+    });
+
+    setTimeout(() => {
+        $("#alerta_cargue_correspondencia").addClass('d-none');
+    }, 5000);
 
     // Función para obtener la fecha actual
     function obtenerFechaActual() {
@@ -47,7 +78,7 @@ $(document).ready(function () {
                                                  
                     ],
                     exportOptions: {
-                        columns: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
+                        columns: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
                     }
                 }
             ]
@@ -72,13 +103,17 @@ $(document).ready(function () {
 
     /* Envío de información del formulario */
     $('#form_consulta_reporte_notificaciones').submit(function(e){
-        e.preventDefault();
-
+        e.preventDefault();        
+        $('#btn_generar_reporte').prop('disabled', true);
         /* Captura de variables del formulario */
         var fecha_desde = $('#fecha_desde').val();
         var fecha_hasta = $('#fecha_hasta').val();
+        // variables NO Obligatorias
+        var estado_general_calificacion = $('#estado_general_calificacion').val();
+        var numero_orden = $('#numero_orden').val();
 
-        llenar_informacion_reporte_notificaciones(listado_reporte_notificaciones, fecha_desde, fecha_hasta, token);
+
+        llenar_informacion_reporte_notificaciones(listado_reporte_notificaciones, fecha_desde, fecha_hasta, estado_general_calificacion, numero_orden, token);
     })
 
     /* Funcionalidad para descargar el reporte de excel */
@@ -103,12 +138,17 @@ $(document).ready(function () {
             /* Captura de variables del formulario */
             var fecha_desde = $('#fecha_desde').val();
             var fecha_hasta = $('#fecha_hasta').val();
+            // variables NO Obligatorias
+            var estado_general_calificacion = $('#estado_general_calificacion').val();
+            var numero_orden = $('#numero_orden').val();
     
             var datos_generar_zip_reporte_notifi = {
                 '_token': token,
                 'fecha_desde': fecha_desde,
                 'fecha_hasta': fecha_hasta,
-                'nro_orden': $('#nro_orden').val()
+                'nro_orden': $('#nro_orden').val(),
+                'estado_general_calificacion': estado_general_calificacion,
+                'numero_orden': numero_orden
             };
     
     
@@ -194,11 +234,6 @@ function renderizarRegistros(data, inicio, fin, reporteNotificacionesTable) {
 
         var datos = [
             data[a].Cons,
-            data[a].Id_Correspondencia,
-            data[a].Id_comunicado,
-            data[a].Id_Asignacion,
-            data[a].Id_proceso,
-            data[a].Id_servicio,
             data[a].ID_evento,
             data[a].F_comunicado,
             data[a].N_radicado,
@@ -206,24 +241,22 @@ function renderizarRegistros(data, inicio, fin, reporteNotificacionesTable) {
             data[a].Carpeta_impresion,
             data[a].Observaciones,
             data[a].N_identificacion,
-            data[a].Destinatario,
+            data[a].Tipo_destinatario,
             data[a].Nombre_destinatario,
             data[a].Direccion_destinatario,
             data[a].Telefono_destinatario,
-            data[a].Ciudad,
-            data[a].Departamento,
+            data[a].Ciudad_departamento,            
             data[a].Email_destinatario,
-            data[a].Proceso,
-            data[a].Servicio,
-            data[a].Accion,
+            data[a].Proceso_servicio,           
+            data[a].Ultima_accion,
             data[a].Estado,
-            data[a].N_orden,
-            data[a].Tipo_destinatario,
+            data[a].N_de_orden,
+            data[a].Id_destinatario,
+            data[a].Tipo_correspondencia,
             data[a].N_guia,
             data[a].Folios,
             data[a].F_envio,
-            data[a].F_notificacion,
-            data[a].Estado_correspondencia
+            data[a].F_notificacion
         ];
         
         reporteNotificacionesTable.row.add(datos).draw(false).node();
@@ -231,11 +264,13 @@ function renderizarRegistros(data, inicio, fin, reporteNotificacionesTable) {
     }
 }
 
-function llenar_informacion_reporte_notificaciones(reporteNotificacionesTable, fecha_desde, fecha_hasta, token){
+function llenar_informacion_reporte_notificaciones(reporteNotificacionesTable, fecha_desde, fecha_hasta, estado_general_calificacion, numero_orden, token){
     var datos_consulta_reporte_notificaciones = {
         '_token': token,
         'fecha_desde': fecha_desde,
         'fecha_hasta': fecha_hasta,
+        'estado_general_calificacion' :estado_general_calificacion, 
+        'numero_orden' :numero_orden
     };
     $.ajax({
         type:'POST',
@@ -256,65 +291,141 @@ function llenar_informacion_reporte_notificaciones(reporteNotificacionesTable, f
                 $('#fecha_desde').val('');
                 $('#fecha_hasta').val('');
                 $('#div_info_numero_registros').addClass('d-none');
-                $('#botones_reporte_notificaciones').addClass('d-none');
-
+                $('#botones_reporte_notificaciones').addClass('d-none');                
             }else{
 
-                // Mostrando mensajes
-                $('.resultado_validacion').removeClass('d-none');
-                $('.resultado_validacion').addClass('alert-info');
-                var string_texto = '<span>Se encontraron <b>'+data.reporte.length+'</b> registros, esto tardará un tiempo en cargar los resultados. Por favor espere.</span>';
-                $('#llenar_mensaje_validacion').append(string_texto);
-
-                setTimeout(() => {
-                    
+                if (data.parametro == "Numero_orden_NoVigente") {
                     // Ocultando el label de conteo de registros
                     $('#div_info_numero_registros').addClass('d-none');
                     $("#total_registros_reporte_notificaciones").empty();
                     // Se oculta los botones para descarga del excel y el .zip
                     $('#botones_reporte_notificaciones').addClass('d-none');
-
-                    // seteamos el input de nro de orden
-                    $('#nro_orden').val(data.n_orden);
-    
-                    // Creacion del contador para añadirlo a los registros
-                    for (let i = 0; i < data.reporte.length; i++) {
-                        data.reporte[i]['Cons'] = i+1;                        
-                    }
-    
-                    // Vaciado del datatable
-                    reporteNotificacionesTable.clear();
-    
-                    // Inserción del contenido cada 100 registros
-                    var inicio = 0;
-                    var fin = Math.min(100, data.reporte.length);
-                    function renderizarSiguienteBloque() {
-                        if (inicio < data.reporte.length) {
-                            renderizarRegistros(data.reporte, inicio, fin, reporteNotificacionesTable);
-                            inicio = fin;
-                            fin += Math.min(fin + 100, data.reporte.length) - fin;
+                    // Mostrando mensajes
+                    $('.resultado_validacion').removeClass('d-none');
+                    $('.resultado_validacion').addClass('alert-danger');
+                    $('#llenar_mensaje_validacion').append(data.mensaje);
+                    setTimeout(() => {
+                        $('.resultado_validacion').addClass('d-none');
+                        $('.resultado_validacion').removeClass('alert-danger');
+                        $('#llenar_mensaje_validacion').empty();
+                        $(document).ready(function() {
+                            $('#btn_generar_reporte').prop('disabled', false);
+                        });
+                    }, 4000);                
+                } 
+                else if (data.parametro == "Numero_orden_NoExiste"){
+                    // Ocultando el label de conteo de registros
+                    $('#div_info_numero_registros').addClass('d-none');
+                    $("#total_registros_reporte_notificaciones").empty();
+                    // Se oculta los botones para descarga del excel y el .zip
+                    $('#botones_reporte_notificaciones').addClass('d-none');
+                    // Mostrando mensajes
+                    $('.resultado_validacion').removeClass('d-none');
+                    $('.resultado_validacion').addClass('alert-danger');
+                    $('#llenar_mensaje_validacion').append(data.mensaje);
+                    setTimeout(() => {
+                        $('.resultado_validacion').addClass('d-none');
+                        $('.resultado_validacion').removeClass('alert-danger');
+                        $('#llenar_mensaje_validacion').empty();
+                        $(document).ready(function() {
+                            $('#btn_generar_reporte').prop('disabled', false);
+                        });
+                    }, 4000);  
+                }
+                else if (data.parametro == "falta_numero_orden_DB"){
+                    // Mostrando mensajes
+                    $('.resultado_validacion').removeClass('d-none');
+                    $('.resultado_validacion').addClass('alert-danger');
+                    $('#llenar_mensaje_validacion').append(data.mensaje);
+                    setTimeout(() => {
+                        $('.resultado_validacion').addClass('d-none');
+                        $('.resultado_validacion').removeClass('alert-danger');
+                        $('#llenar_mensaje_validacion').empty();
+                        $(document).ready(function() {
+                            $('#btn_generar_reporte').prop('disabled', false);
+                        });
+                    }, 4000);  
+                }
+                else {
+                    // Mostrando mensajes
+                    $('.resultado_validacion').removeClass('d-none');
+                    $('.resultado_validacion').addClass('alert-info');                                        
+                    
+                    if (data.reporte.length == 0) {
+                        var string_texto = '<span>Se encontraron <b>'+data.reporte.length+'</b> registros, con este numero de orden, vuelve a consultar.</span>';
+                        $('#llenar_mensaje_validacion').append(string_texto);
+                        // Ocultando el label de conteo de registros
+                        $('#div_info_numero_registros').addClass('d-none');
+                        $("#total_registros_reporte_notificaciones").empty();
+                        // Se oculta los botones para descarga del excel y el .zip
+                        $('#botones_reporte_notificaciones').addClass('d-none');
+                        setTimeout(() => {
+                            $('.resultado_validacion').addClass('d-none');
+                            $('.resultado_validacion').removeClass('alert-info');
+                            $('#llenar_mensaje_validacion').empty();
+                            $(document).ready(function() {
+                                $('#btn_generar_reporte').prop('disabled', false);
+                            });
+                        }, 4000);
+                    } else {
+                        var string_texto = '<span>Se encontraron <b>'+data.reporte.length+'</b> registros, esto tardará un tiempo en cargar los resultados. Por favor espere.</span>';
+                        $('#llenar_mensaje_validacion').append(string_texto);
+                        setTimeout(() => {
                             
-                            if (inicio >= data.reporte.length) {
-                                // LLenado del label de conteo de registros
-                                $('#div_info_numero_registros').removeClass('d-none');
-                                $("#total_registros_reporte_notificaciones").empty();
-                                $("#total_registros_reporte_notificaciones").append(data.reporte.length);
-                                // Se muestra los botones para descarga del excel y el .zip
-                                $('#botones_reporte_notificaciones').removeClass('d-none');
-    
-                                // ocultando mensaje
-                                $('.resultado_validacion').addClass('d-none');
-                                $('.resultado_validacion').removeClass('alert-info');
-                                $('#llenar_mensaje_validacion').empty();
-                            } else {
-                                setTimeout(renderizarSiguienteBloque, 2000); // Pausa de 2 segundos
-                            }
-                            
-                        }
-                    }
+                            // Ocultando el label de conteo de registros
+                            $('#div_info_numero_registros').addClass('d-none');
+                            $("#total_registros_reporte_notificaciones").empty();
+                            // Se oculta los botones para descarga del excel y el .zip
+                            $('#botones_reporte_notificaciones').addClass('d-none');
         
-                    renderizarSiguienteBloque();
-                }, 3500);
+                            // seteamos el input de nro de orden
+                            $('#nro_orden').val(data.n_orden);
+            
+                            // Creacion del contador para añadirlo a los registros
+                            for (let i = 0; i < data.reporte.length; i++) {
+                                data.reporte[i]['Cons'] = i+1;                        
+                            }
+            
+                            // Vaciado del datatable
+                            reporteNotificacionesTable.clear();
+            
+                            // Inserción del contenido cada 100 registros
+                            var inicio = 0;
+                            var fin = Math.min(100, data.reporte.length);
+                            function renderizarSiguienteBloque() {
+                                if (inicio < data.reporte.length) {
+                                    renderizarRegistros(data.reporte, inicio, fin, reporteNotificacionesTable);
+                                    inicio = fin;
+                                    fin += Math.min(fin + 100, data.reporte.length) - fin;
+                                    
+                                    if (inicio >= data.reporte.length) {
+                                        // LLenado del label de conteo de registros
+                                        $('#div_info_numero_registros').removeClass('d-none');
+                                        $("#total_registros_reporte_notificaciones").empty();
+                                        $("#total_registros_reporte_notificaciones").append(data.reporte.length);
+                                        // Se muestra los botones para descarga del excel y el .zip
+                                        $('#botones_reporte_notificaciones').removeClass('d-none');
+            
+                                        // ocultando mensaje
+                                        $('.resultado_validacion').addClass('d-none');
+                                        $('.resultado_validacion').removeClass('alert-info');
+                                        $('#llenar_mensaje_validacion').empty();
+                                        $(document).ready(function() {
+                                            $('#btn_generar_reporte').prop('disabled', false);
+                                        });
+                                    } else {
+                                        setTimeout(renderizarSiguienteBloque, 2000); // Pausa de 2 segundos
+                                    }
+                                    
+                                }
+                            }
+                
+                            renderizarSiguienteBloque();                    
+                        }, 3500);                        
+                    }    
+                    
+                }
+
                 
             }
         }

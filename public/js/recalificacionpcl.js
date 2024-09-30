@@ -3733,7 +3733,38 @@ $(document).ready(function(){
             // }else if(porcentajePcl < 50){
             //     $('#div_formatoe').removeClass('d-none');   
             // }
-        }  
+        }
+        // validacion para mantener actualizado el porcentaje pcl, rango y monto        
+        var ActualizarDecreto = $('#ActualizarDecreto');
+
+        if (ActualizarDecreto.length > 0) {
+            var Decreto_pericial = $('#decreto_califi').val();
+            var Id_EventoDecreto = $('#Id_Evento_decreto').val();
+            var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
+            var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
+            var porcentaje_pcl = $('#porcentaje_pcl').val();
+            var rango_pcl = $('#rango_pcl').val();
+            var monto_inde = $('#monto_inde').val();
+            var bandera_Pcl_rango_monto = 'bandera_Pcl_rango_monto';
+            var datos_dictamenPericialPcl_rango_monto={
+                '_token': token,            
+                'Decreto_pericial':Decreto_pericial,
+                'Id_EventoDecreto':Id_EventoDecreto,
+                'Id_ProcesoDecreto':Id_ProcesoDecreto,
+                'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,            
+                'porcentaje_pcl':porcentaje_pcl,
+                'rango_pcl':rango_pcl,
+                'monto_inde':monto_inde,            
+                'bandera_dictamen_pericial' :bandera_Pcl_rango_monto,
+            }
+                   
+            $.ajax({
+                type: 'POST',
+                url:'/guardardictamenesPericialRe',
+                data: datos_dictamenPericialPcl_rango_monto,
+            });
+
+        }
 
         var tercerapersona = $("#requiere_persona");
         var tomadecisiones = $("#requiere_decisiones_persona");
