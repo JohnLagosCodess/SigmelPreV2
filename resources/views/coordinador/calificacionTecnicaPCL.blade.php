@@ -6900,22 +6900,11 @@
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group">
-                                            <label for="tipo_evento">Tipo de evento<span style="color: red;">(*)</span></label>
-                                            @if (!empty($array_dictamen_pericial[0]->Tipo_evento))                                                
-                                                <select class="tipo_evento custom-select" name="tipo_evento" id="tipo_evento" style="width: 100%;" required>
-                                                    <option value="{{$array_dictamen_pericial[0]->Tipo_evento}}" selected>{{$array_dictamen_pericial[0]->Nombre_evento}}</option>
-                                                    <option value="">Seleccione una opción</option>
-                                                </select>
-                                            @elseif(!empty($array_tipo_fecha_evento[0]->Tipo_evento))                                                
+                                            <label for="tipo_evento">Tipo de evento<span style="color: red;">(*)</span></label>                                           
                                                 <select class="tipo_evento custom-select" name="tipo_evento" id="tipo_evento" style="width: 100%;" required>
                                                     <option value="{{$array_tipo_fecha_evento[0]->Tipo_evento}}" selected>{{$array_tipo_fecha_evento[0]->Nombre_evento}}</option>
                                                     <option value="">Seleccione una opción</option>
                                                 </select>
-                                            @else
-                                                <select class="tipo_evento custom-select" name="tipo_evento" id="tipo_evento" style="width: 100%;" required>
-                                                    <option value="">Seleccione una opción</option>
-                                                </select>                                                
-                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-3">
