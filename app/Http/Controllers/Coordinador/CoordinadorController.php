@@ -1703,6 +1703,21 @@ class CoordinadorController extends Controller
         }
     }
 
+    public function getInformacionPorIdDestinatario(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        $id_destinatario = $request->id_destinatario;
+        $registros_correspondencias = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')
+            ->select('Tipo_correspondencia')
+            ->where([['Id_destinatario',$id_destinatario]])
+            ->get();
+        return response()->json($registros_correspondencias);
+    }
+
     public function guardarInformacionCorrespondencia(Request $request){
         if (!Auth::check()) {
             return redirect('/');

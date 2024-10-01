@@ -320,6 +320,8 @@ Route::post('/getInfoComunicado', [CoordinadorController::class, 'getInfoComunic
 Route::post('/getInformacionCorrespondencia', [CoordinadorController::class, 'getInformacionCorrespondencia']);
 // Acción: Guardar la información de la correspondencia PBS014
 Route::post('/guardarInformacionCorrespondencia', [CoordinadorController::class, 'guardarInformacionCorrespondencia']);
+// Acción: Consultar la información de correspondencia en base a un id de destinatario
+Route::post('/getInfoCorrespByIdDest', [CoordinadorController::class, 'getInformacionPorIdDestinatario']);
 
 // 14/07/2023
 // Vista: Módulo Calificación PCL Coordinador
@@ -862,6 +864,8 @@ Route::post('/generarZipReporteNotificaciones', [ReporteNotificacionesController
 Route::post('/eliminarZipReporteNotificaciones', [ReporteNotificacionesController::class, 'eliminarZipReporteNotificaciones']);
 // Acción: Cargue de correspondecias o notificaciones
 Route::post('/Sigmel/CargueCorrespondencia', [ReporteNotificacionesController::class, 'cargueCorrespondencias'])->name('subirCorrespondencia');
+// Acción: Llenado de selectores Reportes Notificaciones
+Route::post('/cargueListadoSelectorReporteNoti', [ReporteNotificacionesController::class, 'cargueListadoSelectoresReporteNoti']);
 
 
 // Creación Vista Módulo reporte facturación PCL

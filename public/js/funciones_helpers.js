@@ -446,12 +446,34 @@ $(document).ready(function () {
         if (!Number.isInteger(Number(value))) {
           $(input).val("");
         }
-    }    
+    }
+    
+    // Obtener el botón
+    // let mybutton = document.getElementById("id_subir_scroll");
+
+    // // Mostrar el botón cuando el usuario hace scroll hacia abajo 20px desde la parte superior
+    // window.onscroll = function() {Subirscroll()};
+
+    // function Subirscroll() {
+    //     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    //         mybutton.style.display = "block";
+    //     } else {
+    //         mybutton.style.display = "none";
+    //     }
+    // }
+
+    // // Cuando el usuario hace clic en el botón, se desplaza hacia la parte superior de la página
+    // mybutton.onclick = function() {
+    //     window.scrollTo({
+    //         top: 0,
+    //         behavior: 'smooth' // Scroll suave
+    //     });
+    // }
     
     // $(document).on("input", '[id^="deficienciadecreto3_"]', function() {
     //     NumerosEnteros(this);
-    // });   
-    
+    // });
+            
     function Maximo2Decimales(idinput){
         $('#'+idinput).on('input', function(){
             var inputValue = $(this).val();
@@ -844,24 +866,75 @@ function ubicacionEvento() {
 * @returns string | null
 */
 function retornarIdDestinatario(ids_destinatario, destinatario){
-        console.log('DESTINATARIO : ', destinatario);
-        //Se usa split para armar un array con todos los ids de destinatario
-        let ids = ids_destinatario.split(',');
-        //Se validan los prefijos en base al destinatario
-        const prefijos = {
-            'Afiliado': 'AFI',
-            'Empleador': 'EMP',
-            'eps': 'EPS',
-            'afp': 'AFP',
-            'arl': 'ARL',
-            'afp_conocimiento': 'FPC',
-            'jrci': 'JRC',
-            'jnci': 'JNC'
-        };
-        // Se busca el prefijo con el que deberia venir el ID en base al destinatario
-        let Id_Destinatario = ids.find(finder => finder !== '' && finder.startsWith(prefijos[destinatario]));
-        
-        return Id_Destinatario && Id_Destinatario !== '' ? Id_Destinatario.split('_')[1] : null
+        if(ids_destinatario != null && ids_destinatario != undefined){
+            //Se usa split para armar un array con todos los ids de destinatario
+            let ids = ids_destinatario.split(',');
+            //Se validan los prefijos en base al destinatario
+            const prefijos = {
+                'Afiliado': 'AFI',
+                'Empleador': 'EMP',
+                'eps': 'EPS',
+                'afp': 'AFP',
+                'arl': 'ARL',
+                'afp_conocimiento': 'FPC',
+                'jrci': 'JRC',
+                'jnci': 'JNC'
+            };
+            // Se busca el prefijo con el que deberia venir el ID en base al destinatario
+            let Id_Destinatario = ids.find(finder => finder !== '' && finder.startsWith(prefijos[destinatario]));
+
+            return Id_Destinatario && Id_Destinatario !== '' ? Id_Destinatario.split('_')[1] : null
+        }
+    }
+
+    /*
+        Muestra un spinner en el centro de la pantalla para indicarle al usuario que x recurso se esta cargando
+    */
+    function showLoading() {
+        $('#loading').addClass('loading');
+        $('#loading-content').addClass('loading-content');
+    }
+    /*
+        Esconde el spinner para indicarle al usuario que x recurso fue cargado
+    */
+    function hideLoading() {
+        $('#loading').removeClass('loading');
+        $('#loading-content').removeClass('loading-content');  
+    }
+    /*
+        Consulta en la base de datos si un registro de correspondencia fue guardado con estado distinto a notificado
+        si encuentra el registro devuelve el tipo de correspondencia para que el sistema cargue la información desde la tabla de correspondencias y no
+        lo haga desde la de comunicados.
+    */
+    function consultarRegistroPorIdDestinatario(id_destinatario){
+        return new Promise((resolve, reject) => {
+            let datos = {
+                '_token': $('input[name=_token]').val(),
+                'id_destinatario': id_destinatario
+            };
+    
+            $.ajax({
+                url: '/getInfoCorrespByIdDest',
+                type: 'POST',
+                data: datos,
+                beforeSend: function () {
+                    showLoading();
+                },
+                success: function (response) {
+                    if (response.length > 0) {
+                        resolve(response[0]['Tipo_correspondencia']);
+                    } else {
+                        resolve(null);
+                    }
+                },
+                error: function (error) {
+                    reject(error);
+                },
+                complete: function () {
+                    hideLoading();
+                }
+            });
+        });
 }
 
 /**

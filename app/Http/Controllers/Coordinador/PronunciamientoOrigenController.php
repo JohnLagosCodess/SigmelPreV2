@@ -31,6 +31,7 @@ use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Shared\Converter;
 use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
 use PhpOffice\PhpWord\Style\Image;
@@ -1064,12 +1065,14 @@ class PronunciamientoOrigenController extends Controller
                 $email_destinatario = $datos_entidad[0]->Email;
                 $telefono_destinatario = $datos_entidad[0]->Telefonos;
                 $ciudad_destinatario = $datos_entidad[0]->Nombre_ciudad;
+                $departamento_destinatario = $datos_entidad[0]->Nombre_departamento;
             } else {
                 $nombre_destinatario = "";
                 $direccion_destinatario = "";
                 $email_destinatario = "";
                 $telefono_destinatario = "";
                 $ciudad_destinatario = "";
+                $departamento_destinatario = "";
             }
         }else{
             /* Si es No, la info del destinatario principal se saca dependiendo de las
@@ -1089,7 +1092,8 @@ class PronunciamientoOrigenController extends Controller
                 $datos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
                 ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
-                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Emails as Email','sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Departamento', '=', 'sldm2.Id_departamento')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Emails as Email','sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
                 ->where([['siae.ID_evento','=', $id_evento]])
                 ->get();
 
@@ -1101,12 +1105,15 @@ class PronunciamientoOrigenController extends Controller
                     $email_destinatario = $array_datos[0]["Email"];
                     $telefono_destinatario = $array_datos[0]["Telefonos"];
                     $ciudad_destinatario = $array_datos[0]["Nombre_ciudad"];
+                    $departamento_destinatario = $array_datos[0]["Nombre_departamento"];
+                    
                 } else {
                     $nombre_destinatario = "";
                     $direccion_destinatario = "";
                     $email_destinatario = "";
                     $telefono_destinatario = "";
                     $ciudad_destinatario = "";
+                    $departamento_destinatario = "";
                 }
             } else {
                 $nombre_destinatario = $nombre_entidad;
@@ -1114,6 +1121,7 @@ class PronunciamientoOrigenController extends Controller
                 $email_destinatario = $email_entidad;
                 $telefono_destinatario = $telefono_entidad;
                 $ciudad_destinatario = $ciudad_entidad;
+                $departamento_destinatario = $departamento_entidad;
             }
         }
 
@@ -1432,6 +1440,7 @@ class PronunciamientoOrigenController extends Controller
                 'email_destinatario' => $email_destinatario,
                 'telefono_destinatario' => $telefono_destinatario,
                 'ciudad_destinatario' => $ciudad_destinatario,
+                'departamento_destinatario' => $departamento_destinatario,
                 'nombre_entidad_calificadora' => $nombre_entidad,
                 'Firma_cliente' => $Firma_cliente,
                 'Agregar_copia' => $Agregar_copias,
@@ -1492,23 +1501,23 @@ class PronunciamientoOrigenController extends Controller
             
             //Marca de agua
             $styleVigilado = [
-                'width' => 25,           
-                'height' => 200,            
-                'marginTop' => 0,           
+                'width' => 20,           
+                'height' => 100,  
+                'marginTop' => 600,        
                 'marginLeft' => -50,       
                 'wrappingStyle' => 'behind',   // Imagen detrás del texto
                 'positioning' => Image::POSITION_RELATIVE, 
                 'posVerticalRel' => 'page', 
                 'posHorizontal' => Image::POSITION_ABSOLUTE,
-                'posVertical' => Image::POSITION_VERTICAL_CENTER, // Centrado verticalmente en la página
+                'posVertical' => Image::POSITION_ABSOLUTE, // Centrado verticalmente en la página
             ];
 
             $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
 
             $phpWord = new PhpWord();
             // Configuramos la fuente y el tamaño de letra para todo el documento
-            $phpWord->setDefaultFontName('Arial');
-            $phpWord->setDefaultFontSize(12);
+            $phpWord->setDefaultFontName('Verdana');
+            $phpWord->setDefaultFontSize(10);
             // Configuramos la alineación justificada para todo el documento
             $phpWord->setDefaultParagraphStyle(
                 array('align' => 'both', 'spaceAfter' => 0, 'spaceBefore' => 0)
@@ -1517,24 +1526,36 @@ class PronunciamientoOrigenController extends Controller
             // Configurar el idioma del documento a español
             $phpWord->getSettings()->setThemeFontLang(new \PhpOffice\PhpWord\Style\Language('es-ES'));
     
+
+            //Section header
+            $estilosPaginaWord = array(
+                'headerHeight'=> 0,
+                'footerHeight'=> Converter::inchToTwip(.2),
+                'marginLeft'  => Converter::inchToTwip(1),
+                'marginRight' => Converter::inchToTwip(1),
+                'marginTop'   => 0,
+                'marginBottom'=> 0,
+            );
+            $section = $phpWord->addSection($estilosPaginaWord);
             // Configuramos las margenes del documento (estrechas)
-            $section = $phpWord->addSection();
-            $section->setMarginLeft(0.5 * 72);
-            $section->setMarginRight(0.5 * 72);
-            $section->setMarginTop(0.5 * 72);
-            $section->setMarginBottom(0.5 * 72);
+            // $section = $phpWord->addSection();
+            // $section->setMarginLeft(0.5 * 72);
+            // $section->setMarginRight(0.5 * 72);
+            // $section->setMarginTop(0.5 * 72);
+            // $section->setMarginBottom(0.5 * 72);
 
             // Creación de Header
             $header = $section->addHeader();
             $header->addWatermark($pathVigilado, $styleVigilado);
             $imagenPath_header = public_path($ruta_logo);
-            $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
-            $esti = array('size' => 11, 'font' => 'Arial');
+            $header->addImage($imagenPath_header, array('width' => 110, 'height' => 30, 'align' => 'right'));
             $encabezado = $header->addTextRun(['alignment' => 'right']);
-            $encabezado->addText('Página ');
-            $encabezado->addField('PAGE');
-            $encabezado->addText(' de ');
-            $encabezado->addField('NUMPAGES');
+            //FontStyle del paginado
+            $fontStyle = ['name' => 'Calibri', 'size' => 8];
+            $encabezado->addText('Página ', $fontStyle);
+            $encabezado->addField('PAGE',[],[],null,$fontStyle);
+            $encabezado->addText(' de ',$fontStyle);
+            $encabezado->addField('NUMPAGES',[],[],null,$fontStyle);
             $header->addTextBreak();
                       
             // Creación de Contenido
@@ -1557,9 +1578,14 @@ class PronunciamientoOrigenController extends Controller
             $textRun1->addTextBreak();
             $textRun1->addText($direccion_destinatario);
             $textRun1->addTextBreak();
+            $textRun1->addText('Tel: ');
             $textRun1->addText($telefono_destinatario);
             $textRun1->addTextBreak();
-            $textRun1->addText($ciudad_destinatario);
+            if($ciudad_destinatario !== 'Bogota D.C.'){
+                $textRun1->addText($departamento_destinatario.' - '.$ciudad_destinatario);
+            }else{
+                $textRun1->addText($ciudad_destinatario);
+            }
 
             $cell2 = $table->addCell(4000);
 
@@ -1586,7 +1612,7 @@ class PronunciamientoOrigenController extends Controller
 
             if (preg_match($patron1_asunto, $asunto) && preg_match($patron2_asunto, $asunto)) {
                 $asunto_modificado = str_replace('{{$NRO_DICTAMEN_PRI_CALI}}', $nro_dictamen_pri_cali, $asunto);
-                $asunto_modificado = str_replace('{{$FECHA_DICTAMEN_PRI_CALI}}', $fecha_dictamen_pri_cali, $asunto_modificado);
+                $asunto_modificado = str_replace('{{$FECHA_DICTAMEN_PRI_CALI}}', date("d/m/Y", strtotime($fecha_dictamen_pri_cali)), $asunto_modificado);
 
                 $asunto = $asunto_modificado;
             }else{
@@ -1602,14 +1628,14 @@ class PronunciamientoOrigenController extends Controller
             $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
             $asuntoyafiliado->addText($asunto, array('bold' => true));
             $asuntoyafiliado->addTextBreak();
-            $asuntoyafiliado->addText('Paciente: ', array('bold' => true));
-            $asuntoyafiliado->addText(strtoupper($nombre_afiliado)." ".$tipo_identificacion." ".$num_identificacion);
-            $asuntoyafiliado->addTextBreak();
-            $asuntoyafiliado->addText('Ramo: ', array('bold' => true));
-            $asuntoyafiliado->addText($ramo);
-            $asuntoyafiliado->addTextBreak();
-            $asuntoyafiliado->addText('Siniestro: ', array('bold' => true));
-            $asuntoyafiliado->addText($N_siniestro);
+            $asuntoyafiliado->addText('PACIENTE: ', array('bold' => true));
+            $asuntoyafiliado->addText(strtoupper($nombre_afiliado)." ".$tipo_identificacion." ".$num_identificacion,array('bold' => true));
+            // $asuntoyafiliado->addTextBreak();
+            // $asuntoyafiliado->addText('Ramo: ', array('bold' => true));
+            // $asuntoyafiliado->addText($ramo);
+            // $asuntoyafiliado->addTextBreak();
+            // $asuntoyafiliado->addText('Siniestro: ', array('bold' => true));
+            // $asuntoyafiliado->addText($N_siniestro);
             $section->addTextBreak();
 
             // $section->addText('Asunto: '.$asunto, array('bold' => true));
@@ -1738,9 +1764,9 @@ class PronunciamientoOrigenController extends Controller
             Html::addHtml($section, $htmltabla2, false, true);
             $section->addTextBreak();
             // Configuramos el footer
-            $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$N_siniestro;
+            // $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$N_siniestro;
             $footer = $section->addFooter();
-            $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
+            // $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
             if($ruta_logo_footer != null){
                 $imagenPath_footer = public_path($ruta_logo_footer);
                 $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));

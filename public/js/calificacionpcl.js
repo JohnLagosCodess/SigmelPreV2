@@ -440,6 +440,19 @@ $(document).ready(function(){
                 $('#enviar').append(`<option value="${data.bd_destino}" selected>${data.Nombre_proceso}</option>`);
             }
         });
+
+        /* 
+            Seteo fecha de de de cierre dependiendo de las siguientes acciones:
+            REPORTAR NO PROCEDE CALIFICACIÓN: id 173
+            REPORTAR NO RECALIFICACIÓN: id 149
+            NO RATIFICAR PENSIÓN - NOTIFICAR FORMATO E: id 154
+        */
+
+        if($(this).val() == 173 || $(this).val() == 149 || $(this).val() == 154) {
+            var fecha_con_hora = $("#fecha_accion").val();
+            var fecha_sin_hora = fecha_con_hora.substring(0, 10);
+            $("#fecha_cierre").val(fecha_sin_hora);
+        }
     });
 
     //Listado de los tipos de documento que pueden subir
@@ -1628,7 +1641,7 @@ $(document).ready(function(){
     }
     
     let correspondencia_array = [];
-    $("#listado_agregar_comunicados").on('click', "#CorrespondenciaNotificacion", function() {
+    $("#listado_agregar_comunicados").on('click', "#CorrespondenciaNotificacion", async function() {
         //Reestablecer modal
         cleanModalCorrespondencia();
         //Cargar selectores modal con Pendiente como valor por defecto
@@ -1647,6 +1660,8 @@ $(document).ready(function(){
         let anexos = $(id).data('anexos');
         let correspondencia = $(id).data('correspondencia');
         let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
+        //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
+        let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
         //Información superior del modal 
         $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
         $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
@@ -1695,7 +1710,7 @@ $(document).ready(function(){
         $("#modalCorrespondencia #id_asignacion").val(id_asignacion);
         $("#modalCorrespondencia #id_proceso").val(id_proceso);
         $("#modalCorrespondencia #id_comunicado").val(idComunicado);
-        if(correspondencia_array?.includes(tipo_correspondencia)){
+        if(correspondencia_array?.includes(tipo_correspondencia) || correspondencias_guardadas === tipo_correspondencia){
             data_comunicado = {
                 _token: token,
                 id_comunicado: idComunicado,

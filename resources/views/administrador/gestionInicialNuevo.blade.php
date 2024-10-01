@@ -777,6 +777,9 @@
                         Creando Evento por favor espere...
                     </button>
                 </div>
+                <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+                    <i class="fas fa-chevron-up"></i>
+                </a>
             </div>
         </form>
         {{-- MODAL PARA MOSTRAR EL LISTADO DE DOCUMETNOS --}}

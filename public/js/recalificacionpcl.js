@@ -747,6 +747,31 @@ $(document).ready(function(){
     var opt_tabla_2 = $("[id^='autosuficiencia_']").is(":checked") ? $("[id^='autosuficiencia_']:checked").val() : 0;
     var opt_tabla_3 = $("[name='edad_cronologica']").is(":checked") ? $("[name='edad_cronologica']:checked").val() : 0;
     var opt_total_laboral30 =  0;
+
+    // Validacion de la edad cronologica del afiliado
+    if ($('#Edad_Menor').length > 0) {
+        let edades_cronologicas = $('#Edad_Menor').val();
+        console.log(edades_cronologicas);
+        console.log(opt_tabla_3);        
+        if (edades_cronologicas) {
+            if (edades_cronologicas == opt_tabla_3) {
+                $('#div_alerta_sirena').addClass('d-none');
+            } else {
+                $('#div_alerta_sirena').removeClass('d-none');            
+            }
+        }
+    } else if ($('#Edad_Mayor').length > 0){
+        let edades_cronologicas = $('#Edad_Mayor').val();
+        console.log(edades_cronologicas);
+        console.log(opt_tabla_3);    
+        if (edades_cronologicas) {
+            if (edades_cronologicas == opt_tabla_3) {
+                $('#div_alerta_sirena').addClass('d-none');
+            } else {
+                $('#div_alerta_sirena').removeClass('d-none');            
+            }
+        }
+    }
     
     $("[name='restricion_rol']").on("change", function(){
         opt_tabla_1 = $(this).val();
@@ -2028,7 +2053,7 @@ $(document).ready(function(){
     }
 
     let correspondencia_array = [];
-    $(document).on('click', "#CorrespondenciaNotificacion", function() {
+    $(document).on('click', "#CorrespondenciaNotificacion", async function() {
         //Reestablecer modal
         cleanModalCorrespondencia();
         //Cargar selectores modal con Pendiente como valor por defecto
@@ -2050,6 +2075,8 @@ $(document).ready(function(){
         let tipo_descarga = $(id).data('tipo_descarga');
 
         let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
+        //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
+        let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
     
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
@@ -2103,7 +2130,7 @@ $(document).ready(function(){
         $("#modalCorrespondencia #id_asignacion").val(id_asignacion);
         $("#modalCorrespondencia #id_proceso").val(id_proceso);
         $("#modalCorrespondencia #id_comunicado").val(idComunicado);
-        if(correspondencia_array.includes(tipo_correspondencia)){
+        if(correspondencia_array.includes(tipo_correspondencia) || correspondencias_guardadas === tipo_correspondencia){
             data_comunicado = {
                 _token: token,
                 id_comunicado: idComunicado,
@@ -3733,7 +3760,38 @@ $(document).ready(function(){
             // }else if(porcentajePcl < 50){
             //     $('#div_formatoe').removeClass('d-none');   
             // }
-        }  
+        }
+        // validacion para mantener actualizado el porcentaje pcl, rango y monto        
+        var ActualizarDecreto = $('#ActualizarDecreto');
+
+        if (ActualizarDecreto.length > 0) {
+            var Decreto_pericial = $('#decreto_califi').val();
+            var Id_EventoDecreto = $('#Id_Evento_decreto').val();
+            var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
+            var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
+            var porcentaje_pcl = $('#porcentaje_pcl').val();
+            var rango_pcl = $('#rango_pcl').val();
+            var monto_inde = $('#monto_inde').val();
+            var bandera_Pcl_rango_monto = 'bandera_Pcl_rango_monto';
+            var datos_dictamenPericialPcl_rango_monto={
+                '_token': token,            
+                'Decreto_pericial':Decreto_pericial,
+                'Id_EventoDecreto':Id_EventoDecreto,
+                'Id_ProcesoDecreto':Id_ProcesoDecreto,
+                'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,            
+                'porcentaje_pcl':porcentaje_pcl,
+                'rango_pcl':rango_pcl,
+                'monto_inde':monto_inde,            
+                'bandera_dictamen_pericial' :bandera_Pcl_rango_monto,
+            }
+                   
+            $.ajax({
+                type: 'POST',
+                url:'/guardardictamenesPericialRe',
+                data: datos_dictamenPericialPcl_rango_monto,
+            });
+
+        }
 
         var tercerapersona = $("#requiere_persona");
         var tomadecisiones = $("#requiere_decisiones_persona");
@@ -4742,6 +4800,7 @@ $(document).ready(function(){
     // Formulario para guardar Dictamen pericial
     $('#form_dictamen_pericial').submit(function (e){
         e.preventDefault();
+        document.querySelector('#GuardrDictamenPericial').disabled=true;
         // Abrir modal para mostrar alerta y retornar al input
         var validarsuma_combinada = $('#suma_combinada').val();
         var validarTotal_Deficiencia50 = $('#Total_Deficiencia50').val();
@@ -4822,7 +4881,7 @@ $(document).ready(function(){
             data: datos_dictamenPericial,
             success: function(response){
                 if (response.parametro == 'insertar_dictamen_pericial') {
-                    document.querySelector('#GuardrDictamenPericial').disabled=true;
+                    // document.querySelector('#GuardrDictamenPericial').disabled=true;
                     $('#div_alerta_dictamen_pericial').removeClass('d-none');
                     $('.alerta_dictamen_pericial').append('<strong>'+response.mensaje+'</strong>'); 
 
