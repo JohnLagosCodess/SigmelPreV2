@@ -524,7 +524,8 @@ class CalificacionPCLController extends Controller
 
         $Accion_realizar = $request->accion;
 
-        if ($Accion_realizar == 52 || $Accion_realizar == 98 || $Accion_realizar == 99) {
+        //if ($Accion_realizar == 52 || $Accion_realizar == 98 || $Accion_realizar == 99) {
+        if ($Accion_realizar == 224) {
             $Fecha_devolucion_comite = $date;
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }else{

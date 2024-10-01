@@ -425,6 +425,8 @@ $(document).ready(function(){
     }
 
     $("#accion").change(function(){
+        
+        
         let datos_ejecutar_parametrica_mod_principal = {
             '_token': token,
             'parametro': "validarSiModPrincipal",
@@ -486,25 +488,38 @@ $(document).ready(function(){
             }
         });
 
-                //Selector enviara, seccion 'Accion a realizar'
-                let datos_bandeja_destino = {
-                    '_token':token,
-                    'parametro':"lista_bandejas_destino",
-                    'Id_proceso' : Id_proceso_actual,
-                    'Id_cliente' : $("#cliente").data('id'),
-                    'Id_servicio': $("#Id_servicio").val(),
-                    'Id_accion': $(this).val(),
-                }
-        
-                $.ajax({
-                    type:'POST',
-                    url:'/selectoresOrigenAtel',
-                    data: datos_bandeja_destino,
-                    success:function (data) {
-                        $('#enviar').empty();
-                        $('#enviar').append(`<option value="${data.bd_destino}" selected>${data.Nombre_proceso}</option>`);
-                    }
-                });
+        //Selector enviara, seccion 'Accion a realizar'
+        let datos_bandeja_destino = {
+            '_token':token,
+            'parametro':"lista_bandejas_destino",
+            'Id_proceso' : Id_proceso_actual,
+            'Id_cliente' : $("#cliente").data('id'),
+            'Id_servicio': $("#Id_servicio").val(),
+            'Id_accion': $(this).val(),
+        }
+
+        $.ajax({
+            type:'POST',
+            url:'/selectoresOrigenAtel',
+            data: datos_bandeja_destino,
+            success:function (data) {
+                $('#enviar').empty();
+                $('#enviar').append(`<option value="${data.bd_destino}" selected>${data.Nombre_proceso}</option>`);
+            }
+        });
+
+        /* 
+            Seteo fecha de de de cierre dependiendo de las siguientes acciones:
+            REPORTAR NO PROCEDE CALIFICACIÓN: id 173
+            REPORTAR NO RECALIFICACIÓN: id 149
+            NO RATIFICAR PENSIÓN - NOTIFICAR FORMATO E: id 154
+        */
+
+        if($(this).val() == 173 || $(this).val() == 149 || $(this).val() == 154) {
+            var fecha_con_hora = $("#fecha_accion").val();
+            var fecha_sin_hora = fecha_con_hora.substring(0, 10);
+            $("#fecha_cierre").val(fecha_sin_hora);
+        }
     });
 
     //Listado de los tipos de documento que pueden subir
@@ -1772,7 +1787,7 @@ $(document).ready(function(){
             var comunicadoNradico = '';
             /** @var select2 Config. del select2 */
             let select2 = [];
-            console.log('ID ROL ',idRol);
+            
             for (let i = 0; i < data.hitorialAgregarComunicado.length; i++) {
                 let estado_correspondencia = {}
                 let estado_notificacion = data.hitorialAgregarComunicado[i].Estado_Notificacion;
