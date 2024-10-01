@@ -36,6 +36,7 @@ return new class extends Migration
             $table->date('F_notificacion')->nullable();;
             $table->integer('Id_Estado_corresp');
             $table->text('Tipo_correspondencia');
+            $table->text('Id_destinatario')->nullable();
             $table->string('Nombre_usuario', 100);
             $table->date('F_registro');
         });

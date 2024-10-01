@@ -1500,9 +1500,9 @@ $(document).ready(function(){
         formData.append('fecha_comunicado2',null);
         formData.append('radicado2',$('#radicado_comunicado_manual').val());
         formData.append('cliente_comunicado2','N/A');
-        formData.append('nombre_afiliado_comunicado2','N/A');
+        formData.append('nombre_afiliado_comunicado2',$('#nombre_afiliado').val());
         formData.append('tipo_documento_comunicado2','N/A');
-        formData.append('identificacion_comunicado2','N/A');
+        formData.append('identificacion_comunicado2',$('#identificacion').val());
         formData.append('destinatario', 'N/A');
         formData.append('nombre_destinatario','N/A');
         formData.append('nic_cc','N/A');
@@ -1595,7 +1595,7 @@ $(document).ready(function(){
                     comunicado_reemplazar = response[0];
                     let nombre_doc = comunicado_reemplazar.Nombre_documento;
                     if(nombre_doc != null && nombre_doc != "null" && comunicado_reemplazar.Tipo_descarga !== 'Manual'){
-                        extensionDoc = `.${ nombre_doc.split('.').pop()}`;
+                        extensionDoc = ['.pdf','.doc','.docx','.xlsx'];//`.${ nombre_doc.split('.').pop()}`;
                         document.getElementById('cargue_comunicados_modal').setAttribute('accept', extensionDoc);
                     }
                     else if(comunicado_reemplazar.Tipo_descarga === 'Manual'){
@@ -1662,7 +1662,7 @@ $(document).ready(function(){
                 }
             });
         }
-        else if(comunicado_reemplazar.Tipo_descarga !== 'Manual' && extensionDoc === extensionDocCargado){
+        else if(comunicado_reemplazar.Tipo_descarga !== 'Manual' && extensionDoc.includes(extensionDocCargado)){
             var formData = new FormData($('form')[0]);
             formData.append('doc_de_reemplazo', archivo);
             formData.append('token', $('input[name=_token]').val());
@@ -3682,6 +3682,22 @@ $(document).ready(function(){
             'f_correspondencia':f_correspondencia,
             'radicado':radicado,
             'decision_dictamen':  decision_dictamen,
+            'id_cliente': $("#id_cliente").val(),
+            'id_servicio': $("#id_servicio").val(),
+            'tipo_identificacion':  $("#tipo_documento").val(),
+            'num_identificacion': $("#identificacion").val(),
+            'id_Jrci_califi_invalidez': $("#id_Jrci_califi_invalidez").val(),
+            'nombre_junta_regional': $("#jrci_califi_invalidez").val(),
+            'nro_dictamen': $("#n_dictamen_jrci_emitido").val(),
+            'f_dictamen_jrci_emitido': $("#f_dictamen_jrci_emitido").val(),
+            'porcentaje_pcl_jrci_emitido': $("#porcentaje_pcl_jrci_emitido").val(),
+            'origen_jrci_emitido': $("#origen_jrci_emitido option:selected").text(),
+            'f_estructuracion_contro_jrci_emitido': $("#f_estructuracion_contro_jrci_emitido").val(),
+            'N_siniestro' : $('#n_siniestro').val(),
+            'cuerpo': $("#cuerpo_comunicado").summernote('code'),
+            'manual_de_califi_jrci_emitido':  $("#manual_de_califi_jrci_emitido option:selected").text(),
+            'sustentacion_concepto_jrci': $("#sustentacion_concepto_jrci").val(),
+            'sustentacion_concepto_jrci1':  $("#sustentacion_concepto_repo_jrci").val(),
             'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar
         }
 
@@ -3739,6 +3755,7 @@ $(document).ready(function(){
         $("#modalCorrespondencia #id_asignacion").val('');
         $("#modalCorrespondencia #id_proceso").val('');
         $("#modalCorrespondencia #id_comunicado").val('');
+        $("#modalCorrespondencia #id_destinatario").val('');
         
     }
     
@@ -3775,7 +3792,7 @@ $(document).ready(function(){
     }
     
     let correspondencia_array = [];
-    $("#tabla_comunicados_juntas").on('click', "#CorrespondenciaNotificacion", function() {
+    $("#tabla_comunicados_juntas").on('click', "#CorrespondenciaNotificacion", async function() {
         //Reestablecer modal
         cleanModalCorrespondencia();
         //Cargar selectores modal con Pendiente como valor por defecto
@@ -3796,7 +3813,9 @@ $(document).ready(function(){
         let correspondencia = $(id).data('correspondencia');
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
-        console.log('Info : ', this)
+        let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
+        //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
+        let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
             $("#btn_guardar_actualizar_correspondencia").remove();
@@ -3832,6 +3851,7 @@ $(document).ready(function(){
             $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
             $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
         }
+        $("#modalCorrespondencia #id_destinatario").val(id_destinatario);
         $("#modalCorrespondencia #id_evento").val($(id).data('id_evento'));
         $("#modalCorrespondencia #enlace_ed_evento").text($(id).data('id_evento'));
        // console.log(tipo_correspondencia);
@@ -3850,7 +3870,7 @@ $(document).ready(function(){
         $("#modalCorrespondencia #id_proceso").val(id_proceso);
         $("#modalCorrespondencia #id_comunicado").val(idComunicado);
 
-        if(correspondencia_array?.includes(tipo_correspondencia)){
+        if(correspondencia_array?.includes(tipo_correspondencia) || correspondencias_guardadas === tipo_correspondencia){
             data_comunicado = {
                 _token: token,
                 id_comunicado: idComunicado,
@@ -4062,6 +4082,7 @@ $(document).ready(function(){
             'id_proceso': $('#modalCorrespondencia #id_proceso').val(),
             'id_evento': $('#modalCorrespondencia #id_evento').val(),
             'id_comunicado': $('#modalCorrespondencia #id_comunicado').val(),
+            'id_destinatario': $('#modalCorrespondencia #id_destinatario').val(),
             'n_radicado': $('#modalCorrespondencia #radicado').val(),
             'n_orden': $('#modalCorrespondencia #n_orden').val(),
             'tipo_destinatario': tipoDestinatario,

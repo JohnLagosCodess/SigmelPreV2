@@ -275,6 +275,9 @@ Route::post('/cargaDocumentosComplementarios', [AdministradorController::class, 
 // Acción: Eliminar documento complementario
 Route::post('/eliminarDocumentoComplementario', [AdministradorController::class, 'eliminarDocumentoComplementario']);
 
+Route::post('/upload', [AdministradorController::class, 'cargarHistorialClinico']);
+
+
 // Acción: Descargar Documentos
 Route::get('/descargar-archivo/{nombreArchivo}/{id_evento}', [AdministradorController::class, 'DescargarDocumentos']);
 Route::post('/descargar-documentos', [AdministradorController::class, 'descargaMasiva']);
@@ -317,6 +320,8 @@ Route::post('/getInfoComunicado', [CoordinadorController::class, 'getInfoComunic
 Route::post('/getInformacionCorrespondencia', [CoordinadorController::class, 'getInformacionCorrespondencia']);
 // Acción: Guardar la información de la correspondencia PBS014
 Route::post('/guardarInformacionCorrespondencia', [CoordinadorController::class, 'guardarInformacionCorrespondencia']);
+// Acción: Consultar la información de correspondencia en base a un id de destinatario
+Route::post('/getInfoCorrespByIdDest', [CoordinadorController::class, 'getInformacionPorIdDestinatario']);
 
 // 14/07/2023
 // Vista: Módulo Calificación PCL Coordinador
@@ -356,6 +361,8 @@ Route::post('/generarPdf', [CalificacionPCLController::class, 'generarPdf'])->na
 Route::post('/consultarHistorialAcciones', [CalificacionPCLController::class, 'historialAcciones']);
 // Acción: Traer historial de acciones del evento de la tabla sigmel_informacion_historial_accion_eventos
 Route::post('/historialAccionesEventosPcl', [CalificacionPCLController::class, 'historialAccionesEventoPcl']);
+// Acción: Valida si una accion ya ha sido ejecutada
+Route::post('/validar_acciones', [AccionesController::class, 'validar_acciones']);
 
 
 // 01/08/2023
@@ -653,6 +660,8 @@ Route::post('/informacionBandejaNotifi', [BandejaNotifiController::class, 'infom
 Route::post('/sinfiltrosBandejaNotifi', [BandejaNotifiController::class, 'sinFiltroBandejaNotifi']);
 // Accion: Capturar data según los filtros
 Route::post('/filtrosBandejaNotifi', [BandejaNotifiController::class, 'filtrosBandejaNotifi']);
+Route::post('/proceso_notificaciones', [BandejaNotifiController::class, 'proceso_notificaciones']);
+
 Route::post('/alertasNaranjasRojasNotif', [BandejaJuntasController::class, 'alertaNaranjasRojasJuntas']);
 
 // Accion: Actualizar el profesional y redireccionar el servicio
@@ -855,6 +864,8 @@ Route::post('/generarZipReporteNotificaciones', [ReporteNotificacionesController
 Route::post('/eliminarZipReporteNotificaciones', [ReporteNotificacionesController::class, 'eliminarZipReporteNotificaciones']);
 // Acción: Cargue de correspondecias o notificaciones
 Route::post('/Sigmel/CargueCorrespondencia', [ReporteNotificacionesController::class, 'cargueCorrespondencias'])->name('subirCorrespondencia');
+// Acción: Llenado de selectores Reportes Notificaciones
+Route::post('/cargueListadoSelectorReporteNoti', [ReporteNotificacionesController::class, 'cargueListadoSelectoresReporteNoti']);
 
 
 // Creación Vista Módulo reporte facturación PCL

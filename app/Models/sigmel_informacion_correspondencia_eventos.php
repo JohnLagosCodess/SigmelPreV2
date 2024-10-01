@@ -37,6 +37,7 @@ class sigmel_informacion_correspondencia_eventos extends Model
     'F_notificacion',
     'Id_Estado_corresp',
     'Tipo_correspondencia',
+    'Id_destinatario',
     'Nombre_usuario',
     'F_registro',
     ];

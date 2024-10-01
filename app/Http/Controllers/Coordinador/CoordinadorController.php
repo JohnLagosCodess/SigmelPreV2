@@ -1427,6 +1427,12 @@ class CoordinadorController extends Controller
             }
             else {
                 $nombre_final_documento = $request -> nombre_documento;
+                if($nombre_final_documento){
+                    File::delete($path.'/'.$nombre_final_documento);
+                }
+                $nameWithoutExtension = pathinfo($nombre_final_documento, PATHINFO_FILENAME);
+                $extension = $archivo->getClientOriginalExtension();
+                $nombre_final_documento = "{$nameWithoutExtension}.{$extension}";
             }
             Storage::putFileAs($Id_evento, $archivo, $nombre_final_documento);
         } 
@@ -1445,6 +1451,7 @@ class CoordinadorController extends Controller
             $datos_comunicado_actualizar=[
                 'F_comunicado' => $date,
                 'Elaboro' => $nombre_usuario,
+                'Nombre_documento' => $nombre_final_documento,
                 'Reemplazado' => 1,
             ];
         }
@@ -1696,6 +1703,21 @@ class CoordinadorController extends Controller
         }
     }
 
+    public function getInformacionPorIdDestinatario(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        $id_destinatario = $request->id_destinatario;
+        $registros_correspondencias = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')
+            ->select('Tipo_correspondencia')
+            ->where([['Id_destinatario',$id_destinatario]])
+            ->get();
+        return response()->json($registros_correspondencias);
+    }
+
     public function guardarInformacionCorrespondencia(Request $request){
         if (!Auth::check()) {
             return redirect('/');
@@ -1707,6 +1729,7 @@ class CoordinadorController extends Controller
         $id_asignacion = $request->id_asignacion;
         $id_proceso = $request->id_proceso;
         $id_comunicado = $request->id_comunicado;
+        $id_destinatario = $request->id_destinatario;
         $correspondencia = $request->correspondencia;
         $tipo_correspondencia = $request->tipo_correspondencia;
         $accion = $request->accion;
@@ -1730,6 +1753,7 @@ class CoordinadorController extends Controller
                 'Id_proceso' => $id_proceso,
                 'Id_servicio' => $id_servicio,
                 'Id_comunicado' => $id_comunicado,
+                'Id_destinatario' => $id_destinatario,
                 'Nombre_afiliado' => $request->nombre_afiliado,
                 'N_identificacion' => $request->n_identificacion_afiliado,
                 'N_radicado' => $request->n_radicado,
@@ -1773,6 +1797,7 @@ class CoordinadorController extends Controller
                 'Id_proceso' => $id_proceso,
                 'Id_servicio' => $id_servicio,
                 'Id_comunicado' => $id_comunicado,
+                'Id_destinatario' => $id_destinatario,
                 'Nombre_afiliado' => $request->nombre_afiliado,
                 'N_identificacion' => $request->n_identificacion_afiliado,
                 'N_radicado' => $request->n_radicado,

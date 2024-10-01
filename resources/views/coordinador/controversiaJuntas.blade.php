@@ -1829,6 +1829,12 @@
                                                 <div class="alerta_Correspondencia alert alert-success mt-2 mr-auto" role="alert"></div>
                                             </div>
                                         </div>
+                                        <div class="text-center d-none" id="mostrar_barra_creacion_comunicado">                                
+                                            <button class="btn btn-info" type="button" disabled>
+                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                Guardando Comunicado por favor espere...
+                                            </button>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -1918,7 +1924,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
-                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('afiliado', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" data-ids_destinatario="{{$comunicados->Id_Destinatarios}}" style="<?php echo subrayado('afiliado', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >Afiliado</a>
         
                                                                     <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Empleador"
@@ -1926,7 +1932,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
-                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('empleador', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" data-ids_destinatario="{{$comunicados->Id_Destinatarios}}" style="<?php echo subrayado('empleador', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >Empleador</a>
         
                                                                     <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps"
@@ -1934,7 +1940,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
-                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('eps', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" data-ids_destinatario="{{$comunicados->Id_Destinatarios}}" style="<?php echo subrayado('eps', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >EPS</a>
         
                                                                     <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp"
@@ -1942,7 +1948,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
-                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('afp', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" data-ids_destinatario="{{$comunicados->Id_Destinatarios}}" style="<?php echo subrayado('afp', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >AFP</a>
         
                                                                     <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="arl"
@@ -1950,7 +1956,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
-                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('arl', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" data-ids_destinatario="{{$comunicados->Id_Destinatarios}}" style="<?php echo subrayado('arl', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >ARL</a>
                                                                     
                                                                     <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jrci"
@@ -1958,7 +1964,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
-                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('jrci', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" data-ids_destinatario="{{$comunicados->Id_Destinatarios}}" style="<?php echo subrayado('jrci', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >JRCI</a>
         
                                                                     <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jnci"
@@ -1966,7 +1972,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
-                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('jnci', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" data-ids_destinatario="{{$comunicados->Id_Destinatarios}}" style="<?php echo subrayado('jnci', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >JNCI</a>
                                                                     
                                                                     <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp_conocimiento"
@@ -1974,7 +1980,7 @@
                                                                     data-destinatario_principal="{{$comunicados->Destinatario}}" data-id_evento="{{$comunicados->ID_evento}}" data-id_asignacion="{{$comunicados->Id_Asignacion}}" 
                                                                     data-id_proceso="{{$comunicados->Id_proceso}}" data-anexos="{{$comunicados->Anexos}}" data-correspondencia="{{$comunicados->Correspondencia}}" 
                                                                     data-tipo_descarga="{{$comunicados->Tipo_descarga}}" data-nombre_afiliado="{{$comunicados->Nombre_afiliado}}" data-numero_identificacion="{{$comunicados->N_identificacion}}"
-                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" style="<?php echo subrayado('afp_conocimiento', $destinatario, $array_copias, $array_correspondencia); ?>"
+                                                                    data-estado_correspondencia="{{$comunicados->Estado_correspondencia}}" data-ids_destinatario="{{$comunicados->Id_Destinatarios}}" style="<?php echo subrayado('afp_conocimiento', $destinatario, $array_copias, $array_correspondencia); ?>"
                                                                     >AFP Conocimiento</a>
                                                                 </td>
                                                            @endif
@@ -2058,6 +2064,9 @@
                         </div>
                     </div>
                 </div>
+                <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+                    <i class="fas fa-chevron-up"></i>
+                </a>
             </div>
         </div>
     {{-- @endif --}}
@@ -2071,6 +2080,7 @@
     </form>
     <?php $aperturaModal = 'Edicion'; ?>
     @include('//.administrador.modalcarguedocumentos')
+    @include('//.administrador.modalProgressbar')
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.coordinador.modalCorrespondencia')
 
@@ -2578,4 +2588,5 @@
     </script>
     <script type="text/javascript" src="/js/controversia_juntas.js"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
 @stop

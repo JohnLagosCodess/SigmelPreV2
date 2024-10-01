@@ -30,6 +30,7 @@ use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -43,6 +44,12 @@ use Mockery\Undefined;
 class PronunciamientoPCLController extends Controller
 {
     use GenerarRadicados;
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
 
     // TODO LO REFERENTE SERVICIO PRONUNCIAMIENTO
     public function mostrarVistaPronunciamiento(Request $request){
@@ -539,6 +546,8 @@ class PronunciamientoPCLController extends Controller
         }
         //valida la acción del botón
         if ($request->bandera_pronuncia_guardar_actualizar == 'Guardar') {
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
         
             $datos_info_pronunciamiento_eventos = [
                 'ID_Evento' => $Id_EventoPronuncia,
@@ -618,6 +627,7 @@ class PronunciamientoPCLController extends Controller
                 'Otro_destinatario' => 1,
                 'Modulo_creacion' => 'pronunciamientoPCL',
                 'N_siniestro' => $request->n_siniestro,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -635,7 +645,7 @@ class PronunciamientoPCLController extends Controller
             sleep(2);
 
             if($request->decision_pr != 'Silencio'){
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
@@ -713,7 +723,8 @@ class PronunciamientoPCLController extends Controller
             $mensajes = array(
                 "parametro" => 'agregar_pronunciamiento',
                 "parametro2" => 'guardo',
-                "mensaje" => 'Información guardada satisfactoriamente.'
+                "mensaje" => 'Información guardada satisfactoriamente.',
+                "Id_Comunicado" => $Id_Comunicado
             ); 
 
             return json_decode(json_encode($mensajes, true));
@@ -808,6 +819,7 @@ class PronunciamientoPCLController extends Controller
                 'Elaboro' => $request->elaboro,
                 'Reviso' => '0',
                 'Anexos' => $request->n_anexos,
+                'Agregar_copia' => $agregar_copias_comu,
                 'Tipo_descarga' => $request->decision_pr,
                 'Modulo_creacion' => 'pronunciamientoPCL',
                 'Reemplazado' => 0,
@@ -819,12 +831,20 @@ class PronunciamientoPCLController extends Controller
             ];
             // dd($request->decision_pr);
             if($request->decision_pr != 'Silencio' && $request->Id_Comunicado){
+                $Id_Comunicado = $request->Id_Comunicado;
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
                     ['ID_evento', $Id_EventoPronuncia],
                     ['Id_Asignacion', $Id_Asignacion_Pronuncia],
-                    ['Id_Comunicado', $request->Id_Comunicado]
+                    ['Id_Comunicado', $Id_Comunicado]
                 ])->update($datos_info_comunicado_eventos);
                 sleep(2);
+
+                $mensajes = array(
+                    "parametro" => 'update_pronunciamiento',
+                    "parametro2" => 'guardo',
+                    "mensaje2" => 'Información actualizada satisfactoriamente.',
+                    "Id_Comunicado" => $Id_Comunicado
+                );
             }
             else if($request->decision_pr == 'Silencio' && $request->Id_Comunicado){
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $request->Id_Comunicado)->delete();
@@ -841,10 +861,27 @@ class PronunciamientoPCLController extends Controller
                     }
                 }
                 sleep(2);
+
+                $mensajes = array(
+                    "parametro" => 'update_pronunciamiento',
+                    "parametro2" => 'guardo',
+                    "mensaje2" => 'Información actualizada satisfactoriamente.',                    
+                );
             }
             if($request->decision_pr != 'Silencio' && $request->Id_Comunicado == "null"){
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                //Se asignan los IDs de destinatario por cada posible destinatario
+                $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+                $datos_info_comunicado_eventos['Id_Destinatarios'] = $ids_destinatarios;
+
+                $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
+
+                $mensajes = array(
+                    "parametro" => 'update_pronunciamiento',
+                    "parametro2" => 'guardo',
+                    "mensaje2" => 'Información actualizada satisfactoriamente.',
+                    "Id_Comunicado" => $Id_Comunicado
+                );
             }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
             $Id_Pronuncia = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->select('Id_Pronuncia','Id_Asignacion')->latest('Id_Pronuncia')->first();
@@ -919,12 +956,7 @@ class PronunciamientoPCLController extends Controller
                     sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->insert($insertar_diagnostico);
                 } 
             }
-            $mensajes = array(
-                "parametro" => 'update_pronunciamiento',
-                "parametro2" => 'guardo',
-                "mensaje2" => 'Información actualizada satisfactoriamente.'
-            ); 
-
+            
             return json_decode(json_encode($mensajes, true));
 
         } 

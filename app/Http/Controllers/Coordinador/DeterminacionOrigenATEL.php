@@ -30,6 +30,7 @@ use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_accion_eventos;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use Dompdf\Dompdf;
@@ -40,6 +41,12 @@ use Carbon\Carbon;
 class DeterminacionOrigenATEL extends Controller
 {
     use GenerarRadicados;
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
 
     public function mostrarVistaDtoATEL(Request $request){
         if(!Auth::check()){
@@ -95,23 +102,7 @@ class DeterminacionOrigenATEL extends Controller
         ->get();
 
         // Traer Información laboral
-        $array_datos_info_laboral=DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_arls as sla', 'sla.Id_arl', '=', 'sile.Id_arl')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'sile.Id_departamento')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldms', 'sldms.Id_municipios', '=', 'sile.Id_municipio')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_actividad_economicas as slae', 'slae.Id_ActEco', '=', 'sile.Id_actividad_economica')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_clase_riesgos as slcr', 'slcr.Id_Riesgo', '=', 'sile.Id_clase_riesgo')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_ciuo_codigos as slcc', 'slcc.Id_Codigo', '=', 'sile.Id_codigo_ciuo')
-        ->select('sile.ID_evento', 'sile.Tipo_empleado','sile.Id_arl', 'sla.Nombre_arl', 'sile.Empresa', 'sile.Nit_o_cc', 'sile.Telefono_empresa',
-        'sile.Email', 'sile.Direccion', 'sile.Id_departamento', 'sldm.Nombre_departamento', 'sile.Id_municipio', 
-        'sldms.Nombre_municipio', 'sile.Id_actividad_economica', 'slae.Nombre_actividad', 'sile.Id_clase_riesgo', 
-        'slcr.Nombre_riesgo', 'sile.Persona_contacto', 'sile.Telefono_persona_contacto', 'sile.Id_codigo_ciuo', 'slcc.Nombre_ciuo', 
-        'sile.F_ingreso', 'sile.Cargo', 'sile.Funciones_cargo', 'sile.Antiguedad_empresa', 'sile.Antiguedad_cargo_empresa', 
-        'sile.F_retiro', 'sile.Descripcion')
-        ->where([['sile.ID_evento','=', $Id_evento_dto_atel]])
-        ->orderBy('sile.F_registro', 'desc')
-        ->limit(1)
-        ->get();
+        $array_datos_info_laboral = $this->globalService->retornarInformaciónLaboral($Id_evento_dto_atel);
 
         //Trae Documentos Solicitados del proceso origen solamente
         $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
@@ -144,7 +135,7 @@ class DeterminacionOrigenATEL extends Controller
             ['Id_Asignacion',$Id_asignacion_dto_atel],
             ['Id_proceso',$Id_proceso_dto_atel],
             ['Estado', 'Activo']
-        ])
+        ])->orderBy('F_examen_interconsulta','DESC')
         ->get();
 
         // TRAER DATOS CIE10 (Diagnóstico motivo de calificación)
@@ -252,18 +243,10 @@ class DeterminacionOrigenATEL extends Controller
         }
 
         /* Nombre Afp */
-        $afp_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
-        ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sie.Emails as Email')
-        ->where([['Id_Entidad', $array_datos_calificacion_origen[0]->Id_afp]])
-        ->get();
+        $afp_afiliado = $this->globalService->retornarInformaciónEntidad($array_datos_calificacion_origen[0]->Id_afp);
 
         /* Traer datos de la AFP de Conocimiento */
-        $info_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
-        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
-        ->select('siae.Entidad_conocimiento')
-        ->where([['siae.ID_evento', $Id_evento_dto_atel]])
-        ->get();
+        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_evento_dto_atel);
 
         // Consultamos si el caso está en la bandeja de Notificaciones
         $array_caso_notificado = BandejaNotifiController::evento_en_notificaciones($Id_evento_dto_atel,$Id_asignacion_dto_atel);
@@ -654,7 +637,6 @@ class DeterminacionOrigenATEL extends Controller
                 foreach ($array_datos_organizados_motivo_calificacion as $subarray_datos_organizados_motivo_calificacion) {
                     array_push($array_datos_con_keys_motivo_calificacion, array_combine($array_tabla_diagnosticos_motivo_calificacion, $subarray_datos_organizados_motivo_calificacion));
                 }
-    
                 // Inserción de la información
                 foreach ($array_datos_con_keys_motivo_calificacion as $insertar_diagnostico) {
                     sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->insert($insertar_diagnostico);
@@ -745,6 +727,18 @@ class DeterminacionOrigenATEL extends Controller
 
             sleep(2);
 
+            $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($request->ID_Evento);
+            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL, AFP_Conocimiento";
+            }
+            else{
+                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL";
+            }
+            $Destinatario = 'Afp';
+
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $request->ID_Evento,
                 'Id_proceso' => $request->Id_proceso,
@@ -756,7 +750,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Nombre_afiliado' => 'N/A',
                 'T_documento' => 'N/A',
                 'N_identificacion' => 'N/A',
-                'Destinatario' => 'N/A',
+                'Destinatario' => $Destinatario,
                 'Nombre_destinatario' => 'N/A',
                 'Nit_cc' => 'N/A',
                 'Direccion_destinatario' => 'N/A',
@@ -770,10 +764,12 @@ class DeterminacionOrigenATEL extends Controller
                 'Elaboro' => $nombre_usuario,
                 'Reviso' => 'N/A',
                 'Anexos' => 'N/A',
+                'Agregar_copia' => $agregar_copias_dml,
                 'Tipo_descarga' => 'Dictamen',
                 'Modulo_creacion' => 'determinacionOrigenATEL',
                 'Reemplazado' => 0,
                 'N_siniestro' => $request->N_siniestro,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -806,7 +802,19 @@ class DeterminacionOrigenATEL extends Controller
 
             sleep(2);
 
+            //Copias y destinatario de un dictamen segun la ficha PBS054
+            $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($request->ID_Evento);
+            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL, AFP_Conocimiento";
+            }
+            else{
+                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL";
+            }
+            $Destinatario = 'Afp';
+
             $comunicado_reemplazado = [
+                'Destinatario' => $Destinatario,
+                'Agregar_copia' => $agregar_copias_dml,
                 'Reemplazado' => 0,
                 'N_siniestro' => $request->N_siniestro,
             ];
@@ -827,10 +835,20 @@ class DeterminacionOrigenATEL extends Controller
         sigmel_informacion_accion_eventos::on('sigmel_gestiones')
         ->where('ID_evento', $request->ID_Evento)->update($datos_info_accion_evento);
         
+        //Capturamos el Id del comunicado para poder generarlo en el servidor
+        $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento',$request->ID_Evento],
+            ['Id_Asignacion',$request->Id_Asignacion],
+            ['N_radicado',$request->radicado_dictamen]
+            ])
+        ->value('Id_Comunicado');
+        
         $mensajes = array(
             "parametro" => 'agregar_dto_atel',
+            'Id_Comunicado' => $id_comunicado ? $id_comunicado : null,
             "mensaje" => $mensaje
-        ); 
+        );
 
         return json_decode(json_encode($mensajes, true));
     
@@ -1182,6 +1200,9 @@ class DeterminacionOrigenATEL extends Controller
                 ['ID_evento',$Id_Evento_dto_atel],
                 ['Id_Asignacion',$Id_Asignacion_dto_atel]
             ])->update($datos_correspondencia);       
+
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
     
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $Id_Evento_dto_atel,
@@ -1214,14 +1235,15 @@ class DeterminacionOrigenATEL extends Controller
                 'Modulo_creacion' => 'determinacionOrigenATEL',
                 'Reemplazado' => 0,
                 'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
     
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
-    
+            $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
             $mensajes = array(
                 "parametro" => 'insertar_correspondencia',
+                'Id_Comunicado' => $id_comunicado ? $id_comunicado : null,
                 "mensaje" => 'Correspondencia guardada satisfactoriamente.'
             );
     
@@ -1278,7 +1300,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Id_Asignacion' => $Id_Asignacion_dto_atel,
                 'Ciudad' => $ciudad,
                 'F_comunicado' => $date,
-                'N_radicado' => $radicado,
+                // 'N_radicado' => $radicado,
                 'Cliente' => 'N/A',
                 'Nombre_afiliado' => $destinatario_principal,
                 'T_documento' => 'N/A',
@@ -1322,8 +1344,18 @@ class DeterminacionOrigenATEL extends Controller
                     ])
             ->update($datos_info_comunicado_eventos);
 
+            //Capturamos el Id del comunicado para poder generarlo en el servidor
+            $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$Id_Evento_dto_atel],
+                ['Id_Asignacion',$Id_Asignacion_dto_atel],
+                ['Id_proceso', $Id_Proceso_dto_atel],
+                ['N_radicado',$request->radicado]
+                ])
+            ->value('Id_Comunicado');
             $mensajes = array(
                 "parametro" => 'actualizar_correspondencia',
+                'Id_Comunicado' => $id_comunicado ? $id_comunicado : null,
                 "mensaje" => 'Correspondencia actualizada satisfactoriamente.'
             );
     
@@ -1338,38 +1370,89 @@ class DeterminacionOrigenATEL extends Controller
         if(!Auth::check()){
             return redirect('/');
         }
-        
         $user= Auth::user();
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
 
-        /* captura de variables del formulario */
-        $id_cliente = $request->id_cliente;
-        $nro_siniestro = $request->nro_siniestro;
+        $Id_evento = $request->Id_evento;
         $Id_Asignacion = $request->Id_Asignacion;
         $Id_Proceso = $request->Id_Proceso;
-        $f_dictamen = date("d-m-Y", strtotime($request->f_dictamen));
-        $empresa_laboral = $request->empresa_laboral;
-        $nit_cc_laboral = $request->nit_cc_laboral;
-        $cargo_laboral = $request->cargo_laboral;
-        $antiguedad_cargo_laboral = $request->antiguedad_cargo_laboral;
-        $act_economica_laboral = $request->act_economica_laboral;
-        $justificacion_revision_origen = $request->justificacion_revision_origen;
-        $nombre_evento = $request->nombre_evento;
-        if (!empty($request->f_evento)) {
-            $f_evento = date("d-m-Y", strtotime($request->f_evento));
+        
+        $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_Asignacion));
+        $array_datos_info_laboral = $this->globalService->retornarInformaciónLaboral($Id_evento);
+        // Obtenemos la informaciópn de  la tabla sigmel_informacion_dto_atel_eventos
+        $datos_bd_DTO_ATEL = sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
+        ->where('ID_evento', $Id_evento)->get();
+
+        // obtenemos el nombre del evento
+        if (count($datos_bd_DTO_ATEL) > 0) {
+            $id_evento_guardado_dto_atel = $datos_bd_DTO_ATEL[0]->Tipo_evento;
+            $array_nombre_del_evento_guardado = sigmel_lista_tipo_eventos::on('sigmel_gestiones')
+            ->select('Nombre_evento')
+            ->where('Id_Evento', $id_evento_guardado_dto_atel)->get();
+            $nombre_del_evento_guardado = $array_nombre_del_evento_guardado[0]->Nombre_evento;
+        }else{
+            $nombre_del_evento_guardado = "";
+        }
+        
+        // {{-- Nro de documento --}}
+        // echo $array_datos_calificacion_origen[0]->Nro_identificacion;
+
+        /* captura de variables del formulario */
+        // $id_cliente = $request->id_cliente;
+        $id_cliente = !empty($array_datos_calificacion_origen[0]->Id_cliente) ? $array_datos_calificacion_origen[0]->Id_cliente : null;
+        
+        // $f_dictamen = date("d/m/Y", strtotime($request->f_dictamen));
+        $f_dictamen = date("d/m/Y", strtotime(!empty($array_datos_calificacion_origen[0]->F_registro_asignacion) ? $array_datos_calificacion_origen[0]->F_registro_asignacion : null));
+
+        // $empresa_laboral = $request->empresa_laboral;
+        $empresa_laboral = !empty($array_datos_info_laboral[0]->Empresa) ? $array_datos_info_laboral[0]->Empresa : null;
+
+        // $nit_cc_laboral = $request->nit_cc_laboral;
+        $nit_cc_laboral = !empty($array_datos_info_laboral[0]->Nit_o_cc) ? $array_datos_info_laboral[0]->Nit_o_cc : null;
+
+        // $cargo_laboral = $request->cargo_laboral;
+        $cargo_laboral = !empty($array_datos_info_laboral[0]->Cargo) ? $array_datos_info_laboral[0]->Cargo : null;
+
+        // $antiguedad_cargo_laboral = $request->antiguedad_cargo_laboral;
+        $antiguedad_cargo_laboral = !empty($array_datos_info_laboral[0]->Antiguedad_cargo_empresa) ? $array_datos_info_laboral[0]->Antiguedad_cargo_empresa : null;
+
+        // $act_economica_laboral = $request->act_economica_laboral;
+        $act_economica_laboral = (!empty($array_datos_info_laboral[0]->Id_actividad_economica) && !empty($array_datos_info_laboral[0]->Nombre_actividad)) ? $array_datos_info_laboral[0]->Id_actividad_economica." - ".$array_datos_info_laboral[0]->Nombre_actividad : null;
+
+        // $justificacion_revision_origen = $request->justificacion_revision_origen;
+        $justificacion_revision_origen = !empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen) ? $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen : null;
+
+        $nombre_evento = $nombre_del_evento_guardado;
+
+        
+        // if (!empty($request->f_evento)) {
+        //     $f_evento = date("d/m/Y", strtotime($request->f_evento));
+        // } else {
+        //     $f_evento = '';
+        // }
+        if (!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)) {
+            $f_evento = date("d/m/Y", strtotime($datos_bd_DTO_ATEL[0]->Fecha_evento));
         } else {
             $f_evento = '';
         }
         
-        if (!empty($request->f_fallecimiento)) {
-            $f_fallecimiento = date("d-m-Y", strtotime($request->f_fallecimiento));
+        // if (!empty($request->f_fallecimiento)) {
+        //     $f_fallecimiento = date("d/m/Y", strtotime($request->f_fallecimiento));
+        // } else {
+        //     $f_fallecimiento = "";
+        // }
+        if (!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)) {
+            $f_fallecimiento = date("d/m/Y", strtotime($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento));
         } else {
-            $f_fallecimiento = "";
+            $f_fallecimiento = "N/A";
         }
         $N_siniestro = $request->N_siniestro;
-        $sustentacion_califi_origen = $request->sustentacion_califi_origen;
+
+        // $sustentacion_califi_origen = $request->sustentacion_califi_origen;
+        $sustentacion_califi_origen = !empty($datos_bd_DTO_ATEL[0]->Sustentacion) ? $datos_bd_DTO_ATEL[0]->Sustentacion : null;
+
         $Id_comunicado = $request->id_comunicado;
         $origen = $request->origen;
 
@@ -1406,7 +1489,7 @@ class DeterminacionOrigenATEL extends Controller
 
         // fecha solicitud
         $array_datos_calificacionOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_Asignacion));
-        $fecha_solicitud = date("d-m-Y", strtotime($array_datos_calificacionOrigen[0]->F_radicacion));
+        $fecha_solicitud = date("d/m/Y", strtotime($array_datos_calificacionOrigen[0]->F_radicacion));
 
         /* 2. DATOS PERSONALES */
         $informacion_del_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
@@ -1432,13 +1515,13 @@ class DeterminacionOrigenATEL extends Controller
             'sie1.Nombre_entidad as Nombre_arl',
             'sie2.Nombre_entidad as Nombre_afp',
             'sldm.Nombre_municipio as Nombre_ciudad'
-        )->where([['siae.ID_evento', $nro_siniestro]])
+        )->where([['siae.ID_evento', $Id_evento]])
         ->get();
 
         $nombre_afiliado = $informacion_del_afiliado[0]->Nombre_afiliado;
         $tipo_doc_afiliado = $informacion_del_afiliado[0]->Tipo_documento;
         $nro_ident_afiliado = $informacion_del_afiliado[0]->Nro_identificacion;
-        $f_nacimiento_afiliado = date("d-m-Y", strtotime($informacion_del_afiliado[0]->F_nacimiento));
+        $f_nacimiento_afiliado = date("d/m/Y", strtotime($informacion_del_afiliado[0]->F_nacimiento));
         $edad_afiliado = $informacion_del_afiliado[0]->Edad;
         $genero_afiliado = $informacion_del_afiliado[0]->Genero;
         $estado_civil_afiliado = $informacion_del_afiliado[0]->Nombre_Estado_Civil;
@@ -1452,7 +1535,7 @@ class DeterminacionOrigenATEL extends Controller
         $datos_examenes_interconsultas = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
         ->select('F_examen_interconsulta', 'Nombre_examen_interconsulta', 'Descripcion_resultado')
         ->where([
-            ['ID_evento',$nro_siniestro],
+            ['ID_evento',$Id_evento],
             ['Id_Asignacion',$Id_Asignacion],
             ['Id_proceso',$Id_Proceso],
             ['Estado', 'Activo']
@@ -1494,7 +1577,7 @@ class DeterminacionOrigenATEL extends Controller
             'codigoQR' => $codigoQR,
             'id_cliente' => $id_cliente,
             'logo_header' => $logo_header,
-            'nro_siniestro' => $nro_siniestro,
+            'Id_evento' => $Id_evento,
             'fecha_solicitud' => $fecha_solicitud,
             'fecha_concepto' => $f_dictamen,
             'ciudad' => $ciudad_afiliado,
@@ -1539,7 +1622,7 @@ class DeterminacionOrigenATEL extends Controller
         $output = $pdf->output();
 
         //Guardar el PDF en un archivo
-        file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
+        file_put_contents(public_path("Documentos_Eventos/{$Id_evento}/{$nombre_pdf}"), $output);
 
         $actualizar_nombre_documento = [
             'Nombre_documento' => $nombre_pdf
@@ -1548,60 +1631,11 @@ class DeterminacionOrigenATEL extends Controller
         sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
         ->update($actualizar_nombre_documento);
 
-        /* Inserción del registro de que fue descargado */
-        // Extraemos el id del servicio asociado
-        // $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
-        // ->select('siae.Id_servicio')
-        // ->where([
-        //     ['siae.Id_Asignacion', $Id_Asignacion],
-        //     ['siae.ID_evento', $nro_siniestro],
-        //     ['siae.Id_proceso', $Id_Proceso],
-        // ])->get();
-
-        // $Id_servicio = $dato_id_servicio[0]->Id_servicio;
-
-        // // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
-        // $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
-        // ->select('sice.F_comunicado', 'sice.N_radicado')
-        // ->where([
-        //     ['sice.ID_evento', $nro_siniestro],
-        //     ['sice.Id_Asignacion', $Id_Asignacion],
-        //     ['sice.Id_proceso', $Id_Proceso],
-        //     ['sice.T_documento', 'N/A'],
-        //     ['sice.Ciudad', 'N/A'],
-        // ])
-        // ->get();
-        
-        // $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
-        // $N_radicado_documento = $dato_f_elaboracion_correspondencia[0]->N_radicado;
-
-        // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-        // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-        // ->select('Nombre_documento')
-        // ->where([
-        //     ['Nombre_documento', $nombre_pdf],
-        // ])->get();
-        
-        // if(count($verficar_documento) == 0){
-        //     $info_descarga_documento = [
-        //         'Id_Asignacion' => $Id_Asignacion,
-        //         'Id_proceso' => $Id_Proceso,
-        //         'Id_servicio' => $Id_servicio,
-        //         'ID_evento' => $nro_siniestro,
-        //         'Nombre_documento' => $nombre_pdf,
-        //         'N_radicado_documento' => $N_radicado_documento,
-        //         'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-        //         'F_descarga_documento' => $date,
-        //         'Nombre_usuario' => $nombre_usuario,
-        //     ];
-            
-        //     sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-        // }
-
-        // return $pdf->download($nombre_pdf); 
-
         $datos = [
+            'nombre_documento' => $nombre_pdf,
+            'mensaje' => 'Dictamen generado satisfactoriamente',
             'indicativo' => $indicativo,
+            'n_identificacion' => $nro_ident_afiliado,
             'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
         ];
         
@@ -1615,33 +1649,70 @@ class DeterminacionOrigenATEL extends Controller
         if(!Auth::check()){
             return redirect('/');
         }
-        
         $user= Auth::user();
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
 
-        /* Captura de variables del formulario */
-        $id_tupla_comunicado = $request->id_tupla_comunicado;
-        $id_com_inter = $request->id_com_inter;
-        $ciudad = $request->ciudad;
-        $fecha =  fechaFormateada($request->fecha);
-        $asunto = strtoupper($request->asunto);
-        $cuerpo = $request->cuerpo;
-        $tipo_identificacion = $request->tipo_identificacion;
-        $num_identificacion = $request->num_identificacion;
-        $nro_siniestro = $request->nro_siniestro;
-        $nombre_afiliado = $request->nombre_afiliado;
-        $nombre_afp = $request->nombre_afp;
-        $email_afp = $request->email_afp;
-        $direccion_afiliado = $request->direccion_afiliado;
-        $direccionAfp = $request->direccion_afp;
-        $telefono_afiliado = $request->telefono_afiliado;
-        $telefono_afp = $request->telefono_afp;
-        $ciudad_afiliado = $request->ciudad_afiliado;
-        $ciudad_afp = $request->ciudad_afp;
+        $Id_evento = $request->Id_evento;
         $Id_asignacion = $request->Id_asignacion;
-        $Id_cliente_firma = $request->Id_cliente_firma;
+        $array_comite_interdisciplinario = $this->globalService->retornarComiteInterdisciplinario($Id_evento,$Id_asignacion);
+        $array_datos_calificacion_origen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion));
+        $afp_afiliado = $this->globalService->retornarInformaciónEntidad($array_datos_calificacion_origen[0]->Id_afp);
+
+        /* Captura de variables del formulario */
+        $id_comunicado = $request->id_comunicado;
+
+        // $id_com_inter = $request->id_com_inter;
+        $id_com_inter = !empty($array_comite_interdisciplinario[0]->Id_com_inter) ? $array_comite_interdisciplinario[0]->Id_com_inter : null;
+
+        // $ciudad = $request->ciudad;
+        $ciudad = !empty($array_comite_interdisciplinario[0]->Ciudad) ? $array_comite_interdisciplinario[0]->Ciudad : null;
+
+        // $fecha =  fechaFormateada($request->fecha);
+        $fecha = fechaFormateada(!empty($array_comite_interdisciplinario[0]->F_visado_comite) ? $array_comite_interdisciplinario[0]->F_visado_comite : now()->format('Y-m-d'));
+
+        // $asunto = strtoupper($request->asunto);
+        $asunto = !empty($array_comite_interdisciplinario[0]->Asunto) ? strtoupper($array_comite_interdisciplinario[0]->Asunto) : "Sin Asunto";
+
+        $cuerpo = $request->cuerpo;
+
+        // $tipo_identificacion = $request->tipo_identificacion;
+        $tipo_identificacion = !empty($array_datos_calificacion_origen[0]->Nombre_tipo_documento) ? $array_datos_calificacion_origen[0]->Nombre_tipo_documento : null;
+
+        // $num_identificacion = $request->num_identificacion;
+        $num_identificacion = !empty($array_datos_calificacion_origen[0]->Nro_identificacion) ? $array_datos_calificacion_origen[0]->Nro_identificacion : null;
+
+        // $nombre_afiliado = $request->nombre_afiliado;
+        $nombre_afiliado = !empty($array_datos_calificacion_origen[0]->Nombre_afiliado) ? $array_datos_calificacion_origen[0]->Nombre_afiliado : null;
+
+        // $direccion_afiliado = $request->direccion_afiliado;
+        $direccion_afiliado = !empty($array_datos_calificacion_origen[0]->Direccion) ?  $array_datos_calificacion_origen[0]->Direccion : null;
+
+        // $telefono_afiliado = $request->telefono_afiliado;
+        $telefono_afiliado = !empty($array_datos_calificacion_origen[0]->Telefono_contacto) ? $array_datos_calificacion_origen[0]->Telefono_contacto : null;
+        
+        $ciudad_afiliado = $request->ciudad_afiliado;
+
+        // $nombre_afp = $request->nombre_afp;
+        $nombre_afp = !empty($afp_afiliado[0]->Nombre_entidad) ? $afp_afiliado[0]->Nombre_entidad : null;
+
+        // $email_afp = $request->email_afp;
+        $email_afp = !empty($afp_afiliado[0]->Email) ? $afp_afiliado[0]->Email : null;
+
+        // $direccionAfp = $request->direccion_afp;
+        $direccionAfp = !empty($afp_afiliado[0]->Direccion) ? $afp_afiliado[0]->Direccion : null;
+
+        // $telefono_afp = $request->telefono_afp;
+        $telefono_afp = !empty($afp_afiliado[0]->Telefonos) ? $afp_afiliado[0]->Telefonos : null;
+
+        // $ciudad_afp = $request->ciudad_afp;
+        $ciudad_afp = !empty($afp_afiliado[0]->Nombre_ciudad) ? $afp_afiliado[0]->Nombre_ciudad : null;
+
+        
+        // $Id_cliente_firma = $request->Id_cliente_firma;
+        $Id_cliente_firma = !empty($array_datos_calificacion_origen[0]->Id_cliente) ? $array_datos_calificacion_origen[0]->Id_cliente : null;
+
         $origen = $request->origen;
         $copia_beneficiario = $request->copia_beneficiario;
         $copia_empleador = $request->copia_empleador;
@@ -1656,7 +1727,7 @@ class DeterminacionOrigenATEL extends Controller
         /* Creación de las variables faltantes que no están en el formulario */
         $dato_nro_radicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->select('N_radicado')
-        ->where([['Id_Comunicado', $id_tupla_comunicado]])
+        ->where([['Id_Comunicado', $id_comunicado]])
         ->get();
 
         $array_dato_nro_radicado = json_decode(json_encode($dato_nro_radicado), true);
@@ -1701,7 +1772,7 @@ class DeterminacionOrigenATEL extends Controller
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
                     ->select('sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
-                    ->where([['siae.ID_evento','=', $nro_siniestro]])
+                    ->where([['siae.ID_evento','=', $Id_evento]])
                     ->get();
         
                     $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
@@ -1718,7 +1789,7 @@ class DeterminacionOrigenATEL extends Controller
                     $datos_entidad_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_municipio', '=', 'sldm.Id_municipios')
                     ->select('sile.Empresa', 'sile.Direccion', 'sile.Email','sile.Telefono_empresa', 'sldm.Nombre_municipio as Nombre_ciudad','sldm.Nombre_departamento')
-                    ->where([['sile.ID_evento', $nro_siniestro]])->get();
+                    ->where([['sile.ID_evento', $Id_evento]])->get();
 
                     $nombre_destinatario_principal = $datos_entidad_empleador[0]->Empresa;
                     $email_destinatario_principal = $datos_entidad_empleador[0]->Email;
@@ -1802,22 +1873,24 @@ class DeterminacionOrigenATEL extends Controller
         
         $Agregar_copias = [];
         if (isset($copia_beneficiario)) {
-            // $nro_siniestro 
+            // $Id_evento 
             $datos_beneficiario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento_benefi', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio_benefi', '=', 'sldm2.Id_municipios')
-            ->select('siae.Nombre_afiliado_benefi', 'siae.Direccion_benefi', 'siae.Email','sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
-            ->where([['siae.ID_evento', $nro_siniestro ]])
+            // ->select('siae.Nombre_afiliado_benefi', 'siae.Direccion_benefi', 'siae.Email','sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+            ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento as Departamento', 'sldm2.Nombre_municipio as ciudad', 'siae.Email')
+            ->where([['siae.ID_evento', $Id_evento ]])
             ->get();
 
-            $nombre_beneficiario = $datos_beneficiario[0]->Nombre_afiliado_benefi;
-            $direccion_beneficiario = $datos_beneficiario[0]->Direccion_benefi;
-            $departamento_beneficiario = $datos_beneficiario[0]->Nombre_departamento;
-            $ciudad_beneficiario = $datos_beneficiario[0]->Nombre_ciudad;
+            $nombre_beneficiario = $datos_beneficiario[0]->Nombre_afiliado;//$datos_beneficiario[0]->Nombre_afiliado_benefi;
+            $direccion_beneficiario = $datos_beneficiario[0]->Direccion;//$datos_beneficiario[0]->Direccion_benefi;
             $email_beneficiario = $datos_beneficiario[0]->Email;
+            $telefono_beneficiario = $datos_beneficiario[0]->Telefono_contacto;
+            $departamento_beneficiario = $datos_beneficiario[0]->Departamento; //$datos_beneficiario[0]->Nombre_departamento;
+            $ciudad_beneficiario = $datos_beneficiario[0]->ciudad;
 
 
-            $Agregar_copias['Beneficiario'] = $nombre_beneficiario."; ".$direccion_beneficiario."; ".$email_beneficiario."; ".$departamento_beneficiario."; ".$ciudad_beneficiario.".";
+            $Agregar_copias['Beneficiario'] = $nombre_beneficiario."; ".$direccion_beneficiario."; ".$email_beneficiario."; ".$telefono_beneficiario."; ".$departamento_beneficiario."; ".$ciudad_beneficiario.".";
         }
 
         if(isset($copia_empleador)){
@@ -1825,18 +1898,18 @@ class DeterminacionOrigenATEL extends Controller
             $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sile.Email','sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
-            ->where([['sile.Nro_identificacion', $num_identificacion],['sile.ID_evento', $nro_siniestro]])
+            ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sile.Email','sldm.Nombre_departamento as Departamento', 'sldm2.Nombre_municipio')
+            ->where([['sile.Nro_identificacion', $num_identificacion],['sile.ID_evento', $Id_evento]])
             ->get();
 
             $nombre_empleador = $datos_empleador[0]->Empresa;
             $direccion_empleador = $datos_empleador[0]->Direccion;
             $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
-            $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
+            $departamento_empleador = $datos_empleador[0]->Departamento;
             $municipio_empleador = $datos_empleador[0]->Nombre_municipio;
             $email_empleador = $datos_empleador[0]->Email;
 
-            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$email_empleador."; ".$telefono_empleador."; ".$ciudad_empleador." - ".$municipio_empleador.".";
+            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$email_empleador."; ".$telefono_empleador."; ".$departamento_empleador." - ".$municipio_empleador.".";
         }
 
         if (isset($copia_eps)) {
@@ -1845,8 +1918,8 @@ class DeterminacionOrigenATEL extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
             ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email',
-            'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
-            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $nro_siniestro]])
+            'sldm.Nombre_departamento as Departamento', 'sldm2.Nombre_municipio')
+            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $Id_evento]])
             ->get();
 
             $nombre_eps = $datos_eps[0]->Nombre_eps;
@@ -1856,11 +1929,11 @@ class DeterminacionOrigenATEL extends Controller
             } else {
                 $telefonos_eps = $datos_eps[0]->Telefonos;
             }
-            $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
+            $departamento_eps = $datos_eps[0]->Departamento;
             $email_eps = $datos_eps[0]->Email;
             $municipio_eps = $datos_eps[0]->Nombre_municipio;
 
-            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$email_eps."; ".$telefonos_eps."; ".$ciudad_eps." - ".$municipio_eps;
+            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$email_eps."; ".$telefonos_eps."; ".$departamento_eps." - ".$municipio_eps;
         }
 
         if (isset($copia_afp)) {
@@ -1869,8 +1942,8 @@ class DeterminacionOrigenATEL extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
             ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Emails as Email','sie.Otros_Telefonos',
-            'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
-            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $nro_siniestro]])
+            'sldm.Nombre_departamento as Departamento', 'sldm2.Nombre_municipio')
+            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $Id_evento]])
             ->get();
             $nombre_afp = $datos_afp[0]->Nombre_afp;
             $direccion_afp = $datos_afp[0]->Direccion;
@@ -1879,17 +1952,17 @@ class DeterminacionOrigenATEL extends Controller
             } else {
                 $telefonos_afp = $datos_afp[0]->Telefonos;
             }
-            $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
+            $departamento_afp = $datos_afp[0]->Departamento;
             $email_afp = $datos_afp[0]->Email;
             $municipio_afp = $datos_afp[0]->Nombre_municipio;
 
-            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$email_afp."; ".$telefonos_afp."; ".$ciudad_afp." - ".$municipio_afp;
+            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$email_afp."; ".$telefonos_afp."; ".$departamento_afp." - ".$municipio_afp;
         }
 
         if (isset($copia_afp_conocimiento)) {
             $dato_id_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
             ->select('siae.Entidad_conocimiento', 'siae.Id_afp_entidad_conocimiento')
-            ->where([['siae.ID_evento', $nro_siniestro]])
+            ->where([['siae.ID_evento', $Id_evento]])
             ->get();
 
             if (count($dato_id_afp_conocimiento) > 0) {
@@ -1902,7 +1975,7 @@ class DeterminacionOrigenATEL extends Controller
                     $datos_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 'sie.Emails as Email', 'sldm.Nombre_departamento as Departamento', 'sldm2.Nombre_municipio')
                     ->where([['sie.Id_Entidad', $id_afp_conocimiento]])
                     ->get();
 
@@ -1914,10 +1987,10 @@ class DeterminacionOrigenATEL extends Controller
                         $telefonos_afp_conocimiento = $datos_afp_conocimiento[0]->Telefonos;
                     }
                     $email_afp_conocimiento = $datos_afp_conocimiento[0]->Email;
-                    $ciudad_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_ciudad;
+                    $departamento_afp_conocimiento = $datos_afp_conocimiento[0]->Departamento;
                     $municipio_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_municipio;
     
-                    $Agregar_copias['AFP_Conocimiento'] = $nombre_afp_conocimiento."; ".$direccion_afp_conocimiento."; ".$email_afp_conocimiento."; ".$telefonos_afp_conocimiento."; ".$ciudad_afp_conocimiento." - ".$municipio_afp_conocimiento;
+                    $Agregar_copias['AFP_Conocimiento'] = $nombre_afp_conocimiento."; ".$direccion_afp_conocimiento."; ".$email_afp_conocimiento."; ".$telefonos_afp_conocimiento."; ".$departamento_afp_conocimiento." - ".$municipio_afp_conocimiento;
                 } else {
                     // $Agregar_copias['AFP_Conocimiento'] = '';
                 }
@@ -1934,8 +2007,8 @@ class DeterminacionOrigenATEL extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
             ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Emails as Email','sie.Otros_Telefonos',
-            'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
-            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $nro_siniestro]])
+            'sldm.Nombre_departamento as Departamento', 'sldm2.Nombre_municipio')
+            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $Id_evento]])
             ->get();
             $nombre_arl = $datos_arl[0]->Nombre_arl;
             $direccion_arl = $datos_arl[0]->Direccion;
@@ -1945,10 +2018,10 @@ class DeterminacionOrigenATEL extends Controller
                 $telefonos_arl = $datos_arl[0]->Telefonos;
             }
             $email_arl = $datos_arl[0]->Email;
-            $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
+            $departamento_arl = $datos_arl[0]->Departamento;
             $municipio_arl = $datos_arl[0]->Nombre_municipio;
 
-            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl." - ".$municipio_arl;
+            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$departamento_arl." - ".$municipio_arl;
         }
 
         /* Validación Firma Cliente */
@@ -1994,26 +2067,6 @@ class DeterminacionOrigenATEL extends Controller
             $footer = null;
         } 
 
-        /* Extraemos los datos del footer */
-        // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
-        // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
-        // ->where('Id_cliente',  $Id_cliente_firma)->get();
-
-        // if(count($datos_footer) > 0){
-        //     $footer_dato_1 = $datos_footer[0]->footer_dato_1;
-        //     $footer_dato_2 = $datos_footer[0]->footer_dato_2;
-        //     $footer_dato_3 = $datos_footer[0]->footer_dato_3;
-        //     $footer_dato_4 = $datos_footer[0]->footer_dato_4;
-        //     $footer_dato_5 = $datos_footer[0]->footer_dato_5;
-
-        // }else{
-        //     $footer_dato_1 = "";
-        //     $footer_dato_2 = "";
-        //     $footer_dato_3 = "";
-        //     $footer_dato_4 = "";
-        //     $footer_dato_5 = "";
-        // }
-
         /* Armado de datos para reemplazarlos en la plantilla */
         $datos_finales_noti_dml_origen = [
             'id_cliente' => $Id_cliente_firma,
@@ -2024,7 +2077,7 @@ class DeterminacionOrigenATEL extends Controller
             'cuerpo' => $cuerpo,
             'tipo_identificacion' => $tipo_identificacion,
             'num_identificacion' => $num_identificacion,
-            'nro_siniestro' => $nro_siniestro,
+            'Id_evento' => $Id_evento,
             'nombre_afiliado' => $nombre_afiliado,
             'origen' => $origen,
             'nro_radicado' => $nro_radicado,
@@ -2041,11 +2094,6 @@ class DeterminacionOrigenATEL extends Controller
             'footer' => $footer,
             'N_siniestro' => $N_siniestro,
             'tipo_evento' => $tipo_evento,
-            // 'footer_dato_1' => $footer_dato_1,
-            // 'footer_dato_2' => $footer_dato_2,
-            // 'footer_dato_3' => $footer_dato_3,
-            // 'footer_dato_4' => $footer_dato_4,
-            // 'footer_dato_5' => $footer_dato_5,
         ];
         /* Creación del pdf */
         $pdf = app('dompdf.wrapper');
@@ -2060,67 +2108,18 @@ class DeterminacionOrigenATEL extends Controller
         $output = $pdf->output();
 
         //Guardar el PDF en un archivo
-        file_put_contents(public_path("Documentos_Eventos/{$nro_siniestro}/{$nombre_pdf}"), $output);
+        file_put_contents(public_path("Documentos_Eventos/{$Id_evento}/{$nombre_pdf}"), $output);
 
         $actualizar_nombre_documento = [
             'Nombre_documento' => $nombre_pdf
         ];
-        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $id_tupla_comunicado)
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $id_comunicado)
         ->update($actualizar_nombre_documento);
 
-        /* Inserción del registro de que fue descargado */
-        // Extraemos el id del proceso y servicio asociado
-        // $dato_id_servicio_proceso = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
-        // ->select('siae.Id_proceso','siae.Id_servicio')
-        // ->where([
-        //     ['siae.Id_Asignacion', $Id_asignacion],
-        //     ['siae.ID_evento', $nro_siniestro],
-        // ])->get();
-
-        // $Id_Proceso = $dato_id_servicio_proceso[0]->Id_proceso;
-        // $Id_servicio = $dato_id_servicio_proceso[0]->Id_servicio;
-
-        // // Extraemos la Fecha de elaboración de correspondencia: Esta consulta aplica solo para los dictamenes
-        // $dato_f_elaboracion_correspondencia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comunicado_eventos as sice') 
-        // ->select('sice.F_comunicado', 'sice.N_radicado')
-        // ->where([
-        //     ['sice.ID_evento', $nro_siniestro],
-        //     ['sice.Id_Asignacion', $Id_asignacion],
-        //     ['sice.Id_proceso', $Id_Proceso],
-        //     ['sice.T_documento', 'N/A'],
-        //     ['sice.Ciudad', '!=', 'N/A'],
-        // ])
-        // ->get();
-
-        // $F_elaboracion_correspondencia = $dato_f_elaboracion_correspondencia[0]->F_comunicado;
-        // $N_radicado_documento = $dato_f_elaboracion_correspondencia[0]->N_radicado;
-
-        // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-        // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-        // ->select('Nombre_documento')
-        // ->where([
-        //     ['Nombre_documento', $nombre_pdf],
-        // ])->get();
-        
-        // if(count($verficar_documento) == 0){
-        //     $info_descarga_documento = [
-        //         'Id_Asignacion' => $Id_asignacion,
-        //         'Id_proceso' => $Id_Proceso,
-        //         'Id_servicio' => $Id_servicio,
-        //         'ID_evento' => $nro_siniestro,
-        //         'Nombre_documento' => $nombre_pdf,
-        //         'N_radicado_documento' => $N_radicado_documento,
-        //         'F_elaboracion_correspondencia' => $F_elaboracion_correspondencia,
-        //         'F_descarga_documento' => $date,
-        //         'Nombre_usuario' => $nombre_usuario,
-        //     ];
-            
-        //     sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-        // }
-
-        // return $pdf->download($nombre_pdf); 
-
         $datos = [
+            'nombre_documento' => $nombre_pdf,
+            'mensaje' => 'Correspondencia generada satisfactoriamente',
+            'n_identificacion' => $num_identificacion,
             'indicativo' => $indicativo,
             'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
         ];

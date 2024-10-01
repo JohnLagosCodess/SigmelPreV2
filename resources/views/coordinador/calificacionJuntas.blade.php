@@ -368,6 +368,9 @@
                         </div>                                    
                     </div>
                 </div>
+                <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+                    <i class="fas fa-chevron-up"></i>
+                </a> 
             </div>
             <div class="card-footer">
                 <div class="alert alert-danger no_ejecutar_parametrica_modulo_principal d-none" role="alert">
@@ -377,13 +380,13 @@
                 <div class="grupo_botones">
                     {{-- <input type="reset" id="Borrar" class="btn btn-info" value="Restablecer"> --}}
                     @if (empty($array_datos_calificacionJuntas[0]->Accion_realizar))
-                        <input type="submit" id="Edicion" class="btn btn-info" value="Guardar">
+                        <input type="button" id="Edicion" class="btn btn-info" label="Open Modal" data-toggle="modal" data-target="#confirmar_accion" value="Guardar">
                         <div class="col-12">
                             <div class="alerta_calificacion alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                         </div>
                         <input type="hidden" id="bandera_accion_guardar_actualizar" value="Guardar">
                     @else 
-                        <input type="submit" id="Edicion" class="btn btn-info" value="Actualizar">
+                        <input type="button" id="Edicion" class="btn btn-info" label="Open Modal" data-toggle="modal" data-target="#confirmar_accion" value="Actualizar">
                         <div class="col-12">
                             <div class="alerta_calificacion alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                         </div>
@@ -531,14 +534,14 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="N_dictamen_controvertido">N° Dictamen controvertido<span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="N_dictamen_controvertido" id="N_dictamen_controvertido" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->N_dictamen_controvertido;} ?>" required>
+                                                <label for="N_dictamen_controvertido">N° Dictamen controvertido</label>
+                                                <input type="text" class="form-control" name="N_dictamen_controvertido" id="N_dictamen_controvertido" value="<?php if(!empty($arrayinfo_controvertido[0]->N_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->N_dictamen_controvertido;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="f_dictamen_controvertido">Fecha dictámen controvertido<span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_dictamen_controvertido" id="f_dictamen_controvertido" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->F_dictamen_controvertido;} ?>" required>
+                                                <label for="f_dictamen_controvertido">Fecha dictámen controvertido</label>
+                                                <input type="date" class="form-control" name="f_dictamen_controvertido" id="f_dictamen_controvertido" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->F_dictamen_controvertido;} ?>">
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -1136,7 +1139,7 @@
                                         </div>
                                         <div class="col">
                                             <label for="empresa_comunicado"><strong>Empresa</strong></label>
-                                            <input class="scalesR" type="radio" name="afiliado_comunicado" id="empresa_comunicado" value="Empresa" style="margin-left: revert;" required>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado" id="empresa_comunicado" value="Empleador" style="margin-left: revert;" required>
                                         </div>
                                         <div class="col">
                                             <label for="eps_comunicado"><strong>EPS</strong></label>
@@ -1398,6 +1401,12 @@
                                             <div class="col-12">
                                                 <div class="alerta_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                             </div>
+                                            <div class="text-center d-none" id="mostrar_barra_creacion_comunicado">                                
+                                                <button class="btn btn-info" type="button" disabled>
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    Guardando Comunicado por favor espere...
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1561,7 +1570,7 @@
                                         </div>
                                         <div class="col">
                                             <label for="empresa_comunicado"><strong>Empresa</strong></label>
-                                            <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empresa" style="margin-left: revert;" required>
+                                            <input class="scalesR" type="radio" name="afiliado_comunicado_act" id="empresa_comunicado_editar" value="Empleador" style="margin-left: revert;" required>
                                         </div>
                                         <div class="col">
                                             <label for="eps_comunicado_editar"><strong>EPS</strong></label>
@@ -1852,6 +1861,12 @@
                                                 </button>
                                             </div>
                                         </div>
+                                        <div class="text-center d-none" id="mostrar_barra_creacion_comunicado">                                
+                                            <button class="btn btn-info" type="button" disabled>
+                                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                Guardando Comunicado por favor espere...
+                                            </button>
+                                        </div>
                                         <div class="col-12">
                                             <div class="alerta_editar_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                         </div>
@@ -1930,12 +1945,15 @@
     </div>
     <?php $aperturaModal = 'Edicion'; ?>
     @include('//.administrador.modalcarguedocumentos')
+    @include('//.administrador.modalProgressbar')
     @include('//.coordinador.modalCrearExpediente')
     @include('//.coordinador.modalCorrespondencia')
     @include('//.coordinador.modalReemplazarArchivos')
+    @include('//.modals.confirmacionAccion')
 @stop
 @section('js')
     <script type="text/javascript" src="/js/calificacionJuntas.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
     <script>
         //funcion para habilitar el historial de acciones

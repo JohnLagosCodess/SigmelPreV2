@@ -24,6 +24,7 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
 use App\Models\sigmel_informacion_correspondencia_eventos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use PhpOffice\PhpWord\PhpWord;
@@ -34,7 +35,12 @@ use PhpOffice\PhpWord\Style\Image;
 class ControversiaJuntasController extends Controller
 {
     use GenerarRadicados;
-    
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
     public function mostrarVistaPronunciamientoJuntas(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -1819,6 +1825,10 @@ class ControversiaJuntasController extends Controller
             // Si el array está vacío, asignamos una cadena vacía
             $Agregar_copias = '';
         }
+
+        //Se asignan los IDs de destinatario por cada posible destinatario
+        $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario(true, true);
+
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
                 'ID_evento' => $newId_evento,
@@ -1861,8 +1871,8 @@ class ControversiaJuntasController extends Controller
                 'F_registro' => $date
             ];
     
-            sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
-            ->insert($datos_correspondencia);       
+            $id_comite = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+            ->insertGetId($datos_correspondencia);       
     
             $datos_info_comunicado_eventos = [
                 'ID_Evento' => $newId_evento,
@@ -1895,12 +1905,15 @@ class ControversiaJuntasController extends Controller
                 'Modulo_creacion' => 'controversiaJuntas',
                 'Reemplazado' => 0,
                 'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
     
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+            $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
     
+            $this->generarProforma($request->decision_dictamen, $id_comunicado,$id_comite,$newId_evento,$newId_asignacion,$Id_proceso, $request);
+
             $mensajes = array(
                 "parametro" => 'insertar_correspondencia',
                 "mensaje" => 'Correspondencia guardada satisfactoriamente.'
@@ -1979,6 +1992,57 @@ class ControversiaJuntasController extends Controller
 
     }
 
+    public  function generarProforma($tipo, $id_comunicado,$id_comite, $id_evento,$id_asignacion,$proceso,$request){
+        $data = [
+            "_token" => $request->_token,
+            "id_comite_inter" => $id_comite,
+            "id_cliente" => $request->id_cliente,
+            "id_proceso" => $proceso,
+            'id_servicio' => $request->id_servicio,
+            "id_asignacion" => $id_asignacion,
+            "nro_radicado" => $request->radicado,
+            "num_identificacion" => $request->num_identificacion,
+            'tipo_identificacion' => $request->tipo_identificacion,
+            "id_evento" => $id_evento,
+            "id_Jrci_califi_invalidez" => $request->id_Jrci_califi_invalidez,
+            "nombre_junta_regional" => $request->nombre_junta_regional,
+            'f_dictamen_jrci_emitido' => $request->f_dictamen_jrci_emitido,
+            "nro_dictamen" => $request->nro_dictamen,
+            "nombre_afiliado" => $request->nombre_afiliado,
+            "origen_jrci_emitido" => $request->origen_jrci_emitido,
+            "manual_de_califi_jrci_emitido" => $request->manual_de_califi_jrci_emitido,
+            "sustentacion_concepto_jrci" => $request->sustentacion_concepto_jrci,
+            "sustentacion_concepto_jrci1" => $request->sustentacion_concepto_jrci1,
+            'copia_afiliado' => $request->afiliado,
+            'copia_empleador' => $request->empleador,
+            'copia_eps' => $request->eps,
+            'copia_afp'=> $request->afp,
+            'copia_arl' => $request->arl,
+            'porcentaje_pcl_jrci_emitido' => $request->porcentaje_pcl_jrci_emitido,
+            'f_estructuracion_contro_jrci_emitido' => $request->f_estructuracion_contro_jrci_emitido,
+            "asunto" => $request->Asunto,
+            "cuerpo" => $request->cuerpo_comunicado,
+            "firmar" => $request->firmar,
+            "elaboro" => $request->elaboro,
+            "reviso" => $request->reviso,
+            "firmar" => $request->firmar,
+            "id_comunicado" => $id_comunicado,
+            "N_siniestro" => $request->N_siniestro,
+        ];
+        
+        $requestTMP = new Request();
+        $requestTMP->setMethod('POST');
+        $requestTMP->request->add($data);
+       
+        if($tipo == 'Acuerdo'){
+            $this->DescargarProformaPronunDictaAcuerdo($requestTMP);
+        }elseif($tipo == 'Desacuerdo'){
+            $this->DescargarProformaRecursoReposicion($requestTMP);
+        }
+
+        return "PDF generado";
+    }
+
     public function CargueInformacionCorrespondencia(Request $request){
 
         // $tupla_comunicado = $request->tupla_comunicado;
@@ -2023,7 +2087,10 @@ class ControversiaJuntasController extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d', 'j.Manual_de_califi', '=', 'd.Id_Decreto')
             ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d1', 'j.Manual_de_califi_jrci_emitido', '=', 'd1.Id_Decreto')
             ->leftJoin('sigmel_gestiones.sigmel_lista_califi_decretos as d2', 'j.Manual_reposicion_jrci', '=', 'd2.Id_Decreto')
-            ->where('j.ID_evento',  '=', $id_evento)
+            ->where([
+                ['j.ID_evento',  '=', $id_evento],
+                ['j.Id_Asignacion',  '=', $id_asignacion]
+            ])
             ->get();
 
             if(!empty($arrayinfo_controvertido[0]->JrciNombre)) 

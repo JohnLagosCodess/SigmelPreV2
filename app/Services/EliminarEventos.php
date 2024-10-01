@@ -17,7 +17,8 @@ class EliminarEventos extends BaseServicio{
            // "--n_eventossss" => "# del evento"
         ],
         'opcional' => [
-            "--excepcion" => "Omitir la tabla indica para que no elimine el registro"
+            "--excepcion" => "Omitir la tabla indica para que no elimine el registro",
+            "--id_asignacion" => "Id de asignacion para borrar solo ese evento"
         ]
     ];
 
@@ -87,8 +88,9 @@ class EliminarEventos extends BaseServicio{
         
         $n_evento = $param['required']['n_evento'];
         $exepcion = $param['opcional']['excepcion'];
+        $id_asignacion = $param['opcional']['id_asignacion'] === "" ? null : $param['opcional']['id_asignacion'];
 
-        //Eliminaos la tabla indica por el usuario para no tenerla en cuenta durante la ejecucion
+        //Eleminamos la tabla indicada por el usuario para no tenerla en cuenta durante la ejecucion
         if($exepcion === ""){
             throw new \Exception("No se ha suministrado la tabla ah omitir.");
         }else{
@@ -96,25 +98,32 @@ class EliminarEventos extends BaseServicio{
             $sigmel_auditorias = $this->tablas['sigmel_auditorias'];
             unset($sigmel_gestiones[array_search($exepcion,$sigmel_gestiones)]);
             unset($sigmel_auditorias[array_search($exepcion,$sigmel_auditorias)]);
-        }
+        }        
 
-        
-
-        return $this->eliminarEvento($n_evento);
+        return $this->eliminarEvento($n_evento,$id_asignacion);
     }
 
     /**
      * Ejecuta la eliminacion del evento en sigmel_gestiones y sigmel_auditorias
      * @param string $evento # del evento a eliminar dentro de las tablas
      */
-    private function eliminarEvento(string $evento){
+    private function eliminarEvento(string $evento,$id_asignacion = null){
         $resultado = [];
         foreach($this->tablas as $db => $item){
             if($db === "sigmel_gestiones"){
                 foreach($item as $tabla){
                     $ID_evento_columna = Schema::connection("sigmel_gestiones")->hasColumn($tabla,'ID_evento');
-                    if($ID_evento_columna){
-                        DB::table(getDatabaseName('sigmel_gestiones') . $tabla)->where('ID_evento',$evento)->delete();
+                    $Id_asignacion_columna = Schema::connection("sigmel_gestiones")->hasColumn($tabla,'Id_Asignacion');
+
+                    $validacion = $Id_asignacion_columna != null ? ($Id_asignacion_columna && $Id_asignacion_columna) : (
+                                    $Id_asignacion_columna == null && $id_asignacion === null  ? $ID_evento_columna: false);
+
+                    if($validacion){
+                        $condiciones = Array(['ID_evento',$evento]);
+                        
+                        $id_asignacion === null ? "" : array_push($condiciones,['Id_Asignacion',$id_asignacion]);
+
+                        DB::table(getDatabaseName('sigmel_gestiones') . $tabla)->where($condiciones)->delete();
                         $resultado[$tabla] = [
                             "status" => true,
                             'info' => "Se elimino el registro"
@@ -122,19 +131,30 @@ class EliminarEventos extends BaseServicio{
                     }else{
                         $resultado[$tabla] = [
                             "status" => false,
-                            'info' => "El registro no se elimino la llave ID_evento no esta en la tabla"
+                            'info' => "El registro no se elimino la llave ID_evento y/o Id_Asignacion no esta en la tabla"
                         ];
                     }
                 }
 
-                $this->eliminarAgudezaVisual($evento);
+                $this->eliminarAgudezaVisual($evento,$id_asignacion);
             }elseif($db === 'sigmel_auditorias'){
                 foreach($item as $tabla){
                     $llave = Schema::connection("sigmel_auditorias")->hasColumn($tabla,'Aud_ID_evento') ? 'Aud_ID_evento' :
                                 (Schema::connection("sigmel_auditorias")->hasColumn($tabla,'ID_evento') ? 'ID_evento' : false);
 
-                    if($llave){
-                        DB::table(getDatabaseName('sigmel_auditorias') . $tabla)->where($llave,$evento)->delete();
+                    $Id_asignacion_columna = Schema::connection("sigmel_auditorias")->hasColumn($tabla,'Aud_Id_Asignacion') ? 'Aud_Id_Asignacion' :
+                    (Schema::connection("sigmel_auditorias")->hasColumn($tabla,'Id_Asignacion') ? 'Id_Asignacion' : false);
+
+                    $validacion = $Id_asignacion_columna != null ? ($llave && $Id_asignacion_columna) : (
+                        $Id_asignacion_columna == null && $id_asignacion === null  ? $llave: false
+                    );
+ 
+                    if($validacion){
+                        $condiciones = Array([$llave,$evento]);
+                        
+                        $id_asignacion === null ? "" : array_push($condiciones,[$Id_asignacion_columna,$id_asignacion]);
+
+                        DB::table(getDatabaseName('sigmel_auditorias') . $tabla)->where($condiciones)->delete();
                         $resultado[$tabla] = [
                             "status" => true,
                             'info' => "Se elimino el registro"
@@ -142,7 +162,7 @@ class EliminarEventos extends BaseServicio{
                     }else{
                         $resultado[$tabla] = [
                             "status" => false,
-                            'info' => "El registro no se elimino la llave $llave no esta en la tabla"
+                            'info' => "El registro no se elimino la llave $llave y/o Id_Asignacion no esta en la tabla"
                         ];
                     }
                 }
@@ -152,7 +172,7 @@ class EliminarEventos extends BaseServicio{
         return $resultado;
     }
     
-    public function eliminarAgudezaVisual(string $n_evento){
+    public function eliminarAgudezaVisual(string $n_evento,$id_asignacion = null){
         $tablas_agudeza = [
             'agudeza_visual' => [
                 'sigmel_info_campimetria_ojo_der_eventos',
@@ -163,22 +183,33 @@ class EliminarEventos extends BaseServicio{
                 'sigmel_info_campimetria_ojo_izqre_eventos'
             ]
         ];
-
+        
         foreach($tablas_agudeza as $item => $tabla_agudeza){
             if($item == 'agudeza_visual'){
-                $id_agudeza = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_agudeza_visual_eventos')->select('Id_agudeza')->where('ID_evento',$n_evento)->first();
+                $condiciones = Array(['ID_evento',$n_evento]);
+                        
+                $id_asignacion === null ? "" : array_push($condiciones,['Id_Asignacion',$id_asignacion]);
+
+                $id_agudeza = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_agudeza_visual_eventos')->select('Id_agudeza')->where($condiciones)->first();
                 if($id_agudeza != null){
                     foreach($tabla_agudeza as $capimetria){
                         DB::table(getDatabaseName('sigmel_auditorias') . $capimetria)->where('Id_agudeza',$id_agudeza)->delete();
                     }   
                 }
+
+                DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_agudeza_visual_eventos')->where($condiciones)->delete();
             }elseif($item == 'agudeza_visual_re'){
-                $id_agudeza = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_agudeza_visualre_eventos')->select('Id_agudeza_re')->where('ID_evento_re',$n_evento)->first();
+                $condiciones = Array(['ID_evento_re',$n_evento]);
+                        
+                $id_asignacion === null ? "" : array_push($condiciones,['Id_Asignacion_re',$id_asignacion]);
+                $id_agudeza = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_agudeza_visualre_eventos')->select('Id_agudeza_re')->where($condiciones)->first();
                 if($id_agudeza != null){
                     foreach($tabla_agudeza as $capimetria){
                         DB::table(getDatabaseName('sigmel_auditorias') . $capimetria)->where('Id_agudeza_re',$id_agudeza)->delete();
                     }
                 }
+
+                DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_agudeza_visualre_eventos')->where($condiciones)->delete();
             }
         }
 

@@ -42,6 +42,7 @@ use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_lista_tablas_1507_decretos;
 use App\Models\sigmel_lista_tipo_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -50,7 +51,12 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 class RecalificacionPCLController extends Controller
 {
     use GenerarRadicados;
+    protected $globalService;
 
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
     public function mostrarVistaRecalificacionPCL(Request $request){
         if(!Auth::check()){
             return redirect('/');
@@ -232,7 +238,7 @@ class RecalificacionPCLController extends Controller
                         ['Id_Asignacion', $eventoAsigancion_Recalifi],
                         ['Id_proceso',$Id_proceso_recali],
                         ['Estado_Recalificacion', 'Activo']
-                    ])
+                    ])->orderBy('F_examen_interconsulta','DESC')
                     ->get();
             
                     $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
@@ -440,12 +446,15 @@ class RecalificacionPCLController extends Controller
                 ])
                 ->get();
                 
+                //Traer Información apoderado  y Edad del afiliado
                 $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-                ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+                ->select('Nombre_apoderado','Nro_identificacion_apoderado', 'Edad')
                 ->where([
                     ['ID_evento', '=', $Id_evento_recali]
                 ])
                 ->get(); 
+
+                $edad_afiliado = $datos_apoderado_actual[0]->Edad;
                 
                 $array_datos_examenes_interconsultasre = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
                 ->where([
@@ -940,7 +949,7 @@ class RecalificacionPCLController extends Controller
                 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 
                 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 
                 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 
-                'info_afp_conocimiento','N_siniestro_evento'));
+                'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado'));
                 
             }                        
         } 
@@ -1043,12 +1052,15 @@ class RecalificacionPCLController extends Controller
                 ])
                 ->get();
                 
+                //Traer Información apoderado  y Edad del afiliado
                 $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-                ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+                ->select('Nombre_apoderado','Nro_identificacion_apoderado', 'Edad')
                 ->where([
                     ['ID_evento', '=', $Id_evento_recali]
                 ])
-                ->get(); 
+                ->get();
+                
+                $edad_afiliado = $datos_apoderado_actual[0]->Edad;                
                 
                 $array_datos_examenes_interconsultasre = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
                 ->where([
@@ -1544,8 +1556,7 @@ class RecalificacionPCLController extends Controller
                 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultasre', 
                 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditivare', 'hay_agudeza_visualre', 'array_laboralmente_Activore', 
                 'array_rol_ocupacionalre', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinariore', 'consecutivore', 
-                'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento'));
-                // return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'array_datos_motivo_solicitud', 'validar_estado_decreto', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento'));
+                'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado'));
             }            
             elseif (!empty($validar_evento_CalifiTecnica[0]->Id_servicio)) { 
                 
@@ -1570,7 +1581,7 @@ class RecalificacionPCLController extends Controller
                         ['Id_Asignacion', $validar_estado_decreto[0]->Id_Asignacion_decreto],
                         ['Id_proceso',$Id_proceso_recali],
                         ['Estado', 'Activo']
-                    ])
+                    ])->orderBy('F_examen_interconsulta','DESC')
                     ->get();
         
                     $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
@@ -1662,7 +1673,7 @@ class RecalificacionPCLController extends Controller
                         ['ID_evento',$Id_evento_recali],
                         ['Id_proceso',$Id_proceso_recali],
                         ['Estado', 'Activo']
-                    ])
+                    ])->orderBy('F_examen_interconsulta','DESC')
                     ->get();
         
                     $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
@@ -1867,12 +1878,15 @@ class RecalificacionPCLController extends Controller
                 ])
                 ->get();
                 
+                //Traer Información apoderado  y Edad del afiliado
                 $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-                ->select('Nombre_apoderado','Nro_identificacion_apoderado')
+                ->select('Nombre_apoderado','Nro_identificacion_apoderado', 'Edad')
                 ->where([
                     ['ID_evento', '=', $Id_evento_recali]
                 ])
-                ->get(); 
+                ->get();
+                
+                $edad_afiliado = $datos_apoderado_actual[0]->Edad;                
                 
                 $array_datos_examenes_interconsultasre = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
                 ->where([
@@ -2363,7 +2377,7 @@ class RecalificacionPCLController extends Controller
                 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 
                 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 
                 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_comite_interdisciplinariore', 'consecutivore', 
-                'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento'));
+                'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado'));
                 
             }
         }
@@ -5216,6 +5230,9 @@ class RecalificacionPCLController extends Controller
             }
         }
 
+        //Se asignan los IDs de destinatario por cada posible destinatario
+        $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
                 'Oficio_pcl' => $oficiopcl,
@@ -5296,15 +5313,18 @@ class RecalificacionPCLController extends Controller
                 'N_siniestro' => $N_siniestro,
                 'Reemplazado' => 0,
                 'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
     
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+            $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
     
             $mensajes = array(
                 "parametro" => 'insertar_correspondencia',
-                "mensaje" => 'Correspondencia guardada satisfactoriamente.'
+                "mensaje" => 'Correspondencia guardada satisfactoriamente.',
+                "Id_Comunicado" => $Id_Comunicado,
+                "Bandera_boton_guardar_oficio" => 'boton_oficio'
             );
     
             return json_decode(json_encode($mensajes, true));
@@ -5402,9 +5422,23 @@ class RecalificacionPCLController extends Controller
                 ['N_radicado',$request->radicado]
             ])->update($datos_info_comunicado_eventos); 
     
+            $capturar_Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->select('Id_Comunicado')
+            ->where([
+                ['ID_evento', $Id_EventoDecreto],
+                ['Id_Asignacion',$Id_Asignacion_Dcreto],
+                ['Id_proceso', $Id_ProcesoDecreto],
+                ['N_radicado',$request->radicado]
+            ])
+            ->get();
+
+            $Id_Comunicado = $capturar_Id_Comunicado[0]->Id_Comunicado;
+            
             $mensajes = array(
                 "parametro" => 'actualizar_correspondencia',
-                "mensaje" => 'Correspondencia actualizada satisfactoriamente.'
+                "mensaje" => 'Correspondencia actualizada satisfactoriamente.',
+                "Id_Comunicado" => $Id_Comunicado,
+                "Bandera_boton_guardar_oficio" => 'boton_oficio'
             );
     
             return json_decode(json_encode($mensajes, true));
@@ -5423,54 +5457,79 @@ class RecalificacionPCLController extends Controller
         $time = time();
         $nombre_usuario = Auth::user()->name;
         $date = date("Y-m-d", $time);
-        $Decreto_pericial = $request->Decreto_pericial;
-        $Id_EventoDecreto = $request->Id_EventoDecreto;
-        $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
-        $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
-        $suma_combinada = $request->suma_combinada;
-        $Total_Deficiencia50 = $request->Total_Deficiencia50;
-        $total_discapacidades = $request->total_discapacidades;
-        $total_minusvalia = $request->total_minusvalia;
-        $total_porcentajePcl = $Total_Deficiencia50 + $total_discapacidades + $total_minusvalia;
-        $radicado_dictamen = $request->radicado_dictamen;
-        $porcentaje_pcl = $request->porcentaje_pcl;  
-        $rango_pcl = $request->rango_pcl;     
-        $monto_inde = $request->monto_inde;        
-        $tipo_evento = $request->tipo_evento;        
-        $tipo_origen = $request->tipo_origen;  
-        $f_evento_pericial = $request->f_evento_pericial;
-        $f_estructura_pericial = $request->f_estructura_pericial;
-        $n_siniestro = $request->n_siniestro;
-        $requiere_rev_pension = $request->requiere_rev_pension;
-        $sustenta_fecha = $request->sustenta_fecha;        
-        $detalle_califi = $request->detalle_califi;        
-        $enfermedad_catastrofica = $request->enfermedad_catastrofica;        
-        $enfermedad_congenita = $request->enfermedad_congenita;        
-        $tipo_enfermedad = $request->tipo_enfermedad;        
-        $requiere_persona = $request->requiere_persona;        
-        $requiere_decisiones_persona = $request->requiere_decisiones_persona;        
-        $requiere_dispositivo_apoyo = $request->requiere_dispositivo_apoyo;        
-        $justi_dependencia = $request->justi_dependencia; 
-        if (empty($requiere_persona) && empty($requiere_decisiones_persona) && empty($requiere_dispositivo_apoyo)) {
-            $justi_dependencia = '';
-        } else {
-            $justi_dependencia = $justi_dependencia;
-        }
         $bandera_dictamen_pericial = $request->bandera_dictamen_pericial;
-
-        // eL número de identificacion siempre será el del afiliado.
-        $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-        ->select('Nro_identificacion')
-        ->where([['ID_evento', $Id_EventoDecreto]])
-        ->get();
-
-        if (count($array_nro_ident_afi) > 0) {
-            $nro_identificacion = $array_nro_ident_afi[0]->Nro_identificacion;
-        }else{
-            $nro_identificacion = 'N/A';
-        }
+        //if validacion para actualizar siempre el pcl, rango, monto y else actualizacion normal desde el form del dictamen pericial
+        if ($bandera_dictamen_pericial == 'bandera_Pcl_rango_monto') {
+            $Decreto_pericial = $request->Decreto_pericial;
+            $Id_EventoDecreto = $request->Id_EventoDecreto;
+            $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
+            $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
+            $porcentaje_pcl = $request->porcentaje_pcl;
+            $rango_pcl = $request->rango_pcl;
+            $monto_inde = $request->monto_inde;
+        } else {
+            
+            $Decreto_pericial = $request->Decreto_pericial;
+            $Id_EventoDecreto = $request->Id_EventoDecreto;
+            $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
+            $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
+            $suma_combinada = $request->suma_combinada;
+            $Total_Deficiencia50 = $request->Total_Deficiencia50;
+            $total_discapacidades = $request->total_discapacidades;
+            $total_minusvalia = $request->total_minusvalia;
+            $total_porcentajePcl = $Total_Deficiencia50 + $total_discapacidades + $total_minusvalia;
+            $radicado_dictamen = $request->radicado_dictamen;
+            $porcentaje_pcl = $request->porcentaje_pcl;  
+            $rango_pcl = $request->rango_pcl;     
+            $monto_inde = $request->monto_inde;        
+            $tipo_evento = $request->tipo_evento;        
+            $tipo_origen = $request->tipo_origen;  
+            $f_evento_pericial = $request->f_evento_pericial;
+            $f_estructura_pericial = $request->f_estructura_pericial;
+            $n_siniestro = $request->n_siniestro;
+            $requiere_rev_pension = $request->requiere_rev_pension;
+            $sustenta_fecha = $request->sustenta_fecha;        
+            $detalle_califi = $request->detalle_califi;        
+            $enfermedad_catastrofica = $request->enfermedad_catastrofica;        
+            $enfermedad_congenita = $request->enfermedad_congenita;        
+            $tipo_enfermedad = $request->tipo_enfermedad;        
+            $requiere_persona = $request->requiere_persona;        
+            $requiere_decisiones_persona = $request->requiere_decisiones_persona;        
+            $requiere_dispositivo_apoyo = $request->requiere_dispositivo_apoyo;        
+            $justi_dependencia = $request->justi_dependencia; 
+            if (empty($requiere_persona) && empty($requiere_decisiones_persona) && empty($requiere_dispositivo_apoyo)) {
+                $justi_dependencia = '';
+            } else {
+                $justi_dependencia = $justi_dependencia;
+            }
+            
+            $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
+            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+                $agregar_copias_dml = "EPS, AFP, ARL, AFP_Conocimiento";
+            }
+            else{
+                $agregar_copias_dml = "EPS, AFP, ARL";
+            }
+            $Destinatario = 'Afiliado';
+    
+            // eL número de identificacion siempre será el del afiliado.
+            $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+            ->select('Nro_identificacion')
+            ->where([['ID_evento', $Id_EventoDecreto]])
+            ->get();
+    
+            if (count($array_nro_ident_afi) > 0) {
+                $nro_identificacion = $array_nro_ident_afi[0]->Nro_identificacion;
+            }else{
+                $nro_identificacion = 'N/A';
+            }
+        }        
 
         if ($bandera_dictamen_pericial == 'Guardar') {
+
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+
             if($Decreto_pericial == 3){
                 $datos_dictamenPericial =[
                     'Suma_combinada' => $suma_combinada,
@@ -5532,7 +5591,7 @@ class RecalificacionPCLController extends Controller
                     'Nombre_afiliado' => 'N/A',
                     'T_documento' => 'N/A',
                     'N_identificacion' => $nro_identificacion,
-                    'Destinatario' => 'N/A',
+                    'Destinatario' => $Destinatario,
                     'Nombre_destinatario' => 'N/A',
                     'Nit_cc' => 'N/A',
                     'Direccion_destinatario' => 'N/A',
@@ -5546,14 +5605,16 @@ class RecalificacionPCLController extends Controller
                     'Elaboro' => $nombre_usuario,
                     'Reviso' => 'N/A',
                     'Anexos' => 'N/A',
+                    'Agregar_copia' => $agregar_copias_dml,
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'recalificacionPCL',
                     'N_siniestro' => $n_siniestro,
+                    'Id_Destinatarios' => $ids_destinatarios,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
         
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
     
             }else{
                 $datos_dictamenPericial =[
@@ -5617,7 +5678,7 @@ class RecalificacionPCLController extends Controller
                     'Nombre_afiliado' => 'N/A',
                     'T_documento' => 'N/A',
                     'N_identificacion' => $nro_identificacion,
-                    'Destinatario' => 'N/A',
+                    'Destinatario' => $Destinatario,
                     'Nombre_destinatario' => 'N/A',
                     'Nit_cc' => 'N/A',
                     'Direccion_destinatario' => 'N/A',
@@ -5631,20 +5692,28 @@ class RecalificacionPCLController extends Controller
                     'Elaboro' => $nombre_usuario,
                     'Reviso' => 'N/A',
                     'Anexos' => 'N/A',
+                    'Agregar_copia' => $agregar_copias_dml,
                     'Tipo_descarga' => 'Dictamen',
                     'Modulo_creacion' => 'recalificacionPCL',
                     'N_siniestro' => $n_siniestro,
+                    'Id_Destinatarios' => $ids_destinatarios,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
         
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
             }    
             $mensajes = array(
                 "parametro" => 'insertar_dictamen_pericial',
-                "mensaje" => 'Concepto final del dictamen pericial guardado satisfactoriamente.'
-            );            
-        } elseif($bandera_dictamen_pericial == 'Actualizar') {
+                "mensaje" => 'Concepto final del dictamen pericial guardado satisfactoriamente.',
+                'Id_Comunicado' => $Id_Comunicado,
+                'radicado_dictamen' => $radicado_dictamen,
+                'Bandera_boton_guardar_dictamen' => 'boton_dictamen',                               
+            );
+            
+            return json_decode(json_encode($mensajes, true));
+
+        } elseif ($bandera_dictamen_pericial == 'Actualizar') {
             if($Decreto_pericial == 3){
                 $datos_dictamenPericial =[
                     'Suma_combinada' => $suma_combinada,
@@ -5718,6 +5787,8 @@ class RecalificacionPCLController extends Controller
             sleep(2);
 
             $comunicado_reemplazado = [
+                'Destinatario' => $Destinatario,
+                'Agregar_copia' => $agregar_copias_dml,
                 'Reemplazado' => 0,
                 'N_siniestro' => $n_siniestro,
             ];
@@ -5728,13 +5799,44 @@ class RecalificacionPCLController extends Controller
                     ['N_radicado',$radicado_dictamen]
                     ])
             ->update($comunicado_reemplazado);
-            // dd($comunicado_reemplazado);
+            
+            $capturar_Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->select('Id_Comunicado')
+            ->where([
+                    ['ID_evento',$Id_EventoDecreto],
+                    ['Id_Asignacion',$Id_Asignacion_Dcreto],
+                    ['N_radicado',$radicado_dictamen]
+                    ])
+            ->get();
+            $Id_Comunicado = $capturar_Id_Comunicado[0]->Id_Comunicado;
+            
             $mensajes = array(
                 "parametro" => 'insertar_dictamen_pericial',
-                "mensaje" => 'Concepto final del dictamen pericial actualizado satisfactoriamente.'
+                "mensaje" => 'Concepto final del dictamen pericial actualizado satisfactoriamente.',
+                'Id_Comunicado' => $Id_Comunicado,
+                'radicado_dictamen' => $radicado_dictamen,
+                'Bandera_boton_guardar_dictamen' => 'boton_dictamen',                               
+
             );
+
+            return json_decode(json_encode($mensajes, true));
+
+        } else if ($bandera_dictamen_pericial == 'bandera_Pcl_rango_monto'){
+
+            $datos_dictamenPericial =[                
+                'Porcentaje_pcl' => $porcentaje_pcl,
+                'Rango_pcl' => $rango_pcl,
+                'Monto_indemnizacion' => $monto_inde,                
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date,
+            ];
+    
+            sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento', $Id_EventoDecreto], ['Id_Asignacion', $Id_Asignacion_Dcreto]])->update($datos_dictamenPericial); 
+            
+            // return 'Se actualizo porcentaje pcl: '.$porcentaje_pcl.', rango: '.$rango_pcl.' y monto: '.$monto_inde.' de la Asignacion: '.$Id_Asignacion_Dcreto;
+
         }
-        return json_decode(json_encode($mensajes, true));
     }
 
     // Generar PDF del Dictamen de PCL 1507
@@ -5748,11 +5850,21 @@ class RecalificacionPCLController extends Controller
         $nombre_usuario = Auth::user()->name;
         $cargo_profesional = Auth::user()->cargo;
 
-        $ID_Evento_comuni = $request->ID_Evento_comuni;
-        $Id_Asignacion_comuni = $request->Id_Asignacion_comuni;
-        $Id_Proceso_comuni = $request->Id_Proceso_comuni;
-        $Radicado_comuni = $request->Radicado_comuni;
-        $Id_Comunicado = $request->Id_Comunicado;
+        if ($request->Bandera_boton_guardar_dictamen == 'boton_dictamen') {
+            $ID_Evento_comuni = $request->ID_Evento_comuni;
+            $Id_Asignacion_comuni = $request->Id_Asignacion_comuni;
+            $Id_Proceso_comuni = $request->Id_Proceso_comuni;
+            $Radicado_comuni = $request->Radicado_comuni;
+            $Id_Comunicado = $request->Id_Comunicado;            
+        } else {
+            $ID_Evento_comuni = $request->ID_Evento_comuni;
+            $Id_Asignacion_comuni = $request->Id_Asignacion_comuni;
+            $Id_Proceso_comuni = $request->Id_Proceso_comuni;
+            $Radicado_comuni = $request->Radicado_comuni;
+            $Id_Comunicado = $request->Id_Comunicado;            
+        }
+        
+
         // $N_siniestro = $request->N_siniestro;
         
         $formattedData = "";
@@ -6772,14 +6884,22 @@ class RecalificacionPCLController extends Controller
         $nombre_usuario = Auth::user()->name;
         $cargo_profesional = Auth::user()->cargo;
 
-        $ID_Evento_comuni_comite = $request->ID_Evento_comuni_comite;
-        $Id_Asignacion_comuni_comite = $request->Id_Asignacion_comuni_comite;
-        $Id_Proceso_comuni_comite = $request->Id_Proceso_comuni_comite;
-        $Radicado_comuni_comite = $request->Radicado_comuni_comite;
-        $Firma_comuni_comite = $request->Firma_comuni_comite;
-        $Id_Comunicado = $request->Id_Comunicado;
+        if ($request->Bandera_boton_guardar_oficio == 'boton_oficio') {
+            $ID_Evento_comuni_comite = $request->ID_Evento_comuni_comite;
+            $Id_Asignacion_comuni_comite = $request->Id_Asignacion_comuni_comite;
+            $Id_Proceso_comuni_comite = $request->Id_Proceso_comuni_comite;
+            $Radicado_comuni_comite = $request->Radicado_comuni_comite;
+            $Firma_comuni_comite = $request->Firma_comuni_comite;
+            $Id_Comunicado = $request->Id_Comunicado;
+        } else {
+            $ID_Evento_comuni_comite = $request->ID_Evento_comuni_comite;
+            $Id_Asignacion_comuni_comite = $request->Id_Asignacion_comuni_comite;
+            $Id_Proceso_comuni_comite = $request->Id_Proceso_comuni_comite;
+            $Radicado_comuni_comite = $request->Radicado_comuni_comite;
+            $Firma_comuni_comite = $request->Firma_comuni_comite;
+            $Id_Comunicado = $request->Id_Comunicado;            
+        }
         // $N_siniestro = $request->N_siniestro;
-
         $formattedData = "";
 
         $dictamenPclQr = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
@@ -7304,7 +7424,7 @@ class RecalificacionPCLController extends Controller
         }
         
         
-        //Obtener los datos del formulario IF para el Oficio PCL y else para Oficio Incapacidad
+        //Obtener los datos del formulario IF para el Oficio PCL y elseif para Oficio Incapacidad demas oficios
 
         if ($Oficio_pcl ==  'Si') {            
             $data = [

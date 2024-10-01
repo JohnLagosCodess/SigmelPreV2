@@ -1652,6 +1652,7 @@ $(document).ready(function(){
         una vez se crea el evento
     */
     $(document).on('click', '#abrir_modal_doc_mod_nuevo', function(){
+        console.log(this);
         let idobtenido = $('#id_evento_registrado').val();
         $("input[id^='EventoID_']").val(idobtenido);
         let idservicioobtenido = $("#id_servicio_registrado").val();
@@ -1670,6 +1671,67 @@ $(document).ready(function(){
         location.reload();
     });
 
+    //Se crea el resumable usando Resumable.js, el cual tiene como fin crear los chunks y enviarlos al endpoint('target') especificado 
+    let resumable = new Resumable({
+        target: '/upload',
+        query:{_token:$("input[name='_token']").val()},
+        maxFiles: 1,
+        fileType: ['pdf','xls','xlsx','doc','docx','jpeg','png','zip'],
+        testChunks: false,
+        headers: {
+            'Accept' : 'application/json'
+        },
+    });
+
+    $("input[id^='listadodocumento_']").click(function(){
+        let idobtenido = $('#id_evento_registrado').val();
+        let idDoc = $(this).data('id_doc');
+        $("input[id^='EventoID_']").val(idobtenido);
+        if(idDoc === 4){
+            //Tomamos el input seleccionado
+            let inputFile = $(`#listadodocumento_${idDoc}`)
+            //Le asignamos el metodo de entrada de archivo el cual viene de nuestro input
+            resumable.assignBrowse(inputFile[0]);
+            //Esta función detecta cuando un archivo fue cargado
+            resumable.on('fileAdded', function (file) {
+                $(`#fileName_${idDoc}`).text(file.fileName);
+                resumable.opts.query.EventoID = idobtenido;
+                resumable.opts.query.Id_Documento = idDoc;
+                resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val();
+                resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
+            });
+        }
+    })
+
+    //Mostrar modal de progressBar cargue de documentos
+    function showProgress() {
+        let progress = $('.progress');
+        $('#modalProgressBar').show();
+        progress.find('.progress-bar').css('width', '0%');
+        progress.find('.progress-bar').html('0%');
+        progress.find('.progress-bar').removeClass('bg-success');
+        progress.show();
+    }
+
+    //Actualización progressBar cargue de documentos
+    function updateProgress(value) {
+        let progress = $('.progress');
+        progress.find('.progress-bar').css('width', `${value}%`)
+        progress.find('.progress-bar').html(`${value}%`)
+    }
+
+    //Errores al cargar un documento en Historia clinica completa
+    let errorCargueDocumentosID4 = (error,time=2000) => {
+        if ($('.mostrar_fallo').hasClass('d-none')) {
+            $('.mostrar_fallo').removeClass('d-none');
+            $('.mostrar_fallo').append(`<strong>${error}</strong>`);
+            setTimeout(function(){
+                $('.mostrar_fallo').addClass('d-none');
+                $('.mostrar_fallo').empty();
+            }, time);
+        }
+    }
+
     /* Envío de Información del Documento a Cargar */
     $("form[id^='formulario_documento_']").submit(function(e){
 
@@ -1677,66 +1739,113 @@ $(document).ready(function(){
         var formData = new FormData($(this)[0]);
         var cambio_estado = $(this).parents()[1]['children'][2]["id"];
         var input_documento = $(this).parents()[0]['children'][0][4]["id"];
+        var id_doc = $(this).data("id_doc");
+        if(id_doc === 4){
+            //Validación de posibles errores antes de enviar el documento
+            if(resumable.opts.query.EventoID === ""){
+                errorCargueDocumentosID4('Debe diligenciar primero el formulario para poder cargar este documento.')
+            }
+            if(resumable.opts.query.Id_servicio === ""){
+                errorCargueDocumentosID4('Debe seleccionar un servicio para poder cargar este documento.')
+            }
+            let file = resumable.files;
+            if(resumable.files.length > 0){
+                if(file[0].size > 1000000000){
+                    return errorCargueDocumentosID4('El tamaño máximo permitido para cargar en este documento es de 1Gb.');
+                }
+                showProgress();
+                resumable.upload();
+            }
+            else{
+                errorCargueDocumentosID4('Debe cargar este documento para poder guardarlo.');
+            }
 
-        // Enviamos los datos para validar y guardar el docmuento correspondiente
-        $.ajax({
-            url: "/cargarDocumentos",
-            type: "post",
-            dataType: "json",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false  ,
-            success:function(response){
-                // console.log(response);
-                if (response.parametro == "fallo") {
-                    if (response.otro != undefined) {
-                        $('#listadodocumento_'+response.otro).val('');
-                    }else{
-                        $('#'+input_documento).val('');
+            resumable.on('fileProgress', function (file) { // trigger when file progress update
+                updateProgress(Math.floor(file.progress() * 100));
+            });
 
-                        let idservicioobtenido = $("#id_servicio_registrado").val();
-                        if (idservicioobtenido) {
-                            $("input[id^='Id_servicio_']").val(idservicioobtenido);
-                        }
-                    }
-                    $('.mostrar_fallo').removeClass('d-none');
-                    $('.mostrar_fallo').append('<strong>'+response.mensaje+'</strong>');
-                    setTimeout(function(){
-                        $('.mostrar_fallo').addClass('d-none');
-                        $('.mostrar_fallo').empty();
-                    }, 6000);
-                }else if (response.parametro == "exito") {
-                    if(response.otro != undefined){
-                        $("#estadoDocumentoOtro_"+response.otro).empty();
-                        $("#estadoDocumentoOtro_"+response.otro).append('<strong class="text-success">Cargado</strong>');
-                        $('#listadodocumento_'+response.otro).prop("disabled", true);
-                        $('#CargarDocumento_'+response.otro).prop("disabled", true);
-                        $('#habilitar_modal_otro_doc').prop("disabled", true);
-                    }else{
-                        $("#"+cambio_estado).empty();
-                        $("#"+cambio_estado).append('<strong class="text-success">Cargado</strong>');
-                    }
+            resumable.on('fileSuccess', function (file, response) { // trigger when file upload complete
+                response = JSON.parse(response)
+                if (response.parametro == "exito") {
+                    $("#"+cambio_estado).empty();
+                    $("#"+cambio_estado).append('<strong class="text-success">Cargado</strong>');
                     $('.mostrar_exito').removeClass('d-none');
                     $('.mostrar_exito').append('<strong>'+response.mensaje+'</strong>');
                     setTimeout(function(){
                         $('.mostrar_exito').addClass('d-none');
                         $('.mostrar_exito').empty();
                     }, 6000);
-                }else{}
-                // Si ya se cargaron todos los documentos obligatorios habilita el botón de guardar y elimina el mensaje amarillo
-                /* if (response.todos_obligatorios == "Si") {
-                    $('.mensaje_confirmacion_cargar_evento').addClass('d-none');
-                    $('#btn_guardar_evento').removeClass('d-none');
-                    toastr['success']('Documentos obligatorios cargados satisfactoriamente.');
-                    toastr.options.positionClass = 'toast-top-right';
-                    toastr.options.extendedTimeOut = 0; //1000;
-                    toastr.options.timeOut = 1000;
-                    toastr.options.fadeOut = 250;
-                    toastr.options.fadeIn = 250;
-                } */
-            }         
-        });
+                }
+                setTimeout(() => {
+                    $('#modalProgressBar').hide();
+                }, 500);
+            });
+
+            resumable.on('fileError', function (file, response) { // trigger when there is any error
+                alert('file uploading error.')
+            });
+        }
+        else{
+            // Enviamos los datos para validar y guardar el docmuento correspondiente
+            $.ajax({
+                url: "/cargarDocumentos",
+                type: "post",
+                dataType: "json",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false  ,
+                success:function(response){
+                    // console.log(response);
+                    if (response.parametro == "fallo") {
+                        if (response.otro != undefined) {
+                            $('#listadodocumento_'+response.otro).val('');
+                        }else{
+                            $('#'+input_documento).val('');
+    
+                            let idservicioobtenido = $("#id_servicio_registrado").val();
+                            if (idservicioobtenido) {
+                                $("input[id^='Id_servicio_']").val(idservicioobtenido);
+                            }
+                        }
+                        $('.mostrar_fallo').removeClass('d-none');
+                        $('.mostrar_fallo').append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(function(){
+                            $('.mostrar_fallo').addClass('d-none');
+                            $('.mostrar_fallo').empty();
+                        }, 6000);
+                    }else if (response.parametro == "exito") {
+                        if(response.otro != undefined){
+                            $("#estadoDocumentoOtro_"+response.otro).empty();
+                            $("#estadoDocumentoOtro_"+response.otro).append('<strong class="text-success">Cargado</strong>');
+                            $('#listadodocumento_'+response.otro).prop("disabled", true);
+                            $('#CargarDocumento_'+response.otro).prop("disabled", true);
+                            $('#habilitar_modal_otro_doc').prop("disabled", true);
+                        }else{
+                            $("#"+cambio_estado).empty();
+                            $("#"+cambio_estado).append('<strong class="text-success">Cargado</strong>');
+                        }
+                        $('.mostrar_exito').removeClass('d-none');
+                        $('.mostrar_exito').append('<strong>'+response.mensaje+'</strong>');
+                        setTimeout(function(){
+                            $('.mostrar_exito').addClass('d-none');
+                            $('.mostrar_exito').empty();
+                        }, 6000);
+                    }else{}
+                    // Si ya se cargaron todos los documentos obligatorios habilita el botón de guardar y elimina el mensaje amarillo
+                    /* if (response.todos_obligatorios == "Si") {
+                        $('.mensaje_confirmacion_cargar_evento').addClass('d-none');
+                        $('#btn_guardar_evento').removeClass('d-none');
+                        toastr['success']('Documentos obligatorios cargados satisfactoriamente.');
+                        toastr.options.positionClass = 'toast-top-right';
+                        toastr.options.extendedTimeOut = 0; //1000;
+                        toastr.options.timeOut = 1000;
+                        toastr.options.fadeOut = 250;
+                        toastr.options.fadeIn = 250;
+                    } */
+                }         
+            });
+        }
     });
 
     /* VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA EL MÓDULO NUEVO ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes */

@@ -1,287 +1,4 @@
 $(document).ready(function () {
-    /* Lo comentareado no se utiliza, lo dejo por si acaso.
-    // Inicialización select2 listado de procesos parametrizados
-    $(".procesos_parametrizados").select2({
-        width: '100%',
-        placeholder:"Selecione una opción",
-        allowClear:false
-    });
-
-    // Inicializacion del select2 del listado de servicios
-    $(".redireccionar").select2({
-        width: '100%',
-        placeholder:"Selecione una opción",
-        allowClear:false
-    });
-
-    // Inicialización select 2 listado de accciones
-    $(".accion").select2({
-        width: '100%',
-        placeholder:"Selecione una opción",
-        allowClear:false
-    });
-
-    // Inicialización select2 listado profesional bandeja de Notificaciones
-    $(".profesional").select2({
-        width: '100%',
-        placeholder:"Seleccione una opción",
-        allowClear:false
-    });
-        // listado de procesos que almenos tiene configurado una paramétrica
-    let datos_lista_procesos_parametrizados = {
-        '_token':token,
-        'parametro':"listado_procesos_parametrizados"
-    }
-
-    $.ajax({
-        type:'POST',
-        url:'/selectoresBandejaNotifi',
-        data: datos_lista_procesos_parametrizados,
-        success:function (data) {
-            // //console.log(data);
-            $('#procesos_parametrizados').append('<option value="" selected>Seleccione</option>');
-            let procesos_parametrizados = Object.keys(data);
-            for (let i = 0; i < procesos_parametrizados.length; i++) {
-                $('#procesos_parametrizados').append('<option value="'+data[procesos_parametrizados[i]]['Id_proceso']+'">'+data[procesos_parametrizados[i]]['Nombre_proceso']+'</option>')
-            }
-        }
-    });
-
-    //Listado de servicios de bandeja Notificaciones
-    $('#procesos_parametrizados').change(function(){
-        let datos_lista_servicio = {
-            '_token': token,
-            'parametro':"lista_servicios_notifi",
-            'id_proceso': $(this).val()
-        };
-        $.ajax({
-            type:'POST',
-            url:'/selectoresBandejaNotifi',
-            data: datos_lista_servicio,
-            success:function(data){
-                $('#accion').empty();
-                $('#profesional').empty();
-                $(".columna_selector_profesional").slideUp('slow');
-                $('#redireccionar').empty();
-                $('#redireccionar').append('<option value="" selected>Seleccione</option>');
-                let servicionotifi = Object.keys(data);
-                for (let i =0; i < servicionotifi.length; i++ ){
-                    $('#redireccionar').append('<option value="'+data[servicionotifi[i]]['Id_Servicio']+'">'+data[servicionotifi[i]]['Nombre_servicio']+'</option>');
-                }
-            }
-        });
-    });
-
-    $(".columna_selector_profesional").slideUp('slow');
-    // listado de acciones a ejecutar dependiendo del proceso y servicio (es decir lo de parametrizaciones)
-    $("#redireccionar").change(function(){
-        let datos_listado_accion = {
-            '_token': token,
-            'Id_proceso': $("#procesos_parametrizados").val(),
-            'Id_servicio': $(this).val(),
-        //    'Id_asignacion' : arrayIdCheckActualizar,
-            'parametro' : "listado_accion"
-        };
-   
-        $.ajax({
-            type:'POST',
-            url:'/selectoresBandejaNotifi',
-            data: datos_listado_accion,
-            success:function(data) {
-                if (data.length > 0) {
-                    $('#accion').empty();
-                    $('#accion').append('<option></option>');
-                    let claves = Object.keys(data);
-                    for (let i = 0; i < claves.length; i++) {
-                        $('#accion').append('<option value="'+data[claves[i]]["Id_Accion"]+'">'+data[claves[i]]["Nombre_accion"]+'</option>');
-                    }
-                    
-                    $(".no_ejecutar_parametrica_bandeja_trabajo").addClass('d-none');
-                    $("#btn_guardar").removeClass('d-none');
-                } else {
-                    $('#accion').empty();
-                    $('#accion').append('<option></option>');
-
-                    $(".no_ejecutar_parametrica_bandeja_trabajo").removeClass('d-none');
-                    $("#btn_guardar").addClass('d-none');
-                }
-            }
-        });
-    });
-
-    // VALIDACIÓN PARA DETERMINAR QUE LA PARAMÉTRICA QUE SE CONFIGURE PARA EL MÓDULO NUEVO ESTE EN UN VALOR DE SI EN LA TABLA sigmel_informacion_parametrizaciones_clientes //
-    var validar_bandeja_trabajo = setInterval(() => {
-        if($("#procesos_parametrizados").val() != '' && $("#redireccionar").val() != '' && $("#accion").val() != ''){
-            let datos_ejecutar_parametrica_bandeja_trabajo = {
-                '_token': token,
-                'parametro': "validarSiBandejaTrabajo",
-                'Id_proceso': $("#procesos_parametrizados").val(),
-                'Id_servicio': $("#redireccionar").val(),
-                'Id_accion': $("#accion").val(),
-            };
-            // //console.log(datos_ejecutar_parametrica_bandeja_trabajo);
-            $.ajax({
-                type:'POST',
-                url:'/validacionParametricaEnSi',
-                data: datos_ejecutar_parametrica_bandeja_trabajo,
-                success:function(data) {
-                    // //console.log(data);
-                    if(data.length > 0){
-                        if (data[0]["Bandeja_trabajo"] !== "Si") {
-                            $(".no_ejecutar_parametrica_bandeja_trabajo").removeClass('d-none');
-                            $("#btn_guardar").addClass('d-none');
-                            $(".columna_selector_profesional").slideUp('slow');
-                        } else {
-                            $(".no_ejecutar_parametrica_bandeja_trabajo").addClass('d-none');
-                            $("#btn_guardar").removeClass('d-none');
-                            clearInterval(validar_bandeja_trabajo);
-
-                            // Cargue Listado de seleccion profesional bandeja Notificaciones
-                            $(".columna_selector_profesional").slideDown('slow');
-                            let datos_lista_profesional={
-                                '_token':token,
-                                'parametro':"lista_profesional_notifi"
-                            }
-                        
-                            $.ajax({
-                                type:'POST',
-                                url:'/selectoresBandejaNotifi',
-                                data: datos_lista_profesional,
-                                success:function (data) {
-                                    $('#profesional').empty();
-                                    $('#profesional').append('<option value="" selected>Seleccione</option>');
-                                    let profecionalnotifi = Object.keys(data);
-                                    for (let i = 0; i < profecionalnotifi.length; i++) {
-                                        $('#profesional').append('<option value="'+data[profecionalnotifi[i]]['id']+'">'+data[profecionalnotifi[i]]['name']+'</option>')
-                                    }
-                                    
-                                }
-                            });
-                        }
-                    }
-                }
-            });
-        }
-    }, 500);
-
-    //Captura id Checkbox para extraer su value
-    var arrayIdCheckActualizar = [];
-    $(document).on('change', "input[id^='actualizar_id_asignacion_']", function(){
-        var IdCheckActualizar = $(this).val();
-        if ($(this).is(':checked')) {
-            arrayIdCheckActualizar.push(IdCheckActualizar);
-            ////console.log('array lleno');
-            ////console.log(arrayIdCheckActualizar);
-        }else{
-            eliminarElemento(IdCheckActualizar);            
-        }       
-        
-    });
-        //Seteo de todos los checkbox
-    $(document).on('change', "#toggleButton", function () {         
-        var isChecked = $(this).is(":checked");
-
-        if (isChecked) {
-            // Establecer estado de todos los checkboxes
-            $("input[id^='actualizar_id_asignacion_']").prop("checked", isChecked);              
-    
-            setTimeout(() => {            
-                $('#Bandeja_Notifi input[type="checkbox"]').each(function() {
-                    arrayIdCheckActualizar.push($(this).val());
-                });
-                arrayIdCheckActualizar.splice(0,1);
-                ////console.log('seleccion grupal')
-                ////console.log(arrayIdCheckActualizar);
-            }, 2000);            
-        }else{            
-            setTimeout(() => {
-                $('#Bandeja_Notifi input[type="checkbox"]').each(function() {
-                    eliminarElemento($(this).val());           
-                });
-            }, 2000);
-           $("input[id^='actualizar_id_asignacion_']").prop("checked", false);              
-        }
-    })
-            // Función para eliminar el elemento del array al desmarcar checkbox
-    function eliminarElemento(elemento) {
-        var index = arrayIdCheckActualizar.indexOf(elemento);
-
-        if (index > -1) {
-            arrayIdCheckActualizar.splice(index, 1);
-            ////console.log("Elemento eliminado: ", elemento);
-            ////console.log(arrayIdCheckActualizar);
-        } else {
-            ////console.log("Elemento no encontrado en el array: ", elemento);
-            ////console.log(arrayIdCheckActualizar);
-        }
-    };
-      //Asignar ruta del formulario de modulo calificacion Notifi
-    $(document).on('mouseover',"input[id^='modulo_califi_Notifi_']", function(){
-        let url_editar_evento = $('#action_modulo_calificacion_Notifi').val();
-        $("form[id^='form_modulo_calificacion_Notifi_']").attr("action", url_editar_evento);    
-    });
-
-
-    $('#form_proser_bandejaNotifi').submit(function (e) {
-        e.preventDefault();       
-
-        if (arrayIdCheckActualizar.length > 0) {            
-
-            var proceso_parametrizado = $('#procesos_parametrizados').val();
-            var redireccionar = $('#redireccionar').val();
-            var accion = $("#accion").val();
-            var profesional = $('#profesional').val();
-            
-            let token = $('input[name=_token]').val();
-                        
-            var datos_actualizar = {
-                'proceso_parametrizado': proceso_parametrizado,
-                'redireccionar': redireccionar,
-                'accion': accion,
-                'profesional': profesional,
-            }
-            
-            var datos_enviar ={
-                '_token': token,
-                array:arrayIdCheckActualizar,
-                json:datos_actualizar
-            }
-            ////console.log(datos_enviar);      
-            $.ajax({
-                url:'/actualizarProfesionalServicioNotifi',          
-                type:'POST',
-                data: datos_enviar,
-                success: function (response) 
-                {
-                    ////console.log(response);
-                    if(response.parametro == 'actualizado_B_Notifi'){                        
-                        $('.mostrar_mensaje_actualizo_bandeja').removeClass('d-none');
-                        $('.mostrar_mensaje_actualizo_bandeja').append('<strong>'+response.mensaje+'</strong>');
-                        setTimeout(function(){
-                            $('.mostrar_mensaje_actualizo_bandeja').addClass('d-none');
-                            $('.mostrar_mensaje_actualizo_bandeja').empty();
-                            location.reload();
-                        }, 6000);
-                    }else{
-                        $('.mostrar_mensaje_No_actualizo_bandeja').removeClass('d-none');
-                        $('.mostrar_mensaje_No_actualizo_bandeja').append('<strong>'+response.mensaje+'</strong>');
-                        setTimeout(function(){
-                            $('.mostrar_mensaje_No_actualizo_bandeja').addClass('d-none');
-                            $('.mostrar_mensaje_No_actualizo_bandeja').empty();                            
-                        }, 6000);
-                    }  
-                }
-            });
-        }else{
-            $('.mostrar_mensaje_No_actualizo_bandeja').removeClass('d-none');
-            $('.mostrar_mensaje_No_actualizo_bandeja').append('<strong>Debe seleccionar un registro en la tabla y el Profesional o Redireccionar a, para Actualizar</strong>');
-            setTimeout(function(){
-                $('.mostrar_mensaje_No_actualizo_bandeja').addClass('d-none');
-                $('.mostrar_mensaje_No_actualizo_bandeja').empty();
-            }, 2000);
-        }
-    });
-    */
     //llenado de selectores 
     let token = $('input[name=_token]').val();
 
@@ -316,44 +33,187 @@ $(document).ready(function () {
         'newId_rol': $("#newId_rol").val(),
         'newId_user': $("#newId_user").val(),
     };
+    var Bandeja_Notifi;
 
     sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token);
 
     filtro_bandejaNotifi(procesos);
 
-    //Dimensionar o ajustar columnas de la tabla
-   /* var dimensionartable = 0;
-    $(".Notifibandeja").hover(function () {
-        dimensionartable++;
-        if (dimensionartable == 1) {
-            $('.detallenotifi').click();
-        }
-    }); */
-
-
-    //Ocultar boton del datatable
-   /* setTimeout(() => {
-        var botonFiltrar = $('#contenedorTable').parents();
-        //console.log(botonFiltrar[1]);
-        var contendorBotoFiltrar = botonFiltrar[1].childNodes[1].childNodes[3].childNodes[1].childNodes[1].childNodes[0].classList[0];
-        ////console.log(contendorBotoFiltrar);
-        $('.' + contendorBotoFiltrar).addClass('d-none');
-    }, 2000); */
-
-    /* $('#btn_expor_datos').click(function () {
-        var infobtnExcel = $(this).parents();
-        var selectorbtnExcel = infobtnExcel[3].children[0].childNodes[3].childNodes[1].childNodes[1].childNodes[0].childNodes[0].classList[0];
-        ////console.log(selectorbtnExcel);
-        $('.'+selectorbtnExcel).click();
-
-    }); */
 
     $('#btn_expor_datos').click(function () {
         $('.dt-button').click();
-
     });
 
+    $("#accion_ejecutar").on("change",function(){
+        procesar_accion($("#accion_ejecutar :selected").text(),procesos);
+    });
+
+    var datos_acciones = [];
+
+    $('#toggleButton').click(function(event) {   
+        console.log('Buenas');
+        if(this.checked) {
+            $(':checkbox').each(function() {
+                this.checked = true;                        
+            });
+        } else {
+            $(':checkbox').each(function() {
+                this.checked = false;                       
+            });
+
+            datos_acciones = [];
+        }
+    }); 
+
+    //Almacena los datos del evento que se esta checkeando
+    $(document).on('click',"input:checkbox",function (){
+
+        let form = $(this).closest('form');
+        let Id_Asignacion = form.find('input[name="newIdAsignacion"]').val();
+        let Id_evento = form.find('input[name="newIdEvento"]').val();
+        let Id_servicio = form.find('input[name="Id_Servicio"]').val();
+        let Id_proceso = form.find('input[name="Id_proceso"]').val();
+
+        //check all
+        let check_all = $(this).data('id');
+        if (check_all !== undefined) {
+            $(':checkbox').prop('checked', this.checked);
+    
+            if (this.checked) {
+                datos_acciones = $(':checkbox:checked').map(function () {
+                    let form = $(this).closest('form');
+                    return {
+                        [form.find('input[name="newIdAsignacion"]').val()]: {
+                            'proceso': form.find('input[name="Id_proceso"]').val(),
+                            'servicio': form.find('input[name="Id_Servicio"]').val(),
+                            'id_evento': form.find('input[name="newIdEvento"]').val(),
+                        }
+                    };
+                }).get();
+            } else {
+                datos_acciones = [];
+            }
+            datos_acciones.splice(0, 2);
+            return;
+        }
+
+
+        if ($(this).is(':checked')) {
+            datos_acciones.push({
+                [Id_Asignacion]: {
+                    'proceso': Id_proceso,
+                    'servicio': Id_servicio,
+                    'id_evento': Id_evento,
+                }
+            });
+        } else {
+            // Remove from datos_acciones if unchecked
+            datos_acciones = datos_acciones.filter(item => Object.keys(item)[0] !== Id_Asignacion);
+        }
+    });
+
+
+    $("#btn_ejecutar_accion").click(function(){
+
+        $("#btn_ejecutar_accion").prop('disabled',true);
+        if(datos_acciones.length == 0){
+            $(".no_ejecutar_accion").removeClass("d-none");
+            setTimeout(function(){
+                $('.no_ejecutar_accion').addClass('d-none');
+                $('.no_ejecutar_accion').empty();                   
+            }, 3000);
+
+            $("#btn_ejecutar_accion").prop('disabled',false);
+            return;
+        }
+
+        const ahora = new Date();
+        let fechaHoraFormateada = ahora.toISOString().slice(0, 16).replace('T', ' ');
+
+        let ejecutar_accion = {
+            '_token' :  $('input[name=_token]').val(),
+            'bandera' : 'ejecutar_accion',
+            'f_accion': fechaHoraFormateada,
+           'accion_ejecutar': $("#accion_ejecutar :selected").val(),
+           'descripcion': $("#descripcion").val(),
+           'f_alerta': $("#f_alerta").val(),
+           'datos_evento': datos_acciones
+        }
+
+        $.post('/proceso_notificaciones',ejecutar_accion,function(data){
+ 
+            $('.alerta_completado').removeClass('d-none');
+            $('.alerta_completado').append("<strong> Accion ejecutada correctamente</strong>");
+                setTimeout(function(){
+                    $('.alerta_completado').addClass('d-none');
+                    $('.alerta_completado').empty(); 
+                    location.reload();                       
+                }, 3000);
+        });
+    });
 });
+
+/**
+ * Carga los eventos asociados a la accion selecionada
+ */
+function procesar_accion(id,procesos){
+    $(".Bandeja_Notifi, #sindatos_bandeja").addClass('d-none');
+    
+    $("#actualizando_bandeja").removeClass('d-none');
+    let datos = {
+        "_token": $('input[name=_token]').val(),
+        "bandera" : "getEventos",
+        "id_acion_ejecutar": id,
+        'newId_rol': $("#newId_rol").val(),
+        'newId_user': $("#newId_user").val(),
+    };
+
+    $.post("/proceso_notificaciones",datos,function(e){
+
+        let data = e.datos;
+        $('#num_registros').empty();
+        $('#num_registros').append(data.length);
+
+        if(!e.estado == 'ok'){
+            return;
+        }
+
+        obtenerAlertasNaranja().then(alertasNaranja => {
+            const alertasNaranjaMap = new Map(alertasNaranja.map(alerta => [
+                alerta.Id_Asignacion, 
+                {
+                    naranja: alerta.F_accion_alerta_naranja,
+                    roja: alerta.F_accion_alerta_roja
+                }
+            ]));
+
+            let cellCss = [];
+
+            for (let i = 0; i < data.length; i++) {
+
+                let dataTMP = crearHipervinculos(data[i],alertasNaranjaMap,procesos,false);
+                data[i] = dataTMP.datos;
+                cellCss.push(dataTMP.estilos);
+            }
+
+            capturar_informacion_bandejaNotifi(data,cellCss)
+
+            $(".dt-buttons").addClass('d-none');
+        }).catch(error => {
+            console.error('Error al obtener alertas naranja:', error);
+        });
+    }).done(function(e){
+
+        if(e.estado == 'ok'){
+            $(".Bandeja_Notifi").removeClass('d-none');
+            $("#actualizando_bandeja, #sindatos_bandeja").addClass('d-none');
+        }else{
+            $(".Bandeja_Notifi, #actualizando_bandeja").addClass('d-none');
+            $("#sindatos_bandeja").removeClass("d-none");
+        }
+
+    });
+}
 
 /**
  * Consulta sin filtro
@@ -374,8 +234,6 @@ function sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token) {
             $('#num_registros').empty();
             $('#num_registros').append(data.length);
             obtenerAlertasNaranja().then(alertasNaranja => {
-                const start = performance.now();
-
                 const alertasNaranjaMap = new Map(alertasNaranja.map(alerta => [
                     alerta.Id_Asignacion, 
                     {
@@ -386,70 +244,15 @@ function sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token) {
 
                 let cellCss = [];
 
-                var enlaceModuloPrincipal = '';
-
                 for (let i = 0; i < data.length; i++) {
-                if (data[i]['Id_Asignacion'] != '') {
-                    //Seteamos los datos y construimos el formulario para cada fila en funcion del proceso actual.
-                    let action = procesos[data[i]['Nombre_proceso_actual']]().url;
-                    let idInput = procesos[data[i]['Nombre_proceso_actual']]().id + data[i]["Id_Asignacion"];
-                    let nombreInput = procesos[data[i]['Nombre_proceso_actual']]().Nombre;
 
-                    enlaceModuloPrincipal = `<form action="${action}" method="POST">
-                                            <input type="hidden" name="_token" value="${token}">
-                                            <input class="btn btn-sm text-info"  id=${idInput} value="Modulo ${nombreInput}" type="submit" style="font-weight: bold; padding-left: inherit;">
-                                            <input type="hidden" name="bd_notificacion" value="true">
-                                            <input type="hidden" name="newIdAsignacion" value="${data[i]["Id_Asignacion"]}">
-                                            <input type="hidden" name="newIdEvento" id="newIdEvento" value="${data[i]["ID_evento"]}">
-                                            <input type="hidden" name="Id_Servicio" id="Id_Servicio" value="${data[i]["Id_Servicio"]}">
-                                        </form>`;
-                    data[i]['moduloNotifi'] = enlaceModuloPrincipal;
-
-                    if (alertasNaranjaMap.has(data[i]['Id_Asignacion'])) {
-                        let alertaFechas = alertasNaranjaMap.get(data[i]['Id_Asignacion']);
-                        let currentTime = new Date();
-
-                        // Verificar alerta naranja
-                        if (alertaFechas.naranja) {
-                            
-                            let alertaFechaNaranja = new Date(alertaFechas.naranja);
-                            // let diferenciaNaranja = Math.abs(currentTime - alertaFechaNaranja);
-        
-                            if (currentTime >= alertaFechaNaranja) {  
-                                cellCss.push({
-                                    color: 'orange',
-                                    evento: data[i]["ID_evento"],
-                                    id_aignacion: data[i]['Id_Asignacion']
-                                });
-                            }
-                        }
-        
-                        // Verificar alerta roja
-                        if (alertaFechas.roja) {
-                            let alertaFechaRoja = new Date(alertaFechas.roja);
-                            // let diferenciaRoja = Math.abs(currentTime - alertaFechaRoja);
-                            if (currentTime >= alertaFechaRoja) { 
-                                cellCss.push({
-                                    color: 'red',
-                                    evento: data[i]["ID_evento"],
-                                    id_aignacion: data[i]['Id_Asignacion']
-                                });
-                            }
-                        }
-                    }
-                } else {
-                    data[i]['moduloNotifi'] = "";
+                    let dataTMP = crearHipervinculos(data[i],alertasNaranjaMap,procesos);
+                    data[i] = dataTMP.datos;
+                    cellCss.push(dataTMP.estilos);
                 }
-                }
-                //const end = performance.now();
-                //console.log(`Execution time Bucle: ${end - start} ms`);
-                //const startDatatable = performance.now();
-                //$.each(data, function (index, value) {
-                    capturar_informacion_bandejaNotifi(data,cellCss)
-                //});
-                //const endDatatable = performance.now();
-                //console.log(`Execution time datatable: ${endDatatable - startDatatable} ms`);
-                //Oculta btn de exporta datatable
+
+                capturar_informacion_bandejaNotifi(data,cellCss)
+
                 $(".dt-buttons").addClass('d-none');
             }).catch(error => {
                 console.error('Error al obtener alertas naranja:', error);
@@ -462,6 +265,74 @@ function sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token) {
         }
 
     });
+}
+
+function crearHipervinculos(data,alertasNaranjaMap,procesos,deshabilitar_check = true){
+    let check = 'disabled';
+
+    if(!deshabilitar_check){
+        check = '';
+        $(".principal").prop('disabled',false);
+    }
+    let cellCss = {};
+    if (data['Id_Asignacion'] != '') {
+        let token = $('input[name=_token]').val();
+        //Seteamos los datos y construimos el formulario para cada fila en funcion del proceso actual.
+        let action = procesos[data['Nombre_proceso_actual']]().url;
+        let idInput = procesos[data['Nombre_proceso_actual']]().id + data["Id_Asignacion"];
+        let nombreInput = procesos[data['Nombre_proceso_actual']]().Nombre;
+
+        data['moduloNotifi'] = `<form action="${action}" method="POST">
+                                <input type="hidden" name="_token" value="${token}">
+                                <input type="checkbox" name="procesar_accion" id="enviar_accion" ${check}>
+                                <input class="btn btn-sm text-info"  id=${idInput} value="Modulo ${nombreInput}" type="submit" style="font-weight: bold; padding-left: inherit;">
+                                <input type="hidden" name="bd_notificacion" value="true">
+                                <input type="hidden" name="newIdAsignacion" value="${data["Id_Asignacion"]}">
+                                <input type="hidden" name="newIdEvento" id="newIdEvento" value="${data["ID_evento"]}">
+                                <input type="hidden" name="Id_Servicio" id="Id_Servicio" value="${data["Id_Servicio"]}">
+                                <input type="hidden" name="Id_proceso" id="Id_proceso" value="${data["Id_proceso"]}">
+                            </form>`;
+
+        if (alertasNaranjaMap.has(data['Id_Asignacion'])) {
+            let alertaFechas = alertasNaranjaMap.get(data['Id_Asignacion']);
+            let currentTime = new Date();
+
+            // Verificar alerta naranja
+            if (alertaFechas.naranja) {
+                
+                let alertaFechaNaranja = new Date(alertaFechas.naranja);
+                // let diferenciaNaranja = Math.abs(currentTime - alertaFechaNaranja);
+
+                if (currentTime >= alertaFechaNaranja) {  
+                    cellCss = {
+                        color: 'orange',
+                        evento: data["ID_evento"],
+                        id_aignacion: data['Id_Asignacion']
+                    };
+                }
+            }
+
+            // Verificar alerta roja
+            if (alertaFechas.roja) {
+                let alertaFechaRoja = new Date(alertaFechas.roja);
+                // let diferenciaRoja = Math.abs(currentTime - alertaFechaRoja);
+                if (currentTime >= alertaFechaRoja) { 
+                    cellCss = {
+                        color: 'red',
+                        evento: data["ID_evento"],
+                        id_aignacion: data['Id_Asignacion']
+                    };
+                }
+            }
+        }
+    } else {
+        data['moduloNotifi'] = "";
+    }
+
+    return {
+        "datos": data,
+        "estilos": cellCss
+    };
 }
 
 function filtro_bandejaNotifi(procesos) {
@@ -529,7 +400,7 @@ function filtro_bandejaNotifi(procesos) {
                         $('#btn_bandeja').removeClass('d-none');
 
                         var enlaceModuloPrincipal = '';
-                        let cellCss = [];
+                        var cellCss = [];
                         obtenerAlertasNaranja().then(alertasNaranja => {
                             const alertasNaranjaMap = new Map(alertasNaranja.map(alerta => [
                                 alerta.Id_Asignacion, 
@@ -549,6 +420,7 @@ function filtro_bandejaNotifi(procesos) {
                             if (data[i]['Id_Asignacion'] != '') {
                                 enlaceModuloPrincipal = `<form action="${action}" method="POST">
                                                         <input type="hidden" name="_token" value="${token}">
+                                                        <input type="checkbox" name="procesar_accion" id="enviar_accion" disabled>
                                                         <input class="btn btn-sm text-info"  id=${idInput} value="Modulo ${nombreInput}" type="submit" style="font-weight: bold; padding-left: inherit;">
                                                         <input type="hidden" name="bd_notificacion" value="true">
                                                         <input type="hidden" name="newIdAsignacion" value="${data[i]["Id_Asignacion"]}">
@@ -615,10 +487,10 @@ function filtro_bandejaNotifi(procesos) {
     });
 }
 
-//Datatable Bandeja Notifi
-$('#Bandeja_Notifi thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Notifi thead');
 function capturar_informacion_bandejaNotifi(response,estilos) {
-      let Bandeja_Notifi =   $('#Bandeja_Notifi').DataTable({
+    //Datatable Bandeja Notifi
+    $('#Bandeja_Notifi thead tr').clone(true).addClass('filters').appendTo('#Bandeja_Notifi thead');
+    Bandeja_Notifi =  $('#Bandeja_Notifi').DataTable({
             orderCellsTop: true,
             fixedHeader: true,
             scrollY: 350,
@@ -642,7 +514,8 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
                         var title = $(cell).text().trim();
 
                         if(title == 'Detalle'){
-                            $(cell).text('');
+                            $(cell).empty();
+                            $(cell).append('<input type="checkbox" class="principal" data-id="principal" id="toggleButton" disabled/>');
                         }
 
                         if(title != '' && title != 'Detalle') {
@@ -706,12 +579,7 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
             "pageLength": 20,
             "order": [[5, 'desc']],
             "columns": [
-                {
-                    data: null,
-                    render: function (data) {
-                        return data.moduloNotifi;
-                    }
-                },
+                {"data": "moduloNotifi"},
                 { "data": "Nombre_Cliente" },
                 { "data": "Nombre_afiliado" },
                 { "data": "Nro_identificacion" },
@@ -796,8 +664,6 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
                 "infoEmpty": "No se encontró información",
             }
         });
-
-
     autoAdjustColumns(Bandeja_Notifi);
 }
 

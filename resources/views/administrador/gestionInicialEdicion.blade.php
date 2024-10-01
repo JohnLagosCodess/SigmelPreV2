@@ -1099,6 +1099,9 @@
                     </button>
                 </div>
             </div>
+            <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+                <i class="fas fa-chevron-up"></i>
+            </a> 
         </form>
         {{-- MODAL PARA AGREGAR INFORMACION LABORAL --}}
         <div class="row">
@@ -1286,6 +1289,7 @@
         {{-- MODAL PARA AGREGAR DOCUMENTOS INFORMACION PERICIAL --}}
         <?php $aperturaModal = 'Edicion'; ?>
         {{-- @include('administrador.modalcarguedocumentos') --}}
+        @include('//.administrador.modalProgressbar')
         <?php 
         /* echo'<pre>';
         print_r($arraylistado_documentos) ;
@@ -1309,6 +1313,7 @@
         });
     </script> --}}
     <script src="/js/selectores_gestion_edicion.js"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
 
     <script type="text/javascript">
         // var conteo = 0;

@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\DB;
 // Cargue de modelos
 use App\Models\sigmel_lista_parametros;
 use App\Models\sigmel_informacion_acciones;
-
+use App\Models\sigmel_informacion_historial_accion_eventos;
+use App\Models\sigmel_informacion_parametrizaciones_clientes;
 
 class AccionesController extends Controller
 {
@@ -151,6 +152,48 @@ class AccionesController extends Controller
             "mensaje" => 'Acción editada satisfactoriamente.'
         );
         return json_decode(json_encode($mensajes, true));
+    }
+
+    /**
+     * Obtiene las acciones disponibles para ejecutar dentro del proceso de notificaciones
+     */
+    public static function getAccionesNotificacion(){
+        return DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes as sipc')
+        ->select('sipc.Servicio_asociado','sipc.Accion_ejecutar','sipc.Id_proceso','lp.Accion')
+        ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as lp','lp.Id_Accion','sipc.Accion_ejecutar')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp','lp.Estado_accion','slp.Id_Parametro')
+        ->where('slp.Tipo_lista','=','Acciones')
+        ->where('slp.Nombre_parametro','=','Notificado')->groupBy('lp.Accion')
+        ->get();   
+    }
+
+    /**
+     * Valida si una accion ya ha sido ejecutada para el servicio actual
+     */
+    public function validar_acciones(Request $request){
+        $request->validate([
+            'bandera' => "required|string",
+            'ID_evento' => "required|string",
+            'accion_ejecutar' => "required|int",
+            'Id_Asignacion' => "required|int",
+            'Id_cliente' => "required|int",
+        ]);
+
+        $accion_ejecutada = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_historial_accion_eventos as sihae')
+        ->leftjoin('sigmel_gestiones.sigmel_informacion_parametrizaciones_clientes as sipc','sipc.Id_proceso','sihae.Id_proceso')
+        ->where([
+            ['sihae.ID_evento', $request->ID_evento],
+            ['sihae.Id_Asignacion', $request->Id_Asignacion],
+            ['sihae.Id_accion', $request->accion_ejecutar],
+            ['sipc.Accion_ejecutar', $request->accion_ejecutar],
+            ['sipc.Id_cliente', $request->Id_cliente],
+            ['sipc.Servicio_asociado', $request->Id_servicio],
+            ['sipc.Estado_facturacion', '!=', 'null'] //Debe tener un estado de facturacion para aplicar el filtro
+        ])->get();
+
+        $response = $accion_ejecutada->count() == 0 ? "sin_ejecutar" : "ejecutada";
+
+        return response()->json($response);
     }
 
 }

@@ -27,9 +27,11 @@ use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_accion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Shared\Converter;
 use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
 use PhpOffice\PhpWord\Style\Image;
@@ -38,6 +40,13 @@ use Html2Text\Html2Text;
 class PronunciamientoOrigenController extends Controller
 {
     use GenerarRadicados;
+
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
 
     // TODO LO REFERENTE SERVICIO PRONUNCIAMIENTO
     public function mostrarVistaPronunciamientoOrigen(Request $request){
@@ -51,26 +60,8 @@ class PronunciamientoOrigenController extends Controller
         $array_datos_pronunciamientoOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_asignacion_calitec));
         //Traer info informacion pronunciamiento
         // sigmel_informacion_pronunciamiento_eventos
-        $info_pronuncia= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_pronunciamiento_eventos as pr')
-        ->select('pr.ID_evento','pr.Id_Asignacion', 'Id_proceso', 'pr.Id_primer_calificador','c.Tipo_Entidad','pr.Id_nombre_calificador','e.Nombre_entidad'
-        ,'pr.Nit_calificador','pr.Dir_calificador','pr.Email_calificador','pr.Telefono_calificador','pr.Depar_calificador','pr.Ciudad_calificador'
-        ,'pr.Id_tipo_pronunciamiento','p.Nombre_parametro as Tpronuncia','pr.Id_tipo_evento','ti.Nombre_evento','pr.Id_tipo_origen','or.Nombre_parametro as T_origen'
-        ,'pr.Fecha_evento','pr.Dictamen_calificador','pr.Fecha_calificador','pr.N_siniestro','pr.Fecha_estruturacion','pr.Porcentaje_pcl','pr.Rango_pcl'
-        ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Destinatario_principal','pr.Tipo_entidad','pr.Nombre_entidad as Nombre_entidad_correspon',
-        'pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps','pr.Copia_afp','pr.Copia_arl','pr.Copia_junta_regional','pr.Copia_junta_nacional','pr.Junta_regional_cual',
-        'sie.Nombre_entidad as Ciudad_Junta','pr.N_anexos','pr.Elaboro_pronuncia','pr.Reviso_Pronuncia','pr.Ciudad_correspon','pr.N_radicado','pr.Firmar','pr.Fecha_correspondencia'
-        ,'pr.Archivo_pronuncia')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as c', 'c.Id_Entidad', '=', 'pr.Id_primer_calificador')
-        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as e', 'e.Id_Entidad', '=', 'pr.Id_nombre_calificador')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as p', 'p.Id_Parametro', '=', 'pr.Id_tipo_pronunciamiento')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as ti', 'ti.Id_Evento', '=', 'pr.Id_tipo_evento')
-        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as or', 'or.Id_Parametro', '=', 'pr.Id_tipo_origen')
-        ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'pr.Junta_regional_cual')
-        ->where([
-            ['pr.ID_evento', '=', $Id_evento_calitec],
-            ['pr.Id_Asignacion', '=', $Id_asignacion_calitec]
-        ])
-        ->get();
+        $info_pronuncia= $this->globalService->retornarInformacionPronunciamiento($Id_evento_calitec,$Id_asignacion_calitec);
+
         $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
         ->select('side.Id_Diagnosticos_motcali', 'side.CIE10', 'slcd.CIE10 as Codigo', 'side.Nombre_CIE10', 'side.Origen_CIE10', 
         'slp.Nombre_parametro', 'side.Deficiencia_motivo_califi_condiciones','slp2.Nombre_parametro as Nombre_parametro_lateralidad')
@@ -488,6 +479,8 @@ class PronunciamientoOrigenController extends Controller
         }
         //valida la acción del botón
         if ($request->bandera_pronuncia_guardar_actualizar == 'Guardar') {
+            //Se asignan los IDs de destinatario por cada posible destinatario
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
         
             $datos_info_pronunciamiento_eventos = [
                 'ID_Evento' => $Id_EventoPronuncia,
@@ -566,6 +559,7 @@ class PronunciamientoOrigenController extends Controller
                 'N_siniestro' => $request->n_siniestro,
                 //Siempre va a ser otro destinatario, debido a que el destinatario es el primer calificador.
                 'Otro_destinatario' => 1,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -581,9 +575,9 @@ class PronunciamientoOrigenController extends Controller
             ->update($dato_actualizar_n_siniestro);
 
             sleep(2);
-
+            $id_comunicado = null;
             if($request->decision_pr != 'Silencio'){
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+                $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
@@ -663,6 +657,8 @@ class PronunciamientoOrigenController extends Controller
             ->where('ID_evento', $Id_EventoPronuncia)->update($datos_info_accion_evento);
 
             $mensajes = array(
+                "decision" => $request->decision_pr,
+                "Id_Comunicado" => $id_comunicado ? $id_comunicado : null,
                 "parametro" => 'agregar_pronunciamiento',
                 "parametro2" => 'guardo',
                 "mensaje" => 'Información guardada satisfactoriamente.'
@@ -671,6 +667,16 @@ class PronunciamientoOrigenController extends Controller
             return json_decode(json_encode($mensajes, true));
 
         }elseif($request->bandera_pronuncia_guardar_actualizar == 'Actualizar'){
+
+            //Capturamos el Id del comunicado para poder generarlo en el servidor
+            $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$Id_EventoPronuncia],
+                ['Id_Asignacion',$Id_Asignacion_Pronuncia],
+                ['Id_proceso', $Id_ProcesoPronuncia],
+                ['N_radicado',$request->n_radicado]
+                ])
+            ->value('Id_Comunicado');
 
             if ($request->tipo_evento == 2) {
                 $Fecha_evento = null;
@@ -771,16 +777,16 @@ class PronunciamientoOrigenController extends Controller
                 'F_registro' => $date,
             ];
             // dd($request->decision_pr);
-            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado){
+            if($request->decision_pr != 'Silencio' && $id_comunicado){
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
                     ['ID_evento', $Id_EventoPronuncia],
                     ['Id_Asignacion', $Id_Asignacion_Pronuncia],
-                    ['Id_Comunicado', $request->Id_Comunicado]
+                    ['Id_Comunicado', $id_comunicado]
                 ])->update($datos_info_comunicado_eventos);
                 sleep(2);
             }
-            else if($request->decision_pr == 'Silencio' && $request->Id_Comunicado){
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $request->Id_Comunicado)->delete();
+            else if($request->decision_pr == 'Silencio' && $id_comunicado){
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $id_comunicado)->delete();
                 $archivos_a_eliminar = [
                     "ORI_ACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.pdf",
                     "ORI_DESACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.docx"
@@ -795,8 +801,12 @@ class PronunciamientoOrigenController extends Controller
                 }
                 sleep(2);
             }
-            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado == "null"){
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_comunicado_eventos);
+            if($request->decision_pr != 'Silencio' && !$id_comunicado){
+                //Se asignan los IDs de destinatario por cada posible destinatario
+                $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+                $datos_info_comunicado_eventos['Id_Destinatarios'] = $ids_destinatarios;
+
+                $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
@@ -879,9 +889,11 @@ class PronunciamientoOrigenController extends Controller
             ->where('ID_evento', $Id_EventoPronuncia)->update($datos_info_accion_evento);
 
             $mensajes = array(
+                "decision" => $request->decision_pr,
+                "Id_Comunicado" => $id_comunicado ? $id_comunicado : null,
                 "parametro" => 'update_pronunciamiento',
                 "parametro2" => 'guardo',
-                "mensaje2" => 'Información actualizada satisfactoriamente.'
+                "mensaje" => 'Información actualizada satisfactoriamente.'
             ); 
 
             return json_decode(json_encode($mensajes, true));
@@ -953,27 +965,46 @@ class PronunciamientoOrigenController extends Controller
     public function DescargarProformaPronunciamiento(Request $request){
         $time = time();
         $date = date("Y-m-d", $time);
-
+        $id_evento = $request->id_evento;
+        $Id_Asignacion_consulta_dx = $request->id_asignacion;
+        $Id_Proceso_consulta_dx = $request->id_proceso;
+        $Id_comunicado = $request->id_comunicado;
+        
+        $array_datos_pronunciamientoOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_Asignacion_consulta_dx));
+        $info_pronuncia = $this->globalService->retornarInformacionPronunciamiento($id_evento,$Id_Asignacion_consulta_dx);
+        $info_comunicado = $this->globalService->retornarInformacionComunicado($Id_comunicado);
+        if(!empty($info_comunicado[0]->Tipo_descarga)){
+            if($info_comunicado[0]->Tipo_descarga === 'Acuerdo'){
+                $bandera_tipo_proforma = "proforma_acuerdo";
+            }
+            else if($info_comunicado[0]->Tipo_descarga === 'Desacuerdo'){
+                $bandera_tipo_proforma = "proforma_desacuerdo";
+            }
+        }
+        else{
+            $bandera_tipo_proforma = '';
+        }
         /* Captura de variables que vienen del ajax */
-        $bandera_tipo_proforma = $request->bandera_tipo_proforma;
-
+        
         $ciudad = $request->ciudad;
         $fecha = $request->fecha;
-        $id_evento = $request->id_evento;
-        
         $nro_radicado = $request->nro_radicado;
-        $nombre_afiliado = $request->nombre_afiliado;
-        $tipo_identificacion = $request->tipo_identificacion;
-        $num_identificacion = $request->num_identificacion;
+        
+        // $nombre_afiliado = $request->nombre_afiliado;
+        $nombre_afiliado = !empty($array_datos_pronunciamientoOrigen[0]->Nombre_afiliado) ? $array_datos_pronunciamientoOrigen[0]->Nombre_afiliado : null;
+        
+        // $tipo_identificacion = $request->tipo_identificacion;
+        $tipo_identificacion = !empty($array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento) ?  $array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento : null;
+
+        // $num_identificacion = $request->num_identificacion;
+        $num_identificacion = !empty($array_datos_pronunciamientoOrigen[0]->Nro_identificacion) ? $array_datos_pronunciamientoOrigen[0]->Nro_identificacion : null;
+
         $fecha_dictamen = $request->fecha_dictamen;
 
         $origen = "<b>".$request->origen."</b>";
 
         $asunto = strtoupper($request->asunto);
         $sustentacion = $request->sustentacion;
-
-        $Id_Asignacion_consulta_dx = $request->Id_Asignacion_consulta_dx;
-        $Id_Proceso_consulta_dx = $request->Id_Proceso_consulta_dx;
 
         $destinatario_principal = $request->destinatario_principal;
         $tipo_entidad_correspon = $request->tipo_entidad_correspon;
@@ -989,10 +1020,14 @@ class PronunciamientoOrigenController extends Controller
         
         $firmar = $request->firmar;
         
-        $Id_cliente_firma = $request->Id_cliente_firma;
+        // $Id_cliente_firma = $request->Id_cliente_firma;
+        $Id_cliente_firma = !empty($array_datos_pronunciamientoOrigen[0]->Id_cliente) ? $array_datos_pronunciamientoOrigen[0]->Id_cliente : null;
+
         $nro_anexos = $request->nro_anexos;
         
-        $nombre_entidad = $request->nombre_entidad;
+        // $nombre_entidad = $request->nombre_entidad;
+        $nombre_entidad = !empty($info_pronuncia[0]->Nombre_entidad) ? $info_pronuncia[0]->Nombre_entidad : null;
+
         $email_entidad = $request->email_entidad;
         $direccion_entidad = $request->direccion_entidad;
         $telefono_entidad = $request->telefono_entidad;
@@ -1000,7 +1035,7 @@ class PronunciamientoOrigenController extends Controller
         $departamento_entidad = $request->departamento_entidad;
         $nro_dictamen_pri_cali = $request->nro_dictamen_pri_cali;
         $fecha_dictamen_pri_cali = $request->fecha_dictamen_pri_cali;
-        $Id_comunicado = $request->id_comunicado;
+        
 
         if (!empty($request->N_siniestro)) {
             $N_siniestro = $request->N_siniestro;
@@ -1030,12 +1065,14 @@ class PronunciamientoOrigenController extends Controller
                 $email_destinatario = $datos_entidad[0]->Email;
                 $telefono_destinatario = $datos_entidad[0]->Telefonos;
                 $ciudad_destinatario = $datos_entidad[0]->Nombre_ciudad;
+                $departamento_destinatario = $datos_entidad[0]->Nombre_departamento;
             } else {
                 $nombre_destinatario = "";
                 $direccion_destinatario = "";
                 $email_destinatario = "";
                 $telefono_destinatario = "";
                 $ciudad_destinatario = "";
+                $departamento_destinatario = "";
             }
         }else{
             /* Si es No, la info del destinatario principal se saca dependiendo de las
@@ -1055,7 +1092,8 @@ class PronunciamientoOrigenController extends Controller
                 $datos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
                 ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
                 ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
-                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Emails as Email','sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Departamento', '=', 'sldm2.Id_departamento')
+                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Emails as Email','sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
                 ->where([['siae.ID_evento','=', $id_evento]])
                 ->get();
 
@@ -1067,12 +1105,15 @@ class PronunciamientoOrigenController extends Controller
                     $email_destinatario = $array_datos[0]["Email"];
                     $telefono_destinatario = $array_datos[0]["Telefonos"];
                     $ciudad_destinatario = $array_datos[0]["Nombre_ciudad"];
+                    $departamento_destinatario = $array_datos[0]["Nombre_departamento"];
+                    
                 } else {
                     $nombre_destinatario = "";
                     $direccion_destinatario = "";
                     $email_destinatario = "";
                     $telefono_destinatario = "";
                     $ciudad_destinatario = "";
+                    $departamento_destinatario = "";
                 }
             } else {
                 $nombre_destinatario = $nombre_entidad;
@@ -1080,6 +1121,7 @@ class PronunciamientoOrigenController extends Controller
                 $email_destinatario = $email_entidad;
                 $telefono_destinatario = $telefono_entidad;
                 $ciudad_destinatario = $ciudad_entidad;
+                $departamento_destinatario = $departamento_entidad;
             }
         }
 
@@ -1398,6 +1440,7 @@ class PronunciamientoOrigenController extends Controller
                 'email_destinatario' => $email_destinatario,
                 'telefono_destinatario' => $telefono_destinatario,
                 'ciudad_destinatario' => $ciudad_destinatario,
+                'departamento_destinatario' => $departamento_destinatario,
                 'nombre_entidad_calificadora' => $nombre_entidad,
                 'Firma_cliente' => $Firma_cliente,
                 'Agregar_copia' => $Agregar_copias,
@@ -1431,78 +1474,10 @@ class PronunciamientoOrigenController extends Controller
 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
             ->update($actualizar_nombre_documento);
-
-            /* Inserción del registro de que fue descargado */
-            // Extraemos el id del servicio asociado
-            // $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
-            // ->select('siae.Id_servicio')
-            // ->where([
-            //     ['siae.Id_Asignacion', $Id_Asignacion_consulta_dx],
-            //     ['siae.ID_evento', $id_evento],
-            //     ['siae.Id_proceso', $Id_Proceso_consulta_dx],
-            // ])->get();
-
-            // $Id_servicio = $dato_id_servicio[0]->Id_servicio;
-
-            // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-            // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            // ->select('Nombre_documento')
-            // ->where([
-            //     ['Nombre_documento', $nombre_pdf],
-            // ])->get();
             
-            // if(count($verficar_documento) == 0){
-                
-            //     // Se valida si antes de insertar la info del doc de acuerdo ya hay un doc de desacuerdo
-            //     $nombre_docu_desacuerdo = "ORI_DESACUERDO_{$Id_Asignacion_consulta_dx}_{$num_identificacion}.docx";
-            //     $verificar_docu_desacuerdo = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            //     ->select('Nombre_documento')
-            //     ->where([
-            //         ['Nombre_documento', $nombre_docu_desacuerdo],
-            //     ])->get();
-
-            //     // Si no existe info del documento de desacuerdo, inserta la info del documento de acuerdo
-            //     // De lo contrario hace una actualización de la info
-            //     if (count($verificar_docu_desacuerdo) == 0) {
-            //         $info_descarga_documento = [
-            //             'Id_Asignacion' => $Id_Asignacion_consulta_dx,
-            //             'Id_proceso' => $Id_Proceso_consulta_dx,
-            //             'Id_servicio' => $Id_servicio,
-            //             'ID_evento' => $id_evento,
-            //             'Nombre_documento' => $nombre_pdf,
-            //             'N_radicado_documento' => $nro_radicado,
-            //             'F_elaboracion_correspondencia' => $fecha,
-            //             'F_descarga_documento' => $date,
-            //             'Nombre_usuario' => Auth::user()->name,
-            //         ];
-                    
-            //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-            //     }else{
-            //         $info_descarga_documento = [
-            //             'Id_Asignacion' => $Id_Asignacion_consulta_dx,
-            //             'Id_proceso' => $Id_Proceso_consulta_dx,
-            //             'Id_servicio' => $Id_servicio,
-            //             'ID_evento' => $id_evento,
-            //             'Nombre_documento' => $nombre_pdf,
-            //             'N_radicado_documento' => $nro_radicado,
-            //             'F_elaboracion_correspondencia' => $fecha,
-            //             'F_descarga_documento' => $date,
-            //             'Nombre_usuario' => Auth::user()->name,
-            //         ];
-                    
-            //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            //         ->where([
-            //             ['Id_Asignacion', $Id_Asignacion_consulta_dx],
-            //             ['N_radicado_documento', $nro_radicado],
-            //             ['ID_evento', $id_evento]
-            //         ])
-            //         ->update($info_descarga_documento);
-            //     }
-
-            // }
-
-            // return $pdf->download($nombre_pdf);
             $datos = [
+                'nombre_documento' => $nombre_pdf,
+                'tipo_proforma' => "proforma_acuerdo",
                 'indicativo' => $indicativo,
                 'pdf' => base64_encode($pdf->download($nombre_pdf)->getOriginalContent())
             ];
@@ -1526,23 +1501,23 @@ class PronunciamientoOrigenController extends Controller
             
             //Marca de agua
             $styleVigilado = [
-                'width' => 25,           
-                'height' => 200,            
-                'marginTop' => 0,           
+                'width' => 20,           
+                'height' => 100,  
+                'marginTop' => 600,        
                 'marginLeft' => -50,       
                 'wrappingStyle' => 'behind',   // Imagen detrás del texto
                 'positioning' => Image::POSITION_RELATIVE, 
                 'posVerticalRel' => 'page', 
                 'posHorizontal' => Image::POSITION_ABSOLUTE,
-                'posVertical' => Image::POSITION_VERTICAL_CENTER, // Centrado verticalmente en la página
+                'posVertical' => Image::POSITION_ABSOLUTE, // Centrado verticalmente en la página
             ];
 
             $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
 
             $phpWord = new PhpWord();
             // Configuramos la fuente y el tamaño de letra para todo el documento
-            $phpWord->setDefaultFontName('Arial');
-            $phpWord->setDefaultFontSize(12);
+            $phpWord->setDefaultFontName('Verdana');
+            $phpWord->setDefaultFontSize(10);
             // Configuramos la alineación justificada para todo el documento
             $phpWord->setDefaultParagraphStyle(
                 array('align' => 'both', 'spaceAfter' => 0, 'spaceBefore' => 0)
@@ -1551,24 +1526,36 @@ class PronunciamientoOrigenController extends Controller
             // Configurar el idioma del documento a español
             $phpWord->getSettings()->setThemeFontLang(new \PhpOffice\PhpWord\Style\Language('es-ES'));
     
+
+            //Section header
+            $estilosPaginaWord = array(
+                'headerHeight'=> 0,
+                'footerHeight'=> Converter::inchToTwip(.2),
+                'marginLeft'  => Converter::inchToTwip(1),
+                'marginRight' => Converter::inchToTwip(1),
+                'marginTop'   => 0,
+                'marginBottom'=> 0,
+            );
+            $section = $phpWord->addSection($estilosPaginaWord);
             // Configuramos las margenes del documento (estrechas)
-            $section = $phpWord->addSection();
-            $section->setMarginLeft(0.5 * 72);
-            $section->setMarginRight(0.5 * 72);
-            $section->setMarginTop(0.5 * 72);
-            $section->setMarginBottom(0.5 * 72);
+            // $section = $phpWord->addSection();
+            // $section->setMarginLeft(0.5 * 72);
+            // $section->setMarginRight(0.5 * 72);
+            // $section->setMarginTop(0.5 * 72);
+            // $section->setMarginBottom(0.5 * 72);
 
             // Creación de Header
             $header = $section->addHeader();
             $header->addWatermark($pathVigilado, $styleVigilado);
             $imagenPath_header = public_path($ruta_logo);
-            $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
-            $esti = array('size' => 11, 'font' => 'Arial');
+            $header->addImage($imagenPath_header, array('width' => 110, 'height' => 30, 'align' => 'right'));
             $encabezado = $header->addTextRun(['alignment' => 'right']);
-            $encabezado->addText('Página ');
-            $encabezado->addField('PAGE');
-            $encabezado->addText(' de ');
-            $encabezado->addField('NUMPAGES');
+            //FontStyle del paginado
+            $fontStyle = ['name' => 'Calibri', 'size' => 8];
+            $encabezado->addText('Página ', $fontStyle);
+            $encabezado->addField('PAGE',[],[],null,$fontStyle);
+            $encabezado->addText(' de ',$fontStyle);
+            $encabezado->addField('NUMPAGES',[],[],null,$fontStyle);
             $header->addTextBreak();
                       
             // Creación de Contenido
@@ -1591,9 +1578,14 @@ class PronunciamientoOrigenController extends Controller
             $textRun1->addTextBreak();
             $textRun1->addText($direccion_destinatario);
             $textRun1->addTextBreak();
+            $textRun1->addText('Tel: ');
             $textRun1->addText($telefono_destinatario);
             $textRun1->addTextBreak();
-            $textRun1->addText($ciudad_destinatario);
+            if($ciudad_destinatario !== 'Bogota D.C.'){
+                $textRun1->addText($departamento_destinatario.' - '.$ciudad_destinatario);
+            }else{
+                $textRun1->addText($ciudad_destinatario);
+            }
 
             $cell2 = $table->addCell(4000);
 
@@ -1620,7 +1612,7 @@ class PronunciamientoOrigenController extends Controller
 
             if (preg_match($patron1_asunto, $asunto) && preg_match($patron2_asunto, $asunto)) {
                 $asunto_modificado = str_replace('{{$NRO_DICTAMEN_PRI_CALI}}', $nro_dictamen_pri_cali, $asunto);
-                $asunto_modificado = str_replace('{{$FECHA_DICTAMEN_PRI_CALI}}', $fecha_dictamen_pri_cali, $asunto_modificado);
+                $asunto_modificado = str_replace('{{$FECHA_DICTAMEN_PRI_CALI}}', date("d/m/Y", strtotime($fecha_dictamen_pri_cali)), $asunto_modificado);
 
                 $asunto = $asunto_modificado;
             }else{
@@ -1636,14 +1628,14 @@ class PronunciamientoOrigenController extends Controller
             $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
             $asuntoyafiliado->addText($asunto, array('bold' => true));
             $asuntoyafiliado->addTextBreak();
-            $asuntoyafiliado->addText('Paciente: ', array('bold' => true));
-            $asuntoyafiliado->addText(strtoupper($nombre_afiliado)." ".$tipo_identificacion." ".$num_identificacion);
-            $asuntoyafiliado->addTextBreak();
-            $asuntoyafiliado->addText('Ramo: ', array('bold' => true));
-            $asuntoyafiliado->addText($ramo);
-            $asuntoyafiliado->addTextBreak();
-            $asuntoyafiliado->addText('Siniestro: ', array('bold' => true));
-            $asuntoyafiliado->addText($N_siniestro);
+            $asuntoyafiliado->addText('PACIENTE: ', array('bold' => true));
+            $asuntoyafiliado->addText(strtoupper($nombre_afiliado)." ".$tipo_identificacion." ".$num_identificacion,array('bold' => true));
+            // $asuntoyafiliado->addTextBreak();
+            // $asuntoyafiliado->addText('Ramo: ', array('bold' => true));
+            // $asuntoyafiliado->addText($ramo);
+            // $asuntoyafiliado->addTextBreak();
+            // $asuntoyafiliado->addText('Siniestro: ', array('bold' => true));
+            // $asuntoyafiliado->addText($N_siniestro);
             $section->addTextBreak();
 
             // $section->addText('Asunto: '.$asunto, array('bold' => true));
@@ -1772,9 +1764,9 @@ class PronunciamientoOrigenController extends Controller
             Html::addHtml($section, $htmltabla2, false, true);
             $section->addTextBreak();
             // Configuramos el footer
-            $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$N_siniestro;
+            // $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$N_siniestro;
             $footer = $section->addFooter();
-            $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
+            // $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
             if($ruta_logo_footer != null){
                 $imagenPath_footer = public_path($ruta_logo_footer);
                 $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));
@@ -1798,80 +1790,12 @@ class PronunciamientoOrigenController extends Controller
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $Id_comunicado)
             ->update($actualizar_nombre_documento);
 
-            /* Inserción del registro de que fue descargado */
-            // Extraemos el id del servicio asociado
-            // $dato_id_servicio = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_asignacion_eventos as siae')
-            // ->select('siae.Id_servicio')
-            // ->where([
-            //     ['siae.Id_Asignacion', $Id_Asignacion_consulta_dx],
-            //     ['siae.ID_evento', $id_evento],
-            //     ['siae.Id_proceso', $Id_Proceso_consulta_dx],
-            // ])->get();
-
-            // $Id_servicio = $dato_id_servicio[0]->Id_servicio;
-
-            // // Se pregunta por el nombre del documento si ya existe para evitar insertarlo más de una vez
-            // $verficar_documento = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            // ->select('Nombre_documento')
-            // ->where([
-            //     ['Nombre_documento', $nombre_docx],
-            // ])->get();
-            
-            // if(count($verficar_documento) == 0){
-
-            //     // Se valida si antes de insertar la info del doc de desacuerdo ya hay un doc de acuerdo
-            //     $nombre_docu_acuerdo = "ORI_ACUERDO_{$Id_Asignacion_consulta_dx}_{$num_identificacion}.pdf";
-            //     $verificar_docu_acuerdo = sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            //     ->select('Nombre_documento')
-            //     ->where([
-            //         ['Nombre_documento', $nombre_docu_acuerdo],
-            //     ])->get();
-
-            //     // Si no existe info del documento de acuerdo, inserta la info del documento de desacuerdo
-            //     // De lo contrario hace una actualización de la info
-            //     if (count($verificar_docu_acuerdo) == 0) {
-            //         $info_descarga_documento = [
-            //             'Id_Asignacion' => $Id_Asignacion_consulta_dx,
-            //             'Id_proceso' => $Id_Proceso_consulta_dx,
-            //             'Id_servicio' => $Id_servicio,
-            //             'ID_evento' => $id_evento,
-            //             'Nombre_documento' => $nombre_docx,
-            //             'N_radicado_documento' => $nro_radicado,
-            //             'F_elaboracion_correspondencia' => $fecha,
-            //             'F_descarga_documento' => $date,
-            //             'Nombre_usuario' => Auth::user()->name,
-            //         ];
-                    
-            //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')->insert($info_descarga_documento);
-            //     }else{
-            //         $info_descarga_documento = [
-            //             'Id_Asignacion' => $Id_Asignacion_consulta_dx,
-            //             'Id_proceso' => $Id_Proceso_consulta_dx,
-            //             'Id_servicio' => $Id_servicio,
-            //             'ID_evento' => $id_evento,
-            //             'Nombre_documento' => $nombre_docx,
-            //             'N_radicado_documento' => $nro_radicado,
-            //             'F_elaboracion_correspondencia' => $fecha,
-            //             'F_descarga_documento' => $date,
-            //             'Nombre_usuario' => Auth::user()->name,
-            //         ];
-                    
-            //         sigmel_registro_descarga_documentos::on('sigmel_gestiones')
-            //         ->where([
-            //             ['Id_Asignacion', $Id_Asignacion_consulta_dx],
-            //             ['N_radicado_documento', $nro_radicado],
-            //             ['ID_evento', $id_evento]
-            //         ])
-            //         ->update($info_descarga_documento);
-            //     }
-            // }
-
-            // return response()->download(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
-
             // Leer el contenido del archivo guardado y codificarlo en base64
             $contenidoWord = File::get(public_path("Documentos_Eventos/{$id_evento}/{$nombre_docx}"));
 
             $datos = [
+                'nombre_documento' => $nombre_docx,
+                'tipo_proforma' => "proforma_desacuerdo",
                 'indicativo' => $indicativo,
                 'word' => base64_encode($contenidoWord)
             ];

@@ -118,6 +118,49 @@
     display: none;
 }
 
+.sirena {
+    /* font-size: 2.5rem;  */
+    animation: parpadeo 1s infinite alternate;
+  }
+  
+@keyframes parpadeo {
+    0% {
+        color: black;
+    }
+    100% {
+        color: red;
+    }
+}
+
+/* .sirena {
+    color: red;
+    animation: parpadeo 1s infinite alternate;
+}
+  
+@keyframes parpadeo {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.1;
+    }
+} */
+
+#id_subir_scroll {
+    bottom: 1.25rem;
+    position: fixed;
+    right: 1.25rem;
+    z-index: 1032;
+}
+
+#id_subir_scroll:hover {
+    background-color: #138496; 
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 .btn-icon-only {
     border: none;
     padding: 0;

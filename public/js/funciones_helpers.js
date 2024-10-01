@@ -446,12 +446,34 @@ $(document).ready(function () {
         if (!Number.isInteger(Number(value))) {
           $(input).val("");
         }
-    }    
+    }
+    
+    // Obtener el botón
+    // let mybutton = document.getElementById("id_subir_scroll");
+
+    // // Mostrar el botón cuando el usuario hace scroll hacia abajo 20px desde la parte superior
+    // window.onscroll = function() {Subirscroll()};
+
+    // function Subirscroll() {
+    //     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    //         mybutton.style.display = "block";
+    //     } else {
+    //         mybutton.style.display = "none";
+    //     }
+    // }
+
+    // // Cuando el usuario hace clic en el botón, se desplaza hacia la parte superior de la página
+    // mybutton.onclick = function() {
+    //     window.scrollTo({
+    //         top: 0,
+    //         behavior: 'smooth' // Scroll suave
+    //     });
+    // }
     
     // $(document).on("input", '[id^="deficienciadecreto3_"]', function() {
     //     NumerosEnteros(this);
-    // });   
-    
+    // });
+            
     function Maximo2Decimales(idinput){
         $('#'+idinput).on('input', function(){
             var inputValue = $(this).val();
@@ -597,7 +619,102 @@ $(document).ready(function () {
     $("#recargar_ventana").click(function(){
         location.reload();
     });
+
+    $(".initSelect2").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    $(document).on('click',"#Edicion",function(e){
+        e.preventDefault();
+
+        /**
+         * Datos que se incluiran en la modal
+         */
+        const ahora = new Date();
+        let f_accion =  ahora.toISOString().slice(0, 16).replace('T', ' ');
+        let accion_ejecutar = $("#accion option:selected").text();
+        let estado_facturacion = $("#estado_facturacion").val();
+        let profecional_asignado = $("#profesional option:selected").text();
+        let id_profecional_asignado = $("#profesional option:selected").val();
+        let servicio = $("#servicio").val();
+
+        //Limpiamos los campos de la modal
+        $("#c_accion_ejecutar, #c_f_accion, #c_e_facturacion, #c_profesional, #c_servicio, #alerta_accion").empty();
+
+        /**
+         * De no haber una accion y/o profesional seleccionado no se habilitara el boton de ejecucion
+         */
+        if(accion_ejecutar == "" || id_profecional_asignado == ""){
+           $("#alerta_accion").removeClass('d-none');
+           $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong> No se puede ejecutar la accion debio a que no ha seleccionado una accion y/o profesional");
+           $("#c_ejecutar_accion").prop('disabled',true);
+           profecional_asignado = "";
+        }else{
+            $("#alerta_accion").addClass('d-none');
+            $("#c_ejecutar_accion").prop('disabled',false);
+        }
+
+        //Muestra el campo de facturacion si este esta presente
+        if(estado_facturacion == ""){
+            $("#c_estado_facturacion, #n_confirmarAccion").addClass("d-none");
+        }else{
+            $("#c_estado_facturacion, #n_confirmarAccion").removeClass("d-none");
+            $("#c_e_facturacion").append(estado_facturacion);
+        }
+
+        //Se agregan los datos a la modal
+        $("#c_accion_ejecutar").append(accion_ejecutar);
+        $("#c_f_accion").append(f_accion);
+        $("#c_profesional").append(profecional_asignado);
+        $("#c_servicio").append(servicio);
+        
+        //Se ejecuta la accion
+        $("#c_ejecutar_accion").off('click').on('click', function() {
+            $("#c_ejecutar_accion").prop("disabled",true);
+            let id_accion = $("#accion option:selected").val();
+
+            validarAccion_ejecutar(id_accion).then(response => {
+
+                /**
+                 * Siempre y cuando la accion este sin ejecutar para el servicio actual podra ser ejecutada, de no ser asi se bloqueara.
+                 */
+                if (response === "sin_ejecutar") {
+                    $("#alerta_accion_ejecutando").removeClass('d-none');
+
+                    let id_formulario = getId_formulario();
+                    $(`#${id_formulario}`).submit();
+
+                    setTimeout(() => {
+                        $("#alerta_accion_ejecutando").addClass('d-none');
+                        location.reload();
+                    }, 1500);
+
+                } else {
+                    $("#alerta_accion").removeClass('d-none');
+                    $("#c_ejecutar_accion").prop('disabled', true);
+                    $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong> Ésta acción solo puede ser ejecutada una única vez. Por favor valide el historial de acciones del servicio.");
+                }
+
+            });
+        });
+
+
+    });
 });
+
+/**
+ * Obtiene el id del formulario para el modulo principal actual
+ * @returns Id del formulario cargado en el dom
+ */
+function getId_formulario(){
+    let disponibles = ["#form_calificacionJuntas","#form_calificacionPcl","#form_calificacionOrigen"];
+    // Busca el primer ID que esté presente en el DOM
+    let formularioPresente = $(disponibles.join(',')).filter(':visible').first();
+
+    // Retorna el ID o null si no se encontró ninguno
+    return formularioPresente.length > 0 ? formularioPresente.attr('id') : null;
+}
 
 /* Función para ajustar un Datatable cuando este tenga un scroll vertical */
 function autoAdjustColumns(table) {
@@ -742,5 +859,112 @@ function ubicacionEvento() {
                 resolve(status); //true o false 
             }
         });
+    });
+}
+/*
+* Recibe una cadena string con todos los IDs de destinatario de un comunicado y el 'destinatario' con el fin d
+* @returns string | null
+*/
+function retornarIdDestinatario(ids_destinatario, destinatario){
+        if(ids_destinatario != null && ids_destinatario != undefined){
+            //Se usa split para armar un array con todos los ids de destinatario
+            let ids = ids_destinatario.split(',');
+            //Se validan los prefijos en base al destinatario
+            const prefijos = {
+                'Afiliado': 'AFI',
+                'Empleador': 'EMP',
+                'eps': 'EPS',
+                'afp': 'AFP',
+                'arl': 'ARL',
+                'afp_conocimiento': 'FPC',
+                'jrci': 'JRC',
+                'jnci': 'JNC'
+            };
+            // Se busca el prefijo con el que deberia venir el ID en base al destinatario
+            let Id_Destinatario = ids.find(finder => finder !== '' && finder.startsWith(prefijos[destinatario]));
+
+            return Id_Destinatario && Id_Destinatario !== '' ? Id_Destinatario.split('_')[1] : null
+        }
+    }
+
+    /*
+        Muestra un spinner en el centro de la pantalla para indicarle al usuario que x recurso se esta cargando
+    */
+    function showLoading() {
+        $('#loading').addClass('loading');
+        $('#loading-content').addClass('loading-content');
+    }
+    /*
+        Esconde el spinner para indicarle al usuario que x recurso fue cargado
+    */
+    function hideLoading() {
+        $('#loading').removeClass('loading');
+        $('#loading-content').removeClass('loading-content');  
+    }
+    /*
+        Consulta en la base de datos si un registro de correspondencia fue guardado con estado distinto a notificado
+        si encuentra el registro devuelve el tipo de correspondencia para que el sistema cargue la información desde la tabla de correspondencias y no
+        lo haga desde la de comunicados.
+    */
+    function consultarRegistroPorIdDestinatario(id_destinatario){
+        return new Promise((resolve, reject) => {
+            let datos = {
+                '_token': $('input[name=_token]').val(),
+                'id_destinatario': id_destinatario
+            };
+    
+            $.ajax({
+                url: '/getInfoCorrespByIdDest',
+                type: 'POST',
+                data: datos,
+                beforeSend: function () {
+                    showLoading();
+                },
+                success: function (response) {
+                    if (response.length > 0) {
+                        resolve(response[0]['Tipo_correspondencia']);
+                    } else {
+                        resolve(null);
+                    }
+                },
+                error: function (error) {
+                    reject(error);
+                },
+                complete: function () {
+                    hideLoading();
+                }
+            });
+        });
+}
+
+/**
+ * 
+ * @param {int} id_accion Id de la accion que se va a ejecutar 
+ * @returns Estado de la accion: sin_ejecutar - ejecutada
+ */
+function validarAccion_ejecutar(id_accion) {
+    return new Promise((resolve, reject) => {
+        if (id_accion === "") {
+            reject("ID de acción vacío");
+            return;
+        }
+        
+        let datos = {
+            '_token': $('input[name=_token]').val(),
+            'bandera': 'validar_accion',
+            'accion_ejecutar': id_accion,
+            'Id_cliente': $("#cliente").data('id'),
+            'Id_servicio': $("#Id_servicio").val(),
+            'ID_evento': $("#newIdEvento").val(),
+            'Id_Asignacion': $("#newIdAsignacion").val()
+        };
+
+        $.post("/validar_acciones", datos)
+            .done(function(response) {
+                resolve(response);
+            })
+            .fail(function(error) {
+                reject(error);
+            });
     });
 }

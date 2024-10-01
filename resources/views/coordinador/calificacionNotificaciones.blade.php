@@ -272,6 +272,9 @@
                         </div>                                    
                     </div>
                 </div>
+                <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+                    <i class="fas fa-chevron-up"></i>
+                </a> 
             </div>
             <div class="card-footer">
                 <div class="grupo_botones">
@@ -350,6 +353,7 @@
     </div>
     <?php $aperturaModal = 'Edicion'; ?>
     @include('//.administrador.modalcarguedocumentos')
+    @include('//.administrador.modalProgressbar')
 @stop
 @section('js')
     <script>
@@ -402,5 +406,6 @@
          sessionStorage.removeItem("scrollTopNotifi");
     </script>
     <script type="text/javascript" src="/js/calificacionNotifi.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
 @stop

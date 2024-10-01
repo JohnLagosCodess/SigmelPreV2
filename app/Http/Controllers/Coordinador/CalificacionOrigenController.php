@@ -28,7 +28,12 @@ use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_lista_parametros;
 use App\Models\sigmel_auditorias_informacion_accion_eventos;
+use App\Models\sigmel_clientes;
+use App\Models\sigmel_informacion_firmas_clientes;
+use App\Models\sigmel_informacion_laboral_eventos;
+use App\Models\sigmel_lista_departamentos_municipios;
 use App\Models\sigmel_numero_orden_eventos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use DateTime;
@@ -36,6 +41,12 @@ use DateTime;
 class CalificacionOrigenController extends Controller
 {
     use GenerarRadicados;
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
 
     public function mostrarVistaCalificacionOrigen(Request $request){
         if(!Auth::check()){
@@ -2026,7 +2037,7 @@ class CalificacionOrigenController extends Controller
                     'info_medio_noti' => $info_medio_noti
                 ]);
             break;
-            case ($destinatarioPrincipal == 'Empresa'):                
+            case ($destinatarioPrincipal == 'Empleador'):                
                 $array_datos_destinatarios = cndatos_comunicado_eventos::on('sigmel_gestiones')
                 ->where([['ID_evento',$newIdEvento],['Nro_identificacion',$identificacion_comunicado_afiliado]])
                 ->limit(1)->get(); 
@@ -2092,6 +2103,13 @@ class CalificacionOrigenController extends Controller
                     $radicado = $this->disponible($request->radicado2,$request->Id_evento)->getRadicado('origen',$request->Id_evento);
                 break;
         }
+        
+        //Se asignan los IDs de destinatario por cada posible destinatario
+        if($request->modulo_creacion === 'controversiaJuntas'){
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario(true,true);
+        }else{
+            $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
+        }
 
         if($tipo_descarga != 'Manual'){
             $radioafiliado_comunicado = $request->radioafiliado_comunicado;
@@ -2107,7 +2125,7 @@ class CalificacionOrigenController extends Controller
             if(!empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && empty($radioOtro)){
                 $destinatario = 'Afiliado';
             }elseif(empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado) && empty($radioOtro)){
-                $destinatario = 'Empresa';
+                $destinatario = 'Empleador';
             }elseif(empty($radioafiliado_comunicado) && empty($radioempresa_comunicado) && !empty($radioOtro)){
                 $destinatario = 'Otro';
             }
@@ -2153,11 +2171,12 @@ class CalificacionOrigenController extends Controller
                 'Tipo_descarga' => $request->tipo_descarga,
                 'Modulo_creacion' => $request->modulo_creacion,
                 'N_siniestro' => $request->N_siniestro,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
 
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
+            $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_registrarComunicadoPcl);
     
             sleep(2);
             $datos_info_historial_acciones = [
@@ -2169,6 +2188,13 @@ class CalificacionOrigenController extends Controller
             ];
     
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+
+            $mensajes = array(
+                "parametro" => 'agregar_comunicado',
+                "mensaje" => 'Comunicado generado satisfactoriamente.',
+                "Id_Comunicado" => $Id_Comunicado,
+                "comunicadoSigmel" => 'DocumentoSigmel'
+            );
         }
         else if($tipo_descarga == 'Manual'){
             if($request->modulo){
@@ -2242,6 +2268,7 @@ class CalificacionOrigenController extends Controller
                 'Modulo_creacion' => $request->modulo_creacion,
                 // 'Nombre_documento' => $request->Nombre_documento,
                 'Nombre_documento' => $nombre_final_documento,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
@@ -2259,14 +2286,14 @@ class CalificacionOrigenController extends Controller
             ];
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
+
+            $mensajes = array(
+                "parametro" => 'agregar_comunicado',
+                "mensaje" => 'Comunicado generado satisfactoriamente.',
+                "comunicadoSigmel" => 'DocumentoManual'
+            );
         }
         
-        
-        $mensajes = array(
-            "parametro" => 'agregar_comunicado',
-            "mensaje" => 'Comunicado generado satisfactoriamente.'
-        );
-
         return json_decode(json_encode($mensajes, true));
 
     }
@@ -2291,7 +2318,7 @@ class CalificacionOrigenController extends Controller
             $enviar_notificacion = BandejaNotifiController::evento_en_notificaciones($newId_evento,$newId_asignacion);
 
             foreach ($hitorialAgregarComunicado as &$comunicado) {
-                if ($comunicado['Tipo_descarga'] === 'Documento_Origen') {
+                if ($comunicado['Nombre_documento'] != null && $comunicado['Tipo_descarga'] != 'Manual') {
                     $filePath = public_path('Documentos_Eventos/'.$comunicado->ID_evento.'/'.$comunicado->Nombre_documento);
                     if(File::exists($filePath)){
                         $comunicado['Existe'] = true;
@@ -2316,10 +2343,7 @@ class CalificacionOrigenController extends Controller
                 if($comunicado["Id_Comunicado"]){
                     $comunicado['Estado_correspondencia'] = BandejaNotifiController::estado_Correspondencia($newId_evento,$newId_asignacion,$comunicado["Id_Comunicado"]);
                 }
-                
-
             }
-            
             return response()->json([
                 'hitorialAgregarComunicado' => $hitorialAgregarComunicado,
                 'enviar_notificacion' => $enviar_notificacion
@@ -2397,7 +2421,7 @@ class CalificacionOrigenController extends Controller
         if(!empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
             $destinatario = 'Afiliado';
         }elseif(empty($radioafiliado_comunicado_editar) && !empty($radioempresa_comunicado_editar) && empty($radioOtro_editar)){
-            $destinatario = 'Empresa';
+            $destinatario = 'Empleador';
         }elseif(empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar) && !empty($radioOtro_editar)){
             $destinatario = 'Otro';
         }

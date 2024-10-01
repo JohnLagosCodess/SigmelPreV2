@@ -40,6 +40,7 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_auditorias_informacion_accion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
+use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use DateTime;
@@ -51,6 +52,13 @@ use PhpOffice\PhpWord\Style\Image;
 class CalificacionJuntasController extends Controller
 {
     use GenerarRadicados;
+
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
 
     public function mostrarVistaCalificacionJuntas(Request $request){
         if(!Auth::check()){
@@ -2247,7 +2255,7 @@ class CalificacionJuntasController extends Controller
                     'info_medio_noti' => $info_medio_noti
                 ]);
             break;
-            case ($destinatarioPrincipal == 'Empresa'):                
+            case ($destinatarioPrincipal == 'Empleador'):                
                 $array_datos_destinatarios = cndatos_comunicado_eventos::on('sigmel_gestiones')
                 ->where([['ID_evento',$newIdEvento],['Nro_identificacion',$identificacion_comunicado_afiliado]])
                 ->limit(1)->get(); 
@@ -2481,6 +2489,9 @@ class CalificacionJuntasController extends Controller
 
         $radicado = $this->disponible($request->radicado2,$Id_evento)->getRadicado('juntas',$Id_evento);
 
+        //Se asignan los IDs de destinatario por cada posible destinatario
+        $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario(true,true);
+
         if($tipo_descarga != 'Manual'){
             $radiojrci_comunicado = $request->radiojrci_comunicado;
             $radiojnci_comunicado = $request->radiojnci_comunicado;
@@ -2512,7 +2523,7 @@ class CalificacionJuntasController extends Controller
             }
             elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && !empty($radioempresa_comunicado)
                 && empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
-                $destinatario = 'Empresa';
+                $destinatario = 'Empleador';
             }
             elseif(empty($radiojrci_comunicado) && empty($radiojnci_comunicado) && empty($radioafiliado_comunicado) && empty($radioempresa_comunicado)
                 && !empty($radioeps_comunicado) && empty($radioafp_comunicado) && empty($radioarl_comunicado) && empty($radioOtro)){
@@ -2574,11 +2585,12 @@ class CalificacionJuntasController extends Controller
                 'Modulo_creacion' => $request->modulo_creacion,
                 'Otro_destinatario' => $otro_destinatario_jrci,
                 'N_siniestro' => $request->N_siniestro,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
             
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoPcl);
+            $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_registrarComunicadoPcl);
 
             sleep(2);
             $datos_info_historial_acciones = [
@@ -2664,11 +2676,12 @@ class CalificacionJuntasController extends Controller
                 // 'Nombre_documento' => $request->Nombre_documento,
                 'Otro_destinatario' => 0,
                 'Nombre_documento' => $nombre_final_documento,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
 
-            sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insert($datos_info_registrarComunicadoJuntas);
+            $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_registrarComunicadoJuntas);
 
             sleep(2);
             $datos_info_historial_acciones = [
@@ -2681,14 +2694,186 @@ class CalificacionJuntasController extends Controller
 
             sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
         }
-        
+        $entidades = ['Jrci', 'Jnci', 'Eps', 'Afp', 'Arl'];
+
+        $principalDestinatario = function($entidades, $destinatario) {
+            return in_array($destinatario, $entidades) ? strtoupper($destinatario) . "_comunicado" : $destinatario;
+        };
+
         $mensajes = array(
             "parametro" => 'agregar_comunicado',
+            'status_pdf' => $this->generarPDF($request, $id_comunicado,$principalDestinatario($entidades,$destinatario ?? null),'guardar'),
             "mensaje" => 'Comunicado generado satisfactoriamente.'
         );
 
         return json_decode(json_encode($mensajes, true));
 
+    }
+    public function generarPDF($data_comunicado,$id_comunicado,$principalDestinatario,$tipo_proceso){
+        
+        //Dado que los procesos de guardar y actualizar estan separados, y las clave-valor no son los mismos,
+        //se utiliza params para homolarlo en uno solo.
+        $params = [
+            'guardar' => [
+                'p1' => '_token',
+                'p2' => 'cliente_comunicado2',
+                'p3' => 'nombre_afiliado_comunicado2',
+                'p4' => 'tipo_documento_comunicado2',
+                'p5' => 'identificacion_comunicado2',
+                'p6' => 'Id_evento',
+                'p7' => 'tipo_descarga',
+                //'p8' => 'afiliado_comunicado_act',
+                'p9' => 'nombre_destinatario',
+                'p10' => 'nic_cc',
+                'p11' => 'direccion_destinatario',
+                'p12' => 'telefono_destinatario',
+                'p13' => 'email_destinatario',
+                'p14' => 'departamento_destinatario',
+                'p15' => 'ciudad_destinatario',
+                'p16' => 'asunto',
+                'p17' => 'cuerpo_comunicado',
+                //'p18' => 'files',
+                'p19' => 'anexos',
+                'p20' => 'forma_envio',
+                'p21' => 'elaboro2',
+                'p22' => 'reviso',
+                'p23' => 'firmarcomunicado',
+                'p24' => 'ciudad',
+                //'p25' => 'Id_comunicado_act',
+                'p26' => 'Id_evento',
+                'p27' => 'Id_asignacion',
+                'p28' => 'Id_procesos',
+                'p29' => 'fecha_comunicado2',
+                'p30' => 'copiaComunicadoTotal',
+                'p31' => 'radicado2',
+                'p32' => 'edit_copia_afiliado',
+                'p33' => 'edit_copia_empleador',
+                'p34' => 'edit_copia_eps',
+                'p35' => 'edit_copia_afp',
+                'p36' => 'edit_copia_arl',
+                'p37' => 'edit_copia_jrci',
+                'p38' => 'edit_copia_jnci',
+                'p39' => 'N_siniestro',
+                'p40' => 'Nombre_junta_act',
+                'p41' => 'F_estructuracion_act',
+                'p42' => 'F_dictamen_act',
+                'p43' => 'input_jrci_seleccionado_copia_editar',
+                'p44' => 'id_jrci_del_input',
+                'p45' => 'F_radicacion_contro_pri_cali_act',
+                'p46' => 'F_notifi_afiliado_act',
+                'p47' => 'Id_junta_act',
+                'p48' => 'tipo_de_preforma_editar',
+            ],
+            'actualizar' => [
+                'p1' => '_token',
+                'p2' => 'cliente_comunicado2_editar',
+                'p3' => 'nombre_afiliado_comunicado2_editar',
+                'p4' => 'tipo_documento_comunicado2_editar',
+                'p5' => 'identificacion_comunicado2_editar',
+                'p6' => 'Id_evento_editar',
+                'p7' => 'tipo_descarga',
+                //'p8' => 'afiliado_comunicado_act',
+                'p9' => 'nombre_destinatario_editar',
+                'p10' => 'nic_cc_editar',
+                'p11' => 'direccion_destinatario_editar',
+                'p12' => 'telefono_destinatario_editar',
+                'p13' => 'email_destinatario_editar',
+                'p14' => 'departamento_destinatario_editar',
+                'p15' => 'ciudad_destinatario_editar',
+                'p16' => 'asunto_editar',
+                'p17' => 'cuerpo_comunicado_editar',
+                //'p18' => 'files',
+                'p19' => 'anexos_editar',
+                'p20' => 'forma_envio_editar',
+                'p21' => 'elaboro2_editar',
+                'p22' => 'reviso_editar',
+                'p23' => 'firmarcomunicado_editar',
+                'p24' => 'ciudad_editar',
+                //'p25' => 'Id_comunicado_act',
+                'p26' => 'Id_evento_editar',
+                'p27' => 'Id_asignacion_editar',
+                'p28' => 'Id_procesos_editar',
+                'p29' => 'fecha_comunicado2_editar',
+                'p30' => 'agregar_copia_editar',
+                'p31' => 'radicado2_editar',
+                'p32' => 'edit_copia_afiliado',
+                'p33' => 'edit_copia_empleador',
+                'p34' => 'edit_copia_eps',
+                'p35' => 'edit_copia_afp',
+                'p36' => 'edit_copia_arl',
+                'p37' => 'edit_copia_jrci',
+                'p38' => 'edit_copia_jnci',
+                'p39' => 'N_siniestro',
+                'p40' => 'Nombre_junta_act',
+                'p41' => 'F_estructuracion_act',
+                'p42' => 'F_dictamen_act',
+                'p43' => 'input_jrci_seleccionado_copia_editar',
+                'p44' => 'id_jrci_del_input',
+                'p45' => 'F_radicacion_contro_pri_cali_act',
+                'p46' => 'F_notifi_afiliado_act',
+                'p47' => 'Id_junta_act',
+                'p48' => 'tipo_de_preforma_editar',
+            ]
+        ];
+
+        $data = [
+            '_token' => $data_comunicado->{$params[$tipo_proceso]['p1']},
+            'cliente_comunicado2_act' => $data_comunicado->{$params[$tipo_proceso]['p2']},
+            'nombre_afiliado_comunicado2_act' => $data_comunicado->{$params[$tipo_proceso]['p3']},
+            'tipo_documento_comunicado2_act' => $data_comunicado->{$params[$tipo_proceso]['p4']},
+            'identificacion_comunicado2_act' => $data_comunicado->{$params[$tipo_proceso]['p5']},
+            'id_evento_comunicado2_act' => $data_comunicado->{$params[$tipo_proceso]['p6']},
+            'tipo_documento_descarga_califi_editar' => $data_comunicado->{$params[$tipo_proceso]['p7']},
+            'afiliado_comunicado_act' => $principalDestinatario,
+            'nombre_destinatario_act2' => $data_comunicado->{$params[$tipo_proceso]['p9']},
+            'nic_cc_act2' => $data_comunicado->{$params[$tipo_proceso]['p10']},
+            'direccion_destinatario_act2' => $data_comunicado->{$params[$tipo_proceso]['p11']},
+            'telefono_destinatario_act2' => $data_comunicado->{$params[$tipo_proceso]['p12']},
+            'email_destinatario_act2' => $data_comunicado->{$params[$tipo_proceso]['p13']},
+            'departamento_pdf' => $data_comunicado->{$params[$tipo_proceso]['p14']},
+            'ciudad_pdf' => $data_comunicado->{$params[$tipo_proceso]['p15']},
+            'asunto_act' => $data_comunicado->{$params[$tipo_proceso]['p16']},
+            'cuerpo_comunicado_act' => $data_comunicado->{$params[$tipo_proceso]['p17']},
+            'files' => null,
+            'anexos_act' => $data_comunicado->{$params[$tipo_proceso]['p19']},
+            'forma_envio_act' => $data_comunicado->{$params[$tipo_proceso]['p20']},
+            'elaboro2_act' => $data_comunicado->{$params[$tipo_proceso]['p21']},
+            'reviso_act' => $data_comunicado->{$params[$tipo_proceso]['p22']},
+            'firmarcomunicado_editar' => $data_comunicado->{$params[$tipo_proceso]['p23']},
+            'ciudad_comunicado_act' => $data_comunicado->{$params[$tipo_proceso]['p24']},
+            'Id_comunicado_act' => $id_comunicado,
+            'Id_evento_act' => $data_comunicado->{$params[$tipo_proceso]['p26']},
+            'Id_asignacion_act' => $data_comunicado->{$params[$tipo_proceso]['p27']},
+            'Id_procesos_act' => $data_comunicado->{$params[$tipo_proceso]['p28']},
+            'fecha_comunicado2_act' => $data_comunicado->{$params[$tipo_proceso]['p29']},
+            'agregar_copia_editar' => $data_comunicado->{$params[$tipo_proceso]['p30']},
+            'radicado2_act' => $data_comunicado->{$params[$tipo_proceso]['p31']},
+            'edit_copia_afiliado' => ($data_comunicado->{$params[$tipo_proceso]['p32']} == 'true'),
+            'edit_copia_empleador' => ($data_comunicado->{$params[$tipo_proceso]['p33']} == 'true'),
+            'edit_copia_eps' => ($data_comunicado->{$params[$tipo_proceso]['p34']} == 'true'),
+            'edit_copia_afp' => ($data_comunicado->{$params[$tipo_proceso]['p35']} == 'true'),
+            'edit_copia_arl' => ($data_comunicado->{$params[$tipo_proceso]['p36']} == 'true'),
+            'edit_copia_jrci' => ($data_comunicado->{$params[$tipo_proceso]['p37']} == 'true'),
+            'edit_copia_jnci' => ($data_comunicado->{$params[$tipo_proceso]['p38']} == 'true'),
+            'n_siniestro_proforma_editar' => $data_comunicado->{$params[$tipo_proceso]['p39']},
+            'Nombre_junta_act' => $data_comunicado->{$params[$tipo_proceso]['p40']},
+            'F_estructuracion_act' => $data_comunicado->{$params[$tipo_proceso]['p41']},
+            'F_dictamen_act' => $data_comunicado->{$params[$tipo_proceso]['p42']},
+            'input_jrci_seleccionado_copia_editar' => $data_comunicado->{$params[$tipo_proceso]['p43']},
+            'id_jrci_del_input' => $data_comunicado->{$params[$tipo_proceso]['p44']},
+            'F_radicacion_contro_pri_cali_act' => $data_comunicado->{$params[$tipo_proceso]['p45']},
+            'F_notifi_afiliado_act' => $data_comunicado->{$params[$tipo_proceso]['p46']},
+            'Id_junta_act' => $data_comunicado->{$params[$tipo_proceso]['p47']},
+            'tipo_de_preforma_editar' => $data_comunicado->{$params[$tipo_proceso]['p48']},
+        ];
+        
+        $requestTMP = new Request();
+        $requestTMP->setMethod('POST');
+        $requestTMP->request->add($data);
+
+        $this->DescargarProformasJuntas($requestTMP);
+
+        return "PDF generado";
     }
     //Historial Comunicado
     public function historialComunicadosJuntas(Request $request){
@@ -2830,7 +3015,7 @@ class CalificacionJuntasController extends Controller
         }
         elseif(empty($radiojrci_comunicado_editar) && empty($radiojnci_comunicado_editar) && empty($radioafiliado_comunicado_editar) && !empty($radioempresa_comunicado_editar)
             && empty($radioeps_comunicado_editar) && empty($radioafp_comunicado_editar) && empty($radioarl_comunicado_editar) && empty($radioOtro_editar)){
-                $destinatario = 'Empresa';
+                $destinatario = 'Empleador';
         }
         elseif(empty($radiojrci_comunicado_editar) && empty($radiojnci_comunicado_editar) && empty($radioafiliado_comunicado_editar) && empty($radioempresa_comunicado_editar)
             && !empty($radioeps_comunicado_editar) && empty($radioafp_comunicado_editar) && empty($radioarl_comunicado_editar) && empty($radioOtro_editar)){
@@ -2910,10 +3095,16 @@ class CalificacionJuntasController extends Controller
             'Descripcion' => $request->asunto_editar,
         ];
 
+        $entidades = ['Jrci', 'Jnci', 'Eps', 'Afp', 'Arl'];
+
+        $principalDestinatario = function($entidades, $destinatario) {
+            return in_array($destinatario, $entidades) ? strtoupper($destinatario) . "_comunicado" : $destinatario;
+        };
         sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_info_historial_acciones);
         
         $mensajes = array(
             "parametro" => 'actualizar_comunicado',
+            'status_pdf' => $this->generarPDF($request, $Id_comunicado_editar,$principalDestinatario($entidades,$destinatario),'actualizar'),
             "mensaje" => 'Comunicado actualizado satisfactoriamente.'
         );
 
@@ -3041,13 +3232,13 @@ class CalificacionJuntasController extends Controller
                 $nombre_junta = $request->Nombre_junta_act;
 
                 // Validamos si los checkbox esta marcados
-                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $edit_copias_afiliado = $request->edit_copia_afiliado ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empleador ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copia_eps ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copia_afp ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
                     'edit_copia_empleador' => $edit_copias_empleador,
@@ -4023,13 +4214,13 @@ class CalificacionJuntasController extends Controller
                 }
 
                 // Copias a partes interesadas
-                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $edit_copias_afiliado = $request->edit_copia_afiliado ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empleador ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copia_eps ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copia_afp ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
 
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
@@ -4538,13 +4729,13 @@ class CalificacionJuntasController extends Controller
                 }
 
                 // Copias a partes interesadas
-                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $edit_copias_afiliado = $request->edit_copia_afiliado ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empleador ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copia_eps ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copia_afp ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
 
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
@@ -5251,13 +5442,13 @@ class CalificacionJuntasController extends Controller
                 }
 
                 // Copias a partes interesadas
-                $edit_copias_afiliado = isset($request->edit_copia_afiliado) ? 'Afiliado' : '';
-                $edit_copias_empleador = isset($request->edit_copia_empleador) ? 'Empleador' : '';
-                $edit_copias_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
-                $edit_copias_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
-                $edit_copias_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $edit_copias_jrci = isset($request->edit_copia_jrci) ? 'JRCI': '';
-                $edit_copias_jnci = isset($request->edit_copia_jnci) ? 'JNCI': '';
+                $edit_copias_afiliado = $request->edit_copia_afi ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empl ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copi ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copi ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copi ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia ? 'JNCI': '';
 
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,

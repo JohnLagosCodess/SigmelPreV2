@@ -30,16 +30,29 @@
                             <form id="form_consulta_reporte_notificaciones" method="POST">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="" class="col-form-label">Fecha Desde <span style="color: red;">(*)</span></label>
                                             <input type="date" class="form-control" name="fecha_desde" id="fecha_desde" max="{{ date('Y-m-d') }}" required>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="" class="col-form-label">Fecha Hasta <span style="color: red;">(*)</span></label>
                                             <input type="date" class="form-control" name="fecha_hasta" id="fecha_hasta" max="{{ date('Y-m-d') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="estado_general_calificacion" class="col-form-label">Estado general de calificación</label>
+                                            <select class="estado_general_calificacion custom-select" name="estado_general_calificacion" id="estado_general_calificacion">                                               
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="numero_orden" class="col-form-label">N° de orden</label>
+                                            <input type="text" minlength="14" class="form-control" name="numero_orden" id="numero_orden">
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -73,13 +86,8 @@
                                         <table id="datos_reporte_notificaciones" class="table table-striped table-bordered" style="width:100%">
                                             <thead>
                                                 <tr class="bg-info">
-                                                    <th>CONS</th>
-                                                    <th>Id_correspondencia</th>
-                                                    <th>Id_comunicado</th>
-                                                    <th>Id_asignacion</th>
-                                                    <th>Id_proceso</th>
-                                                    <th>Id_servicio</th>
-                                                    <th>Id_evento</th>
+                                                    <th>CONS</th>                                                    
+                                                    <th>ID EVENTO</th>
                                                     <th>FECHA COMUNICADO</th>
                                                     <th>N° RADICADO</th>
                                                     <th>DOCUMENTO</th>
@@ -90,20 +98,18 @@
                                                     <th>NOMBRE DESTINATARIO</th>
                                                     <th>DIRECCION</th>
                                                     <th>TELÉFONO</th>	
-                                                    <th>CIUDAD</th>
-                                                    <th>DEPTO</th>	
+                                                    <th>CIUDAD - DEPARTAMENTO</th>                                                    
                                                     <th>CORREO ELECTRONICO</th>
-                                                    <th>PROCESO</th>
-                                                    <th>SERVICIO</th>
-                                                    <th>ULTIMA ACCION</th>
+                                                    <th>PROCESO - SERVICIO</th>                                                    
+                                                    <th>ULTIMA ACCIÓN</th>
                                                     <th>ESTADO</th>
                                                     <th>N° DE ORDEN</th>
+                                                    <th>ID DESTINATARIO</th>
                                                     <th>TIPO DESTINATARIO</th>
                                                     <th>N° DE GUÍA</th>
                                                     <th>FOLIOS</th>
                                                     <th>FECHA DE ENVÍO</th>
                                                     <th>FECHA DE NOTIFICACIÓN</th>
-                                                    <th>ESTADO DE NOTIFICACIÓN</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="vaciar_tabla_reporte_notificaciones">
@@ -155,6 +161,9 @@
                                 </div>
                                 
                             </div>
+                            <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+                                <i class="fas fa-chevron-up"></i>
+                            </a> 
                             <br>                                                   
                             <div class="text-center d-none" id="mostrar_barra_cargar_correspondencia">                                
                                 <button class="btn btn-info" type="button" disabled>
@@ -163,7 +172,7 @@
                                 </button>
                             </div>
                             @if(session('success'))
-                                <div class="alert alert-success">
+                                <div class="alert alert-success" id="alerta_cargue_correspondencia">
                                     {{ session('success') }}
                                 </div>
                             @endif  

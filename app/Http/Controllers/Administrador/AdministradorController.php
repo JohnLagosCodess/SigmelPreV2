@@ -69,8 +69,10 @@ use App\Models\sigmel_informacion_entidades;
 /* Parametrizaciones */
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_acciones;
+use App\Models\sigmel_informacion_diagnosticos_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
-
+use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
+use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 /* Manejo de archivos */
 use ZipArchive;
 
@@ -3704,6 +3706,24 @@ class AdministradorController extends Controller
         // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
         sleep(2);
 
+        //Si el servicio es una DTO insertamos el CIE-10 que debe tener por defecto
+        if($request->servicio == 1 && $request->proceso == 1){
+            $diagnostico_default_dto = [
+                'ID_evento' => $Id_evento,
+                'Id_Asignacion' => $Id_Asignacion,
+                'Id_proceso' => $request->proceso,
+                'CIE10' => '7198',
+                "Nombre_CIE10" => "Muerte sin asistencia",
+                "Deficiencia_motivo_califi_condiciones" => "Accidente mortal",
+                "Lateralidad_CIE10" => null,
+                "Origen_CIE10" => null,
+                "Principal" => "Si",
+                "Nombre_usuario" => $nombre_usuario,
+                'F_registro' => $date
+            ];
+            sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')->insert($diagnostico_default_dto);
+        }
+
         /* RECOLECCIÓN INFORMACIÓN PARA LA TABLA: sigmel_historial_acciones_eventos */
         $datos_historial_acciones = [
             'ID_evento' => $Id_evento,
@@ -4832,8 +4852,155 @@ class AdministradorController extends Controller
         return response()->json($array_datos_clientes);
     }
 
-    public function cargaListadoDocumentosInicialNuevo(Request $request){
+    public function cargarHistorialClinico(Request $request){
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+
+        $idEvento = $request->EventoID;
+        $Id_servicio = $request->Id_servicio;
+        $id_documento = $request->Id_Documento;
+        $nombre_lista_documento = $request->Nombre_documento;
+
+        $receiver = new FileReceiver('file', $request, HandlerFactory::classFromRequest($request));
+
+        if (!$receiver->isUploaded()) {
+            // file not uploaded
+        }
+
+        $fileReceived = $receiver->receive(); // receive file
+        if ($fileReceived->isFinished()) { // file uploading is complete / all chunks are uploaded
+            // Creación de carpeta con el ID EVENTO para insertar los documentos
+            $path = public_path('Documentos_Eventos/'.$idEvento);
+            $mode = 777;
+
+            $file = $fileReceived->getFile(); // get file
+            $extension = $file->getClientOriginalExtension();
+            
+            if (!File::exists($path)) {
+                File::makeDirectory($path, 0777, true, true);
+
+                chmod($path, octdec($mode));
+
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$extension;
+
+                Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
+            }
+            else {
+
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$extension;
+                Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
+            }
+            
+            // $fileName = str_replace('.'.$extension, '', $file->getClientOriginalName()); //file name without extenstion
+            // $fileName .= '_' . md5(time()) . '.' . $extension; // a unique file name
+            // $disk = Storage::disk(config('filesystems.default'));
+            // $path = Storage::putFileAs("000000000000001", $file, $fileName);
+
+            // delete chunked file
+            unlink($file->getPathname());
+
+            // Registrar la información del documento con relación al ID del evento.
+            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
+
+            $nuevoDocumento = [
+                'Id_Documento' => $id_documento,
+                'ID_evento' => $idEvento,
+                'Nombre_documento' => $nombrecompletodocumento,
+                'Formato_documento' => $extension,
+                'Id_servicio' => $Id_servicio,
+                'Estado' => 'activo',
+                'F_cargue_documento' => $date,
+                'Descripcion' => $request->descripcion_documento,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro' => $date
+            ];  
+
+            if (count($nuevoDocumento) > 0) {
+
+                // Consultamos si el documento ya se encuentra dentro de la tabla para no cargarlo nuevamente (se reemplaza por el nuevo).
+                $consulta_documento_bd = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+                    ->select( "Id_Registro_Documento", "Nombre_documento", "Formato_documento")
+                    ->where([
+                        ["Nombre_documento", "=", $nombrecompletodocumento],
+                        // ["Formato_documento", "=", $file->extension()],
+                        ["ID_evento", "=", $idEvento]
+                    ])->get();
+
+                $array_consulta_documento_bd = json_decode(json_encode($consulta_documento_bd), true);
+                
+                if(!empty($array_consulta_documento_bd)){
+                    
+                    $Id_Registro_Documento_en_bd = $array_consulta_documento_bd[0]['Id_Registro_Documento'];
+                    $Nombre_documento_en_bd = $array_consulta_documento_bd[0]['Nombre_documento'];
+
+                    // $Formato_documento_en_bd = $array_consulta_documento_bd[0]['Formato_documento'];
+                    // && $Formato_documento_en_bd == $file->extension()
+                    
+                    if ($Nombre_documento_en_bd == $nombrecompletodocumento) {
+                        $actualizar_documento = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+                            ->where('Id_Registro_Documento', $Id_Registro_Documento_en_bd)->firstOrFail();
         
+                        $actualizar_documento->fill($nuevoDocumento);
+                        $actualizar_documento->save();
+        
+                        $mensajes = array(
+                            "parametro" => 'exito',
+                            "mensaje" => 'Documento cargado satisfactoriamente.'
+                        );
+                        return json_decode(json_encode($mensajes, true));
+        
+                    } 
+
+                }
+                else {
+                    
+                    sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($nuevoDocumento);
+        
+                    $mensajes = array(
+                        "parametro" => 'exito',
+                        "mensaje" => 'Documento cargado satisfactoriamente.'
+                    );                    
+                    // SE VALIDA SI TODOS LOS DOCUMENTOS OBLIGATORIOS HAN SIDO CARGADOS PARA PROCEDER A HABILITAR EL BOTÓN QUE CREARÁ EL EVENTO
+                    $id_docs_obligatorios = sigmel_lista_documentos::on('sigmel_gestiones')
+                            ->select('Id_Documento')
+                            ->where([
+                                ["Requerido", "=", "Si"],
+                                ["Estado", "=", "activo"]
+                            ])->get();
+            
+                    $array_id_docs_obligatorios = json_decode(json_encode($id_docs_obligatorios), true);
+                    $cantidad_id_docs_obligatorios = count($array_id_docs_obligatorios);
+            
+                    $cantidad_id_docs_subidos = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+                    ->where([
+                        ['ID_evento', '=', $request->EventoID]
+                    ])
+                    ->whereIn('Id_Documento', $array_id_docs_obligatorios)->count();
+                    
+                    if ($cantidad_id_docs_obligatorios == $cantidad_id_docs_subidos) {
+                        $mensajes["todos_obligatorios"] = "Si";
+                    }
+                    return json_decode(json_encode($mensajes, true));
+                    
+                }
+
+            }
+            // return [
+            //     'path' => asset('storage/' . $path),
+            //     'filename' => $nombre_final_documento_en_carpeta
+            // ];
+        }
+
+        // otherwise return percentage informatoin
+        $handler = $fileReceived->handler();
+        return [
+            'done' => $handler->getPercentageDone(),
+            'status' => true
+        ];
+    }
+
+    public function cargaListadoDocumentosInicialNuevo(Request $request){
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
@@ -4844,7 +5011,6 @@ class AdministradorController extends Controller
         );
 
         $ejecutar_validador_tamano_documento = Validator::make($request->all(), $reglas_validacion_tamano_documento);
-
         if ($ejecutar_validador_tamano_documento->fails()) {
 
             $mensajes = array(
@@ -4968,7 +5134,6 @@ class AdministradorController extends Controller
             }else{
                 $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
             }
-
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
         }
 
@@ -5029,7 +5194,6 @@ class AdministradorController extends Controller
 
             }
             else {
-
                 sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($nuevoDocumento);
     
                 $mensajes = array(
