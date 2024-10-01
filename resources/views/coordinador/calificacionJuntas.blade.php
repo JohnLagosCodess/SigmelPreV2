@@ -368,6 +368,9 @@
                         </div>                                    
                     </div>
                 </div>
+                <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+                    <i class="fas fa-chevron-up"></i>
+                </a> 
             </div>
             <div class="card-footer">
                 <div class="alert alert-danger no_ejecutar_parametrica_modulo_principal d-none" role="alert">

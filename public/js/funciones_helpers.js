@@ -446,7 +446,29 @@ $(document).ready(function () {
         if (!Number.isInteger(Number(value))) {
           $(input).val("");
         }
-    }    
+    }
+    
+    // Obtener el botón
+    // let mybutton = document.getElementById("id_subir_scroll");
+
+    // // Mostrar el botón cuando el usuario hace scroll hacia abajo 20px desde la parte superior
+    // window.onscroll = function() {Subirscroll()};
+
+    // function Subirscroll() {
+    //     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+    //         mybutton.style.display = "block";
+    //     } else {
+    //         mybutton.style.display = "none";
+    //     }
+    // }
+
+    // // Cuando el usuario hace clic en el botón, se desplaza hacia la parte superior de la página
+    // mybutton.onclick = function() {
+    //     window.scrollTo({
+    //         top: 0,
+    //         behavior: 'smooth' // Scroll suave
+    //     });
+    // }
     
     // $(document).on("input", '[id^="deficienciadecreto3_"]', function() {
     //     NumerosEnteros(this);

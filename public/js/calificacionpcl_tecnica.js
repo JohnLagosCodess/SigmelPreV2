@@ -747,6 +747,27 @@ $(document).ready(function(){
     var opt_tabla_2 = $("[id^='autosuficiencia_']").is(":checked") ? $("[id^='autosuficiencia_']:checked").val() : 0;
     var opt_tabla_3 = $("[name='edad_cronologica']").is(":checked") ? $("[name='edad_cronologica']:checked").val() : 0;
     var opt_total_laboral30 =  0;
+
+    // Validacion de la edad cronologica del afiliado
+    if ($('#Edad_Menor').length > 0) {
+        let edades_cronologicas = $('#Edad_Menor').val();
+        if (edades_cronologicas) {
+            if (edades_cronologicas == opt_tabla_3) {
+                $('#div_alerta_sirena').addClass('d-none');
+            } else {
+                $('#div_alerta_sirena').removeClass('d-none');            
+            }
+        }
+    } else if ($('#Edad_Mayor').length > 0){
+        let edades_cronologicas = $('#Edad_Mayor').val();        
+        if (edades_cronologicas) {
+            if (edades_cronologicas == opt_tabla_3) {
+                $('#div_alerta_sirena').addClass('d-none');
+            } else {
+                $('#div_alerta_sirena').removeClass('d-none');            
+            }
+        }
+    }
     
     $("[name='restricion_rol']").on("change", function(){
         opt_tabla_1 = $(this).val();

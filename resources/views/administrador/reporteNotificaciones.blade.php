@@ -161,6 +161,9 @@
                                 </div>
                                 
                             </div>
+                            <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+                                <i class="fas fa-chevron-up"></i>
+                            </a> 
                             <br>                                                   
                             <div class="text-center d-none" id="mostrar_barra_cargar_correspondencia">                                
                                 <button class="btn btn-info" type="button" disabled>

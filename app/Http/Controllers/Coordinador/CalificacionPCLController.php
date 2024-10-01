@@ -5030,7 +5030,7 @@ class CalificacionPCLController extends Controller
         ])
         ->get();
 
-        //Traer Información apoderado 
+        //Traer Información apoderado  y Edad del afiliado
         $datos_apoderado_actual = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
         ->select('Nombre_apoderado','Nro_identificacion_apoderado', 'Edad')
         ->where([
