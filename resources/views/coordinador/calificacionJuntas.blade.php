@@ -496,7 +496,10 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="Tipo_evento_juntas">Tipo de evento<span style="color: red;">(*)</span></label>
-                                                <input type="text" class="form-control" name="Tipo_evento_juntas" id="Tipo_evento_juntas" value="{{$array_datos_calificacionJuntas[0]->Nombre_evento}}" disabled>
+                                                <select class="tipo_evento custom-select initSelect2" name="Tipo_evento_juntas" id="Tipo_evento_juntas" style="width: 100%;" required>
+                                                    <option value="{{$info_evento->Tipo_evento ?? ''}}" selected>{{$info_evento->Nombre_evento}}</option>
+                                                    <option value="">Seleccione una opción</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div <?php if(!empty($array_datos_calificacionJuntas[0]->Nombre_evento) && $array_datos_calificacionJuntas[0]->Nombre_evento=='Enfermedad'){ ?> class="col-4 text-center" <?php }else{ ?> class="col-4 text-center d-none" <?php } ?>  id="contenedor_enfermedad" >

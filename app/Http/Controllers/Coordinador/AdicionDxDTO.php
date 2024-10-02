@@ -403,6 +403,15 @@ class AdicionDxDTO extends Controller
 
         $bandera_hay_dto = "hay_dto_atel";
 
+        $info_evento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as info')
+        ->select('dx.Activo','lp.Nombre_evento','info.tipo_evento')
+        ->leftjoin('sigmel_gestiones.sigmel_lista_tipo_eventos as lp','lp.Id_Evento','info.Tipo_evento')
+        ->leftjoin('sigmel_gestiones.sigmel_informacion_adiciones_dx_eventos as dx','info.ID_Evento','dx.ID_Evento')
+        ->where([
+            ['info.ID_evento',$Id_evento],
+           // ['Id_Asignacion',$Id_asignacion_dto_atel]
+        ])->first();
+
         // Escenario N°1: Mostrar el formulario vacío cuando se crea una Adición Dx por primera
         // vez desde el módulo nuevo o desde un servicio distinto al de DTO
         $info_adicion_dx_actual = sigmel_informacion_adiciones_dx_eventos::on('sigmel_gestiones')
@@ -899,11 +908,10 @@ class AdicionDxDTO extends Controller
             'bandera_tipo_evento', 'nombre_del_evento_guardado', 'numero_consecutivo', 'motivo_solicitud_actual',
             'datos_apoderado_actual', 'array_datos_info_laboral','listado_documentos_solicitados', 'dato_articulo_12', 'array_datos_examenes_interconsultas',
             'array_datos_diagnostico_motcalifi', 'info_adicion_dx', 'array_datos_diagnostico_adicionales','array_comite_interdisciplinario', 'consecutivo', 
-            'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento', 'caso_notificado', 'N_siniestro_evento'
+            'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento', 'caso_notificado', 'N_siniestro_evento','info_evento'
             )
         );
         
-       
     }
 
     public function cargueListadoSelectoresAdicionDx(Request $request){

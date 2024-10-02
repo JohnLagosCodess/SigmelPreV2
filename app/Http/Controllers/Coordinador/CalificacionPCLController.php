@@ -533,7 +533,8 @@ class CalificacionPCLController extends Controller
 
         $Accion_realizar = $request->accion;
 
-        if ($Accion_realizar == 52 || $Accion_realizar == 98 || $Accion_realizar == 99) {
+        //if ($Accion_realizar == 52 || $Accion_realizar == 98 || $Accion_realizar == 99) {
+        if ($Accion_realizar == 224) {
             $Fecha_devolucion_comite = $date;
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }else{
@@ -8142,6 +8143,9 @@ class CalificacionPCLController extends Controller
             }
         }        
         
+        sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->where('ID_evento', $request->Id_EventoDecreto)->update(["Tipo_evento" => $request->tipo_evento]);
+
         if ($bandera_dictamen_pericial == 'Guardar') { 
             //Se asignan los IDs de destinatario por cada posible destinatario
             $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
