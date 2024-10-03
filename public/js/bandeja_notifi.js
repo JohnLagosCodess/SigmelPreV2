@@ -128,7 +128,21 @@ $(document).ready(function () {
         }
 
         const ahora = new Date();
-        let fechaHoraFormateada = ahora.toISOString().slice(0, 16).replace('T', ' ');
+
+        let opciones = { 
+            timeZone: 'America/Bogota', 
+            year: 'numeric', 
+            month: '2-digit', 
+            day: '2-digit', 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: false
+        };
+        
+        let fechaHoraFormateada = ahora.toLocaleString('es-CO', opciones)
+        .replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$2-$1') // Cambia el orden de año-mes-día
+        .replace(',', '')                           // Elimina la coma
+        .replace(/(\d+):(\d+):(\d+)/, '$1:$2:00'); 
 
         let ejecutar_accion = {
             '_token' :  $('input[name=_token]').val(),
