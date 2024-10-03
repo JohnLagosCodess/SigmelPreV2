@@ -1670,7 +1670,7 @@ class DeterminacionOrigenATEL extends Controller
         $ciudad = !empty($array_comite_interdisciplinario[0]->Ciudad) ? $array_comite_interdisciplinario[0]->Ciudad : null;
 
         // $fecha =  fechaFormateada($request->fecha);
-        $fecha = fechaFormateada(!empty($array_comite_interdisciplinario[0]->F_visado_comite) ? $array_comite_interdisciplinario[0]->F_visado_comite : now()->format('Y-m-d'));
+        $fecha = fechaFormateada(!empty($array_comite_interdisciplinario[0]->F_visado_comite) ? $array_comite_interdisciplinario[0]->F_visado_comite : date('Y-m-d'));
 
         // $asunto = strtoupper($request->asunto);
         $asunto = !empty($array_comite_interdisciplinario[0]->Asunto) ? strtoupper($array_comite_interdisciplinario[0]->Asunto) : "Sin Asunto";

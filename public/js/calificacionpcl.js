@@ -4759,38 +4759,6 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     if(Copias){
         Copias = Copias.split(',').map(copia => copia.trim().toLowerCase());
     }
-    // console.log(Destinatario);
-    
-    // La copia del empleador y el destinanario empleador tienen valores distintos, por ende, se realiza la siguiente validación:
-    // este dato finalmente irá en donde se construye los elementos a subrayados
-
-    // if (Destinatario == 'Empresa') {
-    //     var dato_empleador = 'empresa';
-    //     var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1); // Empresa
-    // } else {
-        
-    //     if (Copias.includes('empleador')) {
-    //         var dato_empleador = 'empleador';
-    //         var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1); // Empleador
-    //     }
-    // }
-
-    // if (Copias != null && Copias.includes('empleador')) {
-    //     var dato_empleador = 'empleador';
-    //     var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
-    //     if(Destinatario.toLowerCase() === 'empresa'){
-    //         dato_empleador_form = Destinatario;
-    //         dato_empleador = Destinatario.toLowerCase();
-    //     }
-    // }else{
-    //     var dato_empleador = 'empresa';
-    //     var dato_empleador_form = dato_empleador.charAt(0).toUpperCase() + dato_empleador.slice(1);
-    //     if(Destinatario.toLowerCase() === 'empleador'){
-    //         dato_empleador_form = Destinatario;
-    //         dato_empleador = Destinatario.toLowerCase();
-    //     }
-    // }
-    
     if(Correspondencia){
         Correspondencia = Correspondencia.split(',').map(correspondencia => correspondencia.trim().toLowerCase());
     }

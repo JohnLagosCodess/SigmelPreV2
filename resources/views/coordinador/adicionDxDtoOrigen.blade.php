@@ -1604,18 +1604,6 @@
                                                                 }, $copias);
                                                             }
 
-
-                                                            // La copia del empleador y el destinanario empleador tienen valores distintos, por ende, se realiza la siguiente validación:
-                                                            // este dato finalmente irá en donde se construye los elementos a subrayados
-                                                            $array_copias_analizar = implode(',', $array_copias);
-                                                            if (strpos($array_copias_analizar, 'empleador') !== false) {
-                                                                $dato_empleador = 'empleador';
-                                                                $dato_empleador_form = 'Empleador'; // Empleador
-                                                            }else{
-                                                                $dato_empleador = 'empresa';
-                                                                $dato_empleador_form = 'Empresa'; // Empresa
-                                                            }
-
                                                             if($correspondencia){
                                                                 $correspondencia = explode(", ", $correspondencia);
                                                                 $array_correspondencia = array_map(function($item) {

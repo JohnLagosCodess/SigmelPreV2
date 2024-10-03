@@ -49,6 +49,7 @@ class sigmel_informacion_comunicado_eventos extends Model
     'N_siniestro',
     'Correspondencia',
     'Otro_destinatario',
+    'Id_destinatarios',
     'Nombre_usuario',
     'F_registro'
     ];

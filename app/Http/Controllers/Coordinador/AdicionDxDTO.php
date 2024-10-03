@@ -2534,7 +2534,7 @@ class AdicionDxDTO extends Controller
         $ciudad = !empty($array_comite_interdisciplinario[0]->Ciudad) ? $array_comite_interdisciplinario[0]->Ciudad : "Bogotá D.C.";
 
         // $fecha =  fechaFormateada($request->fecha);
-        $fecha =  fechaFormateada(!empty($array_comite_interdisciplinario[0]->F_correspondecia) ? $array_comite_interdisciplinario[0]->F_correspondecia : now()->format('Y-m-d'));
+        $fecha =  fechaFormateada(!empty($array_comite_interdisciplinario[0]->F_correspondecia) ? $array_comite_interdisciplinario[0]->F_correspondecia : date('Y-m-d'));
 
         // $asunto = strtoupper($request->asunto);
         $asunto = !empty($array_comite_interdisciplinario[0]->Asunto) ?  strtoupper($array_comite_interdisciplinario[0]->Asunto) : "Sin Asunto";

@@ -47,6 +47,7 @@ return new class extends Migration
             $table->text('Nombre_documento')->nullable();
             $table->enum('Lista_chequeo',['Si','No'])->nullable()->default('No');
             $table->integer('Otro_destinatario')->default(0);
+            $table->text('Id_Destinatarios')->nullable();
             $table->string('Nombre_usuario', 100);
             $table->date('F_registro');
         });
