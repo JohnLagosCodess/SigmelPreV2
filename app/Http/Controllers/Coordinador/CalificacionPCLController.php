@@ -8143,6 +8143,9 @@ class CalificacionPCLController extends Controller
             }
         }        
         
+        sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->where('ID_evento', $request->Id_EventoDecreto)->update(["Tipo_evento" => $request->tipo_evento]);
+
         if ($bandera_dictamen_pericial == 'Guardar') { 
             //Se asignan los IDs de destinatario por cada posible destinatario
             $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();

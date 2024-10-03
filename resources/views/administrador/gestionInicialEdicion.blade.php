@@ -1090,7 +1090,7 @@
             <div class="card-footer">
                 <div class="grupo_botones" style="float: left;">
                     {{-- <input type="reset" id="Borrar" class="btn btn-info" value="Restablecer"> --}}
-                    <input type="submit" id="Edicion" class="btn btn-info" value="Actualizar" onclick="OcultarbotonActualizar()">
+                    <input type="submit" id="Edicion_editar" class="btn btn-info" value="Actualizar" onclick="OcultarbotonActualizar()">
                 </div>
                 <div class="text-center" id="mostrar-barra2"  style="display:none;">                                
                     <button class="btn btn-info" type="button" disabled>
@@ -1466,7 +1466,7 @@
     <script>
         function OcultarbotonActualizar(){
             $("#gestion_inicial").submit(function(e){
-                $('#Edicion, #Borrar').addClass('d-none');
+                $('#Edicion_editar, #Borrar').addClass('d-none');
                 $('#mostrar-barra2').css("display", "block");
                 return true;
             });

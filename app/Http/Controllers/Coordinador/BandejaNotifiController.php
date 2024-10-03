@@ -470,9 +470,18 @@ class BandejaNotifiController extends Controller
                 ->update($dataActualizar);
 
                 unset($dataActualizar['F_alerta']);
+
+                $data_historial_accion = [
+                    'Id_Asignacion' => $id,
+                    'ID_evento' => $values["id_evento"],
+                    'Id_proceso' => $values["proceso"],
+                    'Id_servicio' => $values["servicio"],
+                ];
+
+                $data_historial_accion = array_merge($data_historial_accion,$dataActualizar);
+
                 sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
-                ->where('Id_Asignacion', $id)
-                ->update($dataActualizar);
+                ->insert($data_historial_accion);
 
                     $id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')->select('Cliente')->where('ID_evento',$values["id_evento"])->first();
                     $data = Array($f_accion,$accion,$id_cliente->Cliente,$values["proceso"],$values["servicio"],$values["id_evento"],$id);

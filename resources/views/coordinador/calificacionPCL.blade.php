@@ -1376,7 +1376,7 @@
     @include('//.administrador.modalProgressbar')
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.coordinador.modalCorrespondencia')
-    @include('//.modals.confirmacionAccion'
+    @include('//.modals.confirmacionAccion')
 @stop
 @section('js')
     <script>

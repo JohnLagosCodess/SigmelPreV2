@@ -172,9 +172,15 @@ class CalificacionJuntasController extends Controller
         ->where([['ID_evento',$newIdEvento]])
         ->get();
 
+        $info_evento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as sie')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_tipo_eventos as slte', 'slte.Id_Evento', '=', 'sie.Tipo_evento')
+        ->select('sie.ID_evento', 'sie.Tipo_evento', 'slte.Nombre_evento', 'sie.F_evento')
+        ->where('sie.ID_evento', $newIdEvento)
+        ->first();
+
         return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos','arrayinfo_afiliado',
         'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs',
-        'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio','enviar_notificaciones', 'N_siniestro_evento'));
+        'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio','enviar_notificaciones', 'N_siniestro_evento', 'info_evento'));
     }
     //Cargar Selectores Juntas
     public function cargueListadoSelectoresJuntas(Request $request){
@@ -188,6 +194,17 @@ class CalificacionJuntasController extends Controller
                     ['Id_Evento', '<=', 2],
                     ['Estado', '=', 'activo']
                 ])
+                ->get();
+
+            $informacion_datos_tipo_evento = json_decode(json_encode($datos_tipo_evento, true));
+            return response()->json($informacion_datos_tipo_evento);
+        }
+
+        //Lista tipo evento
+        if($parametro == "lista_tipo_evento_juntas"){
+            $datos_tipo_evento = sigmel_lista_tipo_eventos::on('sigmel_gestiones')
+                ->select('Id_Evento','Nombre_evento')
+                ->where('Estado', '=', 'activo')
                 ->get();
 
             $informacion_datos_tipo_evento = json_decode(json_encode($datos_tipo_evento, true));
@@ -1866,6 +1883,8 @@ class CalificacionJuntasController extends Controller
         }
         // validacion de bandera para guardar o actualizar
         // insercion de datos a la tabla de sigmel_informacion_controversia_juntas_eventos
+        sigmel_informacion_eventos::on('sigmel_gestiones')
+        ->where('ID_evento', $newIdEvento)->update(["Tipo_evento" => $request->tipo_evento]);
 
         if ($request->bandera_controvertido_guardar_actualizar == 'Guardar') {
 

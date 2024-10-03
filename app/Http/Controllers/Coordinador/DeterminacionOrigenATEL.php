@@ -77,6 +77,15 @@ class DeterminacionOrigenATEL extends Controller
         $datos_bd_DTO_ATEL = sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')
         ->where('ID_evento', $Id_evento_dto_atel)->get();
 
+        $info_evento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as info')
+        ->select('dto.Activo','lp.Nombre_evento','info.tipo_evento')
+        ->leftjoin('sigmel_gestiones.sigmel_lista_tipo_eventos as lp','lp.Id_Evento','info.Tipo_evento')
+        ->leftjoin('sigmel_gestiones.sigmel_informacion_dto_atel_eventos as dto','info.ID_Evento','dto.ID_Evento')
+        ->where([
+            ['info.ID_evento',$Id_evento_dto_atel],
+           // ['Id_Asignacion',$Id_asignacion_dto_atel]
+        ])->first();
+
         // obtenemos el nombre del evento
         if (count($datos_bd_DTO_ATEL) > 0) {
             $id_evento_guardado_dto_atel = $datos_bd_DTO_ATEL[0]->Tipo_evento;
@@ -264,10 +273,11 @@ class DeterminacionOrigenATEL extends Controller
         return view('coordinador.determinacionOrigenATEL', compact('user', 'array_datos_calificacion_origen', 
         'motivo_solicitud_actual', 'datos_apoderado_actual', 
         'array_datos_info_laboral', 'listado_documentos_solicitados', 
-        'dato_articulo_12', 'array_datos_diagnostico_motcalifi',
+        'dato_articulo_12', 'array_datos_diagnostico_motcalifi','info_evento',
         'array_datos_examenes_interconsultas', 'array_datos_historico_laboral', 'datos_bd_DTO_ATEL', 
         'nombre_del_evento_guardado','array_comite_interdisciplinario', 'consecutivo', 
         'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento', 'caso_notificado', 'N_siniestro_evento'));
+
     }
 
     public function cargueListadoSelectoresDTOATEL(Request $request){
