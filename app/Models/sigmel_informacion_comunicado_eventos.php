@@ -46,10 +46,13 @@ class sigmel_informacion_comunicado_eventos extends Model
     'Modulo_creacion',
     'Reemplazado',
     'Nombre_documento',
+    'Lista_chequeo',
     'N_siniestro',
+    'Nota',
+    'Estado_Notificacion',
     'Correspondencia',
     'Otro_destinatario',
-    'Id_destinatarios',
+    'Id_Destinatarios',
     'Nombre_usuario',
     'F_registro'
     ];

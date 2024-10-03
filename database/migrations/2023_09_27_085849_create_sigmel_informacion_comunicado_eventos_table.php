@@ -46,6 +46,10 @@ return new class extends Migration
             $table->integer('Reemplazado')->default(0);
             $table->text('Nombre_documento')->nullable();
             $table->enum('Lista_chequeo',['Si','No'])->nullable()->default('No');
+            $table->string('N_siniestro', 25);
+            $table->text('Nota')->nullable();
+            $table->integer('Estado_Notificacion')->nullable();
+            $table->text('Correspondencia')->nullable();
             $table->integer('Otro_destinatario')->default(0);
             $table->text('Id_Destinatarios')->nullable();
             $table->string('Nombre_usuario', 100);

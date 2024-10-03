@@ -440,6 +440,19 @@ $(document).ready(function(){
                 $('#enviar').append(`<option value="${data.bd_destino}" selected>${data.Nombre_proceso}</option>`);
             }
         });
+
+        /* 
+            Seteo fecha de de de cierre dependiendo de las siguientes acciones:
+            REPORTAR NO PROCEDE CALIFICACIÓN: id 173
+            REPORTAR NO RECALIFICACIÓN: id 149
+            NO RATIFICAR PENSIÓN - NOTIFICAR FORMATO E: id 154
+        */
+
+        if($(this).val() == 173 || $(this).val() == 149 || $(this).val() == 154) {
+            var fecha_con_hora = $("#fecha_accion").val();
+            var fecha_sin_hora = fecha_con_hora.substring(0, 10);
+            $("#fecha_cierre").val(fecha_sin_hora);
+        }
     });
 
     //Listado de los tipos de documento que pueden subir

@@ -119,12 +119,8 @@
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <label for="">Tipo de Evento <span style="color:red;">(*)</span></label>
-                                                <input type="hidden" id="nombre_evento_guardado" value="{{$nombre_del_evento_guardado}}">
-                                                <?php if(!empty($info_adicion_dx[0]->Tipo_evento)):?>
-                                                    <input type="hidden" id="bd_tipo_evento" value="<?php if(!empty($info_adicion_dx[0]->Tipo_evento)){echo $info_adicion_dx[0]->Tipo_evento;}?>">
-                                                <?php else:?>
-                                                    <input type="hidden" id="bd_tipo_evento" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Tipo_evento)){echo $datos_bd_DTO_ATEL[0]->Tipo_evento;}?>">
-                                                <?php endif?>
+                                                <input type="hidden" id="nombre_evento_guardado" value="{{$info_evento->Nombre_evento}}">
+                                                <input type="hidden" id="bd_tipo_evento" value="{{$info_evento->tipo_evento ?? ''}}">
                                                 <select class="custom-select tipo_evento" name="tipo_evento" id="tipo_evento" disabled required></select>
                                             </div>
                                         </div>
@@ -1043,7 +1039,10 @@
                                 </div>
                             </div>
                         </div>
-                    </div>                    
+                    </div>
+                    <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+                        <i class="fas fa-chevron-up"></i>
+                    </a>                     
                     <div class="row">
                         <div class="col-6">
                             <div class="form-group">

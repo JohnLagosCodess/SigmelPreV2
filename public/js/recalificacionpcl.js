@@ -747,6 +747,31 @@ $(document).ready(function(){
     var opt_tabla_2 = $("[id^='autosuficiencia_']").is(":checked") ? $("[id^='autosuficiencia_']:checked").val() : 0;
     var opt_tabla_3 = $("[name='edad_cronologica']").is(":checked") ? $("[name='edad_cronologica']:checked").val() : 0;
     var opt_total_laboral30 =  0;
+
+    // Validacion de la edad cronologica del afiliado
+    if ($('#Edad_Menor').length > 0) {
+        let edades_cronologicas = $('#Edad_Menor').val();
+        console.log(edades_cronologicas);
+        console.log(opt_tabla_3);        
+        if (edades_cronologicas) {
+            if (edades_cronologicas == opt_tabla_3) {
+                $('#div_alerta_sirena').addClass('d-none');
+            } else {
+                $('#div_alerta_sirena').removeClass('d-none');            
+            }
+        }
+    } else if ($('#Edad_Mayor').length > 0){
+        let edades_cronologicas = $('#Edad_Mayor').val();
+        console.log(edades_cronologicas);
+        console.log(opt_tabla_3);    
+        if (edades_cronologicas) {
+            if (edades_cronologicas == opt_tabla_3) {
+                $('#div_alerta_sirena').addClass('d-none');
+            } else {
+                $('#div_alerta_sirena').removeClass('d-none');            
+            }
+        }
+    }
     
     $("[name='restricion_rol']").on("change", function(){
         opt_tabla_1 = $(this).val();
@@ -3735,7 +3760,38 @@ $(document).ready(function(){
             // }else if(porcentajePcl < 50){
             //     $('#div_formatoe').removeClass('d-none');   
             // }
-        }  
+        }
+        // validacion para mantener actualizado el porcentaje pcl, rango y monto        
+        var ActualizarDecreto = $('#ActualizarDecreto');
+
+        if (ActualizarDecreto.length > 0) {
+            var Decreto_pericial = $('#decreto_califi').val();
+            var Id_EventoDecreto = $('#Id_Evento_decreto').val();
+            var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
+            var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
+            var porcentaje_pcl = $('#porcentaje_pcl').val();
+            var rango_pcl = $('#rango_pcl').val();
+            var monto_inde = $('#monto_inde').val();
+            var bandera_Pcl_rango_monto = 'bandera_Pcl_rango_monto';
+            var datos_dictamenPericialPcl_rango_monto={
+                '_token': token,            
+                'Decreto_pericial':Decreto_pericial,
+                'Id_EventoDecreto':Id_EventoDecreto,
+                'Id_ProcesoDecreto':Id_ProcesoDecreto,
+                'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,            
+                'porcentaje_pcl':porcentaje_pcl,
+                'rango_pcl':rango_pcl,
+                'monto_inde':monto_inde,            
+                'bandera_dictamen_pericial' :bandera_Pcl_rango_monto,
+            }
+                   
+            $.ajax({
+                type: 'POST',
+                url:'/guardardictamenesPericialRe',
+                data: datos_dictamenPericialPcl_rango_monto,
+            });
+
+        }
 
         var tercerapersona = $("#requiere_persona");
         var tomadecisiones = $("#requiere_decisiones_persona");
@@ -4744,6 +4800,7 @@ $(document).ready(function(){
     // Formulario para guardar Dictamen pericial
     $('#form_dictamen_pericial').submit(function (e){
         e.preventDefault();
+        document.querySelector('#GuardrDictamenPericial').disabled=true;
         // Abrir modal para mostrar alerta y retornar al input
         var validarsuma_combinada = $('#suma_combinada').val();
         var validarTotal_Deficiencia50 = $('#Total_Deficiencia50').val();
@@ -4824,7 +4881,7 @@ $(document).ready(function(){
             data: datos_dictamenPericial,
             success: function(response){
                 if (response.parametro == 'insertar_dictamen_pericial') {
-                    document.querySelector('#GuardrDictamenPericial').disabled=true;
+                    // document.querySelector('#GuardrDictamenPericial').disabled=true;
                     $('#div_alerta_dictamen_pericial').removeClass('d-none');
                     $('.alerta_dictamen_pericial').append('<strong>'+response.mensaje+'</strong>'); 
 

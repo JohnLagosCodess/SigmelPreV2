@@ -868,6 +868,21 @@ $(document).ready(function(){
         }
     }
 
+    let tipo_eventoJuntas = {
+        '_token': $('input[name=_token]').val(),
+        'parametro': 'lista_tipo_evento_juntas'
+    }
+
+    $.post('/selectoresJuntas',tipo_eventoJuntas,function(data){
+        let tipo_selecionado = $("#Tipo_evento_juntas :selected").val();
+
+        data.forEach(function(item){
+            if(item.Id_Evento != tipo_selecionado){
+                $("#Tipo_evento_juntas").append(`<option value="${item.Id_Evento}">${item.Nombre_evento}</option>`);
+            }
+        });
+    });
+
     /* Envío de Información del Documento a Cargar */
     var fechaActual = new Date().toISOString().slice(0,10);
     $("form[id^='formulario_documento_']").submit(function(e){
@@ -1038,6 +1053,7 @@ $(document).ready(function(){
             'n_siniestro': $('#n_siniestro').val(),
             'f_notifi_afiliado': $('#f_notifi_afiliado').val(),
             'f_contro_primer_califi': $('#f_contro_primer_califi').val(),
+            'tipo_evento': $("#Tipo_evento_juntas :selected").val(),
             'bandera_controvertido_guardar_actualizar': $('#guardar_datos_controvertido').val(),
         }
         document.querySelector("#guardar_datos_controvertido").disabled = true;

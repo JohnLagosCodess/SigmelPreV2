@@ -265,7 +265,8 @@ class CalificacionOrigenController extends Controller
 
         $Accion_realizar = $request->accion;
 
-        if ($Accion_realizar == 7) {
+        //if ($Accion_realizar == 7) {
+        if ($Accion_realizar == 224) {
             $Fecha_devolucion_comite = $date_time;
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }else{
@@ -278,7 +279,8 @@ class CalificacionOrigenController extends Controller
         }
 
         // Fecha de asignación para DTO 
-        if ($Accion_realizar == 2 || $Accion_realizar == 101) {
+        //if ($Accion_realizar == 2 || $Accion_realizar == 101) {
+        if ($Accion_realizar == 223) {
             $Fecha_asignacion_dto = $date_time;
         }else{
             if ($request->fecha_asignacion_dto == "0000-00-00 00:00:00" || $request->fecha_asignacion_dto == "Sin Fecha de Asignación para DTO") {

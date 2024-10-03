@@ -57,28 +57,23 @@
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="activo">Activo <span style="color:red;">(*)</span></label>
+                                            @php
+                                                 $seleccionarSi = isset($info_evento->Activo) && $info_evento->Activo == "Si" ? "selected" : "";
+                                                 $seleccionarNo = isset($info_evento->Activo) && $info_evento->Activo != "Si" ? "selected" : "";
+                                                // dd($info_evento);
+                                            @endphp
                                             <select class="custom-select es_activo" name="es_activo" id="es_activo" required>
                                                 <option value=""></option>
-                                                <?php if(!empty($datos_bd_DTO_ATEL[0]->Activo)):?>
-                                                    <?php if($datos_bd_DTO_ATEL[0]->Activo == "Si"):?>
-                                                        <option value="Si" selected>Si</option>
-                                                        <option value="No">No</option>
-                                                    <?php else:?>
-                                                        <option value="Si">Si</option>
-                                                        <option value="No" selected>No</option>
-                                                    <?php endif?>
-                                                <?php else:?>
-                                                    <option value="Si">Si</option>
-                                                    <option value="No">No</option>
-                                                <?php endif?>
+                                                    <option value="Si"  {{$seleccionarSi}}>Si</option>
+                                                    <option value="No" {{$seleccionarNo}}>No</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="">Tipo de Evento <span style="color:red;">(*)</span></label>
-                                            <input type="hidden" id="nombre_evento_guardado" value="{{$nombre_del_evento_guardado}}">
-                                            <input type="hidden" id="bd_tipo_evento" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Tipo_evento)){echo $datos_bd_DTO_ATEL[0]->Tipo_evento;}?>">
+                                            <input type="hidden" id="nombre_evento_guardado" value="{{$info_evento->Nombre_evento}}">
+                                            <input type="hidden" id="bd_tipo_evento" value="{{$info_evento->tipo_evento ?? ''}}">
                                             <select class="custom-select tipo_evento" name="tipo_evento" id="tipo_evento" disabled required></select>
                                         </div>
                                     </div>
@@ -950,7 +945,10 @@
                             </div>
                         </div>
                     </div>
-                </div>                
+                </div>
+                <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+                    <i class="fas fa-chevron-up"></i>
+                </a>                 
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">

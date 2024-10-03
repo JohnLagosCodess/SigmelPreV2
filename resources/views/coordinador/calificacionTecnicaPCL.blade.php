@@ -1149,10 +1149,21 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+                                                        @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica_menor) && $array_laboralmente_Activo[0]->Edad_cronologica_menor == 2.5 && empty($array_comite_interdisciplinario[0]->Id_Asignacion))
+                                                            <input type="hidden"  id="Edad_Menor" value="{{$array_laboralmente_Activo[0]->Edad_cronologica_menor}}">
+                                                        @elseif(!empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 0.5 && empty($array_comite_interdisciplinario[0]->Id_Asignacion) || 
+                                                            !empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 1.0 && empty($array_comite_interdisciplinario[0]->Id_Asignacion) ||
+                                                            !empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 1.5 && empty($array_comite_interdisciplinario[0]->Id_Asignacion) ||
+                                                            !empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 2.0 && empty($array_comite_interdisciplinario[0]->Id_Asignacion) ||
+                                                            !empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 2.5 && empty($array_comite_interdisciplinario[0]->Id_Asignacion))
+                                                            <input type="hidden"  id="Edad_Mayor" value="{{$array_laboralmente_Activo[0]->Edad_cronologica}}">
+                                                        @endif
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">                                                                
-                                                                @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica_menor) && $array_laboralmente_Activo[0]->Edad_cronologica_menor == 2.5)                                                                    
+                                                                @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica_menor) && $array_laboralmente_Activo[0]->Edad_cronologica_menor == 2.5 && !empty($array_comite_interdisciplinario[0]->Id_Asignacion))                                                                    
                                                                     <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="cronologica_menor" value="2.5" checked>                                                                                                                                                                                                                
+                                                                @elseif(!empty($edad_afiliado) && $edad_afiliado < 18 && empty($array_comite_interdisciplinario[0]->Id_Asignacion))
+                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="cronologica_menor" value="2.5" checked>
                                                                 @else
                                                                     <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="cronologica_menor" value="2.5">
                                                                 @endif
@@ -1161,8 +1172,10 @@
                                                         </td>
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">
-                                                                @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 0.5)                                                                    
+                                                                @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 0.5 && !empty($array_comite_interdisciplinario[0]->Id_Asignacion))                                                                    
                                                                     <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_02" value="0.5" checked>                                                                                                                                                                                                                
+                                                                @elseif(!empty($edad_afiliado) && $edad_afiliado >= 18 && $edad_afiliado < 30  && empty($array_comite_interdisciplinario[0]->Id_Asignacion))
+                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_02" value="0.5" checked>   
                                                                 @else
                                                                     <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_02" value="0.5">
                                                                 @endif
@@ -1171,8 +1184,10 @@
                                                         </td>
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">
-                                                                @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 1.0)                                                                    
-                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_03" value="1.0" checked>                                                                                                                                                                                                                
+                                                                @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 1.0 && !empty($array_comite_interdisciplinario[0]->Id_Asignacion))                                                                    
+                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_03" value="1.0" checked>
+                                                                @elseif(!empty($edad_afiliado) && $edad_afiliado >= 30 && $edad_afiliado < 40  && empty($array_comite_interdisciplinario[0]->Id_Asignacion))               
+                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_03" value="1.0" checked>
                                                                 @else
                                                                     <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_03" value="1.0">
                                                                 @endif
@@ -1181,8 +1196,10 @@
                                                         </td>
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">
-                                                                @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 1.5)                                                                    
-                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_04" value="1.5" checked>                                                                                                                                                                                                                
+                                                                @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 1.5 && !empty($array_comite_interdisciplinario[0]->Id_Asignacion))                                                                    
+                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_04" value="1.5" checked>
+                                                                @elseif(!empty($edad_afiliado) && $edad_afiliado >= 40 && $edad_afiliado < 50 && empty($array_comite_interdisciplinario[0]->Id_Asignacion))
+                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_04" value="1.5" checked>
                                                                 @else
                                                                     <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_04" value="1.5">
                                                                 @endif
@@ -1191,8 +1208,10 @@
                                                         </td>
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">
-                                                                @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 2.0)                                                                    
-                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_05" value="2.0" checked>                                                                                                                                        
+                                                                @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 2.0 && !empty($array_comite_interdisciplinario[0]->Id_Asignacion))                                                                    
+                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_05" value="2.0" checked>
+                                                                @elseif(!empty($edad_afiliado) && $edad_afiliado >= 50 && $edad_afiliado < 60 && empty($array_comite_interdisciplinario[0]->Id_Asignacion))
+                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_05" value="2.0" checked>
                                                                 @else
                                                                     <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_05" value="2.0">
                                                                 @endif
@@ -1201,8 +1220,10 @@
                                                         </td>
                                                         <td>
                                                             <div class="form-check custom-control custom-radio">
-                                                                @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 2.5)                                                                    
-                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_06" value="2.5" checked>                                                                                                                                                                                                                
+                                                                @if (!empty($array_laboralmente_Activo[0]->Edad_cronologica) && $array_laboralmente_Activo[0]->Edad_cronologica == 2.5 && !empty($array_comite_interdisciplinario[0]->Id_Asignacion))                                                                    
+                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_06" value="2.5" checked>
+                                                                @elseif(!empty($edad_afiliado) && $edad_afiliado >= 60 && empty($array_comite_interdisciplinario[0]->Id_Asignacion))
+                                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_06" value="2.5" checked>
                                                                 @else
                                                                     <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="edad_cronologica" id="edad_cronologica_06" value="2.5">
                                                                 @endif
@@ -4120,7 +4141,7 @@
                                     <!-- Total de otras areas y rol laboral -->
                                     <div class="row" style="text-align: right">
                                         <div class="col-12">
-                                            <div class="form-group" style="align-content: center">                                               
+                                            <div class="form-group" id="activarintervalos9" style="align-content: center">                                               
                                                 <label for="total_otras">Total otras areas(20%):</label>
                                                 @if (!empty($array_laboralmente_Activo[0]->Total_otras_areas))
                                                     <input type="text" id="total_otras" name="total_otras" value="{{$array_laboralmente_Activo[0]->Total_otras_areas}}"  readonly="">                                                    
@@ -4139,7 +4160,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
-                                            <div class="form-group">
+                                            <div class="form-group" id="activarintervalos10">
                                                 @if (count($array_laboralmente_Activo) == 0)
                                                     <input type="submit" id="GuardarLaboralActivo" name="GuardarLaboralActivo" class="btn btn-info" value="Guardar">                                                
                                                     <input hidden="hidden" type="text" id="bandera_LaboralActivo_guardar_actualizar" value="Guardar">                                                       
@@ -5294,11 +5315,11 @@
                                     </div>
                                 </div>                                
                             </form>
-                            <div class="row">
+                            {{-- <div class="row">
                                 <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert" style="text-align: initial;">
                                     <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <b>Si realizó algún cambio en las secciones anteriores que involucre % PCL, debe actualizar nuevamente el Concepto final del Dictamen Pericial</b>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                     <!-- Libro II Calificación de las discapacidades (20%) Decreto Muci-->
@@ -6840,11 +6861,11 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                {{-- <div class="row">
                                     <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert" style="text-align: initial;">
                                         <i class="fas fa-info-circle"></i> <strong>Importante:</strong> <b>Si realizó algún cambio en las secciones anteriores que involucre % PCL, debe actualizar nuevamente el Concepto final del Dictamen Pericial</b>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>                            
                         </div>                        
                     </form>                    
@@ -6900,22 +6921,11 @@
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group">
-                                            <label for="tipo_evento">Tipo de evento<span style="color: red;">(*)</span></label>
-                                            @if (!empty($array_dictamen_pericial[0]->Tipo_evento))                                                
-                                                <select class="tipo_evento custom-select" name="tipo_evento" id="tipo_evento" style="width: 100%;" required>
-                                                    <option value="{{$array_dictamen_pericial[0]->Tipo_evento}}" selected>{{$array_dictamen_pericial[0]->Nombre_evento}}</option>
-                                                    <option value="">Seleccione una opción</option>
-                                                </select>
-                                            @elseif(!empty($array_tipo_fecha_evento[0]->Tipo_evento))                                                
+                                            <label for="tipo_evento">Tipo de evento<span style="color: red;">(*)</span></label>                                           
                                                 <select class="tipo_evento custom-select" name="tipo_evento" id="tipo_evento" style="width: 100%;" required>
                                                     <option value="{{$array_tipo_fecha_evento[0]->Tipo_evento}}" selected>{{$array_tipo_fecha_evento[0]->Nombre_evento}}</option>
                                                     <option value="">Seleccione una opción</option>
                                                 </select>
-                                            @else
-                                                <select class="tipo_evento custom-select" name="tipo_evento" id="tipo_evento" style="width: 100%;" required>
-                                                    <option value="">Seleccione una opción</option>
-                                                </select>                                                
-                                            @endif
                                         </div>
                                     </div>
                                     <div class="col-3">
@@ -7126,6 +7136,11 @@
                                     <div class="col-12 alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">                                               
                                         <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Despues de <b>Guardar</b> el <b>Comité Interdiciplinario</b> no podra hacer más actualizaciones en la Calificacion Técnica. <br>
                                     </div>
+                                    @if (empty($array_comite_interdisciplinario[0]->Visar) && !empty($array_laboralmente_Activo[0]->Edad_cronologica_menor) || empty($array_comite_interdisciplinario[0]->Visar) && !empty($array_laboralmente_Activo[0]->Edad_cronologica))
+                                        <div class="alert alert-warning" role="alert" id="div_alerta_sirena">
+                                            <i class="fas fa-exclamation-triangle sirena"></i> <strong>Importante:</strong> La edad del afiliado a cambiado, debe actualizar Título II, en la Tabla 3 - Edad cronológica el rago es distinto. <i class="fas fa-exclamation-triangle sirena"></i>
+                                        </div>                                            
+                                    @endif
                                 </div>
                                 <div class="row">   
                                     <div class="col-1">
@@ -8009,6 +8024,9 @@
                     </div>                     
                 </div>
             </div>
+            <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+                <i class="fas fa-chevron-up"></i>
+            </a> 
         </div>
     </div>
    <!--Retonar al modulo PCL -->
