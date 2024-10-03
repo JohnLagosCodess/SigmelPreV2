@@ -129,6 +129,7 @@
                                                 <?php endif?>
                                                 <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">
                                                 <input type="text" name="Id_servicio" id="Id_servicio_{{$documento->Id_Documento}}" value="{{$Id_servicio}}">
+                                                <input type="text" name="string_nombre_doc" id="string_nombre_doc_{{$documento->Id_Documento}}" value="<?php if($documento->nombre_Documento <> ""){echo "{$documento->nombre_Documento}";}?>">
                                             </div>
                                             <div class="row">
                                                 <p><?php if($documento->nombre_Documento <> ""){echo "{$documento->nombre_Documento}.{$documento->formato_documento}";}?></p>
