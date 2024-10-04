@@ -5513,10 +5513,11 @@ class RecalificacionPCLController extends Controller
             }else{
                 $nro_identificacion = 'N/A';
             }
+            
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where('ID_evento', $request->Id_EventoDecreto)->update(["Tipo_evento" => $request->tipo_evento]);
         }        
 
-        sigmel_informacion_eventos::on('sigmel_gestiones')
-        ->where('ID_evento', $request->Id_EventoDecreto)->update(["Tipo_evento" => $request->tipo_evento]);
 
         $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
         if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
