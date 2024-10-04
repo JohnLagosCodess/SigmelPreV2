@@ -5523,10 +5523,11 @@ class RecalificacionPCLController extends Controller
             }else{
                 $nro_identificacion = 'N/A';
             }
+            
+            sigmel_informacion_eventos::on('sigmel_gestiones')
+            ->where('ID_evento', $request->Id_EventoDecreto)->update(["Tipo_evento" => $request->tipo_evento]);
         }        
 
-        sigmel_informacion_eventos::on('sigmel_gestiones')
-        ->where('ID_evento', $request->Id_EventoDecreto)->update(["Tipo_evento" => $request->tipo_evento]);
 
         if ($bandera_dictamen_pericial == 'Guardar') {
 
