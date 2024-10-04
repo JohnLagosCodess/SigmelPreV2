@@ -8121,15 +8121,6 @@ class CalificacionPCLController extends Controller
                 $justi_dependencia = $justi_dependencia;
             }        
     
-            $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
-            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-                $agregar_copias_dml = "EPS, AFP, ARL, AFP_Conocimiento";
-            }
-            else{
-                $agregar_copias_dml = "EPS, AFP, ARL";
-            }
-            $Destinatario = 'Afiliado';
-    
             // eL número de identificacion siempre será el del afiliado.
             $array_nro_ident_afi = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
             ->select('Nro_identificacion')
@@ -8145,6 +8136,15 @@ class CalificacionPCLController extends Controller
         
         sigmel_informacion_eventos::on('sigmel_gestiones')
         ->where('ID_evento', $request->Id_EventoDecreto)->update(["Tipo_evento" => $request->tipo_evento]);
+
+        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
+            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+                $agregar_copias_dml = "EPS, AFP, ARL, AFP_Conocimiento";
+            }
+            else{
+                $agregar_copias_dml = "EPS, AFP, ARL";
+            }
+            $Destinatario = 'Afiliado';
 
         if ($bandera_dictamen_pericial == 'Guardar') { 
             //Se asignan los IDs de destinatario por cada posible destinatario
