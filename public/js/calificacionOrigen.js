@@ -4135,8 +4135,6 @@ function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comu
     if(Copias){
         Copias = Copias.split(',').map(copia => copia.trim().toLowerCase());
     }
-    // La copia del empleador y el destinanario empleador tienen valores distintos, por ende, se realiza la siguiente validación:
-    // este dato finalmente irá en donde se construye los elementos a subrayado
     if(Correspondencia){
         Correspondencia = Correspondencia.split(',').map(correspondencia => correspondencia.trim().toLowerCase());
     }

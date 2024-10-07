@@ -44,7 +44,7 @@
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group">
-                                            <label for="estado_general_calificacion" class="col-form-label">Estado general de calificación</label>
+                                            <label for="estado_general_calificacion" class="col-form-label">Estado general de la notificación</label>
                                             <select class="estado_general_calificacion custom-select" name="estado_general_calificacion" id="estado_general_calificacion">                                               
                                             </select>
                                         </div>

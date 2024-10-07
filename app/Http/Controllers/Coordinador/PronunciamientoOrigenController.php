@@ -805,7 +805,7 @@ class PronunciamientoOrigenController extends Controller
                 //Se asignan los IDs de destinatario por cada posible destinatario
                 $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
                 $datos_info_comunicado_eventos['Id_Destinatarios'] = $ids_destinatarios;
-
+                //Si la decisión es silencio y no existe ningun comunicado relacionado se hace una inserción 
                 $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }

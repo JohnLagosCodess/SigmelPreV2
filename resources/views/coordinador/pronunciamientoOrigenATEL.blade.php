@@ -786,7 +786,6 @@
                                                                 @if ($comunicados->Tipo_descarga == "Acuerdo" || $comunicados->Tipo_descarga == "Desacuerdo")
                                                                     <form id="archivo_{{$comunicados->Id_Comunicado}}" data-info_comunicado="{{ json_encode(['Id_Comunicado' => $comunicados->Id_Comunicado, 'Reemplazado' => $comunicados->Reemplazado, 'Nombre_documento' => $comunicados->Nombre_documento]) }}" method="POST">
                                                                         @csrf
-                                                                        
                                                                         <button type="submit" id="btn_generar_proforma" style="border: none; background:transparent;">
                                                                             <i class="far fa-eye text-info"></i>
                                                                         </button>
