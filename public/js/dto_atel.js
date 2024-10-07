@@ -1972,6 +1972,7 @@ $(document).ready(function(){
                     'Sustentacion': $("#sustentacion_califi_origen").val(),
                     'Origen': $("#origen_dto_atel").val(),
                     'radicado_dictamen': $("#radicado_dictamen").val(),
+                    'n_identificacion' : $('#nro_identificacion').val(),
                 };
             } else {
                 // Editar Información
@@ -2005,6 +2006,7 @@ $(document).ready(function(){
                     'Sustentacion': $("#sustentacion_califi_origen").val(),
                     'Origen': $("#origen_dto_atel").val(),
                     'radicado_dictamen': $("#radicado_dictamen").val(),
+                    'n_identificacion' : $('#nro_identificacion').val(),
                 };
             }
         }
@@ -2103,7 +2105,8 @@ $(document).ready(function(){
                     'Otros_relacion_documentos': $("#otros_enfermedad").val(),
                     'Sustentacion': $("#sustentacion_califi_origen").val(),
                     'Origen': $("#origen_dto_atel").val(),
-                    'radicado_dictamen': $("#radicado_dictamen").val(),                    
+                    'radicado_dictamen': $("#radicado_dictamen").val(),  
+                    'n_identificacion' : $('#nro_identificacion').val(),                  
                 };
             }else{
                 // Editar Información
@@ -2133,6 +2136,7 @@ $(document).ready(function(){
                     'Sustentacion': $("#sustentacion_califi_origen").val(),
                     'Origen': $("#origen_dto_atel").val(),
                     'radicado_dictamen': $("#radicado_dictamen").val(),
+                    'n_identificacion' : $('#nro_identificacion').val(),
                 };
             }
 
