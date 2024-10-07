@@ -138,11 +138,10 @@ $(document).ready(function () {
             minute: '2-digit',
             hour12: false
         };
-        
+
         let fechaHoraFormateada = ahora.toLocaleString('es-CO', opciones)
-        .replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$2-$1') // Cambia el orden de año-mes-día
-        .replace(',', '')                           // Elimina la coma
-        .replace(/(\d+):(\d+):(\d+)/, '$1:$2:00'); 
+        .replace(/(\d+)\/(\d+)\/(\d+)/, '$3-$2-$1')
+        .replace(/,/g, '');
 
         let ejecutar_accion = {
             '_token' :  $('input[name=_token]').val(),
