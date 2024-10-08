@@ -465,19 +465,26 @@ class BandejaNotifiController extends Controller
                 $proceso = $values["proceso"];
                 $servicio = $values["servicio"];
                 $id_evento = $values["id_evento"];
+                $info_accion = self::ingresar_notificacion($id_cliente->Cliente,$servicio,$proceso,$accion);
+
+                if(is_null($info_accion)){
+                    return;
+                }
+                
                 $dataActualizar['Id_accion'] = $accion;
                 $dataActualizar['Descripcion'] = $descripcion;
-                $dataActualizar['Notificacion'] = self::ingresar_notificacion($id_cliente->Cliente,$servicio,$proceso,$accion); //Si - No
+                $dataActualizar['Notificacion'] = $info_accion->enviarA ?? 'No'; //Si - No
                 $dataActualizar['F_alerta'] = $f_alerta;
                 $dataActualizar['F_accion'] = $f_accion;
                 $dataActualizar['Nombre_usuario'] = $nombre_usuario;
+                $dataActualizar['Id_Estado_evento'] = $info_accion->Estado;
 
                 sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
                 ->where('Id_Asignacion', $id)
                 ->update($dataActualizar);
 
                 //Se quita el campo para no generar conflictos con la tabla de historial_acciones
-                unset($dataActualizar['F_alerta']);
+                unset($dataActualizar['F_alerta'],$dataActualizar['Notificacion'],$dataActualizar['Id_Estado_evento'] );
             
                 $data_historial_accion = [
                     'Id_Asignacion' => $id,
@@ -523,19 +530,20 @@ class BandejaNotifiController extends Controller
      * @param int Servicio asociado a la accion a ejecutar
      * @param int Proceso asociado a la accion a ejecutar
      * @param int Id de la accion a ejecutar
-     * @return string Si|No
+     * @return
      */
-    public static function ingresar_notificacion(int $id_cliente,int $servicio,int $id_proceso,int $accion_ejecutar): string {
+    public static function ingresar_notificacion(int $id_cliente,int $servicio,int $id_proceso,int $accion_ejecutar) {
         $estado_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
         ->select('sipc.Estado', 'sipc.Enviar_a_bandeja_trabajo_destino as enviarA')
         ->where([
             ['sipc.Id_proceso', '=', $id_proceso],
             ['sipc.Servicio_asociado', '=', $servicio],
             ['sipc.Accion_ejecutar','=',  $accion_ejecutar],
-            ['sipc.Cliente','=',  $id_cliente]
-        ])->get();
+            ['sipc.Id_cliente','=',  $id_cliente],
+            ['sipc.Status_parametrico','=',  'Activo']
+        ])->first();
 
-        return $estado_parametrica->enviarA ?? 'No';
+        return $estado_parametrica;
 
     }
 
