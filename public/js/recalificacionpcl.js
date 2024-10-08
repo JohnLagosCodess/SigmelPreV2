@@ -4804,20 +4804,27 @@ $(document).ready(function(){
         // Abrir modal para mostrar alerta y retornar al input
         var validarsuma_combinada = $('#suma_combinada').val();
         var validarTotal_Deficiencia50 = $('#Total_Deficiencia50').val();
+        
+        // Funcion de modal si la suma combinada esta vacia o la total deficiencia 50
         function displayModal() {
-            $('#AlertaScTd').modal('show');
-            
+            $('#AlertaScTd').modal('show');    
+            // Remover eventos previos para evitar duplicación
+            $('#AlertaScTd').off('hidden.bs.modal');    
+            // Configurar el evento para que, al cerrar la modal, se haga focus en el botón
             $('#AlertaScTd').on('hidden.bs.modal', function () {
-                
-                $('#suma_combinada').focus();
+                setTimeout(function() {
+                    // Establecer el foco
+                    $('#suma_combinada').focus(); 
+                    document.querySelector('#GuardrDictamenPericial').disabled=false;
+                }, 200);
             });
         }       
 
         if ((validarsuma_combinada.trim() === "" && validarTotal_Deficiencia50.trim() === "") 
         || (validarsuma_combinada.trim() === "" && validarTotal_Deficiencia50.trim() !== "") 
         || (validarsuma_combinada.trim() !== "" && validarTotal_Deficiencia50.trim() === "")) {
-        displayModal();
-        return;
+            displayModal();
+            return;
         }
         var Decreto_pericial = $('#decreto_califi').val();
         var Id_EventoDecreto = $('#Id_Evento_decreto').val();
