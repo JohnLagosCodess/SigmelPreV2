@@ -612,12 +612,7 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
                     } else {
                         // Log::info('No se encontró con Id_Comunicado: ' . $id_comunicado);
                     }
-                } 
-    
-                // else {
-                //     // Si hay otros estados diferentes o un solo estado distinto
-                //     // Log::info('Existen otros estados diferentes a 360 o 362. Id_comunicado: ' . $id_comunicado);
-                // }
+                }                   
                 
             }
 
@@ -716,7 +711,7 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
                 } else {
                     // Log::info('No se encontró con Id_Comunicado: ' . $id_comunicado);
                 }
-                // }
+                
             }
 
         } else {
