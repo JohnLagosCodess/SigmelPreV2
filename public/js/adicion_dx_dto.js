@@ -1435,7 +1435,8 @@ $(document).ready(function(){
                     'Otros_relacion_documentos': $("#otros_docs").val(),
                     'Sustentacion_Adicion_Dx': $("#sustentacion_adicion_dx").val(),
                     'Origen': $("#origen_dto_atel").val(),
-                    'radicado_dictamen': $("#radicado_dictamen").val(),                    
+                    'radicado_dictamen': $("#radicado_dictamen").val(),  
+                    'n_identificacion' : $('#nro_identificacion').val()
                 };
             } else {
                 // console.log('actualizar');
@@ -1471,7 +1472,8 @@ $(document).ready(function(){
                     'Otros_relacion_documentos': $("#otros_docs").val(),
                     'Sustentacion_Adicion_Dx': $("#sustentacion_adicion_dx").val(),
                     'Origen': $("#origen_dto_atel").val(),
-                    'radicado_dictamen': $("#radicado_dictamen").val(),                    
+                    'radicado_dictamen': $("#radicado_dictamen").val(), 
+                    'n_identificacion' : $('#nro_identificacion').val()
                 };
             }
             // console.log(informacion_formulario);

@@ -1669,7 +1669,7 @@ class AdicionDxDTO extends Controller
                 'Cliente' => 'N/A',
                 'Nombre_afiliado' => 'N/A',
                 'T_documento' => 'N/A',
-                'N_identificacion' => 'N/A',
+                'N_identificacion' => $request->n_identificacion,
                 'Destinatario' => $Destinatario,
                 'Nombre_destinatario' => 'N/A',
                 'Nit_cc' => 'N/A',
@@ -1724,6 +1724,7 @@ class AdicionDxDTO extends Controller
             sleep(2);
             //Copias y destinatario de un dictamen segun la ficha PBS054
             $comunicado_reemplazado = [
+                'N_identificacion' => $request->n_identificacion,
                 'Destinatario' => $Destinatario,
                 'Agregar_copia' => $agregar_copias_dml,
                 'Reemplazado' => 0,

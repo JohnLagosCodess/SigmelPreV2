@@ -613,7 +613,7 @@ class CalificacionJuntasController extends Controller
         $Accion_realizar = $request->accion;
 
         // F de asignación para pronunciamiento de Juntas
-        if ($Accion_realizar == 38 ) {
+        if ($Accion_realizar == 155 ) {
             $F_asignacion_pronu_juntas = $date_time;
         }else{
             // $F_asignacion_pronu_juntas = "0000-00-00 00:00:00";
