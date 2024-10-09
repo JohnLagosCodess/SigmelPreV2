@@ -5063,6 +5063,8 @@ class RecalificacionPCLController extends Controller
         $nombre_usuario = Auth::user()->name;
         $date = date("Y-m-d", $time);
 
+        dd($request);
+
         $Id_EventoDecreto = $request->Id_EventoDecreto;
         $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
         $Id_Asignacion_Dcreto = $request->Id_Asignacion_Dcreto;
@@ -5518,13 +5520,12 @@ class RecalificacionPCLController extends Controller
             ->where('ID_evento', $request->Id_EventoDecreto)->update(["Tipo_evento" => $request->tipo_evento]);
         }        
 
-
         $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
         if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-            $agregar_copias_dml = "EPS, AFP, ARL, AFP_Conocimiento";
+            $agregar_copias_dml = "EPS, ARL, AFP_Conocimiento";
         }
         else{
-            $agregar_copias_dml = "EPS, AFP, ARL";
+            $agregar_copias_dml = "EPS, ARL";
         }
         $Destinatario = 'Afiliado';
 

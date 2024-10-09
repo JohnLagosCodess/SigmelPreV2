@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\sigmel_consecutivos_destinatarios;
+use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
 use App\Models\sigmel_informacion_comunicado_eventos;
 use Illuminate\Support\Facades\DB;
@@ -141,5 +142,11 @@ class GlobalService
             return implode(',',$id_destinatarios);
         }
         return null;
+    }
+
+    public function retornarNumeroDeServicio($id_asignacion){
+        return sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
+                ->where([['Id_Asignacion', $id_asignacion]])
+                ->value('Id_servicio');
     }
 }

@@ -3404,11 +3404,11 @@ $(document).ready(function(){
         let correspondencia = $(id).data('correspondencia');
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
-
         let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
         //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
         let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
-
+        //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
+        copias = copias.split(',').map(copia => copia.trim());
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
             $("#btn_guardar_actualizar_correspondencia").remove();
@@ -3581,7 +3581,7 @@ $(document).ready(function(){
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.includes(tipo_correspondencia.toLowerCase())){
+                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -4439,7 +4439,7 @@ $(document).ready(function(){
             $("#empleador").prop('checked', true);
             $("#eps").prop('checked', true);
             $("#arl").prop('checked', true);
-            $("#afp").prop('checked', true);
+            // $("#afp").prop('checked', true);
             
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -4468,7 +4468,7 @@ $(document).ready(function(){
             $("#empleador").prop('checked', false);
             $("#eps").prop('checked', false);
             $("#arl").prop('checked', false);
-            $("#afp").prop('checked', false);
+            // $("#afp").prop('checked', false);
             
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -4526,7 +4526,7 @@ $(document).ready(function(){
             $("#empleador").prop('checked', true);
             $("#eps").prop('checked', true);
             $("#arl").prop('checked', true);
-            $("#afp").prop('checked', true);
+            // $("#afp").prop('checked', true);
             
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -4555,7 +4555,7 @@ $(document).ready(function(){
             $("#empleador").prop('checked', false);
             $("#eps").prop('checked', false);
             $("#arl").prop('checked', false);
-            $("#afp").prop('checked', false);
+            // $("#afp").prop('checked', false);
             
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {

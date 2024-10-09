@@ -1633,10 +1633,10 @@ class AdicionDxDTO extends Controller
         //Copias y destinatario
         $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($request->ID_Evento);
             if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL, AFP_Conocimiento";
+                $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL, AFP_Conocimiento";
             }
             else{
-                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL";
+                $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL";
             }
             $Destinatario = 'Afp';
 
