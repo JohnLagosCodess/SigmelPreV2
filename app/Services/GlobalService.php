@@ -149,4 +149,5 @@ class GlobalService
                 ->where([['Id_Asignacion', $id_asignacion]])
                 ->value('Id_servicio');
     }
+
 }

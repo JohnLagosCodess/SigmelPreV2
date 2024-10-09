@@ -2169,7 +2169,6 @@ $(document).ready(function(){
                         $("#modalCorrespondencia #f_notificacion").val(response[0]?.F_notificacion);
                         $("#modalCorrespondencia #state_notificacion").val(response[0]?.Id_Estado_corresp);
                         $("#modalCorrespondencia #id_correspondencia").val(response[0]?.Id_Correspondencia);
-                        
                         if(response[0]?.Tipo_destinatario){
                             if(response[0]?.Tipo_destinatario === $('#modalCorrespondencia #check_principal').val()){
                                 if(tipo_descarga != 'Manual'){

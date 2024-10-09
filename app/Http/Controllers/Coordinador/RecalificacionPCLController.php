@@ -5075,7 +5075,6 @@ class RecalificacionPCLController extends Controller
         $nombre_usuario = Auth::user()->name;
         $date = date("Y-m-d", $time);
 
-        dd($request);
 
         $Id_EventoDecreto = $request->Id_EventoDecreto;
         $Id_ProcesoDecreto = $request->Id_ProcesoDecreto;
@@ -5104,6 +5103,32 @@ class RecalificacionPCLController extends Controller
         }
         if($formatoe == '') {
             $formatoe = 'No';
+        }
+
+        //Validamos que el servicio sea revisión pensión para poder gestionar las copias del dictamen, ya que en recalificacion las copias del dictamente no dependen del formato elegido
+        $id_servicio = $this->globalService->retornarNumeroDeServicio($Id_Asignacion_Dcreto);
+        if($id_servicio === 8){
+            //Obtener el id del dictamen para poder gestionar las copias del dictamen
+            $id_comunicado_dictamen = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                                ->where([['Id_Asignacion', $Id_Asignacion_Dcreto],['Tipo_descarga','Dictamen']])
+                                ->value('Id_Comunicado');
+    
+            $data_edit_dictamen = [];
+            // Cuando el servicio sea Revisión pensión y el oficio seleccionado sea NO RATIFICACIÓN(E) se marcará como destinatario principal al Afiliado y a la EPS y ARL como copia.
+            if($formatoe == 'Si'){         
+                $data_edit_dictamen['Agregar_copia'] = "EPS, ARL";
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                    ->where([['Id_Comunicado',$id_comunicado_dictamen]])
+                    ->update($data_edit_dictamen);
+    
+            }
+            //En los demás casos C y D no se marcara ninguna copia.
+            else{
+                $data_edit_dictamen['Agregar_copia'] = '';
+                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                    ->where([['Id_Comunicado',$id_comunicado_dictamen]])
+                    ->update($data_edit_dictamen);
+            }
         }
 
         $destinatario_principal = $request->destinatario_principal;
@@ -5531,13 +5556,16 @@ class RecalificacionPCLController extends Controller
             sigmel_informacion_eventos::on('sigmel_gestiones')
             ->where('ID_evento', $request->Id_EventoDecreto)->update(["Tipo_evento" => $request->tipo_evento]);
         }        
-
+        $id_servicio = $this->globalService->retornarNumeroDeServicio($Id_Asignacion_Dcreto);
         $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
-        if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-            $agregar_copias_dml = "EPS, ARL, AFP_Conocimiento";
-        }
-        else{
-            $agregar_copias_dml = "EPS, ARL";
+        $agregar_copias_dml = '';
+        if($id_servicio === 7){
+            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+                $agregar_copias_dml = "EPS, ARL, AFP_Conocimiento";
+            }
+            else{
+                $agregar_copias_dml = "EPS, ARL";
+            }
         }
         $Destinatario = 'Afiliado';
 
