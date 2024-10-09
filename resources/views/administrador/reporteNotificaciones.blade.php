@@ -21,11 +21,6 @@
                             <h5>Correspondencia</h5>
                         </div>
                         <div class="card-body">
-
-                            {{-- <form action="{{route('generarZipReporteNotificaciones')}}" method="POST">
-                                @csrf
-                                <input type="submit" id="btn_generar_zip_reporte_notificaciones" class="btn btn-info" value="Descargar Zip">
-                            </form> --}}
                             <p>Los campos marcados con <span style="color:red;">(*)</span> son obligatorios.</p>
                             <form id="form_consulta_reporte_notificaciones" method="POST">
                                 @csrf

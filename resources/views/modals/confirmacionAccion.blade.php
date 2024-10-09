@@ -1,4 +1,4 @@
-<x-adminlte-modal id="confirmar_accion" class="modalscroll" title="Confirmar accion" theme="info"
+<x-adminlte-modal id="confirmar_accion" class="modalscroll" title="Confirmar acción" theme="info"
     icon="fas fa-info-circle"  disable-animations>
     <div class="card-header">
         <h5>Está a punto de ejecutar el siguiente movimiento:</h5>
@@ -32,7 +32,7 @@
         <div class="row" id="n_confirmarAccion">
             <label >Nota:</label>
             <p class="pl-2 text-end" id="c_nota">
-                Si la acción que desea ejecutar cuenta con un Estado de facturacion relacionado se generará un registro en el informe correspondiente.
+                Si la acción que desea ejecutar cuenta con un Estado de facturación relacionado se generará un registro en el informe correspondiente.
             </p>
         </div>
         <div class="row alert alert-danger h5 d-none" id="alerta_accion"></div>

@@ -164,7 +164,7 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
 
             // Consultar los ids (ID_evento, Id_Asignacion) de la tabla de comunicados eventos
             $info_comunicado_ids = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-            ->select('Id_Comunicado', 'ID_evento', 'Id_Asignacion', 'Id_proceso', 'N_radicado') 
+            ->select('Id_Comunicado', 'ID_evento', 'Id_Asignacion', 'Id_proceso', 'N_radicado', 'Nombre_destinatario', 'Otro_destinatario', 'Destinatario') 
             ->where('Id_Destinatarios', 'like', '%'.$idDestinatario.'%')        
             ->first();
             // Verificar si se encontró un registro
@@ -176,6 +176,9 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
                 $Id_Asignacion = $info_comunicado_ids->Id_Asignacion;                        
                 $Id_proceso = $info_comunicado_ids->Id_proceso;
                 $N_radicado = $info_comunicado_ids->N_radicado;
+                $Nombre_destinatarioId = $info_comunicado_ids->Nombre_destinatario;
+                $Otro_destinatario = $info_comunicado_ids->Otro_destinatario;
+                $DestinatarioPri = $info_comunicado_ids->Destinatario;
                 // Consultar los ids (Id_servicio) de la tabla de asignacion eventos
                 $info_asignacion_ids = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
                 ->select('Id_servicio', 'N_de_orden') 
@@ -270,122 +273,247 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
                         }
                     break;
                     case 'EPS':
-                        $info_destinatario_eps = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones') 
-                        ->select('sie.Nombre_entidad', 'sie.Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
-                        'sie.Telefonos', 'sie.Emails', 'slp.Nombre_parametro')
-                        ->leftJoin('sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sigmel_informacion_afiliado_eventos.Id_eps')
-                        ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
-                        ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
-                        ->where('sigmel_informacion_afiliado_eventos.ID_evento', $ID_evento)
-                        ->first();   
-                        
-                         // Verificar si se encontró un registro
-                        if ($info_destinatario_eps) {
-                            // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
-                            // Acceder a los datos del afiliado
-                            $Tipo_correspondencia = 'eps';
-                            $Nombre_destinatario = $info_destinatario_eps->Nombre_entidad;
-                            $Direccion_destinatario = $info_destinatario_eps->Direccion;                      
-                            $Departamento = $info_destinatario_eps->Nombre_departamento;                        
-                            $Ciudad = $info_destinatario_eps->Nombre_municipio;                        
-                            $Telefono_destinatario = $info_destinatario_eps->Telefonos;                        
-                            $Email_destinatario = $info_destinatario_eps->Emails;
-                            $Medio_notificacion = $info_destinatario_eps->Nombre_parametro;
-        
-                            
+                        // Convertimos el valor de variable del excel idDestinatarioConvencion igual a la de la DB DestinatarioPri
+                        $idDestinatarioConvencion_minus = ucfirst(strtolower($idDestinatarioConvencion));                          
+                        // Validar si tiene otro destinatario y si no, se trae info del afiliado                        
+                        if ($Otro_destinatario == 1 && $DestinatarioPri == $idDestinatarioConvencion_minus) {
+                            $info_destinatario_eps = sigmel_informacion_entidades::on('sigmel_gestiones') 
+                            ->select('Nombre_entidad', 'Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
+                            'Telefonos', 'Emails', 'slp.Nombre_parametro')                
+                            ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sigmel_informacion_entidades.Id_Ciudad')
+                            ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sigmel_informacion_entidades.Id_Medio_Noti')
+                            ->where('sigmel_informacion_entidades.Id_Entidad', $Nombre_destinatarioId)
+                            ->first(); 
+
+                             // Verificar si se encontró un registro
+                            if ($info_destinatario_eps) {
+                                // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
+                                // Acceder a los datos de la entidad
+                                $Tipo_correspondencia = 'eps';
+                                $Nombre_destinatario = $info_destinatario_eps->Nombre_entidad;
+                                $Direccion_destinatario = $info_destinatario_eps->Direccion;                      
+                                $Departamento = $info_destinatario_eps->Nombre_departamento;                        
+                                $Ciudad = $info_destinatario_eps->Nombre_municipio;                        
+                                $Telefono_destinatario = $info_destinatario_eps->Telefonos;                        
+                                $Email_destinatario = $info_destinatario_eps->Emails;
+                                $Medio_notificacion = $info_destinatario_eps->Nombre_parametro;
+                                
+                            } else {
+                                // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
+                            }
                         } else {
-                            // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
-                        }
+                            $info_destinatario_eps = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones') 
+                            ->select('sie.Nombre_entidad', 'sie.Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
+                            'sie.Telefonos', 'sie.Emails', 'slp.Nombre_parametro')
+                            ->leftJoin('sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sigmel_informacion_afiliado_eventos.Id_eps')
+                            ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
+                            ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+                            ->where('sigmel_informacion_afiliado_eventos.ID_evento', $ID_evento)
+                            ->first();   
+                            
+                             // Verificar si se encontró un registro
+                            if ($info_destinatario_eps) {
+                                // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
+                                // Acceder a los datos del afiliado
+                                $Tipo_correspondencia = 'eps';
+                                $Nombre_destinatario = $info_destinatario_eps->Nombre_entidad;
+                                $Direccion_destinatario = $info_destinatario_eps->Direccion;                      
+                                $Departamento = $info_destinatario_eps->Nombre_departamento;                        
+                                $Ciudad = $info_destinatario_eps->Nombre_municipio;                        
+                                $Telefono_destinatario = $info_destinatario_eps->Telefonos;                        
+                                $Email_destinatario = $info_destinatario_eps->Emails;
+                                $Medio_notificacion = $info_destinatario_eps->Nombre_parametro;
+            
+                                
+                            } else {
+                                // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
+                            }                            
+                        }                        
                     break;
                     case 'AFP':
-                        $info_destinatario_afp = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones') 
-                        ->select('sie.Nombre_entidad', 'sie.Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
-                        'sie.Telefonos', 'sie.Emails', 'slp.Nombre_parametro')
-                        ->leftJoin('sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sigmel_informacion_afiliado_eventos.Id_afp')
-                        ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
-                        ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
-                        ->where('sigmel_informacion_afiliado_eventos.ID_evento', $ID_evento)
-                        ->first();   
-                        
-                         // Verificar si se encontró un registro
-                        if ($info_destinatario_afp) {
-                            // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
-                            // Acceder a los datos del afiliado
-                            $Tipo_correspondencia = 'afp';
-                            $Nombre_destinatario = $info_destinatario_afp->Nombre_entidad;
-                            $Direccion_destinatario = $info_destinatario_afp->Direccion;                      
-                            $Departamento = $info_destinatario_afp->Nombre_departamento;                        
-                            $Ciudad = $info_destinatario_afp->Nombre_municipio;                        
-                            $Telefono_destinatario = $info_destinatario_afp->Telefonos;                        
-                            $Email_destinatario = $info_destinatario_afp->Emails;
-                            $Medio_notificacion = $info_destinatario_afp->Nombre_parametro;
-        
+                        // Convertimos el valor de variable del excel idDestinatarioConvencion igual a la de la DB DestinatarioPri
+                        $idDestinatarioConvencion_minus = ucfirst(strtolower($idDestinatarioConvencion));            
+                        // Validar si tiene otro destinatario y si no, se trae info del afiliado                          
+                        if ($Otro_destinatario == 1 && $DestinatarioPri == $idDestinatarioConvencion_minus) {
+                            $info_destinatario_afp = sigmel_informacion_entidades::on('sigmel_gestiones') 
+                            ->select('Nombre_entidad', 'Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
+                            'Telefonos', 'Emails', 'slp.Nombre_parametro')                
+                            ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sigmel_informacion_entidades.Id_Ciudad')
+                            ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sigmel_informacion_entidades.Id_Medio_Noti')
+                            ->where('sigmel_informacion_entidades.Id_Entidad', $Nombre_destinatarioId)
+                            ->first(); 
+
+                             // Verificar si se encontró un registro
+                            if ($info_destinatario_afp) {
+                                // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
+                                // Acceder a los datos de la entidad
+                                $Tipo_correspondencia = 'afp';
+                                $Nombre_destinatario = $info_destinatario_afp->Nombre_entidad;
+                                $Direccion_destinatario = $info_destinatario_afp->Direccion;                      
+                                $Departamento = $info_destinatario_afp->Nombre_departamento;                        
+                                $Ciudad = $info_destinatario_afp->Nombre_municipio;                        
+                                $Telefono_destinatario = $info_destinatario_afp->Telefonos;                        
+                                $Email_destinatario = $info_destinatario_afp->Emails;
+                                $Medio_notificacion = $info_destinatario_afp->Nombre_parametro;
+                                
+                            } else {
+                                // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
+                            }
+                        }  else {
                             
-                        } else {
-                            // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
+                            $info_destinatario_afp = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones') 
+                            ->select('sie.Nombre_entidad', 'sie.Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
+                            'sie.Telefonos', 'sie.Emails', 'slp.Nombre_parametro')
+                            ->leftJoin('sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sigmel_informacion_afiliado_eventos.Id_afp')
+                            ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
+                            ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+                            ->where('sigmel_informacion_afiliado_eventos.ID_evento', $ID_evento)
+                            ->first();   
+                            
+                             // Verificar si se encontró un registro
+                            if ($info_destinatario_afp) {
+                                // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
+                                // Acceder a los datos del afiliado
+                                $Tipo_correspondencia = 'afp';
+                                $Nombre_destinatario = $info_destinatario_afp->Nombre_entidad;
+                                $Direccion_destinatario = $info_destinatario_afp->Direccion;                      
+                                $Departamento = $info_destinatario_afp->Nombre_departamento;                        
+                                $Ciudad = $info_destinatario_afp->Nombre_municipio;                        
+                                $Telefono_destinatario = $info_destinatario_afp->Telefonos;                        
+                                $Email_destinatario = $info_destinatario_afp->Emails;
+                                $Medio_notificacion = $info_destinatario_afp->Nombre_parametro;
+            
+                                
+                            } else {
+                                // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
+                            }
                         }
+                        
                     break;
                     case 'ARL':
-                        $info_destinatario_arl = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones') 
-                        ->select('sie.Nombre_entidad', 'sie.Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
-                        'sie.Telefonos', 'sie.Emails', 'slp.Nombre_parametro')
-                        ->leftJoin('sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sigmel_informacion_afiliado_eventos.Id_arl')
-                        ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
-                        ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
-                        ->where('sigmel_informacion_afiliado_eventos.ID_evento', $ID_evento)
-                        ->first();   
-                        
-                         // Verificar si se encontró un registro
-                        if ($info_destinatario_arl) {
-                            // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
-                            // Acceder a los datos del afiliado
-                            $Tipo_correspondencia = 'arl';
-                            $Nombre_destinatario = $info_destinatario_arl->Nombre_entidad;
-                            $Direccion_destinatario = $info_destinatario_arl->Direccion;                      
-                            $Departamento = $info_destinatario_arl->Nombre_departamento;                        
-                            $Ciudad = $info_destinatario_arl->Nombre_municipio;                        
-                            $Telefono_destinatario = $info_destinatario_arl->Telefonos;                        
-                            $Email_destinatario = $info_destinatario_arl->Emails;
-                            $Medio_notificacion = $info_destinatario_arl->Nombre_parametro;
-        
+                        // Convertimos el valor de variable del excel idDestinatarioConvencion igual a la de la DB DestinatarioPri
+                        $idDestinatarioConvencion_minus = ucfirst(strtolower($idDestinatarioConvencion));                                                             
+                        // Validar si tiene otro destinatario y si no, se trae info del afiliado                        
+                        if ($Otro_destinatario == 1 && $DestinatarioPri == $idDestinatarioConvencion_minus) {
+                            $info_destinatario_arl = sigmel_informacion_entidades::on('sigmel_gestiones') 
+                            ->select('Nombre_entidad', 'Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
+                            'Telefonos', 'Emails', 'slp.Nombre_parametro')                
+                            ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sigmel_informacion_entidades.Id_Ciudad')
+                            ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sigmel_informacion_entidades.Id_Medio_Noti')
+                            ->where('sigmel_informacion_entidades.Id_Entidad', $Nombre_destinatarioId)
+                            ->first(); 
+
+                             // Verificar si se encontró un registro
+                            if ($info_destinatario_arl) {
+                                // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
+                                // Acceder a los datos de la entidad
+                                $Tipo_correspondencia = 'arl';
+                                $Nombre_destinatario = $info_destinatario_arl->Nombre_entidad;
+                                $Direccion_destinatario = $info_destinatario_arl->Direccion;                      
+                                $Departamento = $info_destinatario_arl->Nombre_departamento;                        
+                                $Ciudad = $info_destinatario_arl->Nombre_municipio;                        
+                                $Telefono_destinatario = $info_destinatario_arl->Telefonos;                        
+                                $Email_destinatario = $info_destinatario_arl->Emails;
+                                $Medio_notificacion = $info_destinatario_arl->Nombre_parametro;
+                                
+                            } else {
+                                // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
+                            }
+                        }  else {
                             
-                        } else {
-                            // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
-                        }
+                            $info_destinatario_arl = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones') 
+                            ->select('sie.Nombre_entidad', 'sie.Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
+                            'sie.Telefonos', 'sie.Emails', 'slp.Nombre_parametro')
+                            ->leftJoin('sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sigmel_informacion_afiliado_eventos.Id_arl')
+                            ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
+                            ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+                            ->where('sigmel_informacion_afiliado_eventos.ID_evento', $ID_evento)
+                            ->first();   
+                            
+                             // Verificar si se encontró un registro
+                            if ($info_destinatario_arl) {
+                                // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
+                                // Acceder a los datos del afiliado
+                                $Tipo_correspondencia = 'arl';
+                                $Nombre_destinatario = $info_destinatario_arl->Nombre_entidad;
+                                $Direccion_destinatario = $info_destinatario_arl->Direccion;                      
+                                $Departamento = $info_destinatario_arl->Nombre_departamento;                        
+                                $Ciudad = $info_destinatario_arl->Nombre_municipio;                        
+                                $Telefono_destinatario = $info_destinatario_arl->Telefonos;                        
+                                $Email_destinatario = $info_destinatario_arl->Emails;
+                                $Medio_notificacion = $info_destinatario_arl->Nombre_parametro;
+            
+                                
+                            } else {
+                                // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
+                            }
+                        }                        
                     break;
                     case 'JRC':
-                        $info_destinatario_jrci = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones') 
-                        ->select('sie.Nombre_entidad', 'sie.Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
-                        'sie.Telefonos', 'sie.Emails', 'slp.Nombre_parametro')
-                        ->leftJoin('sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sigmel_informacion_controversia_juntas_eventos.Jrci_califi_invalidez')
-                        ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
-                        ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
-                        ->where('sigmel_informacion_controversia_juntas_eventos.Id_Asignacion', $Id_Asignacion)
-                        ->first();   
-                        
-                         // Verificar si se encontró un registro
-                        if ($info_destinatario_jrci) {
-                            // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
-                            // Acceder a los datos del afiliado
-                            $Tipo_correspondencia = 'jrci';
-                            $Nombre_destinatario = $info_destinatario_jrci->Nombre_entidad;
-                            $Direccion_destinatario = $info_destinatario_jrci->Direccion;                      
-                            $Departamento = $info_destinatario_jrci->Nombre_departamento;                        
-                            $Ciudad = $info_destinatario_jrci->Nombre_municipio;                        
-                            $Telefono_destinatario = $info_destinatario_jrci->Telefonos;                        
-                            $Email_destinatario = $info_destinatario_jrci->Emails;
-                            $Medio_notificacion = $info_destinatario_jrci->Nombre_parametro;
-        
-                            
+                        // Convertimos el valor de variable del excel idDestinatarioConvencion igual a la de la DB DestinatarioPri
+                        $idDestinatarioConvencion_minus = ucfirst(strtolower($idDestinatarioConvencion));
+                        // Conservamos las primeras tres letras del destinatario de la DB  DestinatarioPri
+                        $DestinatarioPrici = substr($DestinatarioPri, 0, 3);
+                        // Validar si tiene otro destinatario y si no, se trae info del afiliado                        
+                        if ($Otro_destinatario == 1 && $DestinatarioPrici == $idDestinatarioConvencion) {
+                            $info_destinatario_jrci = sigmel_informacion_entidades::on('sigmel_gestiones') 
+                            ->select('Nombre_entidad', 'Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
+                            'Telefonos', 'Emails', 'slp.Nombre_parametro')                
+                            ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sigmel_informacion_entidades.Id_Ciudad')
+                            ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sigmel_informacion_entidades.Id_Medio_Noti')
+                            ->where('sigmel_informacion_entidades.Id_Entidad', $Nombre_destinatarioId)
+                            ->first(); 
+
+                             // Verificar si se encontró un registro
+                            if ($info_destinatario_jrci) {
+                                // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
+                                // Acceder a los datos de la entidad
+                                $Tipo_correspondencia = 'jrci';
+                                $Nombre_destinatario = $info_destinatario_jrci->Nombre_entidad;
+                                $Direccion_destinatario = $info_destinatario_jrci->Direccion;                      
+                                $Departamento = $info_destinatario_jrci->Nombre_departamento;                        
+                                $Ciudad = $info_destinatario_jrci->Nombre_municipio;                        
+                                $Telefono_destinatario = $info_destinatario_jrci->Telefonos;                        
+                                $Email_destinatario = $info_destinatario_jrci->Emails;
+                                $Medio_notificacion = $info_destinatario_jrci->Nombre_parametro;
+                                
+                            } else {
+                                // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
+                            }
                         } else {
-                            $Nombre_destinatario = '';
-                            $Direccion_destinatario = '';                      
-                            $Departamento = '';                        
-                            $Ciudad = '';                        
-                            $Telefono_destinatario = '';                        
-                            $Email_destinatario = '';
-                            $Medio_notificacion = '';
-                            // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
+                            $info_destinatario_jrci = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones') 
+                            ->select('sie.Nombre_entidad', 'sie.Direccion', 'sldm.Nombre_departamento', 'sldm.Nombre_municipio', 
+                            'sie.Telefonos', 'sie.Emails', 'slp.Nombre_parametro')
+                            ->leftJoin('sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sigmel_informacion_controversia_juntas_eventos.Jrci_califi_invalidez')
+                            ->leftJoin('sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'sie.Id_Ciudad')
+                            ->leftJoin('sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'sie.Id_Medio_Noti')
+                            ->where('sigmel_informacion_controversia_juntas_eventos.Id_Asignacion', $Id_Asignacion)
+                            ->first();   
+                            
+                             // Verificar si se encontró un registro
+                            if ($info_destinatario_jrci) {
+                                // Log::info('Afiliado encontrado: ' . json_encode($info_destinatario_afiliado));            
+                                // Acceder a los datos del afiliado
+                                $Tipo_correspondencia = 'jrci';
+                                $Nombre_destinatario = $info_destinatario_jrci->Nombre_entidad;
+                                $Direccion_destinatario = $info_destinatario_jrci->Direccion;                      
+                                $Departamento = $info_destinatario_jrci->Nombre_departamento;                        
+                                $Ciudad = $info_destinatario_jrci->Nombre_municipio;                        
+                                $Telefono_destinatario = $info_destinatario_jrci->Telefonos;                        
+                                $Email_destinatario = $info_destinatario_jrci->Emails;
+                                $Medio_notificacion = $info_destinatario_jrci->Nombre_parametro;
+            
+                                
+                            } else {
+                                $Nombre_destinatario = '';
+                                $Direccion_destinatario = '';                      
+                                $Departamento = '';                        
+                                $Ciudad = '';                        
+                                $Telefono_destinatario = '';                        
+                                $Email_destinatario = '';
+                                $Medio_notificacion = '';
+                                // Log::warning('No se encontró ningún afiliado con ID_evento: ' . $idEvento);
+                            }
                         }
                     break;
                     case 'JNC':
@@ -612,12 +740,7 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
                     } else {
                         // Log::info('No se encontró con Id_Comunicado: ' . $id_comunicado);
                     }
-                } 
-    
-                // else {
-                //     // Si hay otros estados diferentes o un solo estado distinto
-                //     // Log::info('Existen otros estados diferentes a 360 o 362. Id_comunicado: ' . $id_comunicado);
-                // }
+                }                   
                 
             }
 
@@ -716,7 +839,7 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
                 } else {
                     // Log::info('No se encontró con Id_Comunicado: ' . $id_comunicado);
                 }
-                // }
+                
             }
 
         } else {
