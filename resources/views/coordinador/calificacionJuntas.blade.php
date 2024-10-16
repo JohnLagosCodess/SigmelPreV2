@@ -26,7 +26,8 @@
                 <?php else: ?>
                     <a href="{{route("bandejaJuntas")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
                 <?php endif ?>
-                <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>                
+                <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button> 
+                <button label="Open Modal" data-toggle="modal" data-target="#historial_servicios" class="btn btn-info"><i class="fas fa-project-diagram mt-1"></i>Historial de servicios</button>                
                 <p>
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
                 </p>
@@ -45,7 +46,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12" id="filaprincipal">
-                        <div id="aumentarColAfiliado"> 
+                        <div id="aumentarColAfiliado" class="d-none"> 
                             <div class="card-info">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
                                     <h5>Información del afiliado</h5>
@@ -75,7 +76,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="identificacion">N° Identificación</label>
-                                                <input type="text" class="form-control" name="identificacion" id="identificacion" value="{{$array_datos_calificacionJuntas[0]->Nro_identificacion}}" disabled>
+                                                <input type="text" class="form-control" name="identificacion" id="identificacion" data-tipo="{{$array_datos_calificacionJuntas[0]->Nombre_tipo_documento}}" value="{{$array_datos_calificacionJuntas[0]->Nro_identificacion}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -1955,6 +1956,7 @@
     @include('//.coordinador.modalCorrespondencia')
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.modals.confirmacionAccion')
+    @include('//.modals.historialServicios')
 @stop
 @section('js')
     <script type="text/javascript" src="/js/calificacionJuntas.js"></script>
