@@ -32,7 +32,8 @@
                 <?php else: ?>
                     <a href="{{route("bandejaPCL")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
                 <?php endif ?>
-                <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>                
+                <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>
+                <button label="Open Modal" data-toggle="modal" data-target="#historial_servicios" class="btn btn-info"><i class="fas fa-project-diagram mt-1"></i>Historial de servicios</button>
                 <p>
                     {{-- <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp;--> --}}
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
@@ -51,7 +52,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12" id="filaprincipal">
-                        <div class="row" id="aumentarColAfiliado">    
+                        <div class="row d-none" id="aumentarColAfiliado">    
                             <div class="col-12">
                                 <div class="card-info">
                                     <div class="card-header text-center" style="border: 1.5px solid black;">
@@ -82,7 +83,7 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="identificacion">N° Identificación</label>
-                                                    <input type="text" class="form-control" name="identificacion" id="identificacion" value="{{$array_datos_calificacionPcl[0]->Nro_identificacion}}" disabled>
+                                                    <input type="text" class="form-control" name="identificacion" data-tipo="{{$array_datos_calificacionPcl[0]->Nombre_tipo_documento}}" id="identificacion" value="{{$array_datos_calificacionPcl[0]->Nro_identificacion}}" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -1377,6 +1378,7 @@
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.coordinador.modalCorrespondencia')
     @include('//.modals.confirmacionAccion')
+    @include('//.modals.historialServicios')
 @stop
 @section('js')
     <script>

@@ -3,7 +3,7 @@ $(document).ready(function () {
     $('#form_consultar_evento').submit(function(e){
         $(".dt-buttons").addClass('d-none');
         e.preventDefault();
-
+        
         /* Captura de variables de formulario de consulta de evento */
         var consultar_nro_identificacion = $('#consultar_nro_identificacion').val();
         var consultar_id_evento = $('#consultar_id_evento').val();
@@ -20,18 +20,18 @@ $(document).ready(function () {
                 type:'POST',
                 url:'/consultaInformacionEvento',
                 data: datos_consulta_evento,
-                success:function(data) {                    
+                success:function(response) {                    
                     // console.log(data);
-                    if (data.parametro == "sin_datos") {
+                    if (response.parametro == "sin_datos") {
                         /* Mostrar contenedor mensaje de que no hay información */
                         $('.resultado_validacion').removeClass('d-none');
                         $('.resultado_validacion').addClass('alert-danger');
-                        $('#llenar_mensaje_validacion').append(data.mensaje);
+                        $('#llenar_mensaje_validacion').append(response.mensaje);
                         setTimeout(() => {
                             $('.resultado_validacion').addClass('d-none');
                             $('.resultado_validacion').removeClass('alert-danger');
                             $('#llenar_mensaje_validacion').empty();
-                        }, 6000);
+                        }, 8000);
 
                         /* Ocultar contenedor informacion del afiliado */
                         $('.contenedor_info_afiliado').addClass('d-none');
@@ -45,6 +45,13 @@ $(document).ready(function () {
                         $('#body_listado_eventos').empty();
 
                     } else {
+
+                        if(response.datos == undefined){
+                            data = response;
+                        }else{
+                            data = response.datos;
+                        }
+
                         /* Ocultar contenedor mensaje de que no hay información */
                         $('.resultado_validacion').addClass('d-none');
                         $('.contenendor_mensaje_no_datos').addClass('d-none');
@@ -68,6 +75,16 @@ $(document).ready(function () {
                         var Ver = '';
                         var agregar_nuevo_servicio = '';
                         var agregar_nuevo_proceso = '';
+
+                        if(response.cantidad_afiliados > 1){
+                            $("#alerta_buscador_msj").empty();
+                            $("#alerta_buscador_msj").append(`se encontraron <strong>${response.cantidad_afiliados}</strong> afiliados relacionados al N° de identificación consultado. Por favor verifique`);
+                            $("#alertaBuscador").show();
+
+                            setTimeout(() => {
+                                $("#alertaBuscador").hide();
+                            }, 4000);
+                        }
 
                         for (let i = 0; i < data.length; i++) {
                             // Validación para mostrar el formulario de edición correspondiente al ID de evento.
@@ -303,30 +320,34 @@ $(document).ready(function () {
             "destroy": true,
             "data": response,
             "pageLength": 5,
-            "order": [[5, 'desc']],
+            "order": [[7, 'desc']],
             "columns":[
-                {"data":"consulta_evento"},
-                {"data":"Nombre_Cliente"},
-                {"data":"Empresa"},
-                {"data":"Nombre_evento"},
-                {"data":"F_radicacion"},
-                {"data":"F_registro"},
-                {"data":"Nombre_proceso"},
-                {"data":"Nombre_servicio"},
-                {"data":"Nombre_estado"},
-                {"data":"Resultado"},
-                {"data":"Accion"},
-                {"data":"F_accion"},
-                {"data":"F_dictamen"},
-                {"data":"F_notificacion"},
-                {"data":"Nombre_profesional"},
                 {
                     data: null,
                     render: function (data, type, row) {
                         return data.Ver + '  ' + data.agregar_nuevo_servicio + '  ' + data.agregar_nuevo_proceso;
                     }
                 },
-                
+                {"data":"consulta_evento"},
+                {"data":"Tipo_documento"},
+                {"data":"Nro_identificacion"},
+                {"data":"Tipo_afiliado"},
+                { 
+                    data: null,
+                    render: function(data){
+                        return data.Nombre_proceso + ' - ' + data.Nombre_servicio
+                    }
+                },
+                {"data":"Accion"},
+                {"data":"F_accion"},
+                {"data":"Resultado"},
+                {"data":"Nombre_profesional"},
+                {"data":"Nombre_estado"},
+                {"data":"F_radicacion"},
+                {"data":"F_registro"},
+                {"data":"F_notificacion"},
+                {"data":"Nombre_evento"},
+                {"data":"Empresa"},
             ],
             "language":{                
                 "search": "Buscar",

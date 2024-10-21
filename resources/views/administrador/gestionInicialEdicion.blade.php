@@ -102,7 +102,9 @@
                     <button type="submit" id="btn_regreso_juntas" style="display: none; !important"></button>
                 </form>
             <?php elseif(isset($_POST['bandera_mod_nuevo']) && $_POST['bandera_mod_nuevo'] == "retornar_mod_nuevo"): ?>
-                <a href="{{route("gestionInicialNuevo")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>           
+                <a href="{{route("gestionInicialNuevo")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
+            <?php elseif(isset($_POST['regresar_anterior']) && $_POST['regresar_anterior'] == "regresar_anterior"): ?>
+                <button class="btn btn-success" onClick="history.go(-1);" value="Recargar bandeja"><i class="fa fa-arrow-left"></i> Regresar</a></button>           
             <?php else: ?>
                 <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>           
             <?php endif ?>

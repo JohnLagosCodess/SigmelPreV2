@@ -470,22 +470,28 @@ class BandejaNotifiController extends Controller
                 if(is_null($info_accion)){
                     return;
                 }
+
+                $profesional = DB::table('users')->select('id', 'name')
+                ->where('id',$info_accion->profesional)->first(); 
                 
                 $dataActualizar['Id_accion'] = $accion;
                 $dataActualizar['Descripcion'] = $descripcion;
-                $dataActualizar['Notificacion'] = $info_accion->enviarA ?? 'No'; //Si - No
-                $dataActualizar['F_alerta'] = $f_alerta;
                 $dataActualizar['F_accion'] = $f_accion;
                 $dataActualizar['Nombre_usuario'] = $nombre_usuario;
-                $dataActualizar['Id_Estado_evento'] = $info_accion->Estado;
+
+                $dataActualizarAsignacion['Notificacion'] = $info_accion->enviarA ?? 'No'; //Si - No
+                $dataActualizarAsignacion['F_alerta'] = $f_alerta;
+                $dataActualizarAsignacion['Id_Estado_evento'] = $info_accion->Estado;
+                $dataActualizarAsignacion['Nombre_profesional'] =  $profesional->name ?? null;
+                $dataActualizarAsignacion['Id_profesional'] =  $profesional->id ?? null;
+
+                $data_asignacion_evento = array_merge($dataActualizarAsignacion,$dataActualizar);
 
                 sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
                 ->where('Id_Asignacion', $id)
-                ->update($dataActualizar);
+                ->update($data_asignacion_evento);
 
-                //Se quita el campo para no generar conflictos con la tabla de historial_acciones
-                unset($dataActualizar['F_alerta'],$dataActualizar['Notificacion'],$dataActualizar['Id_Estado_evento'] );
-            
+                
                 $data_historial_accion = [
                     'Id_Asignacion' => $id,
                     'ID_evento' => $values["id_evento"],
@@ -534,7 +540,7 @@ class BandejaNotifiController extends Controller
      */
     public static function ingresar_notificacion(int $id_cliente,int $servicio,int $id_proceso,int $accion_ejecutar) {
         $estado_parametrica = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
-        ->select('sipc.Estado', 'sipc.Enviar_a_bandeja_trabajo_destino as enviarA')
+        ->select('sipc.Estado', 'sipc.Enviar_a_bandeja_trabajo_destino as enviarA','sipc.Profesional_asignado as profesional')
         ->where([
             ['sipc.Id_proceso', '=', $id_proceso],
             ['sipc.Servicio_asociado', '=', $servicio],
