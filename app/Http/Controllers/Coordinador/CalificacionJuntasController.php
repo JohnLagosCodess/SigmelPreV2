@@ -4041,12 +4041,11 @@ class CalificacionJuntasController extends Controller
                 $nro_radicado = $request->radicado2_act;
                 $Id_junta_act = $request->Id_junta_act;
                 $f_notifi_afiliado_act = $request->F_notifi_afiliado_act;
-                $f_notifi_afiliado_act = date("d/m/Y", $f_notifi_afiliado_act);
+                $f_notifi_afiliado_act = date("d/m/Y", strtotime($f_notifi_afiliado_act));
                 $f_radicacion_contro_pri_cali_act = $request->F_radicacion_contro_pri_cali_act;
-                $f_radicacion_contro_pri_cali_act = date("d/m/Y", $f_radicacion_contro_pri_cali_act);
+                $f_radicacion_contro_pri_cali_act = date("d/m/Y", strtotime($f_radicacion_contro_pri_cali_act));
                 $f_estructuracion_act = $request->F_estructuracion_act;
-                $f_estructuracion_act = date("d/m/Y", $f_estructuracion_act);
-
+                $f_estructuracion_act = date("d/m/Y", strtotime($f_estructuracion_act));
                 /* Extraer el id del cliente */
                 $dato_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
                 ->select('Cliente')
