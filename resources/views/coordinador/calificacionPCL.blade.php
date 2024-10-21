@@ -32,7 +32,8 @@
                 <?php else: ?>
                     <a href="{{route("bandejaPCL")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
                 <?php endif ?>
-                <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>                
+                <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>
+                <button label="Open Modal" data-toggle="modal" data-target="#historial_servicios" class="btn btn-info"><i class="fas fa-project-diagram mt-1"></i>Historial de servicios</button>
                 <p>
                     {{-- <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp;--> --}}
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
@@ -51,7 +52,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12" id="filaprincipal">
-                        <div class="row" id="aumentarColAfiliado">    
+                        <div class="row d-none" id="aumentarColAfiliado">    
                             <div class="col-12">
                                 <div class="card-info">
                                     <div class="card-header text-center" style="border: 1.5px solid black;">
@@ -82,7 +83,7 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="identificacion">N° Identificación</label>
-                                                    <input type="text" class="form-control" name="identificacion" id="identificacion" value="{{$array_datos_calificacionPcl[0]->Nro_identificacion}}" disabled>
+                                                    <input type="text" class="form-control" name="identificacion" data-tipo="{{$array_datos_calificacionPcl[0]->Nombre_tipo_documento}}" id="identificacion" value="{{$array_datos_calificacionPcl[0]->Nro_identificacion}}" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -745,7 +746,7 @@
                                                     <div class="form-group">
                                                         <div class="form-check custom-control custom-radio">
                                                             <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documentos_pcl" value="Documento_PCL" required>
-                                                            <label class="form-check-label custom-control-label" for="documentos_pcl"><strong>Solicitud Documentos PCL</strong></label>
+                                                            <label class="form-check-label custom-control-label" for="documentos_pcl"><strong>SOLICITUD DOCUMENTOS (PCL)</strong></label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -772,7 +773,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documento_revisionpension" value="Documento_Revision_pension" required>
-                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension"><strong>oficio solicitud de documentos complementarios</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension"><strong>SOLICITUD DOCUMENTOS (R.V)</strong></label>
                                                     </div>
                                                 </div>
                                             </div>                                          
@@ -782,7 +783,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="No_procede_recali" value="Documento_No_Recalificacion" required>
-                                                        <label class="form-check-label custom-control-label" for="No_procede_recali"><strong>No Procede Recalificación</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="No_procede_recali"><strong>NO RECALIFICACIÓN</strong></label>
                                                     </div>
                                                 </div>
                                             </div> 
@@ -1094,7 +1095,7 @@
                                                     <div class="form-group">
                                                         <div class="form-check custom-control custom-radio">
                                                             <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="documentos_pcl_editar" value="Documento_PCL" required>
-                                                            <label class="form-check-label custom-control-label" for="documentos_pcl_editar"><strong>Solicitud Documentos PCL</strong></label>
+                                                            <label class="form-check-label custom-control-label" for="documentos_pcl_editar"><strong>SOLICITUD DOCIMENTOS (PCL)</strong></label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1121,7 +1122,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="documento_revisionpension_editar" value="Documento_Revision_pension" required>
-                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension_editar"><strong>oficio solicitud de documentos complementarios</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension_editar"><strong>SOLICITUD DOCUMENTOS (R.V)</strong></label>
                                                     </div>
                                                 </div>
                                             </div>                                          
@@ -1131,7 +1132,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="No_procede_recali_editar" value="Documento_No_Recalificacion" required>
-                                                        <label class="form-check-label custom-control-label" for="No_procede_recali_editar"><strong>No Procede Recalificación</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="No_procede_recali_editar"><strong>NO RECALIFICACIÓN</strong></label>
                                                     </div>
                                                 </div>
                                             </div> 
@@ -1377,6 +1378,7 @@
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.coordinador.modalCorrespondencia')
     @include('//.modals.confirmacionAccion')
+    @include('//.modals.historialServicios')
 @stop
 @section('js')
     <script>

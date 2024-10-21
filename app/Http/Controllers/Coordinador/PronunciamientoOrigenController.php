@@ -1000,6 +1000,7 @@ class PronunciamientoOrigenController extends Controller
         $num_identificacion = !empty($array_datos_pronunciamientoOrigen[0]->Nro_identificacion) ? $array_datos_pronunciamientoOrigen[0]->Nro_identificacion : null;
 
         $fecha_dictamen = $request->fecha_dictamen;
+        $fecha_dictamen = date("d/m/Y", strtotime($fecha_dictamen));
 
         $origen = "<b>".$request->origen."</b>";
 
@@ -1551,11 +1552,11 @@ class PronunciamientoOrigenController extends Controller
             $header->addImage($imagenPath_header, array('width' => 110, 'height' => 30, 'align' => 'right'));
             $encabezado = $header->addTextRun(['alignment' => 'right']);
             //FontStyle del paginado
-            $fontStyle = ['name' => 'Calibri', 'size' => 8];
-            $encabezado->addText('Página ', $fontStyle);
-            $encabezado->addField('PAGE',[],[],null,$fontStyle);
-            $encabezado->addText(' de ',$fontStyle);
-            $encabezado->addField('NUMPAGES',[],[],null,$fontStyle);
+            $fontStylePaginado = ['name' => 'Calibri', 'size' => 8];
+            $encabezado->addText('Página ', $fontStylePaginado);
+            $encabezado->addField('PAGE',[],[],null,$fontStylePaginado);
+            $encabezado->addText(' de ',$fontStylePaginado);
+            $encabezado->addField('NUMPAGES',[],[],null,$fontStylePaginado);
             $header->addTextBreak();
                       
             // Creación de Contenido
@@ -1567,9 +1568,9 @@ class PronunciamientoOrigenController extends Controller
 
             $table->addRow();
 
-            $cell1 = $table->addCell(6000);
+            $cell = $table->addCell(7000);
 
-            $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
+            $textRun1 = $cell->addTextRun(array('alignment'=>'left'));
             $textRun1->addText('Señores: ',array('bold' => true));
             $textRun1->addTextBreak();
             $textRun1->addText($nombre_destinatario);
@@ -1582,24 +1583,10 @@ class PronunciamientoOrigenController extends Controller
             $textRun1->addText($telefono_destinatario);
             $textRun1->addTextBreak();
             if($ciudad_destinatario !== 'Bogota D.C.'){
-                $textRun1->addText($departamento_destinatario.' - '.$ciudad_destinatario);
+                $textRun1->addText($ciudad_destinatario.' - '.$departamento_destinatario);
             }else{
                 $textRun1->addText($ciudad_destinatario);
             }
-
-            $cell2 = $table->addCell(4000);
-
-            $nestedTable = $cell2->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80 * 60, 'alignment'=>'right'));
-            $nestedTable->addRow();
-            $nestedCell = $nestedTable->addCell();
-            $nestedTextRun = $nestedCell->addTextRun(array('alignment'=>'left'));
-            $nestedTextRun->addText('Nro. Radicado: ', array('bold' => true));
-            $nestedTextRun->addTextBreak();
-            $nestedTextRun->addText($nro_radicado, array('bold' => true));
-            $nestedTextRun->addTextBreak();
-            $nestedTextRun->addText($tipo_identificacion . ' ' . $num_identificacion, array('bold' => true));
-            $nestedTextRun->addTextBreak();
-            $nestedTextRun->addText('Siniestro: ' . $N_siniestro, array('bold' => true));
 
             $section->addTextBreak();
             $section->addTextBreak();
@@ -1622,10 +1609,12 @@ class PronunciamientoOrigenController extends Controller
             $table->addRow();
 
 
-            $cell1 = $table->addCell(8000);
+            $cell1 = $table->addCell(2000);
+            $cell2 = $table->addCell(8000);
 
-            $asuntoyafiliado = $cell1->addTextRun(array('alignment'=>'left'));
-            $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
+            $asuntotext = $cell1->addTextRun(array('alignment'=>'left'));
+            $asuntotext->addText('Asunto: ', array('bold' => true));
+            $asuntoyafiliado = $cell2->addTextRun(array('alignment'=>'both'));
             $asuntoyafiliado->addText($asunto, array('bold' => true));
             $asuntoyafiliado->addTextBreak();
             $asuntoyafiliado->addText('PACIENTE: ', array('bold' => true));
@@ -1699,13 +1688,18 @@ class PronunciamientoOrigenController extends Controller
                 
                 Html::addHtml($section, $htmlModificado, false, true);
             }else{
+                //PBS060 Piden "Eliminar la frase "No firma", dejar un espacio de 5 renglones entre "Cordialmente," y el nombre del representante legal Alfa".
+                $section->addTextBreak();
+                $section->addTextBreak();
+                $section->addTextBreak();
                 // $section->addText($Firma_cliente);
             }
 
             $section->addTextBreak();
             $section->addText('HUGO IGNACIO GÓMEZ DAZA', array('bold' => true));
-            $section->addText('Representante Legal para Asuntos de Seguridad Social', array('bold' => true));
-            $section->addText('Convenio Codess - Seguros de Vida Alfa S.A.', array('bold' => true));
+            $section->addText('C.C. 80413626');
+            $section->addText('Representante Legal');
+            $section->addText('Seguros de Vida Alfa S.A.');
             $section->addTextBreak();
             // $section->addText('Elaboró: '.Auth::user()->name, array('bold' => true));
             // $section->addTextBreak();
@@ -1715,14 +1709,13 @@ class PronunciamientoOrigenController extends Controller
             if (count($Agregar_copias) == 0) {
                 $htmltabla2 .= '
                     <tr>
-                        <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
+                        <td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>
                     </tr>';
             } else {
                 $htmltabla2 .= '
                     <tr>
-                        <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
+                        <td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Copia:</span></td>
                     </tr>';
-
                 $Afiliado = 'Afiliado';
                 $Empleador = 'Empleador';
                 $EPS = 'EPS';
@@ -1732,37 +1725,60 @@ class PronunciamientoOrigenController extends Controller
                 $JNCI = 'JNCI';
 
                 if (isset($Agregar_copias[$Afiliado])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$Empleador])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$EPS])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$AFP])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$ARL])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$JRCI])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$JNCI])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
                 }
             }
 
             $htmltabla2 .= '</table>';
             Html::addHtml($section, $htmltabla2, false, true);
             $section->addTextBreak();
+            $section->addTextBreak();
+
+            //Cuadro con la información del siniestro
+            $tableCuadro = $section->addTable();
+
+            $tableCuadro->addRow();
+            
+            $cellCuadro = $tableCuadro->addCell(10000);
+            //Estilo del texto del cuadro
+            $styleTextCuadro = ['bold' => true,'name' => 'Calibri', 'size' => 8];
+            //Cuadro
+            $cuadro = $cellCuadro->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80*60, 'alignment'=>'center'));
+            $cuadro->addRow();
+            $celdaCuadro = $cuadro->addCell();
+            $cuadroTextRun = $celdaCuadro->addTextRun(array('alignment'=>'left'));
+            $cuadroTextRun->addText('Nro. Radicado: ', $styleTextCuadro);
+            $cuadroTextRun->addTextBreak();
+            $cuadroTextRun->addText($nro_radicado, $styleTextCuadro);
+            $cuadroTextRun->addTextBreak();
+            $cuadroTextRun->addText($tipo_identificacion . ' ' . $num_identificacion, $styleTextCuadro);
+            $cuadroTextRun->addTextBreak();
+            $cuadroTextRun->addText('Siniestro: ' . $N_siniestro, $styleTextCuadro);
+
             // Configuramos el footer
             // $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$N_siniestro;
             $footer = $section->addFooter();

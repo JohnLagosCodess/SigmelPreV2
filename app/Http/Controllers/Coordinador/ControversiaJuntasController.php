@@ -29,6 +29,7 @@ use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Shared\Converter;
 use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
 use PhpOffice\PhpWord\Style\Image;
@@ -241,12 +242,15 @@ class ControversiaJuntasController extends Controller
         if(count($array_caso_notificado) > 0){
             $caso_notificado = $array_caso_notificado[0]->Notificacion;
         }
+
+        //Traer el N_siniestro del evento
+        $N_siniestro_evento = $this->globalService->retornarNumeroSiniestro($Id_evento_juntas);     
         //dd($arrayinfo_controvertido);
         return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido',
         'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
         'array_datos_diagnostico_reposi_dictamen_jrci',
-        'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 'cantidad_documentos_cargados',
-        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado'));
+        'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado','N_siniestro_evento'));
     
     }
 
@@ -1835,9 +1839,17 @@ class ControversiaJuntasController extends Controller
             $Agregar_copias = '';
         }
 
+        if($request->decision_dictamen === 'Desacuerdo'){
+            $tipo_descarga = 'RECURSO JRCI';
+        }
+        else if($request->decision_dictamen === 'Acuerdo'){
+            $tipo_descarga = 'ACUERDO JRCI';
+        }else{
+            $tipo_descarga = 'Controversia';
+        }
+
         //Se asignan los IDs de destinatario por cada posible destinatario
         $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario(true, true);
-
         if ($bandera_correspondecia_guardar_actualizar == 'Guardar') {
             $datos_correspondencia = [
                 'ID_evento' => $newId_evento,
@@ -1910,7 +1922,7 @@ class ControversiaJuntasController extends Controller
                 'Agregar_copia' => $Agregar_copias,
                 'JRCI_copia' => $cual,
                 'Anexos' => $anexos,
-                'Tipo_descarga' => 'Controversia',
+                'Tipo_descarga' => $tipo_descarga,
                 'Modulo_creacion' => 'controversiaJuntas',
                 'Reemplazado' => 0,
                 'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
@@ -1961,12 +1973,12 @@ class ControversiaJuntasController extends Controller
                 'Firmar' => $firmar,
                 'Ciudad' => $ciudad,
                 'F_correspondecia' => $f_correspondencia,
-                'N_radicado' => $radicado,
+                // 'N_radicado' => $radicado,
                 'Decision_dictamen' => $request->decision_dictamen,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date
             ];
-    
+            
             sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
             ->where([
                 ['ID_evento',$newId_evento],
@@ -1974,11 +1986,39 @@ class ControversiaJuntasController extends Controller
             ])->update($datos_correspondencia); 
             
             $datos_info_comunicado_eventos = [
+                'ID_Evento' => $newId_evento,
+                'Id_proceso' => $Id_proceso,
+                'Id_Asignacion' => $newId_asignacion,
+                'Ciudad' => $ciudad,
+                'F_comunicado' => $date,
+                // 'N_radicado' => $radicado,
+                'Cliente' => 'N/A',
+                'Nombre_afiliado' => $nombreAfiliado,
+                'T_documento' => 'N/A',
+                'N_identificacion' => $nro_identificacion,
+                'Destinatario' => $Destinatario,
+                'Nombre_destinatario' => $request->nombre_destinatariopri ? $request->nombre_destinatariopri : 'N/A',
+                'Nit_cc' => 'N/A',
+                'Direccion_destinatario' => 'N/A',
+                'Telefono_destinatario' => '001',
+                'Email_destinatario' => 'N/A',
+                'Id_departamento' => '001',
+                'Id_municipio' => '001',
+                'Asunto'=> $Asunto,
+                'Cuerpo_comunicado' => $cuerpo_comunicado,
+                'Forma_envio' => '0',
+                'Elaboro' => $elaboro,
+                'Reviso' => $reviso,
                 'Agregar_copia' => $Agregar_copias,
                 'JRCI_copia' => $cual,
+                'Anexos' => $anexos,
+                'Tipo_descarga' => $tipo_descarga,
+                'Modulo_creacion' => 'controversiaJuntas',
+                'Reemplazado' => 0,
+                'Otro_destinatario' => $request->nombre_destinatariopri ? 1 : 0,
+                'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
-                'Reemplazado' => 0,
             ];   
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
@@ -1986,7 +2026,7 @@ class ControversiaJuntasController extends Controller
                     ['ID_evento', $newId_evento],
                     ['Id_Asignacion',$newId_asignacion],
                     ['Id_proceso', $Id_proceso],
-                    ['N_radicado',$radicado]
+                    ['N_radicado',$request->radicado]
                     ])
             ->update($datos_info_comunicado_eventos);
 
@@ -2367,7 +2407,6 @@ class ControversiaJuntasController extends Controller
         $time = time();
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
-
         /* Captura de variables que vienen del ajax */
         $id_comite_inter = $request->id_comite_inter;
         $id_cliente = $request->id_cliente;
@@ -2389,6 +2428,9 @@ class ControversiaJuntasController extends Controller
         $copia_eps = $request->copia_eps;
         $copia_afp = $request->copia_afp;
         $copia_arl = $request->copia_arl;
+        $copia_jrci = $request->copia_jrci;
+        $copia_jnci = $request->copia_jnci;
+        $jrci_elegida = $request->jrci_elegida;
         $asunto = strtoupper($request->asunto);
         $cuerpo = $request->cuerpo;
         $firmar = $request->firmar;
@@ -2404,6 +2446,11 @@ class ControversiaJuntasController extends Controller
 
         $array_datos_para_destinatario_principal = json_decode(json_encode($datos_para_destinatario_principal), true);
         $checkbox_otro_destinatario = $array_datos_para_destinatario_principal[0]["Otro_destinatario"];
+
+        //Fecha de sustentacion antes la JRCI
+        $fecha_sustent_jrci = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion]])
+        ->value('F_sustenta_jrci');
 
         //  Si el checkbox fue marcado entonces se entra a mirar las demás validaciones
         if ($checkbox_otro_destinatario == "Si") {
@@ -2559,25 +2606,41 @@ class ControversiaJuntasController extends Controller
         ->select('Contro_origen', 'Contro_pcl', 'Contro_diagnostico', 'Contro_f_estructura', 'Contro_m_califi')
         ->where([['ID_evento',$id_evento],
             ['Id_Asignacion',$id_asignacion],
-        ])->get(); 
-
+        ])->get();
         $array_datos_tipo_controversia = json_decode(json_encode($datos_tipo_controversia), true);
 
         if (count($array_datos_tipo_controversia) > 0) {
 
             // Obtener los valores del primer elemento del array
             $controversias = array_values($array_datos_tipo_controversia[0]);
+            $controversias = array_filter($controversias); // Eliminar valores null
+            //En el PBS060 piden Tipo de controversia primera calificación de la siguiente manera: Si se seleccionan las opciones Origen o Diagnósticos no deberá traer nada),
+            if($id_servicio != "12"){
+                $controversias = array_diff($controversias, ['Origen', 'Diagnósticos']);
+            }
+            
+            if (!empty($controversias)) {
+                // Extraer el último valor si hay más de un elemento
+                $ultimo_tipo_controversia = array_pop($controversias);
+            
+                // Concatenar los valores con comas y agregar "y" antes del último
+                if (!empty($controversias)) {
+                    $string_tipos_controversia = implode(", ", $controversias) . " y " . $ultimo_tipo_controversia;
+                } else {
+                    // Si solo hay un valor, no es necesario el "y", ni separarlo por comas
+                    $string_tipos_controversia = $ultimo_tipo_controversia;
+                }
+                $string_tipos_controversia = str_replace('% PCL', 'la pérdida de capacidad laboral', $string_tipos_controversia);
+                $string_tipos_controversia = str_replace('Fecha estructuración', 'la Fecha de estructuración', $string_tipos_controversia);
+                $string_tipos_controversia = str_replace('Manual de calificación', 'el Manual de calificación', $string_tipos_controversia);
 
-            // Obtener el último elemento
-            $ultimo_tipo_controversia = array_pop($controversias);
-
-            // Concatenar los valores con comas y agregar "y" antes del último
-            $string_tipos_controversia = implode(", ", $controversias) . " y " . $ultimo_tipo_controversia;
+            } else {
+                $string_tipos_controversia = "";
+            }
 
         } else {
             $string_tipos_controversia = "";
         }
-
         // Traer datos CIE10 de Dictamen emitido por la Junta Regional de Calificación de Invalidez (JRCI)
         $diagnosticos_cie10 = array();
         $datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
@@ -2595,11 +2658,11 @@ class ControversiaJuntasController extends Controller
         $array_datos_diagnostico_motcalifi = json_decode(json_encode($datos_diagnostico_motcalifi), true);
 
         for ($i=0; $i < count($array_datos_diagnostico_motcalifi); $i++) { 
-            $dato_concatenado = "(<b>".$array_datos_diagnostico_motcalifi[$i]['Codigo']."</b>) ".mb_strtoupper($array_datos_diagnostico_motcalifi[$i]['Nombre_CIE10'], 'UTF-8')." de origen ".$array_datos_diagnostico_motcalifi[$i]['Nombre_parametro']."";
+            $dato_concatenado = "(<b>".$array_datos_diagnostico_motcalifi[$i]['Codigo']."</b>) ".mb_strtoupper($array_datos_diagnostico_motcalifi[$i]['Nombre_CIE10'], 'UTF-8').", ".$array_datos_diagnostico_motcalifi[$i]['Nombre_parametro']."";
             array_push($diagnosticos_cie10, $dato_concatenado);
         }
 
-        $string_diagnosticos_cie10 = implode(", ", $diagnosticos_cie10);
+        $string_diagnosticos_cie10 = implode(" - ", $diagnosticos_cie10);
         $string_diagnosticos_cie10 = $string_diagnosticos_cie10;
 
         /* Copias Interesadas */
@@ -2640,96 +2703,29 @@ class ControversiaJuntasController extends Controller
             $emailAfiliado = $AfiliadoData[0]->Email;            
             $Agregar_copias['Afiliado'] = $nombreAfiliado."; ".$direccionAfiliado."; ".$emailAfiliado."; ".$telefonoAfiliado."; ".$ciudadAfiliado."; ".$municipioAfiliado.".";  
         }
+
         if(isset($copia_empleador)){
-
-            $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
-            ->where([['sile.Nro_identificacion', $num_identificacion],['sile.ID_evento', $id_evento]])
-            ->get();
-
-            if (preg_match("/&/", $datos_empleador[0]->Empresa)) {
-                $nombre_empleador = htmlspecialchars(preg_replace('/&/', '&amp;', $datos_empleador[0]->Empresa));
-            } else {
-                $nombre_empleador = $datos_empleador[0]->Empresa;
-            }
-            $direccion_empleador = $datos_empleador[0]->Direccion;
-            $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
-            $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
-            $municipio_empleador = $datos_empleador[0]->Nombre_municipio;
-
-            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
+            $Agregar_copias['Empleador'] = $this->globalService->retornarEmpleador($num_identificacion,$id_evento);   
         }
 
         if (isset($copia_eps)) {
-            $datos_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
-            'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
-            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
-            ->get();
-
-            $nombre_eps = $datos_eps[0]->Nombre_eps;
-            $direccion_eps = $datos_eps[0]->Direccion;
-            if ($datos_eps[0]->Otros_Telefonos != "") {
-                $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
-            } else {
-                $telefonos_eps = $datos_eps[0]->Telefonos;
-            }
-            $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
-            $minucipio_eps = $datos_eps[0]->Nombre_municipio;
-
-            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
+            $Agregar_copias['EPS'] = $this->globalService->retornarCopiaEntidad($num_identificacion,$id_evento,'eps');
         }
 
         if (isset($copia_afp)) {
-            $datos_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
-            'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
-            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
-            ->get();
-
-            $nombre_afp = $datos_afp[0]->Nombre_afp;
-            $direccion_afp = $datos_afp[0]->Direccion;
-            if ($datos_afp[0]->Otros_Telefonos != "") {
-                $telefonos_afp = $datos_afp[0]->Telefonos.",".$datos_afp[0]->Otros_Telefonos;
-            } else {
-                $telefonos_afp = $datos_afp[0]->Telefonos;
-            }
-            $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
-            $minucipio_afp = $datos_afp[0]->Nombre_municipio;
-
-            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
+            $Agregar_copias['AFP'] = $this->globalService->retornarCopiaEntidad($num_identificacion,$id_evento,'afp');
         }
 
         if(isset($copia_arl)){
-            $datos_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-            ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
-            'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
-            ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
-            ->get();
+            $Agregar_copias['ARL'] = $this->globalService->retornarCopiaEntidad($num_identificacion,$id_evento,'arl');
+        }
 
-            $nombre_arl = $datos_arl[0]->Nombre_arl;
-            $direccion_arl = $datos_arl[0]->Direccion;
-            if ($datos_arl[0]->Otros_Telefonos != "") {
-                $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
-            } else {
-                $telefonos_arl = $datos_arl[0]->Telefonos;
-            }
+        if(isset($copia_jrci)){
+            $Agregar_copias['JRCI'] = $this->globalService->retornarJrci(null,$jrci_elegida);
+        }
 
-            $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
-            $minucipio_arl = $datos_arl[0]->Nombre_municipio;
-
-            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+        if(isset($copia_jnci)){
+            $Agregar_copias['JNCI'] = $this->globalService->retornarJnci();
         }
 
         /* Validación Firma Cliente */
@@ -2800,15 +2796,15 @@ class ControversiaJuntasController extends Controller
 
         //Marca de agua
         $styleVigilado = [
-            'width' => 25,           
-            'height' => 200,            
-            'marginTop' => 0,           
+            'width' => 20,           
+            'height' => 100,  
+            'marginTop' => 600,        
             'marginLeft' => -50,       
             'wrappingStyle' => 'behind',   // Imagen detrás del texto
             'positioning' => Image::POSITION_RELATIVE, 
             'posVerticalRel' => 'page', 
             'posHorizontal' => Image::POSITION_ABSOLUTE,
-            'posVertical' => Image::POSITION_VERTICAL_CENTER, // Centrado verticalmente en la página
+            'posVertical' => Image::POSITION_ABSOLUTE, // Centrado verticalmente en la página
         ];
 
         $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
@@ -2816,8 +2812,8 @@ class ControversiaJuntasController extends Controller
         /* Construcción proforma en formato docx (word) */
         $phpWord = new PhpWord();
         // Configuramos la fuente y el tamaño de letra para todo el documento
-        $phpWord->setDefaultFontName('Arial');
-        $phpWord->setDefaultFontSize(12);
+        $phpWord->setDefaultFontName('Verdana');
+        $phpWord->setDefaultFontSize(10);
         // Configuramos la alineación justificada para todo el documento
         $phpWord->setDefaultParagraphStyle(
             array('align' => 'both', 'spaceAfter' => 0, 'spaceBefore' => 0)
@@ -2825,27 +2821,38 @@ class ControversiaJuntasController extends Controller
         // Configurar el idioma del documento a español
         $phpWord->getSettings()->setThemeFontLang(new \PhpOffice\PhpWord\Style\Language('es-ES'));
 
+        //Section header
+        $estilosPaginaWord = array(
+            'headerHeight'=> 0,
+            'footerHeight'=> Converter::inchToTwip(.2),
+            'marginLeft'  => Converter::inchToTwip(1),
+            'marginRight' => Converter::inchToTwip(1),
+            'marginTop'   => 0,
+            'marginBottom'=> 0,
+        );
+        $section = $phpWord->addSection($estilosPaginaWord);
         // Configuramos las margenes del documento (estrechas)
-        $section = $phpWord->addSection();
-        $section->setMarginLeft(0.5 * 72);
-        $section->setMarginRight(0.5 * 72);
-        $section->setMarginTop(0.5 * 72);
-        $section->setMarginBottom(0.5 * 72);
+        // $section = $phpWord->addSection();
+        // $section->setMarginLeft(0.5 * 72);
+        // $section->setMarginRight(0.5 * 72);
+        // $section->setMarginTop(0.5 * 72);
+        // $section->setMarginBottom(0.5 * 72);
 
         // Creación de Header
         $header = $section->addHeader();
         $header->addWatermark($pathVigilado, $styleVigilado);
         $imagenPath_header = public_path($ruta_logo);
-        $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
-        $test = $header->addTextRun(['alignment' => 'right']);
-        $test->addText('Página ');
-        $test->addField('PAGE');
-        $test->addText(' de ');
-        $test->addField('NUMPAGES');
+        $header->addImage($imagenPath_header, array('width' => 110, 'height' => 30, 'align' => 'right'));
+        $encabezado = $header->addTextRun(['alignment' => 'right']);
+        $fontStylePaginado = ['name' => 'Calibri', 'size' => 8];
+        $encabezado->addText('Página ', $fontStylePaginado);
+        $encabezado->addField('PAGE',[],[],null,$fontStylePaginado);
+        $encabezado->addText(' de ',$fontStylePaginado);
+        $encabezado->addField('NUMPAGES',[],[],null,$fontStylePaginado);
         $header->addTextBreak();
 
         // Creación de Contenido
-        $fecha_formateada = fechaFormateada($date);
+        $fecha_formateada = fechaFormateada($fecha_sustent_jrci ? $fecha_sustent_jrci : $date);
         $section->addText('Bogotá D.C. '.$fecha_formateada, array('bold' => true), array('align' => 'right'));
         $section->addTextBreak();
 
@@ -2854,7 +2861,7 @@ class ControversiaJuntasController extends Controller
 
         $table->addRow();
 
-        $cell1 = $table->addCell(5000);
+        $cell1 = $table->addCell(6000);
 
         $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
         $textRun1->addText('Señores: ',array('bold' => true));
@@ -2863,24 +2870,15 @@ class ControversiaJuntasController extends Controller
         $textRun1->addTextBreak();
         $textRun1->addText($direccion_junta);
         $textRun1->addTextBreak();
+        $textRun1->addText('Tel: ');
         $textRun1->addText($telefono_junta);
         $textRun1->addTextBreak();
-        $textRun1->addText($ciudad_junta.' - '.$departamento_junta);
+        if($ciudad_junta !== 'Bogota D.C.'){
+            $textRun1->addText($ciudad_junta.' - '.$departamento_junta);
+        }else{
+            $textRun1->addText($ciudad_junta);
+        }
 
-        $cell2 = $table->addCell(5000);
-
-        $nestedTable = $cell2->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80 * 60, 'alignment'=>'right'));
-        $nestedTable->addRow();
-        $nestedCell = $nestedTable->addCell();
-        $nestedTextRun = $nestedCell->addTextRun(array('alignment'=>'left'));
-        $nestedTextRun->addText('Nro. Radicado: ', array('bold' => true));
-        $nestedTextRun->addTextBreak();
-        $nestedTextRun->addText($nro_radicado, array('bold' => true));
-        $nestedTextRun->addTextBreak();
-        $nestedTextRun->addText($tipo_identificacion . ' ' . $num_identificacion, array('bold' => true));
-        $nestedTextRun->addTextBreak();
-        $nestedTextRun->addText('Siniestro: ' . $N_siniestro, array('bold' => true));
-        
         $section->addTextBreak();
         $section->addTextBreak();
         // $htmltabla1 = '<table align="justify" style="width: 100%; border: none;">
@@ -2909,7 +2907,7 @@ class ControversiaJuntasController extends Controller
 
         $patron_asunto = '/\{\{\$F_DICTAMEN_JRCI_ASUNTO\}\}/'; 
         if (preg_match($patron_asunto, $asunto)) {
-            $asunto_modificado = str_replace('{{$F_DICTAMEN_JRCI_ASUNTO}}', $f_dictamen_jrci_emitido, $asunto);
+            $asunto_modificado = str_replace('{{$F_DICTAMEN_JRCI_ASUNTO}}', date("d/m/Y", strtotime($f_dictamen_jrci_emitido)), $asunto);
             $asunto = $asunto_modificado;
         }else{
             $asunto = "";
@@ -2929,8 +2927,8 @@ class ControversiaJuntasController extends Controller
         $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
         $asuntoyafiliado->addText($asunto, array('bold' => true));
         $asuntoyafiliado->addTextBreak();
-        $asuntoyafiliado->addText('Afiliado: ', array('bold' => true));
-        $asuntoyafiliado->addText($nombre_afiliado." ".$tipo_identificacion." ".$num_identificacion);
+        $asuntoyafiliado->addText('PACIENTE: ', array('bold' => true));
+        $asuntoyafiliado->addText($nombre_afiliado." ".$tipo_identificacion." ".$num_identificacion,array('bold' => true));
         $section->addTextBreak();
 
 
@@ -2951,15 +2949,30 @@ class ControversiaJuntasController extends Controller
         $cuerpo_modificado = str_replace('HUGO IGNACIO GÓMEZ DAZA', '<b>HUGO IGNACIO GÓMEZ DAZA</b>', $cuerpo);
         $cuerpo_modificado = str_replace('SEGUROS DE VIDA ALFA S.A.', '<b>SEGUROS DE VIDA ALFA S.A.</b>', $cuerpo_modificado);
         $cuerpo_modificado = str_replace('RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN', '<b>RECURSO DE REPOSICIÓN Y EN SUBSIDIO EL DE APELACIÓN</b>', $cuerpo_modificado);
-        $cuerpo_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $cuerpo_modificado);
+        $cuerpo_modificado = str_replace('RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN', '<b>RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE APELACIÓN</b>', $cuerpo_modificado);
+        $cuerpo_modificado = str_replace('ANEXO:', '<b style="text-align:center;">ANEXO:</b>', $cuerpo_modificado);
         $cuerpo_modificado = str_replace('PÉRDIDA DE CAPACIDAD LABORAL', '<b>PÉRDIDA DE CAPACIDAD LABORAL</b>', $cuerpo_modificado);
-        $cuerpo_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $cuerpo_modificado);
+        $cuerpo_modificado = str_replace('NOTIFICACIONES:', '<b style="text-align:center;">NOTIFICACIONES:</b>', $cuerpo_modificado);
+        
         $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo_modificado);
         $cuerpo_modificado = str_replace('<p><br>', ' ', $cuerpo_modificado);
 
         if (preg_match($patron1, $cuerpo_modificado) && preg_match($patron2, $cuerpo_modificado)) {
-            
-            if (preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron6, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
+
+            if($request->id_servicio === '12' && preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron6, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)){
+                // Ambos patrones encontrados
+                $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+
+                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.mb_strtoupper($nombre_afiliado, 'UTF-8').'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', '<b>'.$num_identificacion.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10, $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$tipos_controversia}}', strtolower($string_tipos_controversia), $cuerpo_modificado);
+    
+                $cuerpo_final = nl2br($cuerpo_modificado);
+            }
+            else if($request->id_servicio !== '12' && preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron6, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
                 // Ambos patrones encontrados
                 $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
@@ -2969,55 +2982,82 @@ class ControversiaJuntasController extends Controller
                 $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', '<b>'.$num_identificacion.'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10, $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$pcl_jrci}}', $porcentaje_pcl_jrci_emitido, $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', '<b>'.$f_estructuracion_contro_jrci_emitido.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', '<b>'.date("d/m/Y", strtotime($f_estructuracion_contro_jrci_emitido)).'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$tipos_controversia}}', '<b>'.$string_tipos_controversia.'</b>', $cuerpo_modificado);
     
                 $cuerpo_final = nl2br($cuerpo_modificado);
-            }else{
+            }
+            else{
                 $cuerpo_final = "";
             }
-        
+                 
         } elseif (preg_match($patron1, $cuerpo_modificado)) {
-            if (preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron6, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
-                // Solo patrón6 encontrado
+            if ($request->id_servicio === '12' && preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron6, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
+                // Ambos patrones encontrados
                 $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
 
-                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.strtoupper($nombre_afiliado).'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.mb_strtoupper($nombre_afiliado, 'UTF-8').'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', '<b>'.$num_identificacion.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10, $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$tipos_controversia}}', strtolower($string_tipos_controversia), $cuerpo_modificado);
+    
+                $cuerpo_final = nl2br($cuerpo_modificado);
+            }
+            else if($request->id_servicio !== '12' && preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron6, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
+                // Ambos patrones encontrados
+                $cuerpo_modificado = str_replace('{{$sustentacion_jrci}}', $sustentacion_concepto_jrci, $cuerpo_modificado);
+
+                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.mb_strtoupper($nombre_afiliado, 'UTF-8').'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', '<b>'.$num_identificacion.'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10, $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$pcl_jrci}}', $porcentaje_pcl_jrci_emitido, $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', '<b>'.$f_estructuracion_contro_jrci_emitido.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', '<b>'.date("d/m/Y", strtotime($f_estructuracion_contro_jrci_emitido)).'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$tipos_controversia}}', '<b>'.$string_tipos_controversia.'</b>', $cuerpo_modificado);
     
                 $cuerpo_final = nl2br($cuerpo_modificado);
-
-            }else{
-                $cuerpo_final = "";
             }
-            
-        
+            else{
+                $cuerpo_final = "";
+
+            }
         } elseif (preg_match($patron2, $cuerpo_modificado)) {
-            if (preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron6, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
-                // Solo patrón9 encontrado
+            if ($request->id_servicio === '12' && preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron6, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
+                // Ambos patrones encontrados
                 $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
 
-                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.strtoupper($nombre_afiliado).'</b>', $cuerpo_modificado);
+
+                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.mb_strtoupper($nombre_afiliado, 'UTF-8').'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', '<b>'.$num_identificacion.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10, $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$tipos_controversia}}', strtolower($string_tipos_controversia), $cuerpo_modificado);
+    
+                $cuerpo_final = nl2br($cuerpo_modificado);
+            }
+            else if($request->id_servicio !== '12' && preg_match($patron3, $cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado) && preg_match($patron5, $cuerpo_modificado) && preg_match($patron6, $cuerpo_modificado) && preg_match($patron7, $cuerpo_modificado) && preg_match($patron8, $cuerpo_modificado) && preg_match($patron9, $cuerpo_modificado)) {
+                // Ambos patrones encontrados
+                $cuerpo_modificado = str_replace('{{$sustentacion_jrci1}}', $sustentacion_concepto_jrci1, $cuerpo_modificado);
+
+                $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', '<b>'.mb_strtoupper($nombre_afiliado, 'UTF-8').'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', '<b>'.strtoupper($tipo_identificacion).'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', '<b>'.$num_identificacion.'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10, $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$pcl_jrci}}', $porcentaje_pcl_jrci_emitido, $cuerpo_modificado);
-                $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', '<b>'.$f_estructuracion_contro_jrci_emitido.'</b>', $cuerpo_modificado);
+                $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', '<b>'.date("d/m/Y", strtotime($f_estructuracion_contro_jrci_emitido)).'</b>', $cuerpo_modificado);
                 $cuerpo_modificado = str_replace('{{$tipos_controversia}}', '<b>'.$string_tipos_controversia.'</b>', $cuerpo_modificado);
-                
+    
                 $cuerpo_final = nl2br($cuerpo_modificado);
-
-            }else{
+            }
+            else{
                 $cuerpo_final = "";
+
             }
         } else {
             // Ninguno de los patrones encontrados
             $cuerpo_final = "";
+
         }
 
         $section->addTextBreak();
@@ -3047,15 +3087,17 @@ class ControversiaJuntasController extends Controller
             $htmlModificado = reemplazarStyleImg($Firma_cliente, $nuevoStyle);
             Html::addHtml($section, $htmlModificado, false, true);
         }else{
-            $section->addText('');
+            $section->addTextBreak();
+            $section->addTextBreak();
+            $section->addTextBreak();
         }
 
         // $section->addTextBreak();
+        $section->addTextBreak();
         $section->addText('HUGO IGNACIO GÓMEZ DAZA', array('bold' => true));
-        $section->addTextBreak();
-        $section->addText('Representante Legal para Asuntos de Seguridad Social', array('bold' => true));
-        $section->addTextBreak();
-        $section->addText('Convenio Codess - Seguros de Vida Alfa S.A.', array('bold' => true));
+        $section->addText('C.C. 80413626');
+        $section->addText('Representante Legal');
+        $section->addText('Seguros de Vida Alfa S.A.');
         $section->addTextBreak();
         // $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
         // $section->addTextBreak();
@@ -3065,12 +3107,12 @@ class ControversiaJuntasController extends Controller
         if (count($Agregar_copias) == 0) {
             $htmltabla2 .= '
                 <tr>
-                    <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
+                    <td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>
                 </tr>';
         } else {
             $htmltabla2 .= '
                 <tr>
-                    <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
+                    <td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Copia:</span></td>
                 </tr>';
 
             $Afiliado = 'Afiliado';
@@ -3078,37 +3120,70 @@ class ControversiaJuntasController extends Controller
             $EPS = 'EPS';
             $AFP = 'AFP';
             $ARL = 'ARL';
+            $JRCI = 'JRCI';
+            $JNCI = 'JNCI';
 
             if (isset($Agregar_copias[$Afiliado])) {
-                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
             }
 
             if (isset($Agregar_copias[$Empleador])) {
-                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
             }
 
             if (isset($Agregar_copias[$EPS])) {
-                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
             }
 
             if (isset($Agregar_copias[$AFP])) {
-                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
             }
 
             if (isset($Agregar_copias[$ARL])) {
-                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+            }
+
+            if (isset($Agregar_copias[$JRCI])) {
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+            }
+
+            if (isset($Agregar_copias[$JNCI])) {
+                $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
             }
         }
 
         $htmltabla2 .= '</table>';
         Html::addHtml($section, $htmltabla2, false, true);
+        $section->addTextBreak();
+        $section->addTextBreak();
         // $section->addTextBreak();
         // $section->addText($nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$id_evento, array('bold' => true));
 
+        //Cuadro con la información del siniestro
+        $tableCuadro = $section->addTable();
+
+        $tableCuadro->addRow();
+        
+        $cellCuadro = $tableCuadro->addCell(10000);
+        //Estilo del texto del cuadro
+        $styleTextCuadro = ['bold' => true,'name' => 'Calibri', 'size' => 8];
+        //Cuadro
+        $cuadro = $cellCuadro->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80*60, 'alignment'=>'center'));
+        $cuadro->addRow();
+        $celdaCuadro = $cuadro->addCell();
+        $cuadroTextRun = $celdaCuadro->addTextRun(array('alignment'=>'left'));
+        $cuadroTextRun->addText('Nro. Radicado: ', $styleTextCuadro);
+        $cuadroTextRun->addTextBreak();
+        $cuadroTextRun->addText($nro_radicado, $styleTextCuadro);
+        $cuadroTextRun->addTextBreak();
+        $cuadroTextRun->addText($tipo_identificacion . ' ' . $num_identificacion, $styleTextCuadro);
+        $cuadroTextRun->addTextBreak();
+        $cuadroTextRun->addText('Siniestro: ' . $N_siniestro, $styleTextCuadro);
+
         // Configuramos el footer
-        $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$N_siniestro;
+        // $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$N_siniestro;
         $footer = $section->addFooter();
-        $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
+        // $footer-> addText($info, array('size' => 10, 'bold' => true), array('align' => 'center'));
         if($ruta_logo_footer != null){
             $imagenPath_footer = public_path($ruta_logo_footer);
             $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));
@@ -3243,6 +3318,11 @@ class ControversiaJuntasController extends Controller
         // Validación información Destinatario Principal
         $datos_para_destinatario_principal = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->where([['Id_com_inter', $id_comite_inter]])->get();
+
+        //Fecha de sustentacion antes la JRCI
+        $fecha_sustent_jrci = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
+        ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion]])
+        ->value('F_sustenta_jrci');
 
         $array_datos_para_destinatario_principal = json_decode(json_encode($datos_para_destinatario_principal), true);
         $checkbox_otro_destinatario = $array_datos_para_destinatario_principal[0]["Otro_destinatario"];
@@ -3490,17 +3570,18 @@ class ControversiaJuntasController extends Controller
             $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
-            ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
+            ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sile.Email', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['sile.Nro_identificacion', $num_identificacion],['sile.ID_evento', $id_evento]])
             ->get();
 
             $nombre_empleador = $datos_empleador[0]->Empresa;
             $direccion_empleador = $datos_empleador[0]->Direccion;
+            $email_empleador = $datos_empleador[0]->Email;
             $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
             $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
             $municipio_empleador = $datos_empleador[0]->Nombre_municipio;
 
-            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
+            $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$email_empleador."; ".$telefono_empleador."; ".$ciudad_empleador."; ".$municipio_empleador.".";   
         }
 
         if (isset($copia_eps)) {
@@ -3508,13 +3589,14 @@ class ControversiaJuntasController extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+            ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Emails as Email','sie.Telefonos', 'sie.Otros_Telefonos', 
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
             ->get();
 
             $nombre_eps = $datos_eps[0]->Nombre_eps;
             $direccion_eps = $datos_eps[0]->Direccion;
+            $email_eps = $datos_eps[0]->Email;
             if ($datos_eps[0]->Otros_Telefonos != "") {
                 $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
             } else {
@@ -3523,7 +3605,7 @@ class ControversiaJuntasController extends Controller
             $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
             $minucipio_eps = $datos_eps[0]->Nombre_municipio;
 
-            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
+            $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$email_eps ."; ".$telefonos_eps."; ".$ciudad_eps."; ".$minucipio_eps;
         }
 
         if (isset($copia_afp)) {
@@ -3531,7 +3613,7 @@ class ControversiaJuntasController extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+            ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Emails as Email','sie.Telefonos', 'sie.Otros_Telefonos',
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
             ->get();
@@ -3543,10 +3625,11 @@ class ControversiaJuntasController extends Controller
             } else {
                 $telefonos_afp = $datos_afp[0]->Telefonos;
             }
+            $email_afp = $datos_afp[0]->Email;
             $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
             $minucipio_afp = $datos_afp[0]->Nombre_municipio;
 
-            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
+            $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$email_afp."; ".$telefonos_afp."; ".$ciudad_afp."; ".$minucipio_afp;
         }
 
         if(isset($copia_arl)){
@@ -3554,23 +3637,23 @@ class ControversiaJuntasController extends Controller
             ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-            ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+            ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Emails as Email','sie.Telefonos', 'sie.Otros_Telefonos',
             'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio')
             ->where([['Nro_identificacion', $num_identificacion],['ID_evento', $id_evento]])
             ->get();
 
             $nombre_arl = $datos_arl[0]->Nombre_arl;
             $direccion_arl = $datos_arl[0]->Direccion;
+            $email_arl = $datos_arl[0]->Email;
             if ($datos_arl[0]->Otros_Telefonos != "") {
                 $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
             } else {
                 $telefonos_arl = $datos_arl[0]->Telefonos;
             }
-
             $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
             $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
-            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+            $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
         }
 
         /* Validación Firma Cliente */
@@ -3643,7 +3726,7 @@ class ControversiaJuntasController extends Controller
         $datos_finales_proforma_acuerdo = [
             'id_cliente' => $id_cliente,
             'logo_header' => $logo_header,
-            'fecha' => fechaFormateada($date),
+            'fecha_sustentacion_jrci' => fechaFormateada($fecha_sustent_jrci ? $fecha_sustent_jrci : $date),
             'nombre_junta' => $nombre_junta,
             'direccion_junta' => $direccion_junta,
             'telefono_junta' => $telefono_junta,
@@ -3767,7 +3850,6 @@ class ControversiaJuntasController extends Controller
         return $pdf->download($nombre_pdf);
 
     }
-
 }
 
 function reemplazarStyleImg($html, $nuevoStyle)

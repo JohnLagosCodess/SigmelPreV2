@@ -13,7 +13,7 @@
         }
 
         #header {
-            position: fixed; 
+            /* position: fixed;  */
             /* esta ligado con el primer valor del margin */
             top: -2.2cm;
             left: 0cm;
@@ -29,7 +29,7 @@
         }
 
         .codigo_qr{
-            position: absolute;
+            /* position: absolute; */
             top: 5px; /* Ajusta la distancia desde la parte superior según tus necesidades */
             left: 5px; /* Ajusta la distancia desde la izquierda según tus necesidades */
             max-width: 90px; /* Ajusta el ancho máximo del código QR según tus necesidades */
@@ -37,7 +37,7 @@
         }
 
         #footer{
-            position: fixed;
+            /* position: fixed; */
             /* esta ligado con el tercer valor del margin */
             bottom: -2.2cm;
             left: 0cm;
@@ -108,10 +108,10 @@
 </head>
 <body>
     <?php 
-        $fecha_dictamenF = date("d-m-Y", strtotime($fecha_dictamen));
-        $f_nacimiento_calificadoF = date("d-m-Y", strtotime($f_nacimiento_calificado));
-        $fecha_eventoF = date("d-m-Y", strtotime($fecha_evento));
-        $fecha_fallecimientoF = date("d-m-Y", strtotime($fecha_fallecimiento));    
+        $fecha_dictamenF = date("d/m/Y", strtotime($fecha_dictamen));
+        $f_nacimiento_calificadoF = date("d/m/Y", strtotime($f_nacimiento_calificado));
+        $fecha_eventoF = date("d/m/Y", strtotime($fecha_evento));
+        $fecha_fallecimientoF = date("d/m/Y", strtotime($fecha_fallecimiento));    
     ?>
     <div id="header">
         <img src="data:image/png;base64,{{ base64_encode($codigoQR) }}" class="codigo_qr" alt="Código QR">
@@ -257,9 +257,13 @@
                 <tr>
                     <td colspan="8" class="titulo_tablas">5.1. JUSTIFICACION PARA REVISION DE ORIGEN DEL EVENTO</td>
                 </tr>
-                <tr>
-                    <td colspan="8" class="dato_dinamico">{{$justi_revision_origen}}</td>
-                </tr>
+            </tbody>
+        </table>
+        <div style="border: 1px solid green;">
+            {{$justi_revision_origen}}
+        </div>
+        <table class="tabla_dictamen">
+            <tbody>
                 <tr>
                     <td colspan="8" class="titulo_tablas">5.2. INFORMACIÓN DEL ACCIDENTE</td>
                 </tr>

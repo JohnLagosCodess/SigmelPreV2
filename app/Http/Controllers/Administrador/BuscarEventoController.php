@@ -54,7 +54,18 @@ class BuscarEventoController extends Controller
         $proceso_Juntas = 3;              
         $servicio_JuntasConOri = 12;
         $servicio_JuntasConPcl = 13;
-        $servicio_Notificacion = 4;        
+        $servicio_Notificacion = 4; 
+        
+        //Valida si para el n_identificacion se encuentra relacionado a mas de un afiliado en base al tipo de documento
+        if(!empty($consultar_nro_identificacion) && empty($consultar_id_evento)){
+            $n_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'cndatos_eventos')
+            ->where('Nro_identificacion', $consultar_nro_identificacion)
+            ->distinct('Tipo_documento')
+            ->count('Tipo_documento');
+        }else{
+            $n_afiliado = 0;
+        }
+        
         /* 
             CASO N° 1: Cuando se consulta solamente por el número de identificación.
             CASO N° 2: Cuando se consulta solamente por el id de evento.
@@ -686,8 +697,12 @@ class BuscarEventoController extends Controller
                                 }
                             }                     
                         }
-                    }               
-                    return response()->json($array_informacion_eventos);
+                    }
+
+                    return response()->json([
+                        'datos' => $array_informacion_eventos,
+                        'cantidad_afiliados' => $n_afiliado
+                    ]);
                 }else{
                     $mensajes = array(
                         "parametro" => 'sin_datos',
@@ -2079,6 +2094,7 @@ class BuscarEventoController extends Controller
                             
                         }
                     }
+
                     return response()->json($array_informacion_eventos);
                 }else{
                     $mensajes = array(
@@ -2821,7 +2837,7 @@ class BuscarEventoController extends Controller
                     ->where([
                         ['ID_evento', $evento],
                         ['Id_Asignacion', $Id_Asignacion_origen],
-                        ['Estado', '=', 'Activo']
+                        //['Estado', '=', 'Activo']
                     ])
                     ->get()
                         ->map(function ($item) use ($nombre_usuario, $date, $evento, $nuevo_id_asignacion, $proceso) {
@@ -3011,5 +3027,24 @@ class BuscarEventoController extends Controller
             "parametro" => 'creo_variables'
         );
         return json_decode(json_encode($mensajes, true));
+    }
+
+    /**
+    *  Obtiene el historial de servicio para el evento consultado con base a la identificacion del afiliado.
+    */
+    public function historial_servicios(Request $request){
+        $request->validate([
+            'n_doc' => "required|int",
+            'tipo' => "required|string"
+        ]);
+
+        $datos_historial = cndatos_eventos::on('sigmel_gestiones')->select('Id_proceso','Id_Servicio','ID_evento','Id_Asignacion',
+        'F_registro','Nombre_servicio','Nombre_estado','Accion','F_accion')
+        ->where([
+            ['Nro_identificacion',$request->n_doc],
+            ['Tipo_documento', $request->tipo]
+        ])->get();
+
+        return response()->json($datos_historial);
     }
 }

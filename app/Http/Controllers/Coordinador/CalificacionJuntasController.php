@@ -3249,6 +3249,14 @@ class CalificacionJuntasController extends Controller
         $nombre_usuario = Auth::user()->name;
 
         $Id_comunicado = $request->Id_comunicado_act;
+
+        //Traemos toda la información del comunicado
+        $informacion_comunicado = $this->globalService->retornarInformacionComunicado($Id_comunicado);
+        if(!empty($informacion_comunicado)){
+            $fecha_comunicado = $informacion_comunicado[0]->F_registro;
+        }else{
+            $fecha_comunicado = $date;
+        }
         $F_elaboracion_correspondencia = $request->fecha_comunicado2_act;
         $N_radicado_documento = $request->radicado2_act;
 
@@ -3269,7 +3277,6 @@ class CalificacionJuntasController extends Controller
         $detinatario_principal = $request->afiliado_comunicado_act;
 
         $indicativo = time();
-        
         switch (true) {
             case ($tipo_de_preforma == "Oficio_Afiliado"):
                 if ($detinatario_principal != "Otro") {
@@ -3615,7 +3622,7 @@ class CalificacionJuntasController extends Controller
                 /* Recolección de datos para la proforma en pdf */
                 $data = [
                     'id_cliente' => $id_cliente,
-                    'fecha' => fechaFormateada($date),
+                    'fecha' => fechaFormateada($fecha_comunicado),
                     'nombre_afiliado' => $nombre_afiliado,
                     'tipo_identificacion' => $tipo_identificacion,
                     'num_identificacion' => $N_identificacion,
@@ -3941,7 +3948,7 @@ class CalificacionJuntasController extends Controller
                 $data = [
                     'id_cliente' => $id_cliente,
                     'logo_header' => $logo_header,
-                    'fecha' => fechaFormateada($date),
+                    'fecha' => fechaFormateada($fecha_comunicado),
                     'ID_evento' => $ID_evento,
                     'nro_radicado' => $nro_radicado,
                     'nombre_cliente' => $nombre_cliente,
@@ -3954,7 +3961,7 @@ class CalificacionJuntasController extends Controller
                     'parte_controvierte_califi' => $parte_controvierte_califi,
                     'edad_afiliado' => $edad_afiliado,
                     'genero_afiliado' => $genero_afiliado,
-                    'fecha_nacimiento_afiliado' => $fecha_nacimiento_afiliado,
+                    'fecha_nacimiento_afiliado' => date('d/m/Y', strtotime($fecha_nacimiento_afiliado)),
                     'direccion_afiliado' => $direccion_afiliado,
                     'departamento_afiliado' => $departamento_afiliado,
                     'ciudad_afiliado' => $ciudad_afiliado,
@@ -4094,8 +4101,11 @@ class CalificacionJuntasController extends Controller
                 $nro_radicado = $request->radicado2_act;
                 $Id_junta_act = $request->Id_junta_act;
                 $f_notifi_afiliado_act = $request->F_notifi_afiliado_act;
+                $f_notifi_afiliado_act = date("d/m/Y", $f_notifi_afiliado_act);
                 $f_radicacion_contro_pri_cali_act = $request->F_radicacion_contro_pri_cali_act;
+                $f_radicacion_contro_pri_cali_act = date("d/m/Y", $f_radicacion_contro_pri_cali_act);
                 $f_estructuracion_act = $request->F_estructuracion_act;
+                $f_estructuracion_act = date("d/m/Y", $f_estructuracion_act);
 
                 /* Extraer el id del cliente */
                 $dato_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
@@ -4235,6 +4245,7 @@ class CalificacionJuntasController extends Controller
                 if (count($informacion_tipos_controversia) > 0) {
                     $observaciones_controversia = $informacion_tipos_controversia[0]->Observaciones;
                     $fecha_estructuración = $informacion_tipos_controversia[0]->F_estructuracion_contro;
+                    $fecha_estructuración = date("d/m/Y", strtotime($fecha_estructuración));
                     $porcentaje_pcl = $informacion_tipos_controversia[0]->Porcentaje_pcl;
                 } else {
                     $observaciones_controversia = "";
@@ -4592,7 +4603,7 @@ class CalificacionJuntasController extends Controller
                 $data = [
                     'ID_evento' => $ID_evento,
                     'id_cliente' => $id_cliente,
-                    'fecha' => fechaFormateada($date),
+                    'fecha' => fechaFormateada($fecha_comunicado),
                     'logo_header' => $logo_header,
                     'nro_radicado' => $nro_radicado,
                     'nro_orden_pago' => $nro_orden_pago,
@@ -4740,7 +4751,11 @@ class CalificacionJuntasController extends Controller
 
                 $nro_radicado = $request->radicado2_act;
                 $Id_junta_act = $request->Id_junta_act;
-               
+                //Fecha envio JRCI
+                $fecha_envio_jrci = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
+                    ->where([['ID_evento',$ID_evento],['Id_Asignacion',$Id_Asignacion]])
+                    ->value('F_envio_jrci');
+
                 /* Extraer el id del cliente */
                 $dato_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
                 ->select('Cliente')
@@ -4749,6 +4764,43 @@ class CalificacionJuntasController extends Controller
 
                 if (count($dato_id_cliente)>0) {
                     $id_cliente = $dato_id_cliente[0]->Cliente;
+                }
+
+                /* Tipos de controversia primera calificación */
+                $datos_tipo_controversia = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
+                ->select('Contro_origen', 'Contro_pcl', 'Contro_diagnostico', 'Contro_f_estructura', 'Contro_m_califi')
+                ->where([['ID_evento',$ID_evento],
+                    ['Id_Asignacion',$Id_Asignacion],
+                ])->get();
+                $array_datos_tipo_controversia = json_decode(json_encode($datos_tipo_controversia), true);
+
+                if (count($array_datos_tipo_controversia) > 0) {
+
+                    // Obtener los valores del primer elemento del array
+                    $controversias = array_values($array_datos_tipo_controversia[0]);
+                    $controversias = array_filter($controversias); // Eliminar valores null
+                    
+                    if (!empty($controversias)) {
+                        // Extraer el último valor si hay más de un elemento
+                        $ultimo_tipo_controversia = array_pop($controversias);
+                    
+                        // Concatenar los valores con comas y agregar "y" antes del último
+                        if (!empty($controversias)) {
+                            $string_tipos_controversia = implode(", ", $controversias) . " y " . $ultimo_tipo_controversia;
+                        } else {
+                            // Si solo hay un valor, no es necesario el "y", ni separarlo por comas
+                            $string_tipos_controversia = $ultimo_tipo_controversia;
+                        }
+                        $string_tipos_controversia = str_replace('% PCL', '%PCL', $string_tipos_controversia);
+                        // $string_tipos_controversia = str_replace('Fecha estructuración', 'la Fecha de estructuración', $string_tipos_controversia);
+                        // $string_tipos_controversia = str_replace('Manual de calificación', 'el Manual de calificación', $string_tipos_controversia);
+
+                    } else {
+                        $string_tipos_controversia = "";
+                    }
+
+                } else {
+                    $string_tipos_controversia = "";
                 }
                 
                 // Datos Junta regional
@@ -5135,7 +5187,7 @@ class CalificacionJuntasController extends Controller
                 $header->addTextBreak();
 
                 // Creación de Contenido
-                $fecha_formateada = fechaFormateada($date);
+                $fecha_formateada = fechaFormateada($fecha_comunicado);
                 $section->addText('Bogotá D.C. '.$fecha_formateada, array('bold' => true), array('align' => 'right'));
                 $section->addTextBreak();
 
@@ -5145,9 +5197,9 @@ class CalificacionJuntasController extends Controller
                 $table->addRow();
 
 
-                $cell1 = $table->addCell(5000);
+                $cell1 = $table->addCell(10000);
 
-                $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
+                $textRun1 = $cell1->addTextRun(array('alignment'=>'both'));
                 $textRun1->addText('Señores: ',array('bold' => true));
                 $textRun1->addTextBreak();
                 $textRun1->addText($nombre_junta);
@@ -5157,20 +5209,6 @@ class CalificacionJuntasController extends Controller
                 $textRun1->addText($telefono_junta);
                 $textRun1->addTextBreak();
                 $textRun1->addText($ciudad_junta);
-
-                $cell2 = $table->addCell(5000);
-
-                $nestedTable = $cell2->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80 * 60, 'alignment'=>'right'));
-                $nestedTable->addRow();
-                $nestedCell = $nestedTable->addCell();
-                $nestedTextRun = $nestedCell->addTextRun(array('alignment'=>'left'));
-                $nestedTextRun->addText('Nro. Radicado: ', array('bold' => true));
-                $nestedTextRun->addTextBreak();
-                $nestedTextRun->addText($nro_radicado, array('bold' => true));
-                $nestedTextRun->addTextBreak();
-                $nestedTextRun->addText($tipo_doc_afiliado . ' ' . $num_identificacion_afiliado, array('bold' => true));
-                $nestedTextRun->addTextBreak();
-                $nestedTextRun->addText('Siniestro: ' . $request->n_siniestro_proforma_editar, array('bold' => true));
                 
                 $section->addTextBreak();
                 $section->addTextBreak();
@@ -5216,12 +5254,21 @@ class CalificacionJuntasController extends Controller
 
                     // Configuramos el reemplazo de las etiquetas del cuerpo del comunicado
                     $patron1 = '/\{\{\$nombre_junta\}\}/';
+                    $patron2 = '(Anotar Fecha de envío de expediente)';
+                    $patron3 = '(Anotar la causal de controversia)';
                 
                     $cuerpo = str_replace(['<br>', '<br/>', '<br />', '</br>'], '', $cuerpo);
 
                     $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo);
                     $cuerpo_modificado = str_replace('<p><br>', ' ', $cuerpo_modificado);
 
+                    //Fecha de envio a JRCI
+                    $fecha_envio_jrci = $fecha_envio_jrci ? date('d/m/Y',strtotime($fecha_envio_jrci)) : 'SIN FECHA';
+
+                    if(preg_match($patron2,$cuerpo_modificado) && preg_match($patron3, $cuerpo_modificado)){
+                        $cuerpo_modificado = str_replace('(Anotar Fecha de envío de expediente)', '<b>'.$fecha_envio_jrci.'</b>', $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('(Anotar la causal de controversia)', $string_tipos_controversia, $cuerpo_modificado);
+                    }
 
                     if (preg_match($patron1, $cuerpo_modificado)) {
 
@@ -5320,6 +5367,25 @@ class CalificacionJuntasController extends Controller
                     // $htmltabla2 .= '</table>';
                     // Html::addHtml($section, $htmltabla2, false, true);
                     // $section->addTextBreak();
+
+                    //Cuadro con la información del siniestro
+                    $tableCuadro = $section->addTable();
+
+                    $tableCuadro->addRow();
+                    
+                    $cellCuadro = $tableCuadro->addCell(10000);
+                    //Cuadro
+                    $cuadro = $cellCuadro->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80*60, 'alignment'=>'center'));
+                    $cuadro->addRow();
+                    $celdaCuadro = $cuadro->addCell();
+                    $cuadroTextRun = $celdaCuadro->addTextRun(array('alignment'=>'left'));
+                    $cuadroTextRun->addText('Nro. Radicado: ', array('bold' => true));
+                    $cuadroTextRun->addTextBreak();
+                    $cuadroTextRun->addText($nro_radicado, array('bold' => true));
+                    $cuadroTextRun->addTextBreak();
+                    $cuadroTextRun->addText($tipo_doc_afiliado . ' ' . $num_identificacion_afiliado, array('bold' => true));
+                    $cuadroTextRun->addTextBreak();
+                    $cuadroTextRun->addText('Siniestro: ' . $request->n_siniestro_proforma_editar, array('bold' => true));
 
                     // Configuramos el footer
                     $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$request->n_siniestro_proforma_editar;
@@ -5445,7 +5511,10 @@ class CalificacionJuntasController extends Controller
 
                 $nro_radicado = $request->radicado2_act;
                 $Id_junta_act = $request->Id_junta_act;
-
+                
+                $fecha_envio_jrci = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
+                    ->where([['ID_evento',$ID_evento],['Id_Asignacion',$Id_Asignacion]])
+                    ->value('F_envio_jrci');
                 /* Extraer el id del cliente */
                 $dato_id_cliente = sigmel_informacion_eventos::on('sigmel_gestiones')
                 ->select('Cliente')
@@ -5829,15 +5898,15 @@ class CalificacionJuntasController extends Controller
 
                 //Marca de agua
                 $styleVigilado = [
-                    'width' => 25,           
-                    'height' => 200,            
-                    'marginTop' => 0,           
+                    'width' => 20,           
+                    'height' => 100,  
+                    'marginTop' => 600,        
                     'marginLeft' => -50,       
                     'wrappingStyle' => 'behind',   // Imagen detrás del texto
                     'positioning' => Image::POSITION_RELATIVE, 
                     'posVerticalRel' => 'page', 
                     'posHorizontal' => Image::POSITION_ABSOLUTE,
-                    'posVertical' => Image::POSITION_VERTICAL_CENTER, // Centrado verticalmente en la página
+                    'posVertical' => Image::POSITION_ABSOLUTE, // Centrado verticalmente en la página
                 ];
 
                 $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
@@ -5874,7 +5943,7 @@ class CalificacionJuntasController extends Controller
                 $header->addTextBreak();
 
                 // Creación de Contenido
-                $section->addText('Bogotá D.C. '.fechaFormateada($date), array('bold' => true), array('align' => 'right'));
+                $section->addText('Bogotá D.C. '.fechaFormateada($fecha_comunicado), array('bold' => true), array('align' => 'right'));
                 $section->addTextBreak();
 
                 $table = $section->addTable();                    
@@ -5924,24 +5993,34 @@ class CalificacionJuntasController extends Controller
                     $table->addRow();
         
         
-                    $cell1 = $table->addCell(10000);
+                    $cell1 = $table->addCell(2000);
+                    $cell2 = $table->addCell(8000);
         
-                    $asuntoyafiliado = $cell1->addTextRun(array('alignment'=>'left'));
-                    $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
+                    $asunto = $cell1->addTextRun(array('alignment'=>'left'));
+                    $asunto->addText('Asunto: ', array('bold' => true));
+                    $asuntoyafiliado = $cell2->addTextRun(array('alignment'=>'left'));
                     $asuntoyafiliado->addText($request->asunto_act, array('bold' => true));
                     $asuntoyafiliado->addTextBreak();
                     $asuntoyafiliado->addText('PACIENTE: ', array('bold' => true));
-                    $asuntoyafiliado->addText($nombre_afiliado." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado);
+                    $asuntoyafiliado->addText($nombre_afiliado." ".$tipo_doc_afiliado." ".$num_identificacion_afiliado, array('bold' => true));
                     $section->addTextBreak();
                     // Configuramos el reemplazo de las etiquetas del cuerpo del comunicado
                     $patron1 = '/\{\{\$nombre_afiliado\}\}/';
                     $patron2 = '/\{\{\$correo_solicitud_informacion\}\}/';
-
+                    $patron3 = '(Anote Fecha de notificación del Dictamen de JRCI)';
+                    $patron4 = '(Anote Fecha de solicitud de Dictamen)';
+                    
                     $cuerpo = str_replace(['<br>', '<br/>', '<br />', '</br>'], '', $cuerpo);
+                    //Fecha de envio a JRCI
+                    $fecha_envio_jrci = $fecha_envio_jrci ? date('d/m/Y',strtotime($fecha_envio_jrci)) : 'SIN FECHA';
 
                     $cuerpo_modificado = str_replace('</p>', '</p><br></br>', $cuerpo);
                     $cuerpo_modificado = str_replace('<p><br>', ' ', $cuerpo_modificado);
-
+                    
+                    if(preg_match($patron3,$cuerpo_modificado) && preg_match($patron4, $cuerpo_modificado)){
+                        $cuerpo_modificado = str_replace('(Anote Fecha de notificación del Dictamen de JRCI)', '<b>'.$fecha_envio_jrci.'</b>', $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('(Anote Fecha de solicitud de Dictamen)', '<b>'.$fecha_envio_jrci.'</b>', $cuerpo_modificado);
+                    }
 
                     if (preg_match($patron1, $cuerpo_modificado) && preg_match($patron2, $cuerpo_modificado)) {
 
@@ -5981,7 +6060,8 @@ class CalificacionJuntasController extends Controller
                     // $section->addTextBreak();
                     $section->addText('Departamento de medicina laboral', array('bold' => true));
                     // $section->addTextBreak();
-                    $section->addText('Convenio Codess -  Seguros de Vida Alfa S.A', array('bold' => true));
+                    $section->addText('Convenio CODESS -  Seguros de Vida Alfa S.A.');
+                    $section->addText('Seguros Alfa S.A. y Seguros de Vida Alfa S.A.');
                     $section->addTextBreak();
 
                     $table2 = $section->addTable();

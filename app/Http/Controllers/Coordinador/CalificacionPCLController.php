@@ -3374,6 +3374,17 @@ class CalificacionPCLController extends Controller
             } else {
                 $footer = null;
             } 
+
+            //Trae Documentos Solicitados
+            $listado_documentos_solicitados = $this->globalService->retornarListadoDocumentos($ID_evento,$Id_proceso,$Id_Asignacion);
+
+            $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
+            $string_documentos_solicitados = "<ul>";
+
+            for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
+                $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+            }
+            $string_documentos_solicitados .= "</ul>";
             
             // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
             // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
@@ -3421,6 +3432,7 @@ class CalificacionPCLController extends Controller
                 'Agregar_copia' => $Agregar_copias,
                 'footer' => $footer,
                 'N_siniestro' => $request->n_siniestro_proforma_editar,
+                'Documentos_solicitados' => $string_documentos_solicitados
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,
@@ -3943,7 +3955,17 @@ class CalificacionPCLController extends Controller
             ->select('Email')
             ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
             ->get();
+            
+            //Trae Documentos Solicitados
+            $listado_documentos_solicitados = $this->globalService->retornarListadoDocumentos($ID_evento,$Id_proceso,$Id_Asignacion);
 
+            $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
+            $string_documentos_solicitados = "<ul>";
+
+            for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
+                $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+            }
+            $string_documentos_solicitados .= "</ul>";
             
             $Agregar_copias = [];
             if (isset($copia_afiliado)) {
@@ -4133,6 +4155,7 @@ class CalificacionPCLController extends Controller
                 'Anexos' => $Anexos,
                 'Agregar_copia' => $Agregar_copias,
                 'footer' => $footer,
+                'Documentos_solicitados' => $string_documentos_solicitados,
                 'N_siniestro' => $request->n_siniestro_proforma_editar,
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
@@ -4140,7 +4163,6 @@ class CalificacionPCLController extends Controller
                 // 'footer_dato_4' => $footer_dato_4,
                 // 'footer_dato_5' => $footer_dato_5,
             ];
-
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/solicitud_documentos_revpen', $data);
@@ -5142,7 +5164,7 @@ class CalificacionPCLController extends Controller
             ['Id_Asignacion',$Id_asignacion_calitec],
             ['Id_proceso',$Id_proceso_cali],
             ['Estado', 'Activo']
-        ])->orderBy('F_examen_interconsulta','DESC')
+        ])->orderBy('F_examen_interconsulta','ASC')
         ->get();
 
         $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
@@ -8146,16 +8168,22 @@ class CalificacionPCLController extends Controller
             sigmel_informacion_eventos::on('sigmel_gestiones')
             ->where('ID_evento', $request->Id_EventoDecreto)->update(["Tipo_evento" => $request->tipo_evento]);
         }        
-        
 
+        /*
+            Se trae el id del servicio en base a las siguientes solicitudes:
+            1. DML PCL 1507 / DML 1507 CERO / DML PCL 917 y Oficio Incapacidad y Oficio PCL: 
+                Cuando el servicio sea Calificación técnica o Recalificación NO marcar a la AFP como copia, revertir marcación actual. 
+                Se marcará como destinatario principal al Afiliado y a la EPS y ARL como copia.
+            2. DML PCL 1507 / DML 1507 CERO / DML PCL 917: Adicionar las siguientes validaciones para la marcación automática de las copias:
+        */
         $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
-            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-                $agregar_copias_dml = "EPS, AFP, ARL, AFP_Conocimiento";
-            }
-            else{
-                $agregar_copias_dml = "EPS, AFP, ARL";
-            }
-            $Destinatario = 'Afiliado';
+        if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+            $agregar_copias_dml = "EPS, ARL, AFP_Conocimiento";
+        }
+        else{
+            $agregar_copias_dml = "EPS, ARL";
+        }
+        $Destinatario = 'Afiliado';
 
         if ($bandera_dictamen_pericial == 'Guardar') { 
             //Se asignan los IDs de destinatario por cada posible destinatario

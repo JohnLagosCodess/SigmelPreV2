@@ -102,10 +102,10 @@
         }
 
         .cuadro{
-            border: 3px solid black;
-            padding-left: 6px;  
+            border: 2px solid black;
+            padding: 2px;  
             width: 5cm;
-            height: 2cm;
+            height: auto;
         }   
 
         .content{
@@ -153,6 +153,13 @@
             text-align: justify !important;
             font-size: 12px !important;  
             padding-left: 2px;          
+        }
+
+        .fuente_cuadro_inferior{
+            font-family: sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 0;
         }
 
     </style>
@@ -227,13 +234,6 @@
                             {{$ciudad_destinatario}} <br>
                         </p>
                     </td>
-                    <td>
-                        <div class="cuadro">
-                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado {{$nro_radicado}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
-                        </div>
-                    </td>
                 </tr>
             </tbody>
         </table>
@@ -244,8 +244,8 @@
                     <td class="fuente_todo_texto">
                         <div>
                             <span class="negrita">Asunto: {{$asunto}}</span><br> 
-                            <b>{{$tipo_identificacion.' '.$num_identificacion}}</b><br>
-                            <span class="negrita">Ramo: {{$ramo}}</span><br>           
+                            <b style="margin-left: 9.5%;">PACIENTE: {{$nombre_afiliado}} {{$tipo_identificacion.': '.$num_identificacion}}</b><br>
+                            <span style="margin-left: 9.5%;" class="negrita">Ramo: {{$ramo}}</span><br>           
                             {{-- <span class="negrita">Siniestro: </span>{{$N_siniestro}} --}}
                         </div>
                     </td>
@@ -302,8 +302,8 @@
                 <span class="negrita">Convenio Seguro de Vida Alfa</span>
                 <br>
                 <span class="negrita">Seguro Alfa S.A. y Seguro de Vida Alfa S.A.</span>
-                <br>
-                <span class="negrita">Anexo: {{$nro_anexos}}</span>
+                {{-- <br>
+                <span class="negrita">Anexo: {{$nro_anexos}}</span> --}}
             </div>
         </section>
         <br>
@@ -311,12 +311,12 @@
             {{-- <span class="negrita">Elboró:</span> {{$nombre_usuario}} --}}
             <table style="text-align: justify; width:100%; margin-left: -3px;">
                 @if (count($Agregar_copia) == 0)
-                    <tr>
-                        <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
-                    </tr>
+                    {{-- <tr>
+                        <td class="copias"><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
+                    </tr> --}}
                 @else
                     <tr>
-                        <td class="justificado"><span class="negrita">Copia:</span></td>                            
+                        <td class="justificado copias"><span class="negrita">Copia:</span></td>                            
                     </tr>
                     <?php 
                         $Afiliado = 'Afiliado';
@@ -401,6 +401,12 @@
                 @endif
             </table>
         </section>
+        <br>
+        <div class="cuadro fuente_cuadro_inferior" style="margin: 0 auto">
+            <span class="fuente_todo_texto negrita">Nro. Radicado: <br>{{$nro_radicado}}</span><br>
+            <span class="fuente_todo_texto negrita">{{$tipo_identificacion}}: {{$num_identificacion}}</span><br>
+            <span class="fuente_todo_texto negrita">Siniestro: {{$N_siniestro}}</span><br>
+        </div>
     </div>
     <script type="text/php">
         if ( isset($pdf) ) {

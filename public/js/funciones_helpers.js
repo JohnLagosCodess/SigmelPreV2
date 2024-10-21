@@ -701,7 +701,123 @@ $(document).ready(function () {
 
 
     });
+
+    historial_servicios();
 });
+
+/**
+ * Obtiene el historial de servicio para el evento consultado con base a la identificacion del afiliado.
+ */
+function historial_servicios(){
+    let identificacion = $("#identificacion").val();
+    if(identificacion == ""){
+        return;
+    }
+
+    let procesos = {
+        1: () => {
+            return {
+                'Nombre': 'Origen',
+                'id': 'form_modulo_califi_Origen_',
+                'url': $("#action_modulo_calificacion_Origen").val()
+            }
+        },
+        2: () => {
+            return {
+                'Nombre': 'PCL',
+                'id': 'form_modulo_calificacion_pcl_',
+                'url': $("#action_modulo_calificacion_pcl").val()
+            }
+        },
+        3: () => {
+            return {
+                'Nombre': 'Juntas',
+                'id': 'form_modulo_califi_Juntas_',
+                'url': $("#action_modulo_calificacion_Juntas").val()
+            }
+        }
+    }
+
+    let afiliado =  $("#nombre_afiliado").val();
+    let tipo_doc = $("#identificacion").data('tipo');
+    $('#historial_servicios .modal-header h4').append(`${afiliado} - ${tipo_doc} - ${identificacion}`);
+
+    let token = $("input[name='_token']").val();
+    let data = {
+        '_token': token,
+        'n_doc': identificacion,
+        'tipo': tipo_doc
+    }
+
+    $.post('/historial_servicios',data,function(response){
+        let tabla_historial = $("#listado_historial_s").DataTable({
+            orderCellsTop: true,
+            fixedHeader: true,
+            scrollY: 350,
+            scrollX: true,
+            autoWidth: false,
+            data: response,
+            pageLength: 5,
+            order: [[5, 'desc']],
+            columns: [
+                { "data": "F_registro" },
+                { "data": null, render: function(data){
+                        let action = $("#formularioLlevarEdicionEvento").attr("action");
+                        let editar_evento = `<form action="${action}" id="formularioLlevarEdicionEvento" method="POST">
+                            <input type="hidden" name="_token" value="${token}">
+                            <input type="hidden" name="regresar_anterior"  value="regresar_anterior">
+                            <input type="hidden" name="newIdEvento" value="${data.ID_evento}">
+                            <input type="hidden" name="newIdProceso" value="${data.Id_proceso}">
+                            <input type="hidden" name="newIdServicio" value="${data.Id_Servicio}">
+                            <input type="hidden" name="newIdAsignacion" value="${data.Id_Asignacion}">
+                            <button type="submit" class="btn btn-icon-only text-info btn-sm"><strong>${data.ID_evento}</strong></button>
+                        </form>`;
+                        return editar_evento;
+                    } 
+                },
+                { "data": "Nombre_servicio" },
+                { "data": "Nombre_estado" },
+                { "data": "Accion" },
+                { "data": "F_accion" },
+                { "data": null, render: function(data){
+                        let action = procesos[data.Id_proceso]().url;
+                        let form = `
+                            <form action="${action}" method="POST">
+                                <input type="hidden" name="_token" value="${token}">
+                                <input type="hidden" name="badera_modulo_principal_origen" value="desdebus_mod_origen">
+                                <input type="hidden" name="newIdEvento" value="${data.ID_evento}">
+                                <input type="hidden" name="newIdProceso" value="${data.Id_proceso}">
+                                <input type="hidden" name="newIdServicio" value="${data.Id_Servicio}">
+                                <input type="hidden" name="newIdAsignacion" value="${data.Id_Asignacion}">
+                               <button type="submit" class="btn" style="border: none; background: transparent;">
+                                    <i class="far fa-eye text-info"></i>
+                                </button>
+                            </form>`;
+
+                        return form;
+                    } 
+                },
+            ],
+            language: {
+                "search": "Buscar",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "info": "Mostrando registros _START_ a _END_ de un total de _TOTAL_ registros",
+                "paginate": {
+                    "previous": "Anterior",
+                    "next": "Siguiente",
+                    "first": "Primero",
+                    "last": "Último"
+                },
+                "zeroRecords": "No se encontraron resultados",
+                "emptyTable": "No se encontró información",
+                "infoEmpty": "No se encontró información",
+            }
+        });
+    
+        autoAdjustColumns(tabla_historial);
+    });
+
+}
 
 /**
  * Obtiene el id del formulario para el modulo principal actual

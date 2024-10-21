@@ -100,6 +100,10 @@
             font-family: sans-serif;
             font-size: 12px;
         }        
+        .paddingTexto{
+            margin: 0;
+            padding: 0;
+        }      
         .tabla1{
             width: 100%;            
             margin-left: -3.5px;
@@ -137,10 +141,16 @@
             margin-right: 1.5cm;
         }
         .cuadro{
-            border: 3px solid black;
-            padding-left: 6px;  
-            width: 5cm;
-            height: 2cm;
+            border: 2px solid black;
+            width: 4cm;
+            padding: 1px;
+            height: auto;
+        }     
+        .fuente_cuadro_inferior{
+            font-family: sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 0;
         }
         .copias{
             font-size: 10px;
@@ -203,24 +213,21 @@
         <img src="data:image/png;base64,{{ $imagenBase64_footer }}" class="logo_footer">
     </div>
     <div class="container">
-        <p class="fuente_todo_texto derecha">{{$ciudad}} {{$fecha}}</p>
-        <br>
         <table class="tabla2">                        
             <tbody>
                 <tr>
-                    <td style="width:100%;">
-                        <span class="fuente_todo_texto"><span class="negrita">Señor(a): </span><br>{{$nombre}}</span><br>
-                        <span class="fuente_todo_texto">{{$email_destinatario}}</span><br>
-                        <span class="fuente_todo_texto">{{$direccion}}</span><br>
-                        <span class="fuente_todo_texto">{{$telefono}}</span><br>
-                        <span class="fuente_todo_texto">{{$municipio.' - '.$departamento}}</span>
-                    </td>
-                    <td>
-                        <div class="cuadro">
-                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado: <br>{{$nro_radicado}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion.' '.$num_identificacion}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
-                        </div>
+                    <td style="width:100%; display:table; justify-content: space-between;">
+                        <p class="fuente_todo_texto paddingTexto derecha"><span class="negrita">{{$ciudad}} {{$fecha}}</span></p>
+                        <div>
+                            <div class="fuente_todo_texto paddingTexto">
+                                <span class="negrita">Señor(a): </span><br>
+                                {{$nombre}}
+                            </div>
+                            <div class="fuente_todo_texto paddingTexto">{{$email_destinatario}}</div>
+                            <div class="fuente_todo_texto paddingTexto">{{$direccion}}</div>
+                            <div class="fuente_todo_texto paddingTexto">{{$telefono}}</div>
+                            <div class="fuente_todo_texto paddingTexto">{{$municipio.' - '.$departamento}}</div>
+                        </div>   
                     </td>
                 </tr>
             </tbody>
@@ -242,9 +249,16 @@
         </table>
         <section class="fuente_todo_texto">            
             <?php
-                if (!empty($cuerpo)) {                    
-                    $texto_modificado = $cuerpo;
-                    $cuerpo = $texto_modificado;
+                $patron1 = '/\{\{\$documentos_solicitados\}\}/'; 
+                if (!empty($cuerpo)) {      
+                    if(preg_match($patron1, $cuerpo)){
+                        $texto_modificado = str_replace('{{$documentos_solicitados}}', $Documentos_solicitados, $cuerpo);
+                        $cuerpo = $texto_modificado;
+                    }
+                    else {
+                        $texto_modificado = $cuerpo;
+                        $cuerpo = $texto_modificado;
+                    }     
                 } else {
                     $cuerpo = "";
                 }                
@@ -277,74 +291,81 @@
             <b>Elaboró:</b> {{$nombre_usuario}}
         </p> --}}
         {{-- <p class="fuente_todo_texto"> --}}
-            <table class="tabla1 fuente_todo_texto" style="text-align: justify;">                               
-                @if (count($Agregar_copia) == 0)
-                    <tr>
-                        <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
-                    </tr>
-                @else
-                    <tr>
-                        <td class="justificado"><span class="negrita">Copia:</span></td>                            
-                    </tr>
-                    <?php 
-                        $Afiliado = 'Afiliado';
-                        $Empleador = 'Empleador';
-                        $EPS = 'EPS';
-                        $AFP = 'AFP';
-                        $ARL = 'ARL';
-                    ?>
-                    <?php
-                    if (isset($Agregar_copia[$Afiliado])) { ?>
-                            <tr>
-                                <td class="copias">
-                                    <span class="negrita">Afiliado: </span><?=$Agregar_copia['Afiliado'];?>
-                                </td>
-                            </tr>
-                        <?php       
-                        }
-                    ?>
-                    <?php 
-                        if (isset($Agregar_copia[$Empleador])) { ?>
-                            <tr>
-                                <td class="copias>
-                                    <span class="negrita">Empleador: </span><?=$Agregar_copia['Empleador'];?>
-                                </td>
-                            </tr>
-                        <?php       
-                        }
-                    ?>
-                    <?php 
-                        if (isset($Agregar_copia[$EPS])) { ?>
-                            <tr>
-                                <td class="copias">
-                                    <span class="negrita">EPS: </span><?=$Agregar_copia['EPS'];?>
-                                </td>
-                            </tr>
-                        <?php       
-                        }
-                    ?>
-                    <?php 
-                        if (isset($Agregar_copia[$AFP])) { ?>
-                            <tr>
-                                <td class="copias">
-                                    <span class="negrita">AFP: </span><?=$Agregar_copia['AFP'];?>
-                                </td>
-                            </tr>
-                        <?php       
-                        }
-                    ?>
-                    <?php 
-                        if (isset($Agregar_copia[$ARL])) { ?>
-                            <tr>
-                                <td class="copias">
-                                    <span class="negrita">ARL: </span><?=$Agregar_copia['ARL'];?>
-                                </td>
-                            </tr>
-                        <?php       
-                        }
-                    ?>
-                @endif
-            </table>
+        <br>
+        <table class="tabla1 fuente_todo_texto" style="text-align: justify;">                               
+            @if (count($Agregar_copia) == 0)
+                <tr>
+                    <td class="copias"><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
+                </tr>
+            @else
+                <tr>
+                    <td class="justificado copias"><span class="negrita">Copia:</span></td>                            
+                </tr>
+                <?php 
+                    $Afiliado = 'Afiliado';
+                    $Empleador = 'Empleador';
+                    $EPS = 'EPS';
+                    $AFP = 'AFP';
+                    $ARL = 'ARL';
+                ?>
+                <?php
+                if (isset($Agregar_copia[$Afiliado])) { ?>
+                        <tr>
+                            <td class="copias">
+                                <span class="negrita">Afiliado: </span><?=$Agregar_copia['Afiliado'];?>
+                            </td>
+                        </tr>
+                    <?php       
+                    }
+                ?>
+                <?php 
+                    if (isset($Agregar_copia[$Empleador])) { ?>
+                        <tr>
+                            <td class="copias">
+                                <span class="negrita">Empleador: </span><?=$Agregar_copia['Empleador'];?>
+                            </td>
+                        </tr>
+                    <?php       
+                    }
+                ?>
+                <?php 
+                    if (isset($Agregar_copia[$EPS])) { ?>
+                        <tr>
+                            <td class="copias">
+                                <span class="negrita">EPS: </span><?=$Agregar_copia['EPS'];?>
+                            </td>
+                        </tr>
+                    <?php       
+                    }
+                ?>
+                <?php 
+                    if (isset($Agregar_copia[$AFP])) { ?>
+                        <tr>
+                            <td class="copias">
+                                <span class="negrita">AFP: </span><?=$Agregar_copia['AFP'];?>
+                            </td>
+                        </tr>
+                    <?php       
+                    }
+                ?>
+                <?php 
+                    if (isset($Agregar_copia[$ARL])) { ?>
+                        <tr>
+                            <td class="copias">
+                                <span class="negrita">ARL: </span><?=$Agregar_copia['ARL'];?>
+                            </td>
+                        </tr>
+                    <?php       
+                    }
+                ?>
+            @endif
+        </table>
+        <br>
+        <div class="cuadro fuente_cuadro_inferior" style="margin: 0 auto">
+            <span class="fuente_cuadro_inferior"><span class="negrita">Nro. Radicado: <br>{{$nro_radicado}}</span></span><br>
+            <span class="fuente_cuadro_inferior"><span class="negrita">{{$tipo_identificacion.' '.$num_identificacion}}</span></span><br>
+            <span class="fuente_cuadro_inferior"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
+        </div>
         {{-- </p>                --}}
     </div>
     <script type="text/php">

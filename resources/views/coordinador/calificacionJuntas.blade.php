@@ -26,7 +26,8 @@
                 <?php else: ?>
                     <a href="{{route("bandejaJuntas")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
                 <?php endif ?>
-                <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>                
+                <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button> 
+                <button label="Open Modal" data-toggle="modal" data-target="#historial_servicios" class="btn btn-info"><i class="fas fa-project-diagram mt-1"></i>Historial de servicios</button>                
                 <p>
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
                 </p>
@@ -45,7 +46,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12" id="filaprincipal">
-                        <div id="aumentarColAfiliado"> 
+                        <div id="aumentarColAfiliado" class="d-none"> 
                             <div class="card-info">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
                                     <h5>Información del afiliado</h5>
@@ -75,7 +76,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="identificacion">N° Identificación</label>
-                                                <input type="text" class="form-control" name="identificacion" id="identificacion" value="{{$array_datos_calificacionJuntas[0]->Nro_identificacion}}" disabled>
+                                                <input type="text" class="form-control" name="identificacion" id="identificacion" data-tipo="{{$array_datos_calificacionJuntas[0]->Nombre_tipo_documento}}" value="{{$array_datos_calificacionJuntas[0]->Nro_identificacion}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -1070,25 +1071,27 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="oficio_afiliado" value="Oficio_Afiliado" required>
-                                                        <label class="form-check-label custom-control-label" for="oficio_afiliado"><strong>Oficio Juntas afiliado</strong></label>                                                                                                                                                                    
+                                                        <label class="form-check-label custom-control-label" for="oficio_afiliado"><strong>OFICIO AFILIADO</strong></label>                                                                                                                                                                    
                                                     </div>
                                                 </div>
                                             </div>
                                         @endif
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="oficio_juntas_jrci" value="Oficio_Juntas_JRCI" required>
-                                                    <label class="form-check-label custom-control-label" for="oficio_juntas_jrci"><strong>Oficio Juntas JRCI</strong></label>
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="oficio_juntas_jrci" value="Oficio_Juntas_JRCI" required>
+                                                        <label class="form-check-label custom-control-label" for="oficio_juntas_jrci"><strong>SOLICITUD CALIFICACIÓN INVALIDÉZ</strong></label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @endif
                                         @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
                                             <div class="col">
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="remision_expediente_jrci" value="Remision_Expediente_JRCI" required>
-                                                        <label class="form-check-label custom-control-label" for="remision_expediente_jrci"><strong>Expediente JRCI</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="remision_expediente_jrci"><strong>REMISIÓN EXPEDIENTE JRCI</strong></label>
                                                     </div>
                                                 </div>
                                             </div>                                            
@@ -1098,7 +1101,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="devol_expediente_jrci" value="Devolucion_Expediente_JRCI" required>
-                                                        <label class="form-check-label custom-control-label" for="devol_expediente_jrci"><strong>Devol. Expediente JRCI</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="devol_expediente_jrci"><strong>DEVOLUCIÓN EXPEDIENTE JRCI</strong></label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1501,25 +1504,27 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="oficio_afiliado_editar" value="Oficio_Afiliado" required>
-                                                        <label class="form-check-label custom-control-label" for="oficio_afiliado_editar"><strong>Oficio Juntas afiliado</strong></label>                                                        
+                                                        <label class="form-check-label custom-control-label" for="oficio_afiliado_editar"><strong>OFICIO AFILIADO</strong></label>                                                        
                                                     </div>
                                                 </div>
                                             </div>
                                         @endif
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="oficio_juntas_jrci_editar" value="Oficio_Juntas_JRCI" required>
-                                                    <label class="form-check-label custom-control-label" for="oficio_juntas_jrci_editar"><strong>Oficio Juntas JRCI</strong></label>
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="oficio_juntas_jrci_editar" value="Oficio_Juntas_JRCI" required>
+                                                        <label class="form-check-label custom-control-label" for="oficio_juntas_jrci_editar"><strong>SOLICITUD CALIFICACIÓN INVALIDÉZ</strong></label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @endif
                                         @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
                                             <div class="col">
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="remision_expediente_jrci_editar" value="Remision_Expediente_JRCI" required>
-                                                        <label class="form-check-label custom-control-label" for="remision_expediente_jrci_editar"><strong>Expediente JRCI</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="remision_expediente_jrci_editar"><strong>REMISIÓN EXPEDIENTE JRCI</strong></label>
                                                     </div>
                                                 </div>
                                             </div>                                            
@@ -1529,7 +1534,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="devol_expediente_jrci_editar" value="Devolucion_Expediente_JRCI" required>
-                                                        <label class="form-check-label custom-control-label" for="devol_expediente_jrci_editar"><strong>Devol. Expediente JRCI</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="devol_expediente_jrci_editar"><strong>DEVOLUCIÓN EXPEDIENTE JRCI</strong></label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1961,6 +1966,7 @@
     @include('//.coordinador.modalCorrespondencia')
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.modals.confirmacionAccion')
+    @include('//.modals.historialServicios')
 @stop
 @section('js')
     <script type="text/javascript" src="/js/calificacionJuntas.js"></script>

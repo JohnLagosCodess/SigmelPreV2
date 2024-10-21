@@ -298,6 +298,7 @@ Route::post('/Sigmel/RolAdministrador/ActualizarEvento', [AdministradorControlle
 Route::get('/Sigmel/RolAdministrador/BusquedaEvento', [BuscarEventoController::class, 'mostrarVistaBuscarEvento'])->name('busquedaEvento');
 // Acción Consultar evento 
 Route::post('/consultaInformacionEvento', [BuscarEventoController::class, 'consultaInformacionEvento']);
+Route::post('/historial_servicios', [BuscarEventoController::class, 'historial_servicios']);
 
 // 28/06/2023
 // Vista: Bandeja PCL Coordinador

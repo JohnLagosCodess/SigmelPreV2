@@ -3408,11 +3408,11 @@ $(document).ready(function(){
         let correspondencia = $(id).data('correspondencia');
         //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
         let tipo_descarga = $(id).data('tipo_descarga');
-
         let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
         //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
         let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
-
+        //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
+        copias = copias.split(',').map(copia => copia.trim());
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
             $("#btn_guardar_actualizar_correspondencia").remove();
@@ -3585,7 +3585,7 @@ $(document).ready(function(){
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.includes(tipo_correspondencia.toLowerCase())){
+                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -4413,8 +4413,8 @@ $(document).ready(function(){
             $("#Asunto").val("Calificación de Pérdida de Capacidad Laboral al Fondo de Pensiones Porvenir S.A.");
             var texto_insertar = "<p>Hola, ¡{{$Nombre_afiliado}}! </p>"+
             "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo con tu solicitud de  "+ 
-            "calificación de pérdida de capacidad laboral (PCL) en la AFP Porvenir S.A., te informamos que el historial médico ha sido revisado y "+
-            "calificado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.(1).</p>"+
+            "calificación de pérdida de capacidad laboral (PCL) en la <b>AFP Porvenir S.A.</b>, te informamos que el historial médico ha sido revisado y "+
+            "calificado por el grupo interdisciplinario de calificación de <b>Seguros de Vida Alfa S.A.</b>(1).</p>"+
             "<p>De acuerdo con los parámetros establecidos en el Manual Único para la Calificación de la Perdida de la Capacidad Laboral y "+
             "Ocupacional (2) se ha determinado una (PCL) de {{$PorcentajePcl_dp}}  y fecha de estructuración {{$F_estructuracionPcl_dp}} Origen {{$OrigenPcl_dp}}.</p>"+
             "<p>Si tu calificación es igual o superior al 50%, podrás iniciar los trámites ante la AFP Porvenir (3) para acceder a la prestación "+
@@ -4450,7 +4450,7 @@ $(document).ready(function(){
             $("#empleador").prop('checked', true);
             $("#eps").prop('checked', true);
             $("#arl").prop('checked', true);
-            $("#afp").prop('checked', true);
+            // $("#afp").prop('checked', true);
             
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -4479,7 +4479,7 @@ $(document).ready(function(){
             $("#empleador").prop('checked', false);
             $("#eps").prop('checked', false);
             $("#arl").prop('checked', false);
-            $("#afp").prop('checked', false);
+            // $("#afp").prop('checked', false);
             
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -4500,12 +4500,12 @@ $(document).ready(function(){
         if ($(this).prop('checked')) {
             $("#Asunto").val("Calificación de Pérdida de Capacidad Laboral al Fondo de Pensiones Porvenir S.A.");
             var texto_insertar = "<p>Respetado (a) {{$Nombre_afiliado}}, cordial saludo: </p>"+
-            "<p>Teniendo en cuenta que usted ha cumplido los términos de incapacidad temporal prolongada establecidos por la ley, la AFP Porvenir "+ 
-            "S.A. en cumplimiento de la normatividad legal vigente, procede a notificarle el dictamen de calificación con respecto a las patologías "+
+            "<p>Teniendo en cuenta que usted ha cumplido los términos de incapacidad temporal prolongada establecidos por la ley, la <b>AFP Porvenir "+ 
+            "S.A.</b> en cumplimiento de la normatividad legal vigente, procede a notificarle el dictamen de calificación con respecto a las patologías "+
             "padecidas por usted y sustentadas en las historias clínicas aportadas que hacen parte integral de su expediente.</p>"+
             "<p>Para el caso particular, es necesario resaltar el siguiente acápite legal: Literal a) del Artículo 29 del Decreto 1352 de 2013.</p>"+
-            "<p>Teniendo en cuenta lo anterior nos permitimos informarle que el grupo interdisciplinario de Seguros de Vida Alfa S.A, aseguradora que "+
-            "maneja el seguro previsional de los afiliados a la AFP Porvenir, emitió dictamen de calificación de origen y pérdida de la capacidad "+
+            "<p>Teniendo en cuenta lo anterior nos permitimos informarle que el grupo interdisciplinario de <b>Seguros de Vida Alfa S.A</b>, aseguradora que "+
+            "maneja el seguro previsional de los afiliados a la <b>AFP Porvenir</b>, emitió dictamen de calificación de origen y pérdida de la capacidad "+
             "laboral (PCL), definiendo para su caso lo siguiente:</p>"+
             "<table class='tabla_cuerpo'>" +
             "<tr>" +
@@ -4523,8 +4523,8 @@ $(document).ready(function(){
             "Vida Alfa S.A. su inconformidad dentro de los diez (10) días siguientes a partir de la fecha de recibida la notificación, evento en "+
             "el cual procederemos a remitir su caso a la respectiva Junta Regional de Calificación de Invalidez para obtener una segunda calificación.</p>"+
             "<p>Dicha manifestación debe realizarla por escrito dirigida a Seguros de Vida Alfa, en la que debe expresar sobre cuál de los aspectos "+
-            "apela: origen, pérdida de capacidad laboral y/o fecha de estructuración. Remitirla a la Cra. 10 N° 18 - 36, piso 4, Edificio José María "+
-            "Córdoba en Bogotá, al fax 7435333 ext.14440 0 al correo electrónico: inconformidad@segurosalfa.com.co.</p>";
+            "apela: origen, pérdida de capacidad laboral y/o fecha de estructuración. Remitirla a la <b>Cra. 10 N° 18 - 36, piso 4, Edificio José María "+
+            "Córdoba en Bogotá</b>, al fax 7435333 ext.14440 0 al correo electrónico: inconformidad@segurosalfa.com.co.</p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
 
             // Habilitación etiquetas
@@ -4537,7 +4537,7 @@ $(document).ready(function(){
             $("#empleador").prop('checked', true);
             $("#eps").prop('checked', true);
             $("#arl").prop('checked', true);
-            $("#afp").prop('checked', true);
+            // $("#afp").prop('checked', true);
             
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -4566,7 +4566,7 @@ $(document).ready(function(){
             $("#empleador").prop('checked', false);
             $("#eps").prop('checked', false);
             $("#arl").prop('checked', false);
-            $("#afp").prop('checked', false);
+            // $("#afp").prop('checked', false);
             
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
