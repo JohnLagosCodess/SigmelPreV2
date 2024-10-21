@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+    
     var idRol = $("#id_rol").val();
 
     $(".primer_calificador").select2({
@@ -97,6 +97,15 @@ $(document).ready(function(){
         placeholder:"Seleccione una opción",
         allowClear:false
     });
+
+    // Inicializar select de modal crear expediente cuadro o tabla de expediente
+
+    $(".folear_expediente").select2({
+        width: '100%',
+        placeholder: "Seleccione una opción",
+        allowClear:false
+    });
+    
 
     // llenado de selectores
     let token = $('input[name=_token]').val();
@@ -460,7 +469,7 @@ $(document).ready(function(){
             url:'/selectoresModuloCalificacionPCL',
             data: datos_bandeja_destino,
             success:function (data) {
-                console.log(data);
+                // console.log(data);
                 $('#enviar').empty();
                 $('#enviar').append(`<option value="${data.bd_destino}" selected>${data.Nombre_proceso}</option>`);
             }
@@ -3414,7 +3423,7 @@ $(document).ready(function(){
         //Cargar selectores modal con Pendiente como valor por defecto
         cargarSelectorModalCorrespondencia();
         //Capturar información
-        console.log(this);
+        // console.log(this);
         let id = $(this);
         let token = $('input[name=_token]').val(); 
         let tipo_correspondencia = $(id).data('tipo_correspondencia');
@@ -3664,10 +3673,10 @@ $(document).ready(function(){
         e.preventDefault();
         let token = $('input[name=_token]').val(); 
         let tipo_correspondencia = $('#modalCorrespondencia #tipo_correspondencia').val();
-        console.log("tipo_correspondencia ", tipo_correspondencia);
+        // console.log("tipo_correspondencia ", tipo_correspondencia);
         if (!correspondencia_array?.includes(tipo_correspondencia)) {
             correspondencia_array.push(tipo_correspondencia);
-            console.log(correspondencia_array);
+            // console.log(correspondencia_array);
         }
         tipoDestinatario = null;
         if($('#check_principal').is(':checked')){
@@ -7032,10 +7041,98 @@ $(document).ready(function(){
         url:'/historialComunicadoJuntas',
         data: get_comunicados,
         success:function(data){
+            // console.log(data.hitorialAgregarComunicado);            
             crear_Expediente(data.hitorialAgregarComunicado);
         }
     });
 
+    // Detectar el cambio en el checkbox de la lista de chequeo en el th y Marcar todos
+    $('#Marcar_todos_lista_chequeo').change(function() {
+        // Verificar si está marcado o desmarcado
+        var isChecked = $(this).is(':checked');  
+        // validacion para habilitar o deshabilitar el boton 
+        if (isChecked == true) {
+            deshabilita_habilita = false;
+        } else {
+            deshabilita_habilita = true;            
+        }
+        // Cambiar el estado de los checkboxes en el tbody lista_documentos_check que no están deshabilitados
+        $('#lista_documentos_check input[type="checkbox"]:not(:disabled)').prop('checked', isChecked);
+        $(".actualizar_chequeo, .guardar_chequeo").prop('disabled', deshabilita_habilita);
+
+    });
+
+    // Abrir modal una vez se genere la lista de chequeo
+    if (localStorage.getItem("#Generar_lista_chequeo")) {
+        // Simular el clic en la etiqueta a después de recargar la página
+        localStorage.removeItem("#Generar_lista_chequeo");
+        document.getElementById("Cargando_expediente").style.display = "flex";
+        document.querySelector("#clicGuardado").click();
+        setTimeout(() => {
+            document.querySelector("#crearExpediente").click();                    
+            document.getElementById("Cargando_expediente").style.display = "none";
+        }, 5000);
+    }  
+
+    // Validar si ya existe una lista de chequeo con el boton actualizar
+    var Actualizar_chequeo = $('.actualizar_chequeo');
+    if (Actualizar_chequeo.length > 0) {
+        $(".titulo_lista_chequeo").attr("colspan", "5");
+        $(".posicion_foleo").removeClass('d-none');
+        $(".actualizar_chequeo").removeClass('d-none');
+        $("#row_cuadro_expediente").removeClass('d-none');
+    }
+
+    //insertar o eliminar las filas dinamicas del cuadro de expediente
+    $(".centrar").css('text-align', 'center');
+    var listado_lista_chequeos = $('#listado_lista_chequeos').DataTable({
+        "responsive": true,
+        "info": false,
+        "searching": false,
+        "ordering": false,
+        "scrollCollapse": true,
+        "scrollX": true,
+        "scrollY": "30vh",
+        "paging": false,
+        "language":{
+            "emptyTable": "No se encontró información"
+        }
+    });
+
+    autoAdjustColumns(listado_lista_chequeos);
+
+    var contador_expediente = 0;
+    $('#btn_agregar_fila_expediente').click(function(){
+        $('#guardar_datos_expediente').removeClass('d-none');
+
+        contador_expediente = contador_expediente + 1;
+        var nueva_fila_expediente = [
+            '<div id="nombre_documento_expediente_'+contador_expediente+'" name="nombre_documento_expediente"></div>',            
+            '<input type="number" class="form-control" id="posicion_expediente_'+contador_expediente+'" name="posicion_expediente" required />',
+            '<select id="folear_expediente_'+contador_expediente+'" class="custom-select folear_expediente_'+contador_expediente+'" name="folear_expediente_"><option></option></select>',
+            '<div id="nombre_documento_expediente_'+contador_expediente+'" name="nombre_documento_expediente"></div>',            
+            '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_expediente" class="text-info" data-fila="fila_'+contador_expediente+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
+            'fila_'+contador_expediente
+        ];
+
+        var agregar_fila_expediente = listado_lista_chequeos.row.add(nueva_fila_expediente).draw().node();
+        $(agregar_fila_expediente).addClass('fila_'+contador_expediente);
+        $(agregar_fila_expediente).attr("id", 'fila_'+contador_expediente);
+
+        // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
+        funciones_elementos_fila_diagnosticos(contador_expediente);       
+        
+    });
+
+    $(document).on('click', '#btn_remover_fila_expediente', function(){
+        var expedientes_filas = $(this).data("fila");
+        listado_lista_chequeos.row("."+expedientes_filas).remove().draw();
+    });
+
+    $(document).on('click', "a[id^='btn_remover_expediente']", function(){
+        var expedientes_filas = $(this).data("expediente_fila");
+        listado_lista_chequeos.row("."+expedientes_filas).remove().draw();
+    });
 
 });
 /**
@@ -7094,8 +7191,7 @@ function funciones_elementos_fila(num_consecutivo) {
 
 // Habilita los botones de acciones de acuerdo si hay algo chequeado o no.
 function verificarCheckboxes() {
-    let hayCheckboxMarcado = false;
-    
+    let hayCheckboxMarcado = false;    
     // Iterar sobre cada checkbox
     $("#lista_documentos_check :checkbox").each(function() {
         if ($(this).is(':checked')  &&  $(this).data('nombre') !== 'Lista de chequeo') {
@@ -7103,9 +7199,8 @@ function verificarCheckboxes() {
             return false; // Salir del bucle una vez que se encuentre al menos uno marcado
         }
     });
-
     // Habilitar o deshabilitar los botones según la variable hayCheckboxMarcado
-    $(".actualizar_chequeo, .guardar_chequeo").prop('disabled', !hayCheckboxMarcado);
+    $(".actualizar_chequeo, .guardar_chequeo").prop('disabled', !hayCheckboxMarcado);    
 }
 
 /**
@@ -7129,13 +7224,32 @@ function crear_Expediente(data) {
             $("#alert_expediente").removeClass('d-none');
         } else {
             // Actualizar la lista de comunicados
-            actualizarComunicados(data);
-    
+            actualizarComunicados(data);               
         }
     });    
 
     // Desactiva el boton de generar chequeo si no hay nada chequeado
     $("#lista_documentos_check").on('change', ':checkbox', function() {
+        // Contadores de los checkbox
+        let totalCheckbox = 0;
+        let checkboxMarcados = 0;
+        // recorrer los check para validar si todos estan marcados
+        $('#lista_documentos_check input[type="checkbox"]:not(:disabled)').each(function() {
+            // Incrementa el contador total de checkbox
+            totalCheckbox++; 
+            if ($(this).prop('checked')) {
+                // Incrementa el contador de checkbox marcados
+                checkboxMarcados++; 
+            }
+        });
+
+        // validacion para marcar y desmarcar el checkbox general 
+        if (totalCheckbox == checkboxMarcados) {
+            $("#Marcar_todos_lista_chequeo").prop('checked', true);            
+        }else{
+            $("#Marcar_todos_lista_chequeo").prop('checked', false);            
+        }
+        
         verificarCheckboxes();
     });
 
@@ -7151,45 +7265,45 @@ function crear_Expediente(data) {
 function actualizarComunicados(data) {
     
     //Quita cualquier extension del comunicado.
-    let nombre_proforma = data.map(item => {
-        // Verifica si el asunto incluye 'Lista_chequeo'
-        if (item.Asunto.includes('Lista_chequeo')) {
-            return {
-                nombre: item.Asunto,
-                id_comunicado: item.Id_Comunicado
-            };
-        } else {
-            // Si el asunto no incluye 'Lista_chequeo', retorna null para filtrarlo después
-            return null;
-        }
-    }).filter(item => item !== null);
+    // let nombre_proforma = data.map(item => {
+    //     // Verifica si el asunto incluye 'Lista_chequeo'
+    //     if (item.Asunto.includes('Lista_chequeo')) {
+    //         return {
+    //             nombre: item.Asunto,
+    //             id_comunicado: item.Id_Comunicado
+    //         };
+    //     } else {
+    //         // Si el asunto no incluye 'Lista_chequeo', retorna null para filtrarlo después
+    //         return null;
+    //     }
+    // }).filter(item => item !== null);
 
     // Limpiar opciones existentes antes de agregar nuevas
-    $("#historial_comunicados").empty();
+    // $("#historial_comunicados").empty();
 
     // Agregar las opciones al select2
     //comunicados.forEach(item => {
        // $("#historial_comunicados").append(`<option value='${item.id_comunicado}'>${item.nombre}</option>`);
     //});
 
-    // Actualizar select2 después de agregar opciones
-    $("#historial_comunicados").trigger('change');
+    // // Actualizar select2 después de agregar opciones
+    // $("#historial_comunicados").trigger('change');
 
     //Cargamos la tabla con la lista de chequeo
     get_documentos_para_check();
 
-    if(nombre_proforma == ''){
-        return null;
-    }
+    // if(nombre_proforma == ''){
+    //     return null;
+    // }
 
     //habilitamos la lista de chequeo en caso de que ya exista una en las comunicaciones
-    $('#ver_chequeo').removeClass('d-none');
-    $('#ver_chequeo a').attr('id','generar_descarga_archivo_' + $('#newId_evento').val());
-    $('#ver_chequeo a').attr('asunto_comunicado',nombre_proforma[0].nombre);
-    $('#ver_chequeo a').attr('id_evento',$('#newId_evento').val());
+    // $('#ver_chequeo').removeClass('d-none');
+    // $('#ver_chequeo a').attr('id','generar_descarga_archivo_' + $('#newId_evento').val());
+    // $('#ver_chequeo a').attr('asunto_comunicado',nombre_proforma[0].nombre);
+    // $('#ver_chequeo a').attr('id_evento',$('#newId_evento').val());
 
-    $(".actualizar_chequeo").removeClass('d-none');
-    $(".guardar_chequeo").addClass('d-none');
+    // $(".actualizar_chequeo").removeClass('d-none');
+    // $(".guardar_chequeo").addClass('d-none');
 
 }
 /**
@@ -7198,6 +7312,9 @@ function actualizarComunicados(data) {
  */
 function get_documentos_para_check() {
 
+    // Validar si ya existe una lista de chequeo con el boton actualizar
+    var Actualizar_chequeo = $('.actualizar_chequeo');   
+        
     const get_documentos = {
         '_token': $("input[name='_token']").val(),
         'parametro': "listado_documentos",
@@ -7215,38 +7332,76 @@ function get_documentos_para_check() {
         data: get_documentos,
         success: function (data) {
             let n_documentos = 0;
-
+            // console.log(data.status_doc);            
             // Iterar sobre los documentos
             $.each(data, function(key, item) {
                 if (key !== "comunicados" ) {
                     n_documentos++;
-                    let status_doc, checkbox;
-
+                    let status_doc, checkbox, posicion;
+                                        
                     if (item.status_doc === "No Cargado") {
                         status_doc = `<strong class="text-danger">${item.status_doc}</strong>`;
                         checkbox = '<input class="scales" type="checkbox" disabled>';
+                        // columna de posicion para agregar en el tbody
+                        if (Actualizar_chequeo.length > 0) {                            
+                            posicion = '<input class="form-control" type="number" id="posicionFoleo" disabled>';
+                        }
 
                     } else if (item.status_doc === "Cargado") {
                         status_doc = `<strong class="text-success">${item.status_doc}</strong>`;
                         checkbox = `<input class="scales" type="checkbox" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}'>`;
-
+                        if (Actualizar_chequeo.length > 0) {                            
+                            posicion = `<input class="form-control" type="number" id="posicionFoleo" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' disabled>`;
+                        }
+                        
                         if(item.check == 'Si'){
                             checkbox = `<input class="scales" type="checkbox" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' checked>`;
+                            // columna de posicion para agregar en el tbody
+                            if (Actualizar_chequeo.length > 0) {
+                                posicion = `<input class="form-control posicion-foleo" type="number" id="posicionFoleo" data-idDocumento='${item.Id_Documento}' data-nombre='${item.doc_nombre}' data-idRegistroDoc='${item.id_Registro_Documento}'>`;
+                            }                                                     
                         }
 
                         if(item.doc_nombre ==  'Lista de chequeo'){
                             checkbox = `<input class="scales" type="checkbox" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' checked disabled>`;
+                            // columna de posicion para agregar en el tbody
+                            if (Actualizar_chequeo.length > 0) {
+                                posicion = `<input class="form-control" type="number" id="posicionFoleo" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' disabled>`;
+                            }
                         }
                     }
 
-                    let html_documentos = `<tr>
-                        <td>${n_documentos}</td>
-                        <td>${item.doc_nombre}</td>
-                        <td>${status_doc}</td>
-                        <td>${checkbox}</td>
-                    </tr>`;
+                    if (Actualizar_chequeo.length > 0) {
+                        let html_documentos = `<tr>
+                            <td>${n_documentos}</td>
+                            <td>${item.doc_nombre}</td>
+                            <td>${status_doc}</td>
+                            <td>${checkbox}</td>
+                            <td>${posicion}</td>
+                        </tr>`;
+                        $("#lista_documentos_check").append(html_documentos);
+                        
+                        // Aplicar el required solo a los elementos que no están deshabilitados
+                        // y ya se encuentran en el dom
+                        // if (Actualizar_chequeo.length > 0) {
+                        //     $(".posicion-foleo").each(function() {
+                        //         if (!$(this).is(':disabled')) {
+                        //             $(this).attr("required", "required");
+                        //         }
+                        //     });
+                        // }
 
-                    $("#lista_documentos_check").append(html_documentos);
+                    }else {
+                        let html_documentos = `<tr>
+                            <td>${n_documentos}</td>
+                            <td>${item.doc_nombre}</td>
+                            <td>${status_doc}</td>
+                            <td>${checkbox}</td>                            
+                        </tr>`;
+                        $("#lista_documentos_check").append(html_documentos);
+                    }
+
+
                 }
             });
 
@@ -7254,14 +7409,25 @@ function get_documentos_para_check() {
             $.each(data.comunicados, function(index, item) {
                 n_documentos++;
                 checkbox = `<input class="scales" type="checkbox" data-id='${n_documentos}' data-nombre='${item.nombre}' data-idcomunicado='${item.Id_Comunicado}' disabled>`;
-                let html_comunicado = `<tr>
-                    <td>${n_documentos}</td>
-                    <td>${item.nombre}</td>
-                    <td><strong class="text-info">Comunicado</strong></td>
-                    <td>${checkbox}</td>
-                </tr>`;
+                if (Actualizar_chequeo.length > 0) {
+                    let html_comunicado = `<tr>
+                        <td>${n_documentos}</td>
+                        <td>${item.nombre}</td>
+                        <td><strong class="text-info">Comunicado</strong></td>
+                        <td>${checkbox}</td>
+                        <td>${posicion}</td>
+                    </tr>`;
+                    $("#lista_documentos_check").append(html_comunicado);
+                }else {
+                    let html_comunicado = `<tr>
+                        <td>${n_documentos}</td>
+                        <td>${item.nombre}</td>
+                        <td><strong class="text-info">Comunicado</strong></td>
+                        <td>${checkbox}</td>                        
+                    </tr>`;
+                    $("#lista_documentos_check").append(html_comunicado);
+                }
 
-                $("#lista_documentos_check").append(html_comunicado);
             });
 
             // Disparar evento de cambio después de actualizar la tabla
@@ -7277,6 +7443,34 @@ function get_documentos_para_check() {
  * @param {string} accion Accion a ejecutar (Actualizar, Guardar) 
  */
 function procesarListaChequeo(accion){
+
+    // console.log(accion);
+    
+    if (accion == 'Actualizar') {
+        
+        let validarPosiciones = true;
+    
+        // Recorrer todos los inputs de clase 'posicion-foleo' y verificar su estado
+        $(".posicion-foleo").each(function() {
+            // Solo validar los inputs que no están deshabilitados
+            if (!$(this).is(':disabled') && !$(this).val()) {
+                // Mostrar un error visual
+                $(this).addClass('is-invalid');  
+                // Indicar que el formulario no es válido
+                validarPosiciones = false;
+            } else {
+                // Quitar el error si es válido
+                $(this).removeClass('is-invalid');
+            }
+        });
+    
+        // Si hay algún campo inválido, detener el proceso y mostrar mensaje
+        if (!validarPosiciones) {
+            alert("Por favor, llena todos los campos requeridos en la columna Posición.");
+            return false;  // Evitar continuar si no es válido
+        }
+        // console.log("Procesando lista de chequeo con acción: " + accion);
+    }
 
     let registrarChequeo = {
         '_token': $("input[name='_token']").val(),
@@ -7312,8 +7506,30 @@ function procesarListaChequeo(accion){
         }
     });
 
-    registrarChequeo['lista_chequeo'] = datos;
+    if (accion == 'Actualizar') {
+        
+        // Iterar sobre los inputs y actualizar el array
+        datos.forEach((documento) => {
+            // Encontrar el input correspondiente en el DOM por id_doc
+            let inputPosicion = $(`input[data-idDocumento="${documento.id_doc}"]`);
+            // Si existe el input en el DOM, capturar su valor
+            if (inputPosicion.length > 0) {
+                // Obtener el valor del input y su data (no lo trae de manera correcta debido a que la consulta solo a apunto a los nombre de los documento de homologación)
+                let valorPosicion = inputPosicion.val();  
+                let id_registroDoc = inputPosicion.attr('data-idRegistroDoc');                                             
+                // Asignar el valor capturado a una nueva propiedad en el objeto del array
+                documento.posicion = valorPosicion;
+                documento.id_registro_docu = id_registroDoc;
+            }
+        });
     
+        // console.log(datos);
+    }
+    
+    // Ahora, el array `documentos` tendrá los valores actualizados de los inputs
+    registrarChequeo['lista_chequeo'] = datos;
+    // console.log(registrarChequeo);
+
     $.ajax({
         type: 'POST',
         url: '/registrarListaChequeo',
@@ -7336,10 +7552,11 @@ function procesarListaChequeo(accion){
                 $(".actualizar_chequeo").removeClass('d-none');
                 setTimeout(function(){
                     $('.alerta_chequeo').addClass('d-none');
-                    $('.alerta_chequeo').empty(); 
-                   
+                    $('.alerta_chequeo').empty();                                       
+                    localStorage.setItem("#Generar_lista_chequeo", true);
+                    location.reload(); 
                 }, 3000);
-            } 
+            }             
         },
         error: function(response){
             //Muestra un mensaje en caso de error, ya sea mediante el coontroaldor o fallse en algun proceso de laravel

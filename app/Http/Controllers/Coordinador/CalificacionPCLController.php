@@ -148,6 +148,14 @@ class CalificacionPCLController extends Controller
 
        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento, $Id_servicio));
 
+       // cantidad de documentos cargados
+
+       $cantidad_documentos_cargados = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+       ->where([
+           ['ID_evento', $newIdEvento],
+           ['Id_servicio', $Id_servicio]
+       ])->get();
+
         $arraycampa_documento_solicitado = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->where([
             ['ID_evento', $newIdEvento],
@@ -171,7 +179,7 @@ class CalificacionPCLController extends Controller
         ->get();        
         
         return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 
-        'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado', 
+        'arraylistado_documentos', 'cantidad_documentos_cargados', 'dato_validacion_no_aporta_docs', 'SubModulo','consecutivo','arraycampa_documento_solicitado', 
         'info_comite_inter', 'Id_servicio', 'info_accion_eventos', 'enviar_notificaciones','N_siniestro_evento'));
     }
 
@@ -8106,6 +8114,8 @@ class CalificacionPCLController extends Controller
             $porcentaje_pcl = $request->porcentaje_pcl;
             $rango_pcl = $request->rango_pcl;
             $monto_inde = $request->monto_inde;
+            $sumas_combinada = $request->sumas_combinada;
+            $Totales_Deficiencia50 = $request->Totales_Deficiencia50;
         } else {
             
             $Decreto_pericial = $request->Decreto_pericial;
@@ -8476,7 +8486,9 @@ class CalificacionPCLController extends Controller
             
         } elseif ($bandera_dictamen_pericial == 'bandera_Pcl_rango_monto'){
 
-            $datos_dictamenPericial =[                
+            $datos_dictamenPericial =[  
+                'Suma_combinada' => $sumas_combinada,
+                'Total_Deficiencia50' => $Totales_Deficiencia50,
                 'Porcentaje_pcl' => $porcentaje_pcl,
                 'Rango_pcl' => $rango_pcl,
                 'Monto_indemnizacion' => $monto_inde,                

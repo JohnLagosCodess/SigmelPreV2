@@ -24,6 +24,7 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
 use App\Models\sigmel_informacion_correspondencia_eventos;
+use App\Models\sigmel_registro_documentos_eventos;
 use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
@@ -150,6 +151,14 @@ class ControversiaJuntasController extends Controller
 
         //Trae Documetos Generales del evento
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($Id_evento_juntas, $Id_servicio));
+
+        // cantidad de documentos cargados
+
+        $cantidad_documentos_cargados = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento', $Id_evento_juntas],
+            ['Id_servicio', $Id_servicio]
+        ])->get();
         
         $array_comite_interdisciplinario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comite_interdisciplinario_eventos as sicie')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'sicie.Nombre_dest_principal')
