@@ -900,9 +900,15 @@
                                     <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalGenerarComunicado"><i class="fas fa-file-pdf text-info"></i> <strong>Generar Comunicado</strong></a>
                                 </div>
                             </div>
-                            <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
+                            {{-- <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
                                 <div class="form-group">
                                     <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalCrearExpediente" id="crearExpediente"><i class="fas fa-archive text-info"></i> <strong>Crear Expediente</strong></a>
+                                </div>
+                            </div> --}}
+                            <div id="Cargando_expediente" class="spinner-overlay" style="display: none;">
+                                <div class="spinner-grow" role="status">
+                                    <br><br>
+                                    <span class="spinner-expediente">Cargando Cuadro de Expendiente</span>                                    
                                 </div>
                             </div>
                             <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>

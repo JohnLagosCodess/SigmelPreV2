@@ -3769,6 +3769,8 @@ $(document).ready(function(){
             var Id_EventoDecreto = $('#Id_Evento_decreto').val();
             var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
             var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
+            var sumas_combinada = $('#suma_combinada').val();
+            var Totales_Deficiencia50 = $('#Total_Deficiencia50').val();   
             var porcentaje_pcl = $('#porcentaje_pcl').val();
             var rango_pcl = $('#rango_pcl').val();
             var monto_inde = $('#monto_inde').val();
@@ -3781,7 +3783,9 @@ $(document).ready(function(){
                 'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,            
                 'porcentaje_pcl':porcentaje_pcl,
                 'rango_pcl':rango_pcl,
-                'monto_inde':monto_inde,            
+                'monto_inde':monto_inde,
+                'sumas_combinada':sumas_combinada,
+                'Totales_Deficiencia50':Totales_Deficiencia50,          
                 'bandera_dictamen_pericial' :bandera_Pcl_rango_monto,
             }
                    

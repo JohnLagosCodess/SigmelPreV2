@@ -33,6 +33,7 @@ use App\Models\sigmel_informacion_firmas_clientes;
 use App\Models\sigmel_informacion_laboral_eventos;
 use App\Models\sigmel_lista_departamentos_municipios;
 use App\Models\sigmel_numero_orden_eventos;
+use App\Models\sigmel_registro_documentos_eventos;
 use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
@@ -67,6 +68,15 @@ class CalificacionOrigenController extends Controller
         $array_datos_calificacionOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($newIdAsignacion));
         //Trae Documetos Generales del evento
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento,$Id_servicio));
+
+        // cantidad de documentos cargados
+
+        $cantidad_documentos_cargados = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento', $newIdEvento],
+            ['Id_servicio', $Id_servicio]
+        ])->get();
+        
         //Consulta Vista a mostrar
         $TraeVista= DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_lista_procesos_servicios as p')
         ->select('v.nombre_renderizar')
@@ -242,7 +252,7 @@ class CalificacionOrigenController extends Controller
 
         // Validar si la accion ejecutada tiene enviar a notificaciones            
         $enviar_notificaciones = BandejaNotifiController::evento_en_notificaciones($newIdEvento,$newIdAsignacion);
-        return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos',
+        return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos', 'cantidad_documentos_cargados',
         'arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc',
         'dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados',
         'cali_profe_comite', 'Id_servicio', 'enviar_notificaciones','N_siniestro_evento'));

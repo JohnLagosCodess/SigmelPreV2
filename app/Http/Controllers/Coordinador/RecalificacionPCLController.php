@@ -5479,6 +5479,8 @@ class RecalificacionPCLController extends Controller
             $porcentaje_pcl = $request->porcentaje_pcl;
             $rango_pcl = $request->rango_pcl;
             $monto_inde = $request->monto_inde;
+            $sumas_combinada = $request->sumas_combinada;
+            $Totales_Deficiencia50 = $request->Totales_Deficiencia50;
         } else {
             
             $Decreto_pericial = $request->Decreto_pericial;
@@ -5838,7 +5840,9 @@ class RecalificacionPCLController extends Controller
 
         } else if ($bandera_dictamen_pericial == 'bandera_Pcl_rango_monto'){
 
-            $datos_dictamenPericial =[                
+            $datos_dictamenPericial =[     
+                'Suma_combinada' => $sumas_combinada,
+                'Total_Deficiencia50' => $Totales_Deficiencia50,           
                 'Porcentaje_pcl' => $porcentaje_pcl,
                 'Rango_pcl' => $rango_pcl,
                 'Monto_indemnizacion' => $monto_inde,                
