@@ -3366,6 +3366,17 @@ class CalificacionPCLController extends Controller
             } else {
                 $footer = null;
             } 
+
+            //Trae Documentos Solicitados
+            $listado_documentos_solicitados = $this->globalService->retornarListadoDocumentos($ID_evento,$Id_proceso,$Id_Asignacion);
+
+            $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
+            $string_documentos_solicitados = "<ul>";
+
+            for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
+                $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+            }
+            $string_documentos_solicitados .= "</ul>";
             
             // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
             // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
@@ -3413,6 +3424,7 @@ class CalificacionPCLController extends Controller
                 'Agregar_copia' => $Agregar_copias,
                 'footer' => $footer,
                 'N_siniestro' => $request->n_siniestro_proforma_editar,
+                'Documentos_solicitados' => $string_documentos_solicitados
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,
@@ -3935,7 +3947,17 @@ class CalificacionPCLController extends Controller
             ->select('Email')
             ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
             ->get();
+            
+            //Trae Documentos Solicitados
+            $listado_documentos_solicitados = $this->globalService->retornarListadoDocumentos($ID_evento,$Id_proceso,$Id_Asignacion);
 
+            $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
+            $string_documentos_solicitados = "<ul>";
+
+            for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
+                $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+            }
+            $string_documentos_solicitados .= "</ul>";
             
             $Agregar_copias = [];
             if (isset($copia_afiliado)) {
@@ -4125,6 +4147,7 @@ class CalificacionPCLController extends Controller
                 'Anexos' => $Anexos,
                 'Agregar_copia' => $Agregar_copias,
                 'footer' => $footer,
+                'Documentos_solicitados' => $string_documentos_solicitados,
                 'N_siniestro' => $request->n_siniestro_proforma_editar,
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
@@ -4132,7 +4155,6 @@ class CalificacionPCLController extends Controller
                 // 'footer_dato_4' => $footer_dato_4,
                 // 'footer_dato_5' => $footer_dato_5,
             ];
-
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/solicitud_documentos_revpen', $data);

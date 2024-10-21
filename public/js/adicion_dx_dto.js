@@ -1541,6 +1541,7 @@ $(document).ready(function(){
         var origen = $("#origen_dto_atel option:selected").text(); 
         var sustentacion = $("#sustentacion_adicion_dx").val();
         var N_siniestro = $("#n_siniestro").val();
+        var Justificacion_revision_origen = $("#justificacion_revision_origen").val();
         return {
             '_token': token,
             'id_evento': Id_Evento,
@@ -1551,6 +1552,7 @@ $(document).ready(function(){
             'id_comunicado': id_comunicado,
             'sustentacion': sustentacion,
             'N_siniestro': N_siniestro,
+            'justificacion_revision_origen': Justificacion_revision_origen,
         };
     }
 
@@ -2941,19 +2943,19 @@ $(document).ready(function(){
             }, 1000);
         }
         else{
-            if(informacion_comunicado.Nombre_documento){
-                var nombre_doc = informacion_comunicado.Nombre_documento;
-                var enlaceDescarga = document.createElement('a');
-                enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+Id_Evento;     
-                enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
-                enlaceDescarga.style.display = 'none';
-                document.body.appendChild(enlaceDescarga);
-                enlaceDescarga.click();
-                setTimeout(function() {
-                    document.body.removeChild(enlaceDescarga);
-                }, 1000);
-            }
-            else{
+            // if(informacion_comunicado.Nombre_documento){
+            //     var nombre_doc = informacion_comunicado.Nombre_documento;
+            //     var enlaceDescarga = document.createElement('a');
+            //     enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+Id_Evento;     
+            //     enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+            //     enlaceDescarga.style.display = 'none';
+            //     document.body.appendChild(enlaceDescarga);
+            //     enlaceDescarga.click();
+            //     setTimeout(function() {
+            //         document.body.removeChild(enlaceDescarga);
+            //     }, 1000);
+            // }
+            // else{
                 datos_generacion_proforma_dml_previsional = dataCreacionDMLADX(informacion_comunicado.Id_Comunicado);
                 $.ajax({    
                     type:'POST',
@@ -3002,7 +3004,7 @@ $(document).ready(function(){
                         }
                     },       
                 });
-            }
+            // }
         }
 
     });

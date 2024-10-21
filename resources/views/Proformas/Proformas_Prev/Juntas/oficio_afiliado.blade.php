@@ -59,7 +59,7 @@
             color:black; 
             background-color: white; 
             transform: rotate(0deg); 
-            top:300px;
+            top:700px;
         }
         .logo_footer{
             width: auto;
@@ -82,8 +82,12 @@
             font-family: sans-serif; 
             font-size: 12px;
         }
+        .paddingTexto{
+            margin: 0;
+            padding: 0;
+        }
         .tabla1{
-            width: 80%;
+            width: 100%;
             margin-left: -3.5px;
         }
         .tabla2{
@@ -99,10 +103,16 @@
             margin-right: 1.5cm;
         }
         .cuadro{
-            border: 3px solid black;
-            padding-left: 6px;
-            width: 5cm;
-            height: 2cm;
+            border: 2px solid black;
+            width: 4cm;
+            padding: 1px;
+            height: auto;
+        }     
+        .fuente_cuadro_inferior{
+            font-family: sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 0;
         }
         .derecha{
             float:right;
@@ -161,23 +171,18 @@
             <div class="hijo">{{$i}}</div>
         @endfor --}}
 
-        <p class="fuente_todo_texto derecha"><span class="negrita">Bogotá D.C., {{$fecha}}</span></p>
-        <br><br>
         <table class="tabla2">
             <tbody>
                 <tr>
-                    <td style="width:100%;">
-                        <span class="fuente_todo_texto"><span class="negrita">Señor(a):</span><br>{{$nombre}}</span><br>
-                        <span class="fuente_todo_texto">{{$email_destinatario}}</span><br>
-                        <span class="fuente_todo_texto">{{$direccion}}</span><br>
-                        <span class="fuente_todo_texto">{{$telefono}}</span><br>
-                        <span class="fuente_todo_texto">{{$ciudad_final}} - {{$departamento_final}}</span>
-                    </td>
-                    <td>
-                        <div class="cuadro">
-                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado: <br>{{$nro_radicado}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
+                    
+                    <td style="width:100%; display:table; justify-content: space-between;">
+                        <p class="fuente_todo_texto paddingTexto derecha"><span class="negrita">Bogotá D.C., {{$fecha}}</span></p>
+                        <div>
+                            <span class="fuente_todo_texto paddingTexto"><span class="negrita">Señor(a):</span><br>{{$nombre}}</span><br>
+                            <span class="fuente_todo_texto paddingTexto">{{$email_destinatario}}</span><br>
+                            <span class="fuente_todo_texto paddingTexto">{{$direccion}}</span><br>
+                            <span class="fuente_todo_texto paddingTexto">{{$telefono}}</span><br>
+                            <span class="fuente_todo_texto paddingTexto">{{$ciudad_final}} - {{$departamento_final}}</span>
                         </div>
                     </td>
                 </tr>
@@ -204,9 +209,13 @@
                             </span>
                         </span>
                         <br>
-                        <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}} {{$nombre_afiliado}}</span></span>
+                        <span class="fuente_todo_texto" style="display: inline-block; margin-left: 50px;">
+                            <span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}} {{$nombre_afiliado}}</span>
+                        </span>
                         <br>
-                        <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span>
+                        <span class="fuente_todo_texto" style="display: inline-block; margin-left: 50px;">
+                            <span class="negrita">Siniestro: {{$N_siniestro}}</span>
+                        </span>
                     </td>
                 </tr>
             </tbody>
@@ -331,6 +340,12 @@
                 @endif
             </table>
         </section> --}}
+        <br>
+        <div class="cuadro fuente_cuadro_inferior" style="margin: 0 auto">
+            <span class="fuente_cuadro_inferior"><span class="negrita">Nro. Radicado: <br>{{$nro_radicado}}</span></span><br>
+            <span class="fuente_cuadro_inferior"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
+            <span class="fuente_cuadro_inferior"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
+        </div>
     </div>
     <script type="text/php">
         if ( isset($pdf) ) {

@@ -2230,8 +2230,8 @@ class AdicionDxDTO extends Controller
         // $id_cliente = $request->id_cliente;
         $id_cliente = $array_datos_calificacion_origen[0]->Id_cliente;
 
-        // $f_dictamen = date("d-m-Y", strtotime($request->f_dictamen));
-        $f_dictamen = date("d-m-Y", strtotime($array_datos_calificacion_origen[0]->F_registro_asignacion));
+        // $f_dictamen = date("d/m/Y", strtotime($request->f_dictamen));
+        $f_dictamen = date("d/m/Y", strtotime($array_datos_calificacion_origen[0]->F_registro_asignacion));
 
         // $empresa_laboral = $request->empresa_laboral;
         $empresa_laboral = !empty($array_datos_info_laboral[0]->Empresa) ? $array_datos_info_laboral[0]->Empresa : null;
@@ -2249,25 +2249,25 @@ class AdicionDxDTO extends Controller
         $act_economica_laboral = (!empty($array_datos_info_laboral[0]->Id_actividad_economica) && !empty($array_datos_info_laboral[0]->Nombre_actividad)) ? $array_datos_info_laboral[0]->Id_actividad_economica." - ".$array_datos_info_laboral[0]->Nombre_actividad : '';
 
         // $justificacion_revision_origen = $request->justificacion_revision_origen;
-        $justificacion_revision_origen = !empty($datos_bd_DTO_ATEL[0]->Justificacion_revision_origen) ? $datos_bd_DTO_ATEL[0]->Justificacion_revision_origen : null;
+        $justificacion_revision_origen = $request->justificacion_revision_origen;
 
         // $nombre_evento = $request->nombre_evento;
         $nombre_evento = $nombre_del_evento_guardado;
 
-        // $f_evento = date("d-m-Y", strtotime($request->f_evento));
+        // $f_evento = date("d/m/Y", strtotime($request->f_evento));
         if (!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)) {
-            $f_evento = date("d-m-Y", strtotime($datos_bd_DTO_ATEL[0]->Fecha_evento));
+            $f_evento = date("d/m/Y", strtotime($datos_bd_DTO_ATEL[0]->Fecha_evento));
         }else{
             $f_evento = "";
         }
 
         // if (!empty($request->f_fallecimiento)) {
-        //     $f_fallecimiento = date("d-m-Y", strtotime($request->f_fallecimiento));
+        //     $f_fallecimiento = date("d/m/Y", strtotime($request->f_fallecimiento));
         // } else {
         //     $f_fallecimiento = "";
         // }
         if (!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)) {
-            $f_fallecimiento = date("d-m-Y", strtotime($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento));
+            $f_fallecimiento = date("d/m/Y", strtotime($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento));
         } else {
             $f_fallecimiento = "";
         }
@@ -2312,7 +2312,7 @@ class AdicionDxDTO extends Controller
 
         // fecha solicitud
         $array_datos_calificacionOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_Asignacion));
-        $fecha_solicitud = date("d-m-Y", strtotime($array_datos_calificacionOrigen[0]->F_radicacion));
+        $fecha_solicitud = date("d/m/Y", strtotime($array_datos_calificacionOrigen[0]->F_radicacion));
         /* 2. DATOS PERSONALES */
         $informacion_del_afiliado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'siae.Tipo_documento', '=', 'slp.Id_Parametro')
@@ -2342,7 +2342,7 @@ class AdicionDxDTO extends Controller
         $nombre_afiliado = $informacion_del_afiliado[0]->Nombre_afiliado;
         $tipo_doc_afiliado = $informacion_del_afiliado[0]->Tipo_documento;
         $nro_ident_afiliado = $informacion_del_afiliado[0]->Nro_identificacion;
-        $f_nacimiento_afiliado = date("d-m-Y", strtotime($informacion_del_afiliado[0]->F_nacimiento));
+        $f_nacimiento_afiliado = date("d/m/Y", strtotime($informacion_del_afiliado[0]->F_nacimiento));
         $edad_afiliado = $informacion_del_afiliado[0]->Edad;
         $genero_afiliado = $informacion_del_afiliado[0]->Genero;
         $estado_civil_afiliado = $informacion_del_afiliado[0]->Nombre_Estado_Civil;

@@ -7774,7 +7774,18 @@
                                                                 <td>{{$comite_inter->N_radicado}}</td>
                                                                 <td>{{$comite_inter->Elaboro}}</td>
                                                                 <td>{{$comite_inter->F_visado_comite}}</td>
-                                                                <td>Oficio</td>
+                                                                <?php 
+                                                                    if($comite_inter->Oficio_pcl && $comite_inter->Oficio_pcl === 'Si'){
+                                                                        $tipo_descarga = 'Oficio PCL';
+                                                                    }
+                                                                    else if($comite_inter->Oficio_incapacidad && $comite_inter->Oficio_incapacidad === 'Si'){
+                                                                        $tipo_descarga = 'Oficio Incapacidad';
+                                                                    }
+                                                                    else{
+                                                                        $tipo_descarga = 'Oficio';
+                                                                    }
+                                                                ?>
+                                                                <td><?php echo $tipo_descarga;?></td>
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
                                                                     <form name="ver_notificacionPcl" data-archivo="{{json_encode($comite_inter)}}" @if($comite_inter->Reemplazado === 1) id="verNotificacionPCL" @else action="{{ route('generarOficio_Pcl') }}" @endif method="POST">
                                                                         @csrf
@@ -7860,7 +7871,18 @@
                                                                 <td>{{$comite_inter->N_radicado}}</td>
                                                                 <td>{{$comite_inter->Elaboro}}</td>
                                                                 <td>{{$comite_inter->F_visado_comite}}</td>
-                                                                <td>Oficio</td>
+                                                                <?php 
+                                                                    if($comite_inter->Oficio_pcl && $comite_inter->Oficio_pcl === 'Si'){
+                                                                        $tipo_descarga = 'Oficio PCL';
+                                                                    }
+                                                                    else if($comite_inter->Oficio_incapacidad && $comite_inter->Oficio_incapacidad === 'Si'){
+                                                                        $tipo_descarga = 'Oficio Incapacidad';
+                                                                    }
+                                                                    else{
+                                                                        $tipo_descarga = 'Oficio';
+                                                                    }
+                                                                ?>
+                                                                <td><?php echo $tipo_descarga;?></td>
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
                                                                     <form name="ver_notificacionPcl" data-archivo="{{json_encode($comite_inter)}}" @if($comite_inter->Reemplazado === 1) id="verNotificacionPCL" @else action="{{ route('generarOficio_Pcl') }}" @endif method="POST">
                                                                         @csrf
@@ -7946,7 +7968,18 @@
                                                                 <td>{{$comite_inter->N_radicado}}</td>
                                                                 <td>{{$comite_inter->Elaboro}}</td>
                                                                 <td>{{$comite_inter->F_visado_comite}}</td>
-                                                                <td>Oficio</td>
+                                                                <?php 
+                                                                    if($comite_inter->Oficio_pcl && $comite_inter->Oficio_pcl === 'Si'){
+                                                                        $tipo_descarga = 'Oficio PCL';
+                                                                    }
+                                                                    else if($comite_inter->Oficio_incapacidad && $comite_inter->Oficio_incapacidad === 'Si'){
+                                                                        $tipo_descarga = 'Oficio Incapacidad';
+                                                                    }
+                                                                    else{
+                                                                        $tipo_descarga = 'Oficio';
+                                                                    }
+                                                                ?>
+                                                                <td><?php echo $tipo_descarga;?></td>
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
                                                                     <form name="ver_notificacionPcl" data-archivo="{{json_encode($comite_inter)}}" @if($comite_inter->Reemplazado === 1) id="verNotificacionPCL" @else action="{{ route('generarOficio_Pcl') }}" @endif method="POST">
                                                                         @csrf

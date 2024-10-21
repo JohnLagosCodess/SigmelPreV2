@@ -3142,19 +3142,19 @@ $(document).ready(function(){
                 document.body.removeChild(enlaceDescarga);
             }, 1000);
         }else{
-            if(informacion_comunicado.Nombre_documento){
-                var nombre_doc = informacion_comunicado.Nombre_documento;
-                var enlaceDescarga = document.createElement('a');
-                enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+Id_Evento;     
-                enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
-                enlaceDescarga.style.display = 'none';
-                document.body.appendChild(enlaceDescarga);
-                enlaceDescarga.click();
-                setTimeout(function() {
-                    document.body.removeChild(enlaceDescarga);
-                }, 1000);
-            }
-            else{
+            // if(informacion_comunicado.Nombre_documento){
+            //     var nombre_doc = informacion_comunicado.Nombre_documento;
+            //     var enlaceDescarga = document.createElement('a');
+            //     enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+Id_Evento;     
+            //     enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+            //     enlaceDescarga.style.display = 'none';
+            //     document.body.appendChild(enlaceDescarga);
+            //     enlaceDescarga.click();
+            //     setTimeout(function() {
+            //         document.body.removeChild(enlaceDescarga);
+            //     }, 1000);
+            // }
+            // else{
                 datos_generacion_proforma_dml_previsional = dataCreacionDMLOrigen(informacion_comunicado.Id_Comunicado);
                 $.ajax({    
                     type:'POST',
@@ -3203,7 +3203,7 @@ $(document).ready(function(){
                         }
                     },       
                 });
-            }
+            // }
         }
     });
     

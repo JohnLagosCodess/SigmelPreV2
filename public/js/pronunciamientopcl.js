@@ -1005,21 +1005,21 @@ $(document).ready(function(){
         }else if (opc_seleccionada == 'Desacuerdo') {
             $('#asunto_cali').val('RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN FRENTE A DICTAMEN N°');
             var texto_insertar = "<p>Respetados Señores, </p>"+
-            "<p>Yo, <strong>HUGO IGNACIO GÓMEZ DAZA</strong>, identificado como aparece al pie de mi firma, actuando en nombre y representación de <strong>SEGUROS DE VIDA "+ 
-            "ALFA S.A.</strong> Aseguradora que expidió el seguro previsional a la <strong>AFP PORVENIR S.A.</strong>, debidamente facultado para ello, en atención al "+
+            "<p><strong>HUGO IGNACIO GÓMEZ DAZA</strong>, identificado como aparece al pie de mi firma, actuando en nombre y representación de <strong>SEGUROS DE VIDA "+ 
+            "ALFA S.A.</strong> Aseguradora que expidió el <b><u>seguro previsional a la AFP PORVENIR S.A.</u></b>, debidamente facultado para ello, en atención al "+
             "dictamen de la referencia, estando dentro de los términos de ley, me permito interponer <strong>RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE "+
             "APELACIÓN</strong> ante la Junta, por los siguientes motivos: </p>"+
-            "<p>Nuestra inconformidad se dirige a la calificación de <strong>PERDIDA DE CAPACIDAD LABORAL</strong> dictaminada al afiliado {{$Nombre_afiliado}}, "+
+            "<p>Nuestra inconformidad se dirige a la calificación de <strong>PERDIDA DE CAPACIDAD LABORAL</strong> dictaminada al (la) afiliado(a) {{$Nombre_afiliado}}, "+
             "donde califican los diagnósticos: {{$CIE10_Nombres_Origen}}, PCL de {{$PorcentajePcl}}% y fecha de "+
             "estructuración {{$F_estructuracionPcl}}.</p>"+
             "<p>1. (Descripción de recurso)</p>"+
             "<p>Por lo anterior, presentamos el recurso de reposición y en subsidio el de apelación, contra la pérdida de capacidad laboral (PCL), "+
             "con el fin que se dictamine el valor correspondiente a las patologías del paciente dando aplicación al Decreto 1507/2014 como "+
-            "normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e "+
-            "informarnos con el fin de consignar los honorarios respectivos.</p>"+
-            "<p>ANEXO:</p>"+
+            "normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación.</p>"+
+            "<p>Por último, se informa que esta Administradora realizó pago de honorarios pertinentes, el cual se efectuó de manera efectiva y por lo tanto se anexará en los próximos días el soporte del mismo.</p>"+
+            "<p style='text-align:center;'>ANEXO:</p>"+
             "<p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera. </p>"+
-            "<p>NOTIFICACIONES:</p>"+
+            "<p style='text-align:center;'>NOTIFICACIONES:</p>"+
             "<p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C. </p>"+
             "<p>Cualquier Información adicional con gusto le será suministrada,</p>";
             $('#sustenta_cali').summernote('code', texto_insertar);

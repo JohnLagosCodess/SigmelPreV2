@@ -312,7 +312,7 @@
             <table style="text-align: justify; width:100%; margin-left: -3px;">
                 @if (count($Agregar_copia) == 0)
                     {{-- <tr>
-                        <td><span class="negrita copias">Copia: </span>No se registran copias</td>                                                                                
+                        <td class="copias"><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
                     </tr> --}}
                 @else
                     <tr>

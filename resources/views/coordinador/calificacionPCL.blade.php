@@ -745,7 +745,7 @@
                                                     <div class="form-group">
                                                         <div class="form-check custom-control custom-radio">
                                                             <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documentos_pcl" value="Documento_PCL" required>
-                                                            <label class="form-check-label custom-control-label" for="documentos_pcl"><strong>Solicitud Documentos PCL</strong></label>
+                                                            <label class="form-check-label custom-control-label" for="documentos_pcl"><strong>SOLICITUD DOCUMENTOS (PCL)</strong></label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -772,7 +772,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documento_revisionpension" value="Documento_Revision_pension" required>
-                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension"><strong>oficio solicitud de documentos complementarios</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension"><strong>SOLICITUD DOCUMENTOS (R.V)</strong></label>
                                                     </div>
                                                 </div>
                                             </div>                                          
@@ -782,7 +782,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="No_procede_recali" value="Documento_No_Recalificacion" required>
-                                                        <label class="form-check-label custom-control-label" for="No_procede_recali"><strong>No Procede Recalificación</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="No_procede_recali"><strong>NO RECALIFICACIÓN</strong></label>
                                                     </div>
                                                 </div>
                                             </div> 
@@ -1094,7 +1094,7 @@
                                                     <div class="form-group">
                                                         <div class="form-check custom-control custom-radio">
                                                             <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="documentos_pcl_editar" value="Documento_PCL" required>
-                                                            <label class="form-check-label custom-control-label" for="documentos_pcl_editar"><strong>Solicitud Documentos PCL</strong></label>
+                                                            <label class="form-check-label custom-control-label" for="documentos_pcl_editar"><strong>SOLICITUD DOCIMENTOS (PCL)</strong></label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1121,7 +1121,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="documento_revisionpension_editar" value="Documento_Revision_pension" required>
-                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension_editar"><strong>oficio solicitud de documentos complementarios</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension_editar"><strong>SOLICITUD DOCUMENTOS (R.V)</strong></label>
                                                     </div>
                                                 </div>
                                             </div>                                          
@@ -1131,7 +1131,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="No_procede_recali_editar" value="Documento_No_Recalificacion" required>
-                                                        <label class="form-check-label custom-control-label" for="No_procede_recali_editar"><strong>No Procede Recalificación</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="No_procede_recali_editar"><strong>NO RECALIFICACIÓN</strong></label>
                                                     </div>
                                                 </div>
                                             </div> 

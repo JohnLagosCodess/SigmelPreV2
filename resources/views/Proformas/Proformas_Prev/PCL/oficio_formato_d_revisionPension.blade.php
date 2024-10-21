@@ -99,7 +99,11 @@
         .fuente_todo_texto{
             font-family: sans-serif;
             font-size: 12px;
-        }        
+        }
+        .paddingTexto{
+            margin: 0;
+            padding: 0;
+        }     
         .tabla1{
             width: 100%;            
             margin-left: -3.5px;
@@ -129,11 +133,20 @@
             margin-right: 1.5cm;
         }
         .cuadro{
-            border: 3px solid black;
-            padding-left: 6px;
-            width: 5cm;
-            height: 2cm;  
-        }    
+            border: 2px solid black;
+            width: 4cm;
+            padding: 1px;
+            height: auto;
+        }     
+        .fuente_cuadro_inferior{
+            font-family: sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 0;
+        }
+        .copias{
+            font-size: 10px;
+        }
         .derecha{
             float: right;
         }    
@@ -192,24 +205,21 @@
         <img src="data:image/png;base64,{{ $imagenBase64_footer }}" class="logo_footer">
     </div>
     <div class="container">
-        <p class="fuente_todo_texto derecha">{{$Ciudad_correspondencia}} {{$F_correspondecia}}</p>
-        <br>
         <table class="tabla2">                        
             <tbody>
                 <tr>
-                    <td style="width:100%;">
-                        <span class="fuente_todo_texto"><span class="negrita">Señor(a): </span><br>{{$Nombre_afiliado}}</span><br>
-                        <span class="fuente_todo_texto">{{$Email_afiliado_noti}}</span><br>
-                        <span class="fuente_todo_texto">{{$direccion_destinatario_principal}}</span><br>
-                        <span class="fuente_todo_texto">{{$telefono_destinatario_principal}}</span><br>
-                        <span class="fuente_todo_texto">{{$ciudad_destinatario_principal}}</span>
-                    </td>
-                    <td>
-                        <div class="cuadro">
-                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado: <br>{{$Radicado_comuni}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">{{$T_documento_noti}} {{$NroIden_afiliado_noti}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
-                        </div>
+                    <td style="width:100%; display:table; justify-content: space-between;">
+                        <p class="fuente_todo_texto paddingTexto derecha"><span class="negrita">{{$Ciudad_correspondencia}} {{$F_correspondecia}}</span></p>
+                        <div>
+                            <div class="fuente_todo_texto paddingTexto">
+                                <span class="negrita">Señor(a):</span><br>
+                                {{$Nombre_afiliado}}
+                            </div>
+                            <div class="fuente_todo_texto paddingTexto">{{$Email_afiliado_noti}}</div>
+                            <div class="fuente_todo_texto paddingTexto">{{$direccion_destinatario_principal}}</div>
+                            <div class="fuente_todo_texto paddingTexto">{{$telefono_destinatario_principal}}</div>
+                            <div class="fuente_todo_texto paddingTexto">{{$ciudad_destinatario_principal}}</div>
+                        </div>   
                     </td>
                 </tr>
             </tbody>
@@ -241,7 +251,7 @@
                     && preg_match($patron3, $Cuerpo_comunicado_correspondencia) && preg_match($patron4, $Cuerpo_comunicado_correspondencia))
                 {                    
                     $texto_modificado = str_replace('{{$PorcentajePcl_dp}}', '<b>'.$PorcentajePcl_dp.'</b>', $Cuerpo_comunicado_correspondencia);
-                    $texto_modificado = str_replace('{{$F_estructuracionPcl_dp}}', '<b>'.$F_estructuracionPcl_dp.'</b>', $texto_modificado);
+                    $texto_modificado = str_replace('{{$F_estructuracionPcl_dp}}', '<b>'.date("d/m/Y", strtotime($F_estructuracionPcl_dp)).'</b>', $texto_modificado);
                     $texto_modificado = str_replace('{{$OrigenPcl_dp}}', '<b>'.$OrigenPcl_dp.'</b>', $texto_modificado);
                     $texto_modificado = str_replace('{{$Detalle_calificacion_Fbdp}}', $Detalle_calificacion_Fbdp, $texto_modificado);
                     $Cuerpo_comunicado_correspondencia = $texto_modificado;
@@ -272,19 +282,19 @@
         </section>           --}}
         <section class="fuente_todo_texto">
             <table class="tabla1" style="text-align: justify;">                              
-                @if (empty($Copia_afiliado_correspondecia) && empty($Copia_empleador_correspondecia) && empty($Copia_eps_correspondecia) && empty($Copia_afp_correspondecia) && empty($Copia_arl_correspondecia))
+                @if (empty($Copia_afiliado_correspondecia) && empty($Copia_empleador_correspondecia) && empty($Copia_eps_correspondecia) && empty($Copia_afp_correspondecia) && empty($Copia_arl_correspondecia) && empty($Copia_afp_conocimiento_correspondencia))
                     <tr>
-                        <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
+                        <td class="copias"><span class="negrita ">Copia: </span>No se registran copias</td>                                                                                
                     </tr>
                 @else
                     <tr>
-                        <td class="justificado"><span class="negrita">Copia:</span></td>                            
+                        <td class="justificado copias"><span class="negrita">Copia:</span></td>                            
                     </tr> 
                     <?php 
-                        if (!empty($Copia_empleador_correspondecia)) { ?>
+                        if (!empty($Copia_afiliado_correspondecia)) { ?>
                             <tr>
-                                <td>
-                                    <span class="negrita">Afiliado: </span><?php echo $copia_nombreAfiliado.' - '.$copia_direccionAfiliado.'; '.$copia_emailAfiliado.'; Teléfono: '.$copia_telefonoAfiliado.', '.$copia_ciudadAfiliado.'-'.$copia_departamentoAfiliado;?>
+                                <td class="copias">
+                                    <span class="negrita">Afiliado: </span><?php echo $copia_nombreAfiliado.' - '.$copia_direccionAfiliado.'; '.$copia_emailAfiliado.'; '.$copia_telefonoAfiliado.'; '.$copia_ciudadAfiliado.'-'.$copia_departamentoAfiliado;?>
                                 </td>
                             </tr>
                         <?php       
@@ -293,8 +303,8 @@
                     <?php 
                         if (!empty($Copia_empleador_correspondecia)) { ?>
                             <tr>
-                                <td>
-                                    <span class="negrita">Empresa: </span><?php echo $copiaNombre_empresa_noti.' - '.$copiaDireccion_empresa_noti.'; '.$copiaEmail_empresa_noti.'; Teléfono: '.$copiaTelefono_empresa_noti.', '.$copiaCiudad_departamento_empresa_noti;?>
+                                <td class="copias">
+                                    <span class="negrita">Empresa: </span><?php echo $copiaNombre_empresa_noti.' - '.$copiaDireccion_empresa_noti.'; '.$copiaEmail_empresa_noti.'; '.$copiaTelefono_empresa_noti.'; '.$copiaCiudad_departamento_empresa_noti;?>
                                 </td>
                             </tr>
                         <?php       
@@ -303,8 +313,8 @@
                     <?php 
                         if (!empty($Copia_eps_correspondecia)) { ?>
                             <tr>
-                                <td>
-                                    <span class="negrita">EPS: </span><?php echo $Nombre_eps.' - '.$Direccion_eps.'; '.$Email_eps.'; Teléfono: '.$Telefono_eps.', '.$Ciudad_departamento_eps;?>
+                                <td class="copias">
+                                    <span class="negrita">EPS: </span><?php echo $Nombre_eps.' - '.$Direccion_eps.'; '.$Email_eps.'; '.$Telefono_eps.'; '.$Ciudad_departamento_eps;?>
                                 </td>
                             </tr>
                         <?php       
@@ -314,7 +324,17 @@
                         if (!empty($Copia_afp_correspondecia)) { ?>
                             <tr>
                                 <td class="copias">
-                                    <span class="negrita">AFP: </span><?php echo $Nombre_afp.' - '.$Direccion_afp.'; '.$Email_afp.'; Teléfono: '.$Telefono_afp.', '.$Ciudad_departamento_afp;?>
+                                    <span class="negrita">AFP: </span><?php echo $Nombre_afp.' - '.$Direccion_afp.'; '.$Email_afp.'; '.$Telefono_afp.'; '.$Ciudad_departamento_afp;?>
+                                </td>
+                            </tr>
+                        <?php       
+                        }
+                    ?>
+                    <?php 
+                        if (!empty($Copia_afp_conocimiento_correspondencia)) { ?>
+                            <tr>
+                                <td class="copias">
+                                    <span class="negrita">AFP Conocimiento: </span><?php echo $Nombre_afp_conocimiento.' - '.$Direccion_afp_conocimiento.'; '.$Email_afp_conocimiento.'; '.$Telefonos_afp_conocimiento.'; '.$Ciudad_departamento_afp_conocimiento;?>
                                 </td>
                             </tr>
                         <?php       
@@ -324,7 +344,7 @@
                         if (!empty($Copia_arl_correspondecia)) { ?>
                             <tr>
                                 <td class="copias">
-                                    <span class="negrita">ARL: </span><?php echo $Nombre_arl.' - '.$Direccion_arl.'; '.$Email_arl.'; Teléfono: '.$Telefono_arl.', '.$Ciudad_departamento_arl;?>
+                                    <span class="negrita">ARL: </span><?php echo $Nombre_arl.' - '.$Direccion_arl.'; '.$Email_arl.'; '.$Telefono_arl.'; '.$Ciudad_departamento_arl;?>
                                 </td>
                             </tr>
                         <?php       
@@ -332,7 +352,13 @@
                     ?>                    
                 @endif
             </table>
-        </section>               
+        </section>
+        <br>
+        <div class="cuadro fuente_cuadro_inferior" style="margin: 0 auto">
+            <span class="fuente_cuadro_inferior"><span class="negrita">Nro. Radicado: <br>{{$Radicado_comuni}}</span></span><br>
+            <span class="fuente_cuadro_inferior"><span class="negrita">{{$T_documento_noti}} {{$NroIden_afiliado_noti}}</span></span><br>
+            <span class="fuente_cuadro_inferior"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
+        </div>        
     </div>
     <script type="text/php">
         if ( isset($pdf) ) {

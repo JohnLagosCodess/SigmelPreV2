@@ -1064,25 +1064,27 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="oficio_afiliado" value="Oficio_Afiliado" required>
-                                                        <label class="form-check-label custom-control-label" for="oficio_afiliado"><strong>Oficio Juntas afiliado</strong></label>                                                                                                                                                                    
+                                                        <label class="form-check-label custom-control-label" for="oficio_afiliado"><strong>OFICIO AFILIADO</strong></label>                                                                                                                                                                    
                                                     </div>
                                                 </div>
                                             </div>
                                         @endif
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="oficio_juntas_jrci" value="Oficio_Juntas_JRCI" required>
-                                                    <label class="form-check-label custom-control-label" for="oficio_juntas_jrci"><strong>Oficio Juntas JRCI</strong></label>
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="oficio_juntas_jrci" value="Oficio_Juntas_JRCI" required>
+                                                        <label class="form-check-label custom-control-label" for="oficio_juntas_jrci"><strong>SOLICITUD CALIFICACIÓN INVALIDÉZ</strong></label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @endif
                                         @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
                                             <div class="col">
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="remision_expediente_jrci" value="Remision_Expediente_JRCI" required>
-                                                        <label class="form-check-label custom-control-label" for="remision_expediente_jrci"><strong>Expediente JRCI</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="remision_expediente_jrci"><strong>REMISIÓN EXPEDIENTE JRCI</strong></label>
                                                     </div>
                                                 </div>
                                             </div>                                            
@@ -1092,7 +1094,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma" id="devol_expediente_jrci" value="Devolucion_Expediente_JRCI" required>
-                                                        <label class="form-check-label custom-control-label" for="devol_expediente_jrci"><strong>Devol. Expediente JRCI</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="devol_expediente_jrci"><strong>DEVOLUCIÓN EXPEDIENTE JRCI</strong></label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1495,25 +1497,27 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="oficio_afiliado_editar" value="Oficio_Afiliado" required>
-                                                        <label class="form-check-label custom-control-label" for="oficio_afiliado_editar"><strong>Oficio Juntas afiliado</strong></label>                                                        
+                                                        <label class="form-check-label custom-control-label" for="oficio_afiliado_editar"><strong>OFICIO AFILIADO</strong></label>                                                        
                                                     </div>
                                                 </div>
                                             </div>
                                         @endif
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <div class="form-check custom-control custom-radio">
-                                                    <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="oficio_juntas_jrci_editar" value="Oficio_Juntas_JRCI" required>
-                                                    <label class="form-check-label custom-control-label" for="oficio_juntas_jrci_editar"><strong>Oficio Juntas JRCI</strong></label>
+                                        @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="oficio_juntas_jrci_editar" value="Oficio_Juntas_JRCI" required>
+                                                        <label class="form-check-label custom-control-label" for="oficio_juntas_jrci_editar"><strong>SOLICITUD CALIFICACIÓN INVALIDÉZ</strong></label>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        @endif
                                         @if ($array_datos_calificacionJuntas[0]->Id_Servicio == '13')
                                             <div class="col">
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="remision_expediente_jrci_editar" value="Remision_Expediente_JRCI" required>
-                                                        <label class="form-check-label custom-control-label" for="remision_expediente_jrci_editar"><strong>Expediente JRCI</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="remision_expediente_jrci_editar"><strong>REMISIÓN EXPEDIENTE JRCI</strong></label>
                                                     </div>
                                                 </div>
                                             </div>                                            
@@ -1523,7 +1527,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_de_preforma_editar" id="devol_expediente_jrci_editar" value="Devolucion_Expediente_JRCI" required>
-                                                        <label class="form-check-label custom-control-label" for="devol_expediente_jrci_editar"><strong>Devol. Expediente JRCI</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="devol_expediente_jrci_editar"><strong>DEVOLUCIÓN EXPEDIENTE JRCI</strong></label>
                                                     </div>
                                                 </div>
                                             </div>
