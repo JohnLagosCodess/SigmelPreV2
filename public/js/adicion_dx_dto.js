@@ -3111,6 +3111,11 @@ $(document).ready(function(){
         $(".note-editable").attr("contenteditable", false);
         $("#firmar").prop('disabled', true);
     }
+
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('listado_comunicados_adx');
+    }, 500);
 });
 
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnosticos motivo de calificación*/

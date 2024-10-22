@@ -320,28 +320,28 @@
                                             </div>
                                         </div>
                                         @endif
-                                        <div class="col-4">
+                                        <div class="col-4" style="display: none">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="n_pago_jnci_contro">N° orden de pago (JRCI)</label>
                                                 <input type="text" class="form-control n_pago_jnci_contro" name="n_pago_jnci_contro" id="n_pago_jnci_contro" value="<?php if(!empty($arrayinfo_controvertido[0]->N_pago_jnci_contro)) { echo $arrayinfo_controvertido[0]->N_pago_jnci_contro;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" style="display: none">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="f_pago_jnci_contro">Fecha pago (JRCI)</label>
                                                 <input type="date" class="form-control" name="f_pago_jnci_contro" id="f_pago_jnci_contro" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_pago_jnci_contro)) { echo $arrayinfo_controvertido[0]->F_pago_jnci_contro;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" style="display: none">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="f_radica_pago_jnci_contro">Fecha de radicación pago (JRCI)</label>
                                                 <input type="date" class="form-control" name="f_radica_pago_jnci_contro" id="f_radica_pago_jnci_contro" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_radica_pago_jnci_contro)) { echo $arrayinfo_controvertido[0]->F_radica_pago_jnci_contro;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" style="display: none">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="f_envio_jrci">Fecha de envío a (JRCI)</label>
@@ -1874,7 +1874,7 @@
                                                 <tbody>
                                                     @foreach ($array_comunicados_correspondencia as $key => $comunicados)
                                                         <tr>
-                                                            <td>{{$comunicados->N_radicado}}</td>
+                                                            <td data-id_comunicado="{{$comunicados->Id_Comunicado}}">{{$comunicados->N_radicado}}</td>
                                                             <td>{{$comunicados->Elaboro}}</td>
                                                             <td>{{$comunicados->F_comunicado}}</td>
                                                             <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
@@ -2083,6 +2083,7 @@
     @include('//.administrador.modalProgressbar')
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.coordinador.modalCorrespondencia')
+    @include('//.modals.alertaRadicado')
 
 @stop
 @section('js')

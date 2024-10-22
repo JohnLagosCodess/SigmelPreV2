@@ -2206,7 +2206,11 @@ $(document).ready(function(){
             data: response,
             paging: false,
             order: [[0, 'desc']],
-            "columns":columns,            
+            "columns":columns,     
+            createdRow: function(row, data, dataIndex) {
+                //agregamos el id del comunicado dentro del primer td
+                $(row).find('td').eq(0).attr('data-id_comunicado', data.Id_Comunicado);
+            },       
             "language":{                
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ registros",
@@ -4088,6 +4092,10 @@ $(document).ready(function(){
     }
 
 
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('listado_agregar_comunicados');
+    }, 500);
 });
 
 /* Función para añadir los controles de cada elemento de cada fila */

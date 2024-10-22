@@ -1578,7 +1578,7 @@
                                         <tbody>
                                             @foreach ($array_comunicados_correspondencia as $comunicados)
                                             <tr>
-                                                <td>{{$comunicados->N_radicado}}</td>
+                                                <td data-id_comunicado="{{$comunicados->Id_Comunicado}}">{{$comunicados->N_radicado}}</td>
                                                 <td>{{$comunicados->Elaboro}}</td>
                                                 <td>{{$comunicados->F_comunicado}}</td>
                                                 <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
@@ -1781,6 +1781,7 @@
    </form>
    @include('//.coordinador.modalReemplazarArchivos')
    @include('//.coordinador.modalCorrespondencia')
+   @include('//.modals.alertaRadicado')
 
 @stop
 

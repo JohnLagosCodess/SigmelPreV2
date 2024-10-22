@@ -1996,6 +1996,10 @@ $(document).ready(function(){
         $("#firmar").prop('disabled', true);
     }
 
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('listado_comunicado_pronu_origen');
+    }, 500);
 });
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/
 function funciones_elementos_fila_diagnosticos(num_consecutivo) {

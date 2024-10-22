@@ -5111,6 +5111,10 @@ $(document).ready(function(){
     }
 
 
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('tabla_comunicados_juntas');
+    }, 500);
 });
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/
 /*Para Diagnosticos Controvertido*/

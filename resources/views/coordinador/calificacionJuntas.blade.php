@@ -1957,6 +1957,7 @@
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.modals.confirmacionAccion')
     @include('//.modals.historialServicios')
+    @include('//.modals.alertaRadicado')
 @stop
 @section('js')
     <script type="text/javascript" src="/js/calificacionJuntas.js"></script>

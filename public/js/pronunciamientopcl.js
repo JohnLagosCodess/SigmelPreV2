@@ -1910,6 +1910,35 @@ $(document).ready(function(){
             }
         });
     });
+
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('listado_comunicados_clpcl');
+    }, 500);
+
+    /* Si se selecciona la opción Otro Cual Inserta un campo*/
+    /*$(document).on('change', "#primer_calificador", function() {
+        console.log($(this).find('option:selected').text());
+    
+        if ($(this).find('option:selected').text() === 'Otro/¿Cual?') {
+            $('#nombre_calificador').addClass('d-none');
+            $('#nombre_calificador').next(".select2-container").hide();
+            $('#nombre_calificador').prop('required', false);
+    
+            if ($('#otro_calificador').length === 0) {
+                let input = '<input type="text" class="form-control" name="otro_calificador" id="otro_calificador" placeholder="Escriba el nombre del calificador." required>';
+                $('#nombre_calificador').after(input);
+            }
+        } else {
+            $("#otro_calificador").remove(); // Elimina el input si se selecciona otra opción
+
+            //Muestra nuevamente el selector
+            $('#nombre_calificador').removeClass('d-none');
+            $('#nombre_calificador').next(".select2-container").show();
+            $('#nombre_calificador').prop('required', true);
+        }
+    });*/
+    
 });
 
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/

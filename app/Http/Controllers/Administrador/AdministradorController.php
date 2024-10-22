@@ -76,6 +76,9 @@ use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 /* Manejo de archivos */
 use ZipArchive;
 
+use App\Models\sigmel_informacion_comunicado_eventos;
+use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
+
 class AdministradorController extends Controller
 {
     
@@ -5692,6 +5695,41 @@ class AdministradorController extends Controller
 
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($id_evento, 0));         
         return response()->json($arraylistado_documentos);
+    }
+
+    /**
+     * Elimina un comunicado en especifico
+     */
+    public function eliminar_comunicado(Request $request){
+        $request->validate([
+            'id_servicio' => 'required|int',
+            //'id_proceso' => 'required|int',
+            'id_asignacion' => 'required|int',
+            'id_evento' => 'required|string',
+            'id_comunicado' => 'required|int'
+        ]);
+
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
+            ['Id_Comunicado',$request->id_comunicado],
+            ['Id_Asignacion',$request->id_asignacion]
+        ])->delete();
+
+        $comite_repetido = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento',$request->id_evento],
+            ['Id_Asignacion',$request->id_asignacion]
+        ])->count();
+
+        if($comite_repetido > 1){
+            sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$request->id_evento],
+                ['Id_Asignacion',$request->id_asignacion]
+            ])->latest('Id_com_inter')->limit(1)->delete();
+        }
+
+        return 'ok';
+
     }
 
     

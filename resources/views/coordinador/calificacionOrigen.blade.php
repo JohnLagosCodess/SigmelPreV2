@@ -1354,6 +1354,7 @@
 @include('//.coordinador.modalCorrespondencia')
 @include('//.modals.confirmacionAccion')
 @include('//.modals.historialServicios')
+@include('//.modals.alertaRadicado')
 @stop
 @section('js')
 
