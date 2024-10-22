@@ -74,6 +74,8 @@
         .fuente_todo_texto{
             font-family: sans-serif; 
             font-size: 12px;
+        }
+        .paddingTexto{
             margin: 0;
             padding: 0;
         }
@@ -179,16 +181,16 @@
             <tbody>
                 <tr>
                     <td style="width:100%; display:table; justify-content: space-between;">
-                        <p class="fuente_todo_texto derecha"><span class="negrita">{{$ciudad}} {{$fecha}}</span></p>
+                        <p class="fuente_todo_texto paddingTexto derecha"><span class="negrita">{{$ciudad}} {{$fecha}}</span></p>
                         <div>
-                            <div class="fuente_todo_texto">
+                            <div class="fuente_todo_texto paddingTexto">
                                 <span class="negrita">Señores:</span><br>
                                 {{$nombre_destinatario_principal}}
                             </div>
-                            <div class="fuente_todo_texto">{{$email_destinatario_principal}}</div>
-                            <div class="fuente_todo_texto">{{$direccion_destinatario_principal}}</div>
-                            <div class="fuente_todo_texto">{{$telefono_destinatario_principal}}</div>
-                            <div class="fuente_todo_texto">{{$ciudad_destinatario_principal}}</div>
+                            <div class="fuente_todo_texto paddingTexto">{{$email_destinatario_principal}}</div>
+                            <div class="fuente_todo_texto paddingTexto">{{$direccion_destinatario_principal}}</div>
+                            <div class="fuente_todo_texto paddingTexto">{{$telefono_destinatario_principal}}</div>
+                            <div class="fuente_todo_texto paddingTexto">{{$ciudad_destinatario_principal}}</div>
                         </div>
                         
                     </td>
@@ -325,7 +327,7 @@
                 @endif
             </table>
         </section>
-
+        <br>
         <div class="cuadro fuente_cuadro_inferior" style="margin: 0 auto">
             <span class="fuente_cuadro_inferior"><span class="negrita">Nro. Radicado : <br>{{$nro_radicado}}</span></span><br>
             <span class="fuente_cuadro_inferior"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>

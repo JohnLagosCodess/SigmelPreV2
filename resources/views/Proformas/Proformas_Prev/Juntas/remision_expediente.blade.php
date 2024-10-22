@@ -58,7 +58,7 @@
             color:black; 
             background-color: white; 
             transform: rotate(0deg); 
-            top:300px;
+            top:700px;
         }
         .logo_footer{
             width: auto;
@@ -81,6 +81,10 @@
             font-family: sans-serif; 
             font-size: 12px;
         }
+        .paddingTexto{
+            margin: 0;
+            padding: 0;
+        }
         .tabla1{
             width: 80%;
             margin-left: -3.5px;
@@ -99,10 +103,16 @@
             margin-bottom: 0.5cm;
         }
         .cuadro{
-            border: 3px solid black;
-            padding-left: 6px;
-            width: 5cm;
-            height: 2cm;
+            border: 2px solid black;
+            width: 4cm;
+            padding: 1px;
+            height: auto;
+        }     
+        .fuente_cuadro_inferior{
+            font-family: sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 0;
         }
 
         .tabla_cuerpo_remision_expediente {
@@ -195,17 +205,10 @@
             <tbody>
                 <tr>
                     <td style="width: 100%;">
-                        <span class="fuente_todo_texto"><span class="negrita">Señores: <br>{{$nombre_junta}}</span></span><br>
-                        <span class="fuente_todo_texto">Dirección: {{$direccion_junta}}</span><br>
-                        <span class="fuente_todo_texto">Teléfono: {{$telefono_junta}}</span><br>
-                        <span class="fuente_todo_texto">{{$ciudad_junta}} - {{$departamento_junta}}</span>
-                    </td>
-                    <td>
-                        <div class="cuadro">
-                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado: <br> {{$nro_radicado}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">{{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
-                        </div>
+                        <span class="fuente_todo_texto paddingTexto"><span class="negrita">Señores: <br>{{$nombre_junta}}</span></span><br>
+                        <span class="fuente_todo_texto paddingTexto">Dirección: {{$direccion_junta}}</span><br>
+                        <span class="fuente_todo_texto paddingTexto">Teléfono: {{$telefono_junta}}</span><br>
+                        <span class="fuente_todo_texto paddingTexto">{{$ciudad_junta}} - {{$departamento_junta}}</span>
                     </td>
                 </tr>
             </tbody>
@@ -217,7 +220,9 @@
                     <td>
                         <span class="fuente_todo_texto"><span class="negrita">Asunto: <?php echo $asunto;?></span></span>
                         <br>
-                        <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}} {{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}} {{$nombre_afiliado}}</span></span>
+                        <span class="fuente_todo_texto" style="display: inline-block; margin-left: 50px;">
+                            <span class="negrita">Siniestro: {{$N_siniestro}} {{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}} {{$nombre_afiliado}}</span>
+                        </span>
                     </td>
                 </tr>
             </tbody>
@@ -289,15 +294,14 @@
         </section>
         <br>
         <section class="fuente_todo_texto">
-            <span class="negrita">Elboró:</span> {{$nombre_usuario}}
             <table style="text-align: justify; width:100%; margin-left: -3px;">
                 @if (count($Agregar_copia) == 0)
                     <tr>
-                        <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
+                        <td class="copias"><span class="negrita ">Copia: </span>No se registran copias</td>                                                                                
                     </tr>
                 @else
                     <tr>
-                        <td class="justificado"><span class="negrita">Copia:</span></td>                            
+                        <td class="justificado copias"><span class="negrita">Copia:</span></td>                            
                     </tr>
                     <?php 
                         $Afiliado = 'Afiliado';
@@ -381,6 +385,12 @@
                 @endif
             </table>
         </section>
+        <br>
+        <div class="cuadro fuente_cuadro_inferior" style="margin: 0 auto">
+            <span class="fuente_cuadro_inferior"><span class="negrita">Nro. Radicado: <br> {{$nro_radicado}}</span></span><br>
+            <span class="fuente_cuadro_inferior"><span class="negrita">{{$tipo_doc_afiliado}} {{$num_identificacion_afiliado}}</span></span><br>
+            <span class="fuente_cuadro_inferior"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
+        </div>
     </div>
     <script type="text/php">
         if ( isset($pdf) ) {

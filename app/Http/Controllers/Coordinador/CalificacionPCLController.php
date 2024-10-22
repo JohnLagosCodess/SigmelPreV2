@@ -148,6 +148,14 @@ class CalificacionPCLController extends Controller
 
        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento, $Id_servicio));
 
+       // cantidad de documentos cargados
+
+       $cantidad_documentos_cargados = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
+       ->where([
+           ['ID_evento', $newIdEvento],
+           ['Id_servicio', $Id_servicio]
+       ])->get();
+
         $arraycampa_documento_solicitado = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->where([
             ['ID_evento', $newIdEvento],
@@ -171,7 +179,7 @@ class CalificacionPCLController extends Controller
         ->get();        
         
         return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 
-        'arraylistado_documentos', 'dato_validacion_no_aporta_docs','arraylistado_documentos','SubModulo','consecutivo','arraycampa_documento_solicitado', 
+        'arraylistado_documentos', 'cantidad_documentos_cargados', 'dato_validacion_no_aporta_docs', 'SubModulo','consecutivo','arraycampa_documento_solicitado', 
         'info_comite_inter', 'Id_servicio', 'info_accion_eventos', 'enviar_notificaciones','N_siniestro_evento'));
     }
 
@@ -3366,6 +3374,17 @@ class CalificacionPCLController extends Controller
             } else {
                 $footer = null;
             } 
+
+            //Trae Documentos Solicitados
+            $listado_documentos_solicitados = $this->globalService->retornarListadoDocumentos($ID_evento,$Id_proceso,$Id_Asignacion);
+
+            $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
+            $string_documentos_solicitados = "<ul>";
+
+            for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
+                $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+            }
+            $string_documentos_solicitados .= "</ul>";
             
             // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
             // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
@@ -3413,6 +3432,7 @@ class CalificacionPCLController extends Controller
                 'Agregar_copia' => $Agregar_copias,
                 'footer' => $footer,
                 'N_siniestro' => $request->n_siniestro_proforma_editar,
+                'Documentos_solicitados' => $string_documentos_solicitados
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,
@@ -3935,7 +3955,17 @@ class CalificacionPCLController extends Controller
             ->select('Email')
             ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
             ->get();
+            
+            //Trae Documentos Solicitados
+            $listado_documentos_solicitados = $this->globalService->retornarListadoDocumentos($ID_evento,$Id_proceso,$Id_Asignacion);
 
+            $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
+            $string_documentos_solicitados = "<ul>";
+
+            for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
+                $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+            }
+            $string_documentos_solicitados .= "</ul>";
             
             $Agregar_copias = [];
             if (isset($copia_afiliado)) {
@@ -4125,6 +4155,7 @@ class CalificacionPCLController extends Controller
                 'Anexos' => $Anexos,
                 'Agregar_copia' => $Agregar_copias,
                 'footer' => $footer,
+                'Documentos_solicitados' => $string_documentos_solicitados,
                 'N_siniestro' => $request->n_siniestro_proforma_editar,
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
@@ -4132,7 +4163,6 @@ class CalificacionPCLController extends Controller
                 // 'footer_dato_4' => $footer_dato_4,
                 // 'footer_dato_5' => $footer_dato_5,
             ];
-
             // Creación y guardado del pdf
             $pdf = app('dompdf.wrapper');
             $pdf->loadView('/Proformas/Proformas_Prev/PCL/solicitud_documentos_revpen', $data);
@@ -5134,7 +5164,7 @@ class CalificacionPCLController extends Controller
             ['Id_Asignacion',$Id_asignacion_calitec],
             ['Id_proceso',$Id_proceso_cali],
             ['Estado', 'Activo']
-        ])->orderBy('F_examen_interconsulta','DESC')
+        ])->orderBy('F_examen_interconsulta','ASC')
         ->get();
 
         $array_datos_diagnostico_motcalifi =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_diagnosticos_eventos as side')
@@ -8084,6 +8114,8 @@ class CalificacionPCLController extends Controller
             $porcentaje_pcl = $request->porcentaje_pcl;
             $rango_pcl = $request->rango_pcl;
             $monto_inde = $request->monto_inde;
+            $sumas_combinada = $request->sumas_combinada;
+            $Totales_Deficiencia50 = $request->Totales_Deficiencia50;
         } else {
             
             $Decreto_pericial = $request->Decreto_pericial;
@@ -8454,7 +8486,9 @@ class CalificacionPCLController extends Controller
             
         } elseif ($bandera_dictamen_pericial == 'bandera_Pcl_rango_monto'){
 
-            $datos_dictamenPericial =[                
+            $datos_dictamenPericial =[  
+                'Suma_combinada' => $sumas_combinada,
+                'Total_Deficiencia50' => $Totales_Deficiencia50,
                 'Porcentaje_pcl' => $porcentaje_pcl,
                 'Rango_pcl' => $rango_pcl,
                 'Monto_indemnizacion' => $monto_inde,                

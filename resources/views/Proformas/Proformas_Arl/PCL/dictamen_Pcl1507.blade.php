@@ -207,10 +207,10 @@
 </head>
 <body>
     <?php
-        $Fecha_dictamenF = date("d-m-Y", strtotime($Fecha_dictamen));
-        $F_nacimiento_per_calF = date("d-m-Y", strtotime($F_nacimiento_per_cal));
-        $F_estructuracion_dpF = date("d-m-Y", strtotime($F_estructuracion_dp));
-        $F_evento_dpF = date("d-m-Y", strtotime($F_evento_dp));
+        $Fecha_dictamenF = date("d/m/Y", strtotime($Fecha_dictamen));
+        $F_nacimiento_per_calF = date("d/m/Y", strtotime($F_nacimiento_per_cal));
+        $F_estructuracion_dpF = date("d/m/Y", strtotime($F_estructuracion_dp));
+        $F_evento_dpF = date("d/m/Y", strtotime($F_evento_dp));
     ?>
     <div id="header">
         <table class="tabla_header">
@@ -334,7 +334,7 @@
                 <td colspan="4" class="titulo_labels">Fecha nacimiento:</td>
                 <td colspan="5" class="dato_dinamico">{{$F_nacimiento_per_calF}}</td>
                 <td colspan="3" class="titulo_labels">Edad:</td>
-                <td colspan="5" class="dato_dinamico">{{$Edad_per_cal}}</td>
+                <td colspan="5" class="dato_dinamico">{{$Edad_per_cal}} años</td>
             </tr>
             <tr>
                 <td colspan="2" class="titulo_labels">Escolaridad:</td>

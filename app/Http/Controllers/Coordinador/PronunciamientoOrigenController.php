@@ -1568,7 +1568,7 @@ class PronunciamientoOrigenController extends Controller
 
             $table->addRow();
 
-            $cell = $table->addCell(10000);
+            $cell = $table->addCell(7000);
 
             $textRun1 = $cell->addTextRun(array('alignment'=>'left'));
             $textRun1->addText('Señores: ',array('bold' => true));
@@ -1583,7 +1583,7 @@ class PronunciamientoOrigenController extends Controller
             $textRun1->addText($telefono_destinatario);
             $textRun1->addTextBreak();
             if($ciudad_destinatario !== 'Bogota D.C.'){
-                $textRun1->addText($departamento_destinatario.' - '.$ciudad_destinatario);
+                $textRun1->addText($ciudad_destinatario.' - '.$departamento_destinatario);
             }else{
                 $textRun1->addText($ciudad_destinatario);
             }
@@ -1609,10 +1609,12 @@ class PronunciamientoOrigenController extends Controller
             $table->addRow();
 
 
-            $cell1 = $table->addCell(8000);
+            $cell1 = $table->addCell(2000);
+            $cell2 = $table->addCell(8000);
 
-            $asuntoyafiliado = $cell1->addTextRun(array('alignment'=>'left'));
-            $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
+            $asuntotext = $cell1->addTextRun(array('alignment'=>'left'));
+            $asuntotext->addText('Asunto: ', array('bold' => true));
+            $asuntoyafiliado = $cell2->addTextRun(array('alignment'=>'both'));
             $asuntoyafiliado->addText($asunto, array('bold' => true));
             $asuntoyafiliado->addTextBreak();
             $asuntoyafiliado->addText('PACIENTE: ', array('bold' => true));

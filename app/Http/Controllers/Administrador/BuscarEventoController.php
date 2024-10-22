@@ -2837,7 +2837,7 @@ class BuscarEventoController extends Controller
                     ->where([
                         ['ID_evento', $evento],
                         ['Id_Asignacion', $Id_Asignacion_origen],
-                        ['Estado', '=', 'Activo']
+                        //['Estado', '=', 'Activo']
                     ])
                     ->get()
                         ->map(function ($item) use ($nombre_usuario, $date, $evento, $nuevo_id_asignacion, $proceso) {

@@ -228,6 +228,9 @@
                     </table>
                 </div>
             </div>
+            <div class="col-12">
+                <span>Mostrando {{count($cantidad_documentos_cargados)}} documentos cargados de un total de {{count($arraylistado_documentos)}} documentos.</span>
+            </div>
             <x-slot name="footerSlot">
                 <div class="col-12 d-flex">
                     <div class="col-4">

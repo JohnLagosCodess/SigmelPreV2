@@ -1,5 +1,5 @@
 @extends('adminlte::page')
-@section('title', 'Pronunciamiento Oirgen')
+@section('title', 'Pronunciamiento Origen')
 
 @section('css')
     <link rel="stylesheet" type="text/css" href="/plugins/summernote/summernote.min.css">

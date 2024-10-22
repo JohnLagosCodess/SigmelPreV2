@@ -9,16 +9,16 @@
         @page { margin: 2.5cm 1.3cm 2.5cm 1.3cm; }        
         #header {
             position: fixed; 
-            top: -2.2cm;
+            top: -2.3cm;
             left: 0cm;
             width: 100%;
             text-align: center; 
         }
 
         .codigo_qr{
-            position: absolute;
+            /* position: absolute;
             top: 5px; 
-            left: 5px; 
+            left: 5px;  */
             max-width: 90px; 
             max-height: 70px;             
         }
@@ -33,11 +33,11 @@
         }
 
         .logo_header{
-            position: absolute;
-            max-width: 40%;
+            /* position: absolute; */
+            max-width: 100%;
             height: auto;
-            left: 547px;
-            max-height: 75px; 
+            /* left: 547px; */
+            max-height: 75px;
         } 
         
         .sinborder{
@@ -251,32 +251,32 @@
             $Fecha_dictamenF = '';
             $Fecha_Firma = '';
         } else {            
-            $Fecha_dictamenF = date("d-m-Y", strtotime($Fecha_dictamen));
+            $Fecha_dictamenF = date("d/m/Y", strtotime($Fecha_dictamen));
             $Fecha_Firma = date("d/m/Y", strtotime($Fecha_dictamen));
         } 
-        $F_nacimiento_per_calF = date("d-m-Y", strtotime($F_nacimiento_per_cal));
-        $F_estructuracion_dpF = date("d-m-Y", strtotime($F_estructuracion_dp));
+        $F_nacimiento_per_calF = date("d/m/Y", strtotime($F_nacimiento_per_cal));
+        $F_estructuracion_dpF = date("d/m/Y", strtotime($F_estructuracion_dp));
         if ($F_evento_dp == '0000-00-00' || $F_evento_dp == '') {
             $F_evento_dpF = '';
         } else {
-            $F_evento_dpF = date("d-m-Y", strtotime($F_evento_dp));            
+            $F_evento_dpF = date("d/m/Y", strtotime($F_evento_dp));            
         }
     ?>
     <div id="header">
         <table class="tabla_header">
             <tbody>
                 <tr>
-                    <td>
+                    <td style="width:25%; text-align: left;">
                         <img src="data:image/png;base64,{{ base64_encode($codigoQR) }}" class="codigo_qr" alt="Código QR">
                     </td>
-                    <td>
+                    <td style="width:50%; text-align: center;">
                         <p class="titulo_header">
                             FORMULARIO DE DICTAMEN PARA LA CALIFICACIÓN DE LA PÉRDIDA 
                             DE CAPACIDAD LABORAL Y DETERMINACIÓN DE 
                             LA INVALIDEZ DECRETO 917 DE 1999
                         </p> 
                     </td>
-                    <td>
+                    <td style="width:25%; text-align: right;">
                         <?php if($logo_header == "Sin logo"): ?>
                             <p>No logo</p>
                         <?php else: ?>
@@ -368,7 +368,7 @@
                 <td colspan="4" class="titulo_labels">Fecha nacimiento:</td>
                 <td colspan="5" class="dato_dinamico">{{$F_nacimiento_per_calF}}</td>
                 <td colspan="3" class="titulo_labels">Edad:</td>
-                <td colspan="5" class="dato_dinamico">{{$Edad_per_cal}}</td>
+                <td colspan="5" class="dato_dinamico">{{$Edad_per_cal}} años</td>
             </tr>
             <tr>
                 <td colspan="2" class="titulo_labels">Escolaridad:</td>

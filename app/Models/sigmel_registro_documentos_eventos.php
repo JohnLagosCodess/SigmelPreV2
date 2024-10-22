@@ -20,8 +20,10 @@ class sigmel_registro_documentos_eventos extends Model
     'Formato_documento',
     'Id_servicio',
     'Estado',
+    'Lista_chequeo',    
     'Tipo',
     'F_cargue_documento',
+    'Descripcion',
     'Nombre_usuario',
     'F_registro',
     ];

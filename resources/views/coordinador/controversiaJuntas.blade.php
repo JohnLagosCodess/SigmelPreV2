@@ -1806,7 +1806,11 @@
                                         <div class="col-4"> 
                                             <div class="form-group">
                                                 <label for="radicado">N° Radicado</span></label>
-                                                <input type="text" class="form-control" name="radicado" id="radicado" value="{{$consecutivo}}" disabled> 
+                                                @if(!empty($array_comite_interdisciplinario[0]->N_radicado))
+                                                    <input type="text" class="form-control" name="radicado" id="radicado" value="{{$array_comite_interdisciplinario[0]->N_radicado}}" disabled>                                                
+                                                @else
+                                                    <input type="text" class="form-control" name="radicado" id="radicado" value="{{$consecutivo}}" disabled> 
+                                                @endif
                                                 <input type="hidden" class="form-control" name="radicado_comunicado_manual" id="radicado_comunicado_manual" value="{{$consecutivo}}" disabled>
                                             </div>
                                         </div> 
@@ -1815,10 +1819,13 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <?php if(!empty($arrayinfo_controvertido[0]->JrciNombre)):?>
+                                                @if(!empty($arrayinfo_controvertido[0]->JrciNombre) && count($array_comunicados_correspondencia) == 0)
                                                     <input type="submit" id="GuardarCorrespondencia" name="GuardarCorrespondencia" class="btn btn-info" value="Guardar">                                                
                                                     <input hidden="hidden" type="text" id="bandera_correspondecia_guardar_actualizar" value="Guardar">
-                                                <?php endif ?>
+                                                @elseif(!empty($arrayinfo_controvertido[0]->JrciNombre) && count($array_comunicados_correspondencia) > 0)
+                                                    <input type="submit" id="ActualizarCorrespondencia" name="ActualizarCorrespondencia" class="btn btn-info" value="Actualizar">                                                
+                                                    <input hidden="hidden" type="text" id="bandera_correspondecia_guardar_actualizar" value="Actualizar">
+                                                @endif
                                                 {{-- @if (count($array_comunicados_correspondencia) > 0) --}}
                                                     {{-- <button class="btn btn-info" id="generar_proforma_recurso_reposicion_pcl">Word</button> --}}
                                                 {{-- @endif --}}
@@ -2014,7 +2021,7 @@
                                                                     type="button" style="font-weight: bold;"> --}}
                                                                     @foreach ($array_comite_interdisciplinario as $comite_inter)
                                                                         @if($comite_inter->N_radicado === $comunicados->N_radicado)
-                                                                            @if($comunicados->Correspondencia === '' || $comunicados->Correspondencia === null && $dato_rol !== '7')
+                                                                            @if(($comunicados->Correspondencia === '' || $comunicados->Correspondencia === null) && $dato_rol !== '7')
                                                                                 <a href="javascript:void(0);" id="editar_correspondencia_{{$comunicados->Id_Comunicado}}"
                                                                                     data-id_comite_inter={{$comite_inter->Id_com_inter}}              
                                                                                     data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
