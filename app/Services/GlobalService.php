@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\DB;
 
 class GlobalService
 {
+    /**
+        * Retorna toda la informacion laboral en base al id de evento
+        * 
+        * @param string $Id_evento Id del evento del cual se requiere obtener la información laboral.
+        *
+        * @return Collection Devuelve una colección con la información del comunicado
+    */
     public function retornarInformaciónLaboral($Id_evento){
         // Traer Información laboral
         return DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
@@ -32,7 +39,13 @@ class GlobalService
         ->limit(1)
         ->get();
     }
-
+    /**
+        * Retorna toda la informacion sobre una entidad especifica.
+        * 
+        * @param string $Id_entidad Id de la entidad de la cual se necesita obtener la información.
+        *
+        * @return Collection Devuelve una colección con la información del comunicado
+    */
     public function retornarInformaciónEntidad($Id_entidad){
         //Retornar información de una entidad
         return DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
@@ -42,7 +55,15 @@ class GlobalService
         ->where([['Id_Entidad', $Id_entidad]])
         ->get();
     }
-
+    /**
+        * Retorna toda la informacion del comite interdisciplinario.
+        * 
+        * @param string $Id_evento Id del evento al cual pertenece el modulo / submodulo del cual se desea obtener el comite interdisciplinario del cual se quiere obtener la información
+        *
+        * @param string $Id_asignacion Id de asignación del modulo/submodulo del cual desea obtener el comite interdisciplinario
+        *
+        * @return Collection Devuelve una colección con la información del comunicado
+    */
     public function retornarComiteInterdisciplinario($Id_evento, $Id_asignacion){
         // Comite interdisciplinario
         return  sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
@@ -52,7 +73,15 @@ class GlobalService
         ])
         ->get();
     }
-
+    /**
+        * Retorna toda la informacion de un pronunciamiento origen (Aunque se supone deberia funcionar para PCL también si no hacer un override).
+        * 
+        * @param string $id_evento Id del evento del cual se requiere obtener la información del pronunciamiento.
+        *
+        * @param string $id_asignacion Id de asignación del pronuncimiento del que se requiere la información
+        *
+        * @return Collection Devuelve una colección con la información
+    */
     public function retornarInformacionPronunciamiento($id_evento, $id_asignacion){
         return DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_pronunciamiento_eventos as pr')
         ->select('pr.ID_evento','pr.Id_Asignacion', 'Id_proceso', 'pr.Id_primer_calificador','c.Tipo_Entidad','pr.Id_nombre_calificador','e.Nombre_entidad'
@@ -87,7 +116,13 @@ class GlobalService
             ->where([['Id_Comunicado',$id_comunicado]])
             ->get();
     }
-
+    /**
+        * Retorna toda la informacion de un comunicado.
+        * 
+        * @param string $id_comunicado Id del comunicado del cual se quiere obtener la información
+        *
+        * @return Collection Devuelve una colección con la información del comunicado
+    */
     public function retornarcuentaConAfpConocimiento($id_evento){
         return DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
@@ -95,7 +130,12 @@ class GlobalService
         ->where([['siae.ID_evento', $id_evento]])
         ->get();
     }
-    
+    /**
+        * Genera el consecutivo el cual va a ser usado como identificador de alguno de los posibles destinatarios del modal de correspondencia.
+        * 
+        * @return string | null Devuelve un string (id de destinatario) el cual es armado con 5 caracteres alfanumericos elegidos aleatoriamente + 
+        * el microtimestamp del momento en el que fue recibida la petición
+    */
     public function generacionConsecutivoIdDestinatario(){
         $letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
         $randomString = '';
@@ -106,7 +146,15 @@ class GlobalService
         }
         return $randomString.microtime(true);
     }
-
+    /**
+        * Retorna el numero de siniestro global del evento.
+        * 
+        * @param bool $is_jrci Bandera que indica que el comunicado requiere un id de destinatario para la JRCI.
+        *
+        * @param bool $is_jnci Bandera que indica que el comunicado requiere un id de destinatario para la JNCI.
+        *
+        * @return string | null Devuelve una cadena string con la los Id de destinatarios separados por , y si algo falla devuelve null
+    */
     public function asignacionConsecutivoIdDestinatario($is_jrci = false, $is_jnci = false){
         $id_destinatarios = [];
         //Se establecen los prefijos que va a llevar cada uno de los posibles destinatarios
@@ -154,7 +202,13 @@ class GlobalService
         }
         return null;
     }
-
+    /**
+        * Retorna el Id del servicio en base al id de asignación.
+        * 
+        * @param string Necesario ya que la consulta se hace en base al id de asignación.
+        *
+        * @return int | null Retorna el numero de id de servicio o devuelve null si el id de asignación no existe.
+    */
     public function retornarNumeroDeServicio($id_asignacion){
         return sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')
                 ->where([['Id_Asignacion', $id_asignacion]])
@@ -171,7 +225,13 @@ class GlobalService
         ])
         ->get();
     }
-
+    /**
+        * Retorna el numero de siniestro global del evento.
+        * 
+        * @param string $id_evento Necesario para saber a cual evento hace referencia.
+        *
+        * @return Collection | null Devuelve una colección con la información y si no devuelve null
+    */
     public function retornarNumeroSiniestro($id_evento){
         //Traer el N_siniestro del evento
         return sigmel_informacion_eventos::on('sigmel_gestiones')
@@ -374,4 +434,20 @@ class GlobalService
         }
         return null;
     }
+    /**
+        * Retorna la modalidad de calificación de PCL (solo PCL -> Calificación Tecnica, Recalificación, Revisión Pensión).
+        * 
+        * @param string $id_evento Necesario para determinar con exactitud el evento al cual hace referencia, ya que una persona puede tener varios eventos.
+        *
+        * @param string $id_asignacion Necesario para saber a que asignacion esta haciendo referencia.
+        *
+        * @return Collection | null Devuelve una colección con la información y si no devuelve null
+    */
+    public function retornarModalidadCalificacionPCL($id_evento, $id_asignacion){
+        return DB::table('sigmel_gestiones.sigmel_informacion_decreto_eventos as side')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Modalidad_calificacion')
+        ->where([['side.ID_Evento',$id_evento], ['side.Id_Asignacion', $id_asignacion]])
+        ->select('side.Modalidad_calificacion', 'slp.Nombre_parametro as Nombre_modalidad_calificacion')
+        ->get();
+    }    
 }

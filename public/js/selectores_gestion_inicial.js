@@ -1697,7 +1697,7 @@ $(document).ready(function(){
                 $(`#fileName_${idDoc}`).text(file.fileName);
                 resumable.opts.query.EventoID = idobtenido;
                 resumable.opts.query.Id_Documento = idDoc;
-                resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val();
+                resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val().replace(/ /g, "_");
                 resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
             });
         }

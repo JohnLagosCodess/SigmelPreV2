@@ -650,7 +650,7 @@ class CalificacionPCLController extends Controller
                 'ID_evento' => $request->newId_evento,
                 'Id_Asignacion' => $request->newId_asignacion,
                 'Id_proceso' => $request->Id_proceso,
-                'Modalidad_calificacion' => $request->modalidad_calificacion,
+                // 'Modalidad_calificacion' => $request->modalidad_calificacion,
                 'fuente_informacion' => $request->fuente_informacion,
                 'F_accion' => $date_time,
                 'Accion' => $request->accion,
@@ -669,7 +669,7 @@ class CalificacionPCLController extends Controller
                 'Aud_ID_evento' => $request->newId_evento,
                 'Aud_Id_Asignacion' => $request->newId_asignacion,
                 'Aud_Id_proceso' => $request->Id_proceso,
-                'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
+                // 'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
                 'Aud_fuente_informacion' => $request->fuente_informacion,
                 'Aud_F_accion' => $date_time,
                 'Aud_Accion' => $request->accion,
@@ -1210,7 +1210,7 @@ class CalificacionPCLController extends Controller
                 'ID_evento' => $request->newId_evento,
                 'Id_Asignacion' => $request->newId_asignacion,
                 'Id_proceso' => $request->Id_proceso,
-                'Modalidad_calificacion' => $request->modalidad_calificacion,
+                // 'Modalidad_calificacion' => $request->modalidad_calificacion,
                 'fuente_informacion' => $request->fuente_informacion,
                 'F_accion' => $date_time,
                 'Accion' => $request->accion,
@@ -1229,7 +1229,7 @@ class CalificacionPCLController extends Controller
                 'Aud_ID_evento' => $request->newId_evento,
                 'Aud_Id_Asignacion' => $request->newId_asignacion,
                 'Aud_Id_proceso' => $request->Id_proceso,
-                'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
+                // 'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
                 'Aud_fuente_informacion' => $request->fuente_informacion,
                 'Aud_F_accion' => $date_time,
                 'Aud_Accion' => $request->accion,
@@ -5651,16 +5651,16 @@ class CalificacionPCLController extends Controller
         ->get();
 
         //Traer el N_siniestro del evento
-        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
-        ->select('N_siniestro')
-        ->where([['ID_evento',$Id_evento_calitec]])
-        ->get();
+        $N_siniestro_evento = $this->globalService->retornarNumeroSiniestro($Id_evento_calitec);
+
+        //Traer la modalidad de calificación
+        $Modalidad_calificacion = $this->globalService->retornarModalidadCalificacionPCL($Id_evento_calitec,$Id_asignacion_calitec);
 
         return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 
         'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo',
         'array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 
         'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 
-        'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado'));
+        'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado', 'Modalidad_calificacion'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
@@ -5948,7 +5948,8 @@ class CalificacionPCLController extends Controller
         $id_Proceso_decreto = $request->Id_Proceso_decreto;
         $id_Asignacion_decreto = $request->Id_Asignacion_decreto;
         $origen_firme = $request->origen_firme;
-        $origen_cobertura = $request->origen_cobertura;        
+        $origen_cobertura = $request->origen_cobertura;
+        $modalidad_calificacion = $request->modalidad_calificacion;
 
         if ($origen_firme == 49 && $origen_cobertura == 51 || $origen_firme == 48 && $origen_cobertura == 51 || $origen_firme == 49 && $origen_cobertura == 50) {
             $banderaGuardarNoDecreto = $request->banderaGuardarNoDecreto;
@@ -5963,6 +5964,7 @@ class CalificacionPCLController extends Controller
                         'Cobertura' => $origen_cobertura,
                         'Decreto_calificacion' => $decreto_califi,   
                         'Estado_decreto' =>  'Abierto',
+                        'Modalidad_calificacion' => $modalidad_calificacion,
                         'Nombre_usuario' => $usuario,
                         'F_registro' => $date,
                 ];
@@ -5984,7 +5986,8 @@ class CalificacionPCLController extends Controller
                     'Id_Asignacion' => $id_Asignacion_decreto,
                     'Origen_firme' => $origen_firme,
                     'Cobertura' => $origen_cobertura,
-                    'Decreto_calificacion' => $decreto_califi,                    
+                    'Decreto_calificacion' => $decreto_califi,
+                    'Modalidad_calificacion' => $modalidad_calificacion,
                     'Nombre_usuario' => $usuario,
                     'F_registro' => $date,
                 ];
@@ -6033,6 +6036,7 @@ class CalificacionPCLController extends Controller
                     'Otros_relacion_doc' => $descripcion_otros,
                     'Descripcion_enfermedad_actual' => $descripcion_enfermedad,
                     'Estado_decreto' =>  'Abierto',
+                    'Modalidad_calificacion' => $modalidad_calificacion,
                     'Nombre_usuario' => $usuario,
                     'F_registro' => $date,
                 ];
@@ -6095,6 +6099,7 @@ class CalificacionPCLController extends Controller
                     'Relacion_documentos' => $total_relacion_documentos,
                     'Otros_relacion_doc' => $descripcion_otros,
                     'Descripcion_enfermedad_actual' => $descripcion_enfermedad,
+                    'Modalidad_calificacion' => $modalidad_calificacion,
                     'Nombre_usuario' => $usuario,
                     'F_registro' => $date,
                 ];
@@ -8882,7 +8887,7 @@ class CalificacionPCLController extends Controller
             $Ciudad_per_cal = $array_datos_info_afiliado[0]->Nombre_municipio;
             $Email_per_cal = $array_datos_info_afiliado[0]->Email;
             $Nombre_ben = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
-            $Tipo_iden_ben = $array_datos_info_afiliado[0]->Tipo_documento_benefi;            
+            $Tipo_iden_ben = $array_datos_info_afiliado[0]->T_documento;            
             $Documento_iden_ben = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
             $Telefono_iden_ben = '';
             $Ciudad_iden_ben = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
@@ -10768,7 +10773,7 @@ class CalificacionPCLController extends Controller
             $Ciudad_per_cal = $array_datos_info_afiliado[0]->Nombre_municipio;
             $Email_per_cal = $array_datos_info_afiliado[0]->Email;
             $Nombre_ben = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
-            $Tipo_iden_ben = $array_datos_info_afiliado[0]->Tipo_documento_benefi;            
+            $Tipo_iden_ben = $array_datos_info_afiliado[0]->T_documento;            
             $Documento_iden_ben = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
             $Telefono_iden_ben = '';
             $Ciudad_iden_ben = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;

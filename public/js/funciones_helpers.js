@@ -1023,34 +1023,39 @@ function retornarIdDestinatario(ids_destinatario, destinatario){
         lo haga desde la de comunicados.
     */
     function consultarRegistroPorIdDestinatario(id_destinatario){
-        return new Promise((resolve, reject) => {
-            let datos = {
-                '_token': $('input[name=_token]').val(),
-                'id_destinatario': id_destinatario
-            };
-    
-            $.ajax({
-                url: '/getInfoCorrespByIdDest',
-                type: 'POST',
-                data: datos,
-                beforeSend: function () {
-                    showLoading();
-                },
-                success: function (response) {
-                    if (response.length > 0) {
-                        resolve(response[0]['Tipo_correspondencia']);
-                    } else {
-                        resolve(null);
+        if(id_destinatario){
+            return new Promise((resolve, reject) => {
+                let datos = {
+                    '_token': $('input[name=_token]').val(),
+                    'id_destinatario': id_destinatario
+                };
+        
+                $.ajax({
+                    url: '/getInfoCorrespByIdDest',
+                    type: 'POST',
+                    data: datos,
+                    beforeSend: function () {
+                        showLoading();
+                    },
+                    success: function (response) {
+                        if (response.length > 0) {
+                            resolve(response[0]['Tipo_correspondencia']);
+                        } else {
+                            resolve(null);
+                        }
+                    },
+                    error: function (error) {
+                        reject(error);
+                    },
+                    complete: function () {
+                        hideLoading();
                     }
-                },
-                error: function (error) {
-                    reject(error);
-                },
-                complete: function () {
-                    hideLoading();
-                }
+                });
             });
-        });
+        }
+        else{
+            return null;
+        }
 }
 
 /**

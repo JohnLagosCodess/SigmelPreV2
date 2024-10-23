@@ -47,6 +47,7 @@ return new class extends Migration
             $table->text('N_radicado')->nullable();  
             $table->text('N_siniestro')->nullable();
             $table->text('Estado_decreto')->nullable();
+            $table->string('Modalidad_calificacion',25)->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

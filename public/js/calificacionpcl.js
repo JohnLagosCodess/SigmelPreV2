@@ -603,7 +603,7 @@ $(document).ready(function(){
                 $(`#fileName_${idDoc}`).text(file.fileName);
                 resumable.opts.query.EventoID = idobtenido;
                 resumable.opts.query.Id_Documento = idDoc;
-                resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val();
+                resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val().replace(/ /g, "_");
                 resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
             });
         }
@@ -830,7 +830,7 @@ $(document).ready(function(){
         formData.append('newId_asignacion', $('#newId_asignacion').val());
         formData.append('Id_proceso', $('#Id_proceso').val());
         formData.append('Id_servicio', $("#Id_servicio").val());
-        formData.append('modalidad_calificacion', $('#modalidad_calificacion').val());   
+        formData.append('modalidad_calificacion', $('#modalidad_calificacion').val());
         formData.append('fecha_devolucion', $('#fecha_devolucion').val());   
         formData.append('fuente_informacion', $('#fuente_informacion').val());
         formData.append('nueva_fecha_radicacion', $('#nueva_fecha_radicacion').val());
@@ -1669,7 +1669,7 @@ $(document).ready(function(){
         //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
         let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
         //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
-        copias = copias.split(',').map(copia => copia.trim());
+        copias = copias ? copias.split(',').map(copia => copia.trim()) : copias;
         //Información superior del modal 
         $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
         $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
@@ -1860,7 +1860,7 @@ $(document).ready(function(){
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
+                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && Array.isArray(copias) && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
