@@ -8380,7 +8380,7 @@
     });
 
 </script>
-<script type="text/javascript" src="/js/funciones_helpers.js"></script>
+<script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
 <script type="text/javascript" src="/js/calificacionpcl_tecnica.js"></script>
 {{-- JS: Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores --}}
 <script type="text/javascript" src="/js/datatable_deficiencias_alteraciones_sistemas.js"></script>

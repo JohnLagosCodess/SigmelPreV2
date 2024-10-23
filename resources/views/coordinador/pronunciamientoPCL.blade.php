@@ -986,7 +986,7 @@
             }
         };
     </script>
-    <script type="text/javascript" src="/js/pronunciamientopcl.js"></script>
-    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script type="text/javascript" src="/js/pronunciamientopcl.js?v=1.0.0"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

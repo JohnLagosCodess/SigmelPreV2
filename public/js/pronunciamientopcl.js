@@ -1144,6 +1144,7 @@ $(document).ready(function(){
         formData.append('Id_Asignacion_Pronuncia', $('#Asignacion_Pronuncia').val());
         formData.append('primer_calificador', $('#primer_calificador').val());
         formData.append('nombre_calificador', $('#nombre_calificador').val());
+        formData.append('otro_calificador', $('#otro_calificador').val());
         formData.append('nit_calificador', $('#nit_calificador').val());
         formData.append('nit_calificador', $('#nit_calificador').val());
         formData.append('dir_calificador', $('#dir_calificador').val());
@@ -1917,14 +1918,15 @@ $(document).ready(function(){
     }, 500);
 
     /* Si se selecciona la opción Otro Cual Inserta un campo*/
-    /*$(document).on('change', "#primer_calificador", function() {
+    $(document).on('change', "#primer_calificador", function() {
         console.log($(this).find('option:selected').text());
     
         if ($(this).find('option:selected').text() === 'Otro/¿Cual?') {
             $('#nombre_calificador').addClass('d-none');
             $('#nombre_calificador').next(".select2-container").hide();
             $('#nombre_calificador').prop('required', false);
-    
+            $("#nit_calificador, #dir_calificador, #mail_calificador, #telefono_calificador, #depar_calificador, #ciudad_calificador").removeAttr('readonly');
+
             if ($('#otro_calificador').length === 0) {
                 let input = '<input type="text" class="form-control" name="otro_calificador" id="otro_calificador" placeholder="Escriba el nombre del calificador." required>';
                 $('#nombre_calificador').after(input);
@@ -1937,7 +1939,7 @@ $(document).ready(function(){
             $('#nombre_calificador').next(".select2-container").show();
             $('#nombre_calificador').prop('required', true);
         }
-    });*/
+    });
     
 });
 

@@ -1515,7 +1515,7 @@
     </script>
     
     <script type="text/javascript" src="/js/calificacionpcl.js"></script>
-    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

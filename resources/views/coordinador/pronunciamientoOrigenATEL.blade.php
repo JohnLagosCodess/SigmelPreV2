@@ -962,6 +962,6 @@
         };
     </script>
     <script type="text/javascript" src="/js/pronunciamientoOrigen.js"></script>
-    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

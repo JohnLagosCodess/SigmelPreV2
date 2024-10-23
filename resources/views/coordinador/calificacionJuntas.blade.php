@@ -263,7 +263,7 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="fecha_accion">Fecha de acción <span style="color: red;">(*)</span></label>
-                                                    <input type="text" class="form-control" name="fecha_accion" id="fecha_accion" value="<?php if(!empty($array_datos_calificacionJuntas[0]->F_accion_realizar)){echo $array_datos_calificacionJuntas[0]->F_accion_realizar; }else{echo now()->format('Y-m-d H:i:s');} ?>" disabled>
+                                                    <input type="text" class="form-control" name="fecha_accion" id="fecha_accion" value="{{now()->format('Y-m-d H:i:s');}}" disabled>
                                                     {{-- @if (!empty($array_datos_calificacionJuntas[0]->F_accion_realizar))
                                                         <input type="date" class="form-control" name="fecha_accion" id="fecha_accion" value="{{$array_datos_calificacionJuntas[0]->F_accion_realizar}}" disabled>
                                                         <input hidden="hidden" type="date" class="form-control" name="f_accion" id="f_accion" value="{{$array_datos_calificacionJuntas[0]->F_accion_realizar}}">
@@ -1972,7 +1972,7 @@
 @section('js')
     <script type="text/javascript" src="/js/calificacionJuntas.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
-    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script>
         //funcion para habilitar el historial de acciones
         function historialDeAcciones() {

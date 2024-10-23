@@ -631,8 +631,7 @@ $(document).ready(function () {
         /**
          * Datos que se incluiran en la modal
          */
-        const ahora = new Date();
-        let f_accion =  ahora.toISOString().slice(0, 16).replace('T', ' ');
+        let f_accion =  $('#fecha_accion').val();
         let accion_ejecutar = $("#accion option:selected").text();
         let estado_facturacion = $("#estado_facturacion").val();
         let profecional_asignado = $("#profesional option:selected").text();

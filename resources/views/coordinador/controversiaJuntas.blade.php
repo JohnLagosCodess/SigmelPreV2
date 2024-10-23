@@ -2094,7 +2094,7 @@
 
 @stop
 @section('js')
-    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script type="text/javascript">
         document.getElementById('botonEnvioVista').addEventListener('click', function(event) {
             event.preventDefault();
