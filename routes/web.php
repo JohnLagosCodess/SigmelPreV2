@@ -801,6 +801,8 @@ Route::post('/ConsecutivoIdEvento', [AdministradorController::class, 'Consecutiv
 Route::post('/eliminarSucursalCliente', [AdministradorController::class, 'eliminarSucursalCliente']);
 // Acción: Eliminar fila dinámica en tabla de ans modal edicion cliente
 Route::post('/eliminarAnsCliente', [AdministradorController::class, 'eliminarAnsCliente']);
+//Acción: Elimiar comunicado
+Route::post('/eliminar_evento', [AdministradorController::class, 'eliminar_comunicado']);
 // Acción: Actualizar información del cliente.
 Route::post('/ActualizarCliente', [AdministradorController::class, 'actualizar_cliente']);
 

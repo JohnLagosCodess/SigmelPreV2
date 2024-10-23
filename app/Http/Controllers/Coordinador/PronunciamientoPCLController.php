@@ -376,6 +376,12 @@ class PronunciamientoPCLController extends Controller
         
         $array_diagnosticos_motivo_calificacion = json_decode($request->datos_finales_diagnosticos_moticalifi);
 
+       /* if(!empty($request->otro_calificador)){
+            sigmel_informacion_entidades::on('sigmel_gestiones')->insert([
+                'IdTipo_entidad' => 6,
+            ]);
+        }*/
+
         // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
         //Valida que no este vacio el CIE10
         if(!empty($array_diagnosticos_motivo_calificacion)){

@@ -1820,13 +1820,13 @@ $(document).ready(function(){
     });
 
     // Dehabilitar los requiered si el checked de pcl no esta esta checked
-    var checkboxcontro_pcl = $('#contro_pcl');
+    /*var checkboxcontro_pcl = $('#contro_pcl');
 
     if (!checkboxcontro_pcl.prop('checked')) {
         $('#manual_de_califi').prop('required', false);
         $('#total_deficiencia').prop('required', false);
         $('#f_estructuracion_contro').prop('required', false);        
-    }   
+    }*/
 
     //Mostrar o Ocultar la seccion de Firmeza o controversia por otra parte interesada del Dictamen Junta Regional de Calificación de Invalidez (JRCI) 
     // si los Pronunciamiento ante Dictamen de JRCI estan checked
@@ -5117,6 +5117,10 @@ $(document).ready(function(){
     }
 
 
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('tabla_comunicados_juntas');
+    }, 500);
 });
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/
 /*Para Diagnosticos Controvertido*/

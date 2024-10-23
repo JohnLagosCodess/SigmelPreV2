@@ -793,7 +793,7 @@
 <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
 <script src="/plugins/toatsr/build/toastr.min.js"></script>
 <script src="/js/selectores_gestion_inicial.js"></script>
-<script src="/js/funciones_helpers.js"></script>
+<script src="/js/funciones_helpers.js?v=1.0.0"></script>
 <script>
     $(document).ready(function(){
         $('#gestion_inicial_nuevo').submit(function(e){

@@ -7736,7 +7736,7 @@
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 1507 --}}
-                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td data-id_comunicado="{{$comunicados['Id_Comunicado'] ?? null}}">{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
                                                                     <td>{{$comunicados['F_comunicado']}}</td>
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
@@ -7833,7 +7833,7 @@
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL Cero --}}
-                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td data-id_comunicado="{{$comunicados['Id_Comunicado'] ?? null}}">{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
                                                                     <td>{{$comunicados['F_comunicado']}}</td>
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
@@ -7930,7 +7930,7 @@
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 917 --}}
-                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td data-id_comunicado="{{$comunicados['Id_Comunicado'] ?? null}}">{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
                                                                     <td>{{$comunicados['F_comunicado']}}</td>  
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td> 
@@ -8027,7 +8027,7 @@
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Documentos cargados manualmente  --}}
-                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td data-id_comunicado="{{$comunicados['Id_Comunicado'] ?? null}}">{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
                                                                     <td>{{$comunicados['F_comunicado']}}</td>  
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
@@ -8392,7 +8392,7 @@
     });
 
 </script>
-<script type="text/javascript" src="/js/funciones_helpers.js"></script>
+<script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
 <script type="text/javascript" src="/js/calificacionpcl_tecnica.js"></script>
 {{-- JS: Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores --}}
 <script type="text/javascript" src="/js/datatable_deficiencias_alteraciones_sistemas.js"></script>

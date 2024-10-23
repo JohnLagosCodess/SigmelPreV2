@@ -3336,7 +3336,11 @@ $(document).ready(function(){
             data: response,
             paging: false,
             order: [[0, 'desc']],
-            "columns": columns,   
+            "columns": columns,
+            createdRow: function(row, data, dataIndex) {
+                //agregamos el id del comunicado dentro del primer td
+                $(row).find('td').eq(0).attr('data-id_comunicado', data.Id_Comunicado);
+            },  
             "language":{                
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ registros",
@@ -7133,6 +7137,10 @@ $(document).ready(function(){
         var expedientes_filas = $(this).data("expediente_fila");
         listado_lista_chequeos.row("."+expedientes_filas).remove().draw();
     });
+    //Validacion duplicado documentos
+    setTimeout(function() {
+        radicados_duplicados('listado_agregar_comunicados');
+    }, 500);
 
 });
 /**

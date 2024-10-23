@@ -1355,7 +1355,11 @@ $(document).ready(function(){
             data: response,
             paging: false,
             order: [[0, 'desc']],
-            "columns": columns,            
+            "columns": columns, 
+            createdRow: function(row, data, dataIndex) {
+                //agregamos el id del comunicado dentro del primer td
+                $(row).find('td').eq(0).attr('data-id_comunicado', data.Id_Comunicado);
+            },           
             "language":{                
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ registros",
@@ -4204,6 +4208,11 @@ $(document).ready(function(){
         $("#Pdf").prop('disabled', false);
 
     }
+    
+    //Validacion radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('listado_agregar_comunicados');
+    }, 500);
     
     // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
     // inhabilita los campos nro anexos, asunto, etiquetas, cuerpo comunicado, firmar

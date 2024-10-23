@@ -4725,6 +4725,10 @@ $(document).ready(function(){
         $("#firmar").prop('disabled', true);
     }
 
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('listado_comunicados_clpcl');
+    }, 500);
 });
 // guardar examenes de interconsulta
 $(document).ready(function(){

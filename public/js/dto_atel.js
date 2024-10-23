@@ -3318,6 +3318,10 @@ $(document).ready(function(){
         }
     }
 
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('listado_comunicados_dto');
+    }, 500);
 });
 
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/

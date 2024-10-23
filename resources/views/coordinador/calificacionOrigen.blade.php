@@ -1354,6 +1354,7 @@
 @include('//.coordinador.modalCorrespondencia')
 @include('//.modals.confirmacionAccion')
 @include('//.modals.historialServicios')
+@include('//.modals.alertaRadicado')
 @stop
 @section('js')
 
@@ -1534,6 +1535,6 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script type="text/javascript" src="/js/calificacionOrigen.js"></script>
-    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
 @stop
