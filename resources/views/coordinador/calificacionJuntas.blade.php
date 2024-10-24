@@ -46,7 +46,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12" id="filaprincipal">
-                        <div id="aumentarColAfiliado" class="d-none"> 
+                        <div id="aumentarColAfiliado"> 
                             <div class="card-info">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
                                     <h5>Información del afiliado</h5>

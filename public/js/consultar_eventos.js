@@ -78,7 +78,7 @@ $(document).ready(function () {
 
                         if(response.cantidad_afiliados > 1){
                             $("#alerta_buscador_msj").empty();
-                            $("#alerta_buscador_msj").append(`se encontraron <strong>${response.cantidad_afiliados}</strong> afiliados relacionados al N° de identificación consultado. Por favor verifique`);
+                            $("#alerta_buscador_msj").append(`Se encontraron <strong>${response.cantidad_afiliados}</strong> afiliados relacionados al N° de identificación consultado. Por favor verifique`);
                             $("#alertaBuscador").show();
 
                             setTimeout(() => {
@@ -331,6 +331,7 @@ $(document).ready(function () {
                 {"data":"consulta_evento"},
                 {"data":"Tipo_documento"},
                 {"data":"Nro_identificacion"},
+                {"data":"Nombre_afiliado"},
                 {"data":"Tipo_afiliado"},
                 { 
                     data: null,

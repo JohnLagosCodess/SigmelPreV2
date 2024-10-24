@@ -734,7 +734,7 @@ $(document).ready(function () {
  * Obtiene el historial de servicio para el evento consultado con base a la identificacion del afiliado.
  */
 function historial_servicios(){
-    let identificacion = $("#identificacion").val();
+    let identificacion = $("#identificacion").val() || $("#nro_identificacion").val();
     if(identificacion == ""){
         return;
     }
@@ -764,7 +764,7 @@ function historial_servicios(){
     }
 
     let afiliado =  $("#nombre_afiliado").val();
-    let tipo_doc = $("#identificacion").data('tipo');
+    let tipo_doc = $("#identificacion").data('tipo') || $("#tipo_documento").text();
     $('#historial_servicios .modal-header h4').append(`${afiliado} - ${tipo_doc} - ${identificacion}`);
 
     let token = $("input[name='_token']").val();

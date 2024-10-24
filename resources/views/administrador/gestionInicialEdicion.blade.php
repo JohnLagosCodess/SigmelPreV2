@@ -109,8 +109,9 @@
                 <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>           
             <?php endif ?>
         </div>
-        <div class="col-3" style="text-align: left !important; margin-left: -55px;">
+        <div class="col-6 d-flex" style="text-align: left !important; margin-left: -55px;">
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalHistorialAcciones" class="btn btn-info" id="cargar_historial_acciones"><i class="fas fa-list"></i> Historial Acciones</a>
+            <button label="Open Modal" data-toggle="modal" data-target="#historial_servicios" class="btn btn-info ml-1"><i class="fas fa-project-diagram mt-1"></i>Historial de servicios</button>
         </div>
     </div>
     {{-- MODAL HISTORIAL DE ACCIONES --}}
@@ -1287,7 +1288,7 @@
                 </x-adminlte-modal>
             </div>
         </div>
-
+        @include('//.modals.historialServicios')
         {{-- MODAL PARA AGREGAR DOCUMENTOS INFORMACION PERICIAL --}}
         <?php $aperturaModal = 'Edicion'; ?>
         {{-- @include('administrador.modalcarguedocumentos') --}}
