@@ -136,19 +136,19 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="fecha_dictamen">Fecha Dictamen</label>
                                             <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" value="<?php if(!empty($array_comite_interdisciplinario[0]->F_visado_comite)){echo $array_comite_interdisciplinario[0]->F_visado_comite;}else{echo now()->format('Y-m-d');}?>" disabled>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="numero_dictamen">N° Dictamen</label>
                                             <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="{{$array_datos_calificacionPclTecnica[0]->Consecutivo_dictamen}}" disabled>                                                                                                                                        
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="motivo_solicitud">Motivo Solicitud<span style="color: red;">(*)</span></label>
                                             <select class="custom-select motivo_solicitud" name="motivo_solicitud" id="motivo_solicitud" style="width: 100%;" required>
@@ -158,6 +158,18 @@
                                                     <option value="">Seleccione una opción</option>
                                                 @endif
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">                                                
+                                            <label for="modalidad_calificacion">Modalidad Calificación<span style="color: red;">(*)</span></label>
+                                            <select class="modalidad_calificacion custom-select" name="modalidad_calificacion" id="modalidad_calificacion" required>
+                                                @if ($Modalidad_calificacion[0]->Modalidad_calificacion)
+                                                    <option value="{{$Modalidad_calificacion[0]->Modalidad_calificacion}}" selected>{{$Modalidad_calificacion[0]->Nombre_modalidad_calificacion}}</option>
+                                                @else
+                                                    <option value="">Seleccione una opción</option>
+                                                @endif
+                                            </select>                                                 
                                         </div>
                                     </div>
                                 </div>

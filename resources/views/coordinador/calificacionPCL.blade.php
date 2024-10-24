@@ -218,7 +218,7 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        {{-- <div class="col-4">
                                             <div class="form-group">                                                
                                                 <label for="modalidad_calificacion">Modalidad Calificación</label>                                                    
                                                 <select class="modalidad_calificacion custom-select" name="modalidad_calificacion" id="modalidad_calificacion">
@@ -229,7 +229,7 @@
                                                     @endif
                                                 </select>                                                 
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="modalidad_calificacion">Documentos adjuntos</label><br>
