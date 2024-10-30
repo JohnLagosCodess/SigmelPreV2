@@ -1395,7 +1395,8 @@ $(document).ready(function () {
         /* for (var pair of formData.entries()) {
             console.log(pair[0]+ ', ' + pair[1]); 
         } */
-
+        formData.append('bandera','consultador_eventos');
+        
         $.ajax({
             url: "/cargarDocumentos",
             type: "post",

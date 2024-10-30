@@ -2482,6 +2482,7 @@ class BuscarEventoController extends Controller
         //Procesamos la informacion del formulario asociado al nuevo servicio
         $this->procesarFormulariosJuntas($request->id_evento, $Id_Asignacion,$request->selector_nuevo_servicio,$request->tupla_proceso_escogido,$request->selector_nuevo_proceso,$request->id_servicio_actual_nuevo_proceso);
         
+        AdministradorController::mover_archivoTEMP($request->id_evento,$Id_Asignacion,$request->selector_nuevo_servicio);
         $mensajes = array(
             "parametro" => 'creo_proceso',
             "retorno_id_evento" => $request->id_evento,
@@ -2880,7 +2881,8 @@ class BuscarEventoController extends Controller
 
                     //Se copian los documentos siempre y cuando no se una controversia y cumpla las reglas.
                     if($servicio['Nombre_servicio'] != 'Controversia PCL'){
-                        $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen);
+                        
+                        $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen,$Id_Asignacion_origen,$nuevo_id_asignacion);
                     }
 
                     Log::channel('seguimiento_juntas')->notice("Se agregaron datos para la junta en PCL: " . json_encode($Controvertido));
@@ -2923,7 +2925,7 @@ class BuscarEventoController extends Controller
                     $Controvertido['Id_Asignacion_Servicio_Anterior'] = $Id_Asignacion_origen;
 
                     //Se copian los documentos siempre y cuando no se una controversia y cumpla las reglas.
-                    $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen);
+                    $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen,$Id_Asignacion_origen,$nuevo_id_asignacion);
 
                     Log::channel('seguimiento_juntas')->notice("Se agregaron datos para la junta en Origen: " . json_encode($Controvertido));
                     Log::channel('seguimiento_juntas')->notice("Se agregaron los diagnosticoss para la junta en Origen: " . json_encode($diagnostico));
@@ -2960,7 +2962,7 @@ class BuscarEventoController extends Controller
      * @param int $servicio Id del nuevo sercio que se esta creando.
      * @param int $servicioOrigen Id del servico origen del cual se esta creando el nuvo proceso.
      */
-    public function copiarLisdatoGeneralDocumentos(string $evento,int $servicio,int $servicioOrigen){
+    public function copiarLisdatoGeneralDocumentos(string $evento,int $servicio,int $servicioOrigen,$Id_Asignacion_origen, $nuevo_id_asignacion){
         $documentos = DB::select('CALL psrvistadocumentos(?,?)', array($evento,$servicioOrigen));
         
         $contador = 0;

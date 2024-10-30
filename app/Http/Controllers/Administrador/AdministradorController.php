@@ -5158,6 +5158,22 @@ class AdministradorController extends Controller
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
         }
 
+        if($request->bandera == 'consultador_eventos'){
+            
+            $ubicacion_origen = public_path('Documentos_Eventos/'.$idEvento);
+            $ubicacion_destino = public_path('Documentos_Eventos/Temp/' .$idEvento);
+
+            $nombre_temp = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}_idDoc_{$id_documento}.{$file->extension()}";
+            $this->mover_archivo($ubicacion_origen,$ubicacion_destino,$nombre_final_documento_en_carpeta,$nombre_temp,$id_documento);
+
+            $mensajes = [
+                "parametro" => 'exito',
+                "mensaje" => 'Documento cargado satisfactoriamente.'
+            ];
+
+            return response()->json($mensajes);
+        }
+
         // Registrar la información del documento con relación al ID del evento.
         if(!empty($request->bandera_nombre_otro_doc)){
             $nombrecompletodocumento = $request->bandera_nombre_otro_doc;
@@ -5263,6 +5279,68 @@ class AdministradorController extends Controller
 
         }
 
+    }
+
+    public static function mover_archivoTEMP($IdEvento,$Id_Asignacion,$servicio){
+       $pathTmp =  public_path('Documentos_Eventos/Temp/' .$IdEvento);
+       $ruta_documentos = public_path('Documentos_Eventos/' .$IdEvento);
+       if (File::exists($pathTmp)) {  
+            // Obtiene todos los archivos en la carpeta
+            $archivos = File::files($pathTmp);
+
+            foreach ($archivos as $archivo) {
+                // Obtiene el nombre del archivo y su extensión
+                $nombreArchivo = pathinfo($archivo->getFilename(), PATHINFO_FILENAME);
+                $extension = $archivo->getExtension();
+                $pathorigen = "{$pathTmp}/{$nombreArchivo}.{$extension}";
+
+                //extraer el idDocdel nombre y lo quita del idDoc
+                if (preg_match('/_idDoc_(\d+)/', $nombreArchivo, $matches)) {
+                    $id_documento = $matches[1]; 
+                
+                    $nombreArchivo = str_replace("_idDoc_{$id_documento}", '', $nombreArchivo);
+                }
+
+                $nuevo_nombre = "{$nombreArchivo}_IdAsignacion_{$Id_Asignacion}";
+
+                $destino = "{$ruta_documentos}/{$nuevo_nombre}.{$extension}";
+
+                // saca los documentos de la carpeta temporal
+                File::move($pathorigen,$destino);
+
+                if(!isset($id_documento)){
+                    return;
+                }
+
+                $info_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_Documento' => $id_documento,
+                    'ID_evento' => $IdEvento,
+                    'Nombre_documento' => $nuevo_nombre,
+                    'Formato_documento' => $extension,
+                    'Id_servicio' => $servicio,
+                    'Estado' => 'activo',
+                    'F_cargue_documento' => date('Y-m-d',time()),
+                    'Nombre_usuario' => Auth::user()->name,
+                    'F_registro' => date('Y-m-d',time()),
+                    ];
+                
+                sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($info_documento);
+            }
+        }
+    }
+
+    public function mover_archivo($ubicacion,$destino,$nombre_origen,$nombre_destino,$id_documento,$mode = 777){
+        if (!File::exists($destino)) {
+            File::makeDirectory($destino, 0777, true, true);
+            chmod($destino, octdec($mode));
+        }
+
+        $ubicacion .= "/" . $nombre_origen;
+
+        $destino .= "/{$nombre_destino}";
+
+        rename($ubicacion,$destino);
     }
 
     // Función para cargar documentos familia (es decir los complementarios)
