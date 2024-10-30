@@ -303,9 +303,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="8"><span class="titulo_labels">Elaborado por: </span><span class="dato_dinamico">{{$nombre_usuario}}</span></td>
-                </tr>
-                <tr>
                     <td colspan="8" class="consideracion_legal">
                         <b>CONSIDERACIONES LEGALES:</b> Basados en Ley 100 de 1993, Ley 1562 de 2012, 
                         Decreto 1352 de 2013 y artículo 142 de la Ley 019 de 2012. 

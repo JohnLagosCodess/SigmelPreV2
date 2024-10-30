@@ -8767,6 +8767,8 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siae.Tipo_documento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpa', 'slpa.Id_Parametro', '=', 'siae.Nivel_escolar')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpar', 'slpar.Id_Parametro', '=', 'siae.Estado_civil')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldmdafi','sldmdafi.Id_departamento','=','siae.Id_departamento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldmdbenefi','sldmdbenefi.Id_departamento','=','siae.Id_departamento_benefi')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'siae.Id_municipio')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldmu', 'sldmu.Id_municipios', '=', 'siae.Id_municipio_benefi')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'siae.Id_eps')
@@ -8776,32 +8778,34 @@ class CalificacionPCLController extends Controller
         'siae.F_nacimiento', 'siae.Edad', 'siae.Genero', 'siae.Email', 'siae.Telefono_contacto', 'siae.Estado_civil', 
         'slpar.Nombre_parametro as Estado_civi', 'siae.Nivel_escolar', 'slpa.Nombre_parametro as Escolaridad', 
         'siae.Apoderado', 'siae.Nombre_apoderado', 'siae.Nro_identificacion_apoderado', 'siae.Id_dominancia', 'siae.Direccion', 
-        'siae.Id_departamento', 'siae.Id_municipio', 'sldm.Nombre_municipio as Nombre_municipio', 'siae.Ocupacion', 'siae.Tipo_afiliado', 
+        'siae.Id_departamento', 'siae.Id_municipio', 'siae.Ocupacion', 'siae.Tipo_afiliado', 
         'siae.Ibc', 'siae.Id_eps', 'sie.Nombre_entidad as Entidad_eps', 'siae.Id_afp', 'sien.Nombre_entidad as Entidad_afp', 'siae.Id_arl', 
         'sient.Nombre_entidad as Entidad_arl', 'siae.Activo', 'siae.Medio_notificacion', 'siae.Nombre_afiliado_benefi', 
-        'siae.Tipo_documento_benefi', 'siae.Nro_identificacion_benefi', 'siae.Direccion_benefi', 'siae.Id_departamento_benefi', 
-        'siae.Id_municipio_benefi', 'sldmu.Nombre_municipio as Nombre_municipio_benefi', 'siae.Nombre_usuario', 'siae.F_registro', 
-        'F_actualizacion')
-        ->where([['ID_Evento',$ID_Evento_comuni]])->get();        
-
+        'siae.Tipo_documento_benefi', 'siae.Nro_identificacion_benefi', 'siae.Direccion_benefi', 'siae.Id_departamento_benefi','sldmdafi.Nombre_departamento as Nombre_departamento_afi',
+        'sldm.Nombre_municipio as Nombre_municipio','sldmdbenefi.Nombre_departamento as Nombre_departamento_benefi','sldmu.Nombre_municipio as Nombre_municipio_benefi','siae.Id_municipio_benefi','siae.Nombre_usuario', 
+        'siae.F_registro','F_actualizacion')
+        ->where([['ID_Evento',$ID_Evento_comuni]])->get();  
+                
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
         $Ocupacion_afiliado = $array_datos_info_afiliado[0]->Ocupacion;
+        
+        // Debido a un error en el modulo nuevo, guarda beneficiario donde va el afiliado y afiliado donde va el beneficiario, por eso ya no es relevante el tipo de afiliado
 
-        if ($Tipo_afiliado !== 27 ) {
+        // if ($Tipo_afiliado !== 27 ) {
             $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado;
             $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion;
             $Telefono_afiliado_dic = $array_datos_info_afiliado[0]->Telefono_contacto;
             $Email_afiliado_dic = $array_datos_info_afiliado[0]->Email;
             $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion;
             $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio;
-        }else{
-            $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
-            $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
-            $Telefono_afiliado_dic = '';
-            $Email_afiliado_dic = '';
-            $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion_benefi;
-            $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
-        }
+        // }else{
+        //     $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
+        //     $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
+        //     $Telefono_afiliado_dic = '';
+        //     $Email_afiliado_dic = '';
+        //     $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion_benefi;
+        //     $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
+        // }
 
         if($Id_solicitante_dic == 1 || $Id_solicitante_dic == 2 ||  $Id_solicitante_dic == 3){
             $Solicitante_dic = $motivo_solicitud_dictamen[0]->Solicitante;
@@ -8950,15 +8954,15 @@ class CalificacionPCLController extends Controller
             $Ciudad_acudiente = '';
         }
 
-        if ($Documento_iden_ben == '') {
+        // if ($Documento_iden_ben == '') {
             $Numero_documento_afiliado = $NroIden_per_cal;
             $Documento_afiliado = $Tipo_documento_per_cal;
             $Nombre_afiliado_pre = $Nombre_per_cal;
-        } else {            
-            $Numero_documento_afiliado = $Documento_iden_ben;
-            $Documento_afiliado = $Tipo_iden_ben;
-            $Nombre_afiliado_pre = $Nombre_ben;
-        }
+        // } else {            
+        //     $Numero_documento_afiliado = $Documento_iden_ben;
+        //     $Documento_afiliado = $Tipo_iden_ben;
+        //     $Nombre_afiliado_pre = $Nombre_ben;
+        // }
         
 
         //Captura de datos de Etapas del ciclo vital
@@ -9400,11 +9404,11 @@ class CalificacionPCLController extends Controller
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
         $Ocupacion_afiliado = $array_datos_info_afiliado[0]->Ocupacion;
 
-        if ($Tipo_afiliado !== 27 ) {
+        // if ($Tipo_afiliado !== 27 ) {
             $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado;            
-        }else{
-            $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;            
-        }
+        // }else{
+            // $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;            
+        // }
 
         if($Id_solicitante_dic == 1 || $Id_solicitante_dic == 2 ||  $Id_solicitante_dic == 3){
             $Solicitante_dic = $motivo_solicitud_dictamen[0]->Solicitante;
@@ -10673,21 +10677,21 @@ class CalificacionPCLController extends Controller
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
         $Ocupacion_afiliado = $array_datos_info_afiliado[0]->Ocupacion;
 
-        if ($Tipo_afiliado !== 27 ) {
+        // if ($Tipo_afiliado !== 27 ) {
             $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado;
             $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion;
             $Telefono_afiliado_dic = $array_datos_info_afiliado[0]->Telefono_contacto;
             $Email_afiliado_dic = $array_datos_info_afiliado[0]->Email;
             $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion;
             $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio;
-        }else{
-            $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
-            $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
-            $Telefono_afiliado_dic = '';
-            $Email_afiliado_dic = '';
-            $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion_benefi;
-            $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
-        }
+        // }else{
+        //     $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
+        //     $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
+        //     $Telefono_afiliado_dic = '';
+        //     $Email_afiliado_dic = '';
+        //     $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion_benefi;
+        //     $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
+        // }
 
         if($Id_solicitante_dic == 1 || $Id_solicitante_dic == 2 ||  $Id_solicitante_dic == 3){
             $Solicitante_dic = $motivo_solicitud_dictamen[0]->Solicitante;
@@ -10836,15 +10840,15 @@ class CalificacionPCLController extends Controller
             $Ciudad_acudiente = '';
         }
 
-        if ($Documento_iden_ben == '') {
+        // if ($Documento_iden_ben == '') {
             $Numero_documento_afiliado = $NroIden_per_cal;
             $Documento_afiliado = $Tipo_documento_per_cal;
             $Nombre_afiliado_pre = $Nombre_per_cal;
-        } else {            
-            $Numero_documento_afiliado = $Documento_iden_ben;
-            $Documento_afiliado = $Tipo_iden_ben;
-            $Nombre_afiliado_pre = $Nombre_ben;
-        }
+        // } else {            
+        //     $Numero_documento_afiliado = $Documento_iden_ben;
+        //     $Documento_afiliado = $Tipo_iden_ben;
+        //     $Nombre_afiliado_pre = $Nombre_ben;
+        // }
         
 
         //Captura de datos de Etapas del ciclo vital
@@ -11280,7 +11284,7 @@ class CalificacionPCLController extends Controller
 
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
 
-        if ($Tipo_afiliado !== 27 ) {
+        // if ($Tipo_afiliado !== 27 ) {
             $Nombre_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_afiliado;
             $Direccion_afiliado_noti = $array_datos_info_afiliado[0]->Direccion;
             $Telefono_afiliado_noti = $array_datos_info_afiliado[0]->Telefono_contacto;
@@ -11289,16 +11293,16 @@ class CalificacionPCLController extends Controller
             $T_documento_noti = $array_datos_info_afiliado[0]->T_documento;            
             $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion;
             $Email_afiliado_noti = $array_datos_info_afiliado[0]->Email;
-        }else{
-            $Nombre_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
-            $Direccion_afiliado_noti = $array_datos_info_afiliado[0]->Direccion_benefi;
-            $Telefono_afiliado_noti = '';
-            $Departamento_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_departamento_benefi;            
-            $Ciudad_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
-            $T_documento_noti = $array_datos_info_afiliado[0]->Tipo_documento_benfi;            
-            $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
-            $Email_afiliado_noti = '';
-        }
+        // }else{
+        //     $Nombre_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
+        //     $Direccion_afiliado_noti = $array_datos_info_afiliado[0]->Direccion_benefi;
+        //     $Telefono_afiliado_noti = '';
+        //     $Departamento_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_departamento_benefi;            
+        //     $Ciudad_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
+        //     $T_documento_noti = $array_datos_info_afiliado[0]->Tipo_documento_benfi;            
+        //     $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
+        //     $Email_afiliado_noti = '';
+        // }
 
         if(!empty($Copia_eps_correspondecia) && $Copia_eps_correspondecia == 'EPS'){
             $Nombre_eps = $array_datos_info_afiliado[0]->Entidad_eps;

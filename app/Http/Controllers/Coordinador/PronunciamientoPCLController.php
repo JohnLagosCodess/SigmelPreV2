@@ -1641,7 +1641,7 @@ class PronunciamientoPCLController extends Controller
                 $texto_modificado = str_replace('{{$CIE10_Nombres_Origen}}', $CIE10Nombres, $texto_modificado);
                 // $texto_modificado = str_replace('{{$OrigenPcl}}', $T_origen , $texto_modificado);
                 $texto_modificado = str_replace('{{$PorcentajePcl}}', '<b>'.$Porcentaje_pcl.'</b>', $texto_modificado);
-                $texto_modificado = str_replace('{{$F_estructuracionPcl}}', '<b>'.date("d/m/Y", strtotime($Fecha_estruturacion)).'</b>', $texto_modificado);
+                $texto_modificado = str_replace('{{$F_estructuracionPcl}}', '<b>'.$Fecha_estruturacion.'</b>', $texto_modificado);
                 $texto_modificado = str_replace('</p>', '</p><br></br>', $texto_modificado);
                 $texto_modificado = str_replace('<p><br>', ' ', $texto_modificado);
                 $cuerpo = $texto_modificado;

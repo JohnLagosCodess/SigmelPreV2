@@ -591,9 +591,10 @@ $(document).ready(function(){
     /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
     $("input[id^='listadodocumento_']").click(function(){
         let idobtenido = $('#newId_evento').val();
+        let tipoDoc = $(this).data('tipo_documento');
         let idDoc = $(this).data('id_doc');
         $("input[id^='EventoID_']").val(idobtenido);
-        if(idDoc === 4){
+        if(idDoc === 4 && !tipoDoc){
             //Tomamos el input seleccionado
             let inputFile = $(`#listadodocumento_${idDoc}`)
             //Le asignamos el metodo de entrada de archivo el cual viene de nuestro input
@@ -645,6 +646,7 @@ $(document).ready(function(){
         var formData = new FormData($(this)[0]);
         var id_reg_doc = $(this).data("id_reg_doc");
         var id_doc = $(this).data("id_doc");
+        let tipoDoc = $(this).data('tipo_documento');
 
         var cambio_estado = $(this).parents()[1]['children'][2]["id"];
         var input_documento = $(this).parents()[0]['children'][0][4]["id"];
@@ -652,7 +654,7 @@ $(document).ready(function(){
         //for (var pair of formData.entries()) {
         //   console.log(pair[0]+ ', ' + pair[1]); 
         //}
-        if(id_doc === 4){
+        if(id_doc === 4 && !tipoDoc){
             //Validación de posibles errores antes de enviar el documento
             if(resumable.opts.query.EventoID === ""){
                 errorCargueDocumentosID4('Debe diligenciar primero el formulario para poder cargar este documento.')
@@ -784,9 +786,9 @@ $(document).ready(function(){
     }
     var fechaActual_alerta = anioactual + '-' + mesactual + '-' + diaactual;
     Fecha_alerta_capturada.change(function() {
-        var valor_Fecha_alerta_capturada = $(this).val();        
+        var valor_Fecha_alerta_capturada = $(this).val(); 
         // Se saca solo la fecha de la F_alerta_capturada
-        var F_alerta_capturada = valor_Fecha_alerta_capturada.split('T')[0];        
+        var F_alerta_capturada = valor_Fecha_alerta_capturada.split('T')[0];
         if (F_alerta_capturada == ''){
             $('#Edicion').prop('disabled', false)
             $('#alerta_fecha_alerta').addClass('d-none');
