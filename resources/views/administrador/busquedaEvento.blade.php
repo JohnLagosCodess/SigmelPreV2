@@ -77,7 +77,7 @@
             </div>
         </form>
         <!-- Información del afiliado-->
-        <div class="row contenedor_info_afiliado d-none">
+        <div class="row contenedor_info_afiliado d-none" style="display:none">
             <div class="col-12">
                 <div class="card-info">
                     <div class="card-header text-center" style="border: 1.5px solid black;">
@@ -132,6 +132,7 @@
                                     <th>Tipo de documento</th>
                                     <th>N° de identificación</th>
                                     <th>Nombre de afiliado / beneficiaro</th>
+                                    <th>Proceso - Servicio</th>
                                     <th>Proceso - Servicio</th>
                                     <th>Última acción</th>
                                     <th>Fecha última acción</th>
