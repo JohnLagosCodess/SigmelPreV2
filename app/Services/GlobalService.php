@@ -21,7 +21,7 @@ class GlobalService
     */
     public function retornarInformaciónLaboral($Id_evento){
         // Traer Información laboral
-        $resultado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+        return DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
         ->leftJoin('sigmel_gestiones.sigmel_lista_arls as sla', 'sla.Id_arl', '=', 'sile.Id_arl')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_departamento', '=', 'sile.Id_departamento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldms', 'sldms.Id_municipios', '=', 'sile.Id_municipio')
@@ -38,12 +38,6 @@ class GlobalService
         ->orderBy('sile.F_registro', 'desc')
         ->limit(1)
         ->get();
-
-        if ($resultado->isEmpty()) {
-            return null;  // Si no hay resultados, retorna null
-        }
-    
-        return $resultado;
     }
     /**
         * Retorna toda la informacion sobre una entidad especifica.
@@ -54,18 +48,12 @@ class GlobalService
     */
     public function retornarInformaciónEntidad($Id_entidad){
         //Retornar información de una entidad
-        $resultado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
+        return DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_entidades as sie')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Departamento', '=', 'sldm2.Id_departamento')
         ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm1.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento','sie.Emails as Email')
         ->where([['Id_Entidad', $Id_entidad]])
         ->get();
-
-        if ($resultado->isEmpty()) {
-            return null;  // Si no hay resultados, retorna null
-        }
-    
-        return $resultado;
     }
     /**
         * Retorna toda la informacion del comite interdisciplinario.
@@ -78,18 +66,12 @@ class GlobalService
     */
     public function retornarComiteInterdisciplinario($Id_evento, $Id_asignacion){
         // Comite interdisciplinario
-        $resultado = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        return sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->where([
             ['ID_evento',$Id_evento],
             ['Id_Asignacion',$Id_asignacion]
         ])
         ->get();
-
-        if ($resultado->isEmpty()) {
-            return null;  // Si no hay resultados, retorna null
-        }
-    
-        return $resultado;
     }
     /**
         * Retorna toda la informacion de un pronunciamiento origen (Aunque se supone deberia funcionar para PCL también si no hacer un override).

@@ -3377,15 +3377,17 @@ class CalificacionPCLController extends Controller
 
             //Trae Documentos Solicitados
             $listado_documentos_solicitados = $this->globalService->retornarListadoDocumentos($ID_evento,$Id_proceso,$Id_Asignacion);
-
-            $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
-            $string_documentos_solicitados = "<ul>";
-
-            for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
-                $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+            if($listado_documentos_solicitados){
+                $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
+                $string_documentos_solicitados = "<ul>";
+    
+                for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
+                    $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+                }
+                $string_documentos_solicitados .= "</ul>";
+            }else{
+                $string_documentos_solicitados = '';
             }
-            $string_documentos_solicitados .= "</ul>";
-            
             // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
             // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
             // ->where('Id_cliente', $id_cliente)->get();
@@ -3404,7 +3406,6 @@ class CalificacionPCLController extends Controller
             //     $footer_dato_4 = "";
             //     $footer_dato_5 = "";
             // }
-
             $data = [
                 'logo_header' => $logo_header,
                 'id_cliente' => $id_cliente,
@@ -3958,14 +3959,17 @@ class CalificacionPCLController extends Controller
             
             //Trae Documentos Solicitados
             $listado_documentos_solicitados = $this->globalService->retornarListadoDocumentos($ID_evento,$Id_proceso,$Id_Asignacion);
+            if($listado_documentos_solicitados){
+                $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
+                $string_documentos_solicitados = "<ul>";
 
-            $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
-            $string_documentos_solicitados = "<ul>";
-
-            for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
-                $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+                for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
+                    $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+                }
+                $string_documentos_solicitados .= "</ul>";
+            }else{
+                $string_documentos_solicitados = '';
             }
-            $string_documentos_solicitados .= "</ul>";
             
             $Agregar_copias = [];
             if (isset($copia_afiliado)) {

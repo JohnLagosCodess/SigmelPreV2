@@ -3252,7 +3252,7 @@ class CalificacionJuntasController extends Controller
 
         //Traemos toda la información del comunicado
         $informacion_comunicado = $this->globalService->retornarInformacionComunicado($Id_comunicado);
-        if(!empty($informacion_comunicado)){
+        if($informacion_comunicado && !empty($informacion_comunicado[0]->F_registro)){
             $fecha_comunicado = $informacion_comunicado[0]->F_registro;
         }else{
             $fecha_comunicado = $date;
