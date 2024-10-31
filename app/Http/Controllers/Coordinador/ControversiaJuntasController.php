@@ -250,7 +250,8 @@ class ControversiaJuntasController extends Controller
         'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
-        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado','N_siniestro_evento'));
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado','N_siniestro_evento',
+        'cantidad_documentos_cargados','arraylistado_documentos'));
     
     }
 

@@ -230,7 +230,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_radicacion" class="col-form-label">Fecha de radicación <span style="color:red;">(*)</span></label>
-                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_info_evento[0]->F_radicacion}}" required>
+                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_info_evento[0]->F_radicacion}}" max="{{date("Y-m-d")}}" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">

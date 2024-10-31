@@ -143,9 +143,10 @@ $(document).ready(function(){
     /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
     $("input[id^='listadodocumento_']").click(function(){
         let idobtenido = $('#newId_evento').val();
+        let tipoDoc = $(this).data('tipo_documento');
         let idDoc = $(this).data('id_doc');
         $("input[id^='EventoID_']").val(idobtenido);
-        if(idDoc === 4){
+        if(idDoc === 4 && !tipoDoc){
             //Tomamos el input seleccionado
             let inputFile = $(`#listadodocumento_${idDoc}`)
             //Le asignamos el metodo de entrada de archivo el cual viene de nuestro input
@@ -197,11 +198,12 @@ $(document).ready(function(){
         var input_documento = $(this).parents()[0]['children'][0][4]["id"];
         var id_reg_doc = $(this).data("id_reg_doc");
         var id_doc = $(this).data("id_doc");
+        let tipoDoc = $(this).data('tipo_documento');
 
         //for (var pair of formData.entries()) {
         //   console.log(pair[0]+ ', ' + pair[1]); 
         //}
-        if(id_doc === 4){
+        if(id_doc === 4 && !tipoDoc){
             //Validación de posibles errores antes de enviar el documento
             if(resumable.opts.query.EventoID === ""){
                 errorCargueDocumentosID4('Debe diligenciar primero el formulario para poder cargar este documento.')

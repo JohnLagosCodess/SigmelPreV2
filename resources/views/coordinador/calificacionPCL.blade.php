@@ -269,7 +269,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="">Nueva Fecha de radicación</label>
-                                                <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionPcl[0]->Nueva_F_radicacion)){echo $array_datos_calificacionPcl[0]->Nueva_F_radicacion;}?>">
+                                                <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" max="{{now()->format('Y-m-d')}}" min="1900-01-01" value="<?php if(!empty($array_datos_calificacionPcl[0]->Nueva_F_radicacion)){echo $array_datos_calificacionPcl[0]->Nueva_F_radicacion;}?>">
+                                                <span class="d-none" id="alertaNuevaFechaDeRadicacion" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -358,7 +359,8 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="">Fecha de cierre</label>
-                                                    <input type="date" class="form-control" name="fecha_cierre" id="fecha_cierre" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_cierre)){echo $array_datos_calificacionPcl[0]->F_cierre;}?>">
+                                                    <input type="date" class="form-control" name="fecha_cierre" id="fecha_cierre" max="{{now()->format('Y-m-d')}}" min="1900-01-01" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_cierre)){echo $array_datos_calificacionPcl[0]->F_cierre;}?>">
+                                                    <span class="d-none" id="fecha_cierre_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>
                                             <div class="col-12">
@@ -1429,6 +1431,80 @@
             document.getElementById('formulario2').submit();
         });
         
+    </script>
+
+    {{-- Validación de fechas, en las cuales la nueva fecha de radicación no puede ser menor a la fecha inicial de radicación. --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtener referencias a los campos de fecha y elementos de alerta
+            const nuevaFechaRadicación = document.getElementById('nueva_fecha_radicacion');
+            const fechaRadicacionInicial = document.getElementById('fecha_radicacion');
+            const alertaNuevaFechaRadicación = document.getElementById('alertaNuevaFechaDeRadicacion');
+            const alertaParametrica = $(".no_ejecutar_parametrica_modulo_principal")[0].classList;
+            const today = new Date().toISOString().split("T")[0];
+
+            // Evento para cuando se cambie la fecha de envío
+            nuevaFechaRadicación.addEventListener('change', function () {
+                // Obtener los valores de las fechas
+                const nuevaFechaDeRadicacion = new Date(nuevaFechaRadicación.value);
+                const fechaDeRadicacionInicial = fechaRadicacionInicial.value ? new Date(fechaRadicacionInicial.value) : null;
+
+                // Validar que la fecha ingresada no sea menor que 1900-01-01
+                if (nuevaFechaRadicación.value < '1900-01-01') {
+                    $("#alertaNuevaFechaDeRadicacion").text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+
+                // Validar que la fecha ingresada no sea mayor a la actual
+                if (nuevaFechaRadicación.value > today) {
+                    $("#alertaNuevaFechaDeRadicacion").text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+
+                // Validar que la nueva fecha de radicación no sea menor a la fecha de radicación inicial
+                if (fechaRadicacionInicial && fechaDeRadicacionInicial > nuevaFechaDeRadicacion) {
+                    $("#alertaNuevaFechaDeRadicacion").text('La fecha ingresada debe ser superior a la fecha de radicación inicial').removeClass('d-none');
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+
+                // Si pasa todas las validaciones, ocultar el mensaje de error y habilitar el botón
+                $("#alertaNuevaFechaDeRadicacion").text('').addClass('d-none');
+                if(alertaParametrica.contains('d-none')) {
+                    $('#Edicion').removeClass('d-none');
+                }
+            });
+        });
+    </script>
+    {{-- Validación general para todos los campos de tipo fecha --}}
+    <script>
+        let today = new Date().toISOString().split("T")[0];
+
+        // Seleccionar todos los inputs de tipo date
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+
+        // Agregar evento de escucha a cada input de tipo date que haya
+        dateInputs.forEach(input => {
+            //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
+            input.addEventListener('change', function() {
+                console.log('This is value of input type date ', this.value);
+                //Validamos que la fecha sea mayor a la fecha de 1900-01-01
+                if(this.value < '1900-01-01'){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea mayor a la fecha actual
+                if(this.value > today){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+                return $(`#${this.id}_alerta`).text('').addClass("d-none");
+            });
+        });
     </script>
 
     <script type="text/javascript">

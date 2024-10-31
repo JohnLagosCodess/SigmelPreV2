@@ -973,7 +973,7 @@ class PronunciamientoOrigenController extends Controller
         $array_datos_pronunciamientoOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_Asignacion_consulta_dx));
         $info_pronuncia = $this->globalService->retornarInformacionPronunciamiento($id_evento,$Id_Asignacion_consulta_dx);
         $info_comunicado = $this->globalService->retornarInformacionComunicado($Id_comunicado);
-        if(!empty($info_comunicado[0]->Tipo_descarga)){
+        if($info_comunicado && !empty($info_comunicado[0]->Tipo_descarga)){
             if($info_comunicado[0]->Tipo_descarga === 'Acuerdo'){
                 $bandera_tipo_proforma = "proforma_acuerdo";
             }
@@ -1027,7 +1027,7 @@ class PronunciamientoOrigenController extends Controller
         $nro_anexos = $request->nro_anexos;
         
         // $nombre_entidad = $request->nombre_entidad;
-        $nombre_entidad = !empty($info_pronuncia[0]->Nombre_entidad) ? $info_pronuncia[0]->Nombre_entidad : null;
+        $nombre_entidad = $info_pronuncia && !empty($info_pronuncia[0]->Nombre_entidad) ? $info_pronuncia[0]->Nombre_entidad : null;
 
         $email_entidad = $request->email_entidad;
         $direccion_entidad = $request->direccion_entidad;

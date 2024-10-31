@@ -17,7 +17,7 @@ class GlobalService
         * 
         * @param string $Id_evento Id del evento del cual se requiere obtener la información laboral.
         *
-        * @return Collection Devuelve una colección con la información del comunicado
+        * @return Collection | null Devuelve una colección con la información del comunicado
     */
     public function retornarInformaciónLaboral($Id_evento){
         // Traer Información laboral
@@ -44,7 +44,7 @@ class GlobalService
         * 
         * @param string $Id_entidad Id de la entidad de la cual se necesita obtener la información.
         *
-        * @return Collection Devuelve una colección con la información del comunicado
+        * @return Collection | null Devuelve una colección con la información del comunicado
     */
     public function retornarInformaciónEntidad($Id_entidad){
         //Retornar información de una entidad
@@ -62,11 +62,11 @@ class GlobalService
         *
         * @param string $Id_asignacion Id de asignación del modulo/submodulo del cual desea obtener el comite interdisciplinario
         *
-        * @return Collection Devuelve una colección con la información del comunicado
+        * @return Collection | null Devuelve una colección con la información del comunicado
     */
     public function retornarComiteInterdisciplinario($Id_evento, $Id_asignacion){
         // Comite interdisciplinario
-        return  sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        return sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
         ->where([
             ['ID_evento',$Id_evento],
             ['Id_Asignacion',$Id_asignacion]
@@ -80,10 +80,10 @@ class GlobalService
         *
         * @param string $id_asignacion Id de asignación del pronuncimiento del que se requiere la información
         *
-        * @return Collection Devuelve una colección con la información
+        * @return Collection | null Devuelve una colección con la información
     */
     public function retornarInformacionPronunciamiento($id_evento, $id_asignacion){
-        return DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_pronunciamiento_eventos as pr')
+        $resultado =  DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_pronunciamiento_eventos as pr')
         ->select('pr.ID_evento','pr.Id_Asignacion', 'Id_proceso', 'pr.Id_primer_calificador','c.Tipo_Entidad','pr.Id_nombre_calificador','e.Nombre_entidad'
         ,'pr.Nit_calificador','pr.Dir_calificador','pr.Email_calificador','pr.Telefono_calificador','pr.Depar_calificador','pr.Ciudad_calificador'
         ,'pr.Id_tipo_pronunciamiento','p.Nombre_parametro as Tpronuncia','pr.Id_tipo_evento','ti.Nombre_evento','pr.Id_tipo_origen','or.Nombre_parametro as T_origen'
@@ -103,32 +103,49 @@ class GlobalService
             ['pr.Id_Asignacion', '=', $id_asignacion]
         ])
         ->get();
+
+        if ($resultado->isEmpty()) {
+            return null;  // Si no hay resultados, retorna null
+        }
+    
+        return $resultado;
     }
     /**
         * Retorna toda la informacion de un comunicado.
         * 
         * @param string $id_comunicado Id del comunicado del cual se quiere obtener la información
         *
-        * @return Collection Devuelve una colección con la información del comunicado
+        * @return Collection | null Devuelve una colección con la información del comunicado
     */
     public function retornarInformacionComunicado($id_comunicado){
-        return sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        $resultado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
             ->where([['Id_Comunicado',$id_comunicado]])
             ->get();
+
+        if ($resultado->isEmpty()) {
+            return null;  // Si no hay resultados, retorna null
+        }
+    
+        return $resultado;
     }
     /**
         * Retorna toda la informacion de un comunicado.
         * 
         * @param string $id_comunicado Id del comunicado del cual se quiere obtener la información
         *
-        * @return Collection Devuelve una colección con la información del comunicado
+        * @return Collection | null Devuelve una colección con la información del comunicado o null si no encuentra nada
     */
     public function retornarcuentaConAfpConocimiento($id_evento){
-        return DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
+        $resultado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
         ->select('siae.Entidad_conocimiento')
         ->where([['siae.ID_evento', $id_evento]])
         ->get();
+        if ($resultado->isEmpty()) {
+            return null;  // Si no hay resultados, retorna null
+        }
+    
+        return $resultado;
     }
     /**
         * Genera el consecutivo el cual va a ser usado como identificador de alguno de los posibles destinatarios del modal de correspondencia.
@@ -216,7 +233,7 @@ class GlobalService
     }
 
     public function retornarListadoDocumentos($id_evento,$id_proceso,$id_asignacion){
-        return sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
+        $resultado = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->where([
             ['ID_evento',$id_evento],
             ['Id_Asignacion', $id_asignacion],
@@ -224,6 +241,12 @@ class GlobalService
             ['Id_proceso', $id_proceso]
         ])
         ->get();
+
+        if ($resultado->isEmpty()) {
+            return null;  // Si no hay resultados, retorna null
+        }
+    
+        return $resultado;
     }
     /**
         * Retorna el numero de siniestro global del evento.
@@ -234,10 +257,16 @@ class GlobalService
     */
     public function retornarNumeroSiniestro($id_evento){
         //Traer el N_siniestro del evento
-        return sigmel_informacion_eventos::on('sigmel_gestiones')
+        $resultado = sigmel_informacion_eventos::on('sigmel_gestiones')
         ->select('N_siniestro')
         ->where([['ID_evento',$id_evento]])
         ->get();
+
+        if ($resultado->isEmpty()) {
+            return null;  // Si no hay resultados, retorna null
+        }
+    
+        return $resultado;
     }
 
     /**
@@ -444,10 +473,16 @@ class GlobalService
         * @return Collection | null Devuelve una colección con la información y si no devuelve null
     */
     public function retornarModalidadCalificacionPCL($id_evento, $id_asignacion){
-        return DB::table('sigmel_gestiones.sigmel_informacion_decreto_eventos as side')
+        $resultado = DB::table('sigmel_gestiones.sigmel_informacion_decreto_eventos as side')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Modalidad_calificacion')
         ->where([['side.ID_Evento',$id_evento], ['side.Id_Asignacion', $id_asignacion]])
         ->select('side.Modalidad_calificacion', 'slp.Nombre_parametro as Nombre_modalidad_calificacion')
         ->get();
-    }    
+
+        if ($resultado->isEmpty()) {
+            return null;  // Si no hay resultados, retorna null
+        }
+    
+        return $resultado;
+    }
 }

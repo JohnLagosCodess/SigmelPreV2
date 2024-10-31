@@ -298,12 +298,14 @@ $(document).ready(function(){
                 
                 $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
                 $("#Edicion").removeClass('d-none');
+                $("#Edicion").prop('disabled',false);
             }else{
                 $("#accion").empty();
                 $("#accion").append('<option></option>');
 
                 $(".no_ejecutar_parametrica_modulo_principal").removeClass('d-none');
                 $("#Edicion").addClass('d-none');
+                $("#Edicion").prop('disabled',true);
             }
         }
     });
@@ -329,9 +331,11 @@ $(document).ready(function(){
                     if (data[0]["Modulo_principal"] !== "Si") {
                         $(".no_ejecutar_parametrica_modulo_principal").removeClass('d-none');
                         $("#Edicion").addClass('d-none');
+                        $("#Edicion").prop('disabled',true);
                     } else {
                         $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
                         $("#Edicion").removeClass('d-none');
+                        $("#Edicion").prop('disabled',false);
 
                         // llenado del input Estado de Facturación
                         $("#estado_facturacion").val(data[0]["Estado_facturacion"]);
@@ -411,9 +415,11 @@ $(document).ready(function(){
                     if (data[0]["Modulo_principal"] !== "Si") {
                         $(".no_ejecutar_parametrica_modulo_principal").removeClass('d-none');
                         $("#Edicion").addClass('d-none');
+                        $("#Edicion").prop('disabled',true);
                     } else {
                         $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
                         $("#Edicion").removeClass('d-none');
+                        $("#Edicion").prop('disabled',false);
 
                         // llenado del input Estado de Facturación
                         $("#estado_facturacion").val(data[0]["Estado_facturacion"]);
@@ -831,9 +837,10 @@ $(document).ready(function(){
     /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
     $("input[id^='listadodocumento_']").click(function(){
         let idobtenido = $('#newId_evento').val();
+        let tipoDoc = $(this).data('tipo_documento');
         let idDoc = $(this).data('id_doc');
         $("input[id^='EventoID_']").val(idobtenido);
-        if(idDoc === 4){
+        if(idDoc === 4 && !tipoDoc){
             //Tomamos el input seleccionado
             let inputFile = $(`#listadodocumento_${idDoc}`)
             //Le asignamos el metodo de entrada de archivo el cual viene de nuestro input
@@ -899,6 +906,7 @@ $(document).ready(function(){
         e.preventDefault();
         var id_reg_doc = $(this).data("id_reg_doc");
         var id_doc = $(this).data("id_doc");
+        let tipoDoc = $(this).data('tipo_documento');
 
         var formData = new FormData($(this)[0]);
         var cambio_estado = $(this).parents()[1]['children'][2]["id"];
@@ -907,7 +915,7 @@ $(document).ready(function(){
         //for (var pair of formData.entries()) {
         //   console.log(pair[0]+ ', ' + pair[1]); 
         //}
-        if(id_doc === 4){
+        if(id_doc === 4 && !tipoDoc){
             //Validación de posibles errores antes de enviar el documento
             if(resumable.opts.query.EventoID === ""){
                 errorCargueDocumentosID4('Debe diligenciar primero el formulario para poder cargar este documento.')
