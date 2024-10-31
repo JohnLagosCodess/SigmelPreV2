@@ -5113,7 +5113,8 @@ class AdministradorController extends Controller
         
         $idEvento = $request->EventoID;
         $Id_servicio = $request->Id_servicio;
-        $Id_asignacion = $request->Id_asignacion;
+        //Homologacion cuando el documento es cargado desde el consultador o desde cualquiera de los otros modulos
+        $Id_asignacion = $request->bandera == 'consultador_eventos' ? '' : "_IdAsignacion_" . $request->Id_asignacion;
         // Creación de carpeta con el ID EVENTO para insertar los documentos
         $path = public_path('Documentos_Eventos/'.$idEvento);
         $mode = 777;
@@ -5132,7 +5133,7 @@ class AdministradorController extends Controller
                     // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
                     // $nombre_final_documento_en_carpeta = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
 
-                    $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion.".".$file->extension();
+                    $nombre_final_documento_en_carpeta = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}{$Id_asignacion}.{$file->extension()}";
                 }else{
                     $nombre_final_documento_en_carpeta = $request->string_nombre_doc.".".$file->extension();
                 }
@@ -5150,7 +5151,7 @@ class AdministradorController extends Controller
                     // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
                     // $nombre_final_documento_en_carpeta = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
 
-                    $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion.".".$file->extension();
+                    $nombre_final_documento_en_carpeta = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}{$Id_asignacion}.{$file->extension()}";
                 }else{
                     $nombre_final_documento_en_carpeta = $request->string_nombre_doc.".".$file->extension();
                 }
@@ -5158,6 +5159,24 @@ class AdministradorController extends Controller
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
         }
 
+        //Almacena los documentos cuando viene desde el consultador
+        if($request->bandera == 'consultador_eventos'){
+            
+            $ubicacion_origen = public_path('Documentos_Eventos/'.$idEvento);
+            $ubicacion_destino = public_path('Documentos_Eventos/Temp/' .$idEvento);
+
+            //Mueve el documento a la carpeta temporal
+            $nombre_temp = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}_idDoc_{$id_documento}.{$file->extension()}";
+            $this->mover_archivo($ubicacion_origen,$ubicacion_destino,$nombre_final_documento_en_carpeta,$nombre_temp);
+
+            $mensajes = [
+                "parametro" => 'exito',
+                "mensaje" => 'Documento cargado satisfactoriamente.'
+            ];
+
+            return response()->json($mensajes);
+        }
+        
         // Registrar la información del documento con relación al ID del evento.
         if(!empty($request->bandera_nombre_otro_doc)){
             $nombrecompletodocumento = $request->bandera_nombre_otro_doc;
@@ -5168,7 +5187,7 @@ class AdministradorController extends Controller
                 // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
                 // $nombrecompletodocumento = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
 
-                $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion;
+                $nombrecompletodocumento = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}{$Id_asignacion}";
             }else{
                 $nombrecompletodocumento = $request->string_nombre_doc;
             }
@@ -5266,285 +5285,13 @@ class AdministradorController extends Controller
 
     }
 
-    public function cargaListadoDocumentosInicialNuevo_backup(Request $request){
-        $time = time();
-        $date = date("Y-m-d", $time);
-        $nombre_usuario = Auth::user()->name;
-
-        /* Validación N° 1: TAMAÑO DEL ARCHIVO */
-        $reglas_validacion_tamano_documento = array(
-            'listadodocumento' => 'max:10000000000000000'
-        );
-
-        $ejecutar_validador_tamano_documento = Validator::make($request->all(), $reglas_validacion_tamano_documento);
-        if ($ejecutar_validador_tamano_documento->fails()) {
-
-            $mensajes = array(
-                "parametro" => 'fallo',
-                "mensaje" => 'El tamaño máximo permitido para cargar este documento es de 50 Megas.'
-            );
-
-            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                $mensajes["otro"] = $request->bandera_otro_documento;
-            }
-            
-            return json_decode(json_encode($mensajes, true));
-        }
-
-        /* Validación N° 2: Cuando el documento que se intenta cargar son de los que no son obligatorios y aún así se manda vacío el dato */
-        if($request->file('listadodocumento') == ""){
-
-            // echo "estoy vacio no subo gonorreas";
-            $mensajes = array(
-                "parametro" => 'fallo',
-                "mensaje" => 'Debe cargar este documento para poder guardarlo.'
-            );
-
-            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                $mensajes["otro"] = $request->bandera_otro_documento;
-            }
-
-            return json_decode(json_encode($mensajes, true));
-        }
-
-        /* Validación N° 3: EL ID DEL EVENTO DEBE ESTAR ESCRITO */
-        if($request->EventoID == ""){
-            $mensajes = array(
-                "parametro" => 'fallo',
-                "mensaje" => 'Debe diligenciar primero el formulario para poder cargar este documento.'
-            );
-
-            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                $mensajes["otro"] = $request->bandera_otro_documento;
-            }
-
-            return json_decode(json_encode($mensajes, true));
-        }
-        
-        /* Validación N° 4: TIPO DE DOCUMENTO */
-        $reglas_validacion_tipo_documento = array(
-            'listadodocumento' => 'mimes:pdf,xls,xlsx,doc,docx,jpeg,png,zip'
-        );
-
-        $ejecutar_validador_tipo_documento = Validator::make($request->all(), $reglas_validacion_tipo_documento);
-
-        if ($ejecutar_validador_tipo_documento->fails()) {
-            $mensajes = array(
-                "parametro" => 'fallo',
-                "mensaje" => 'El tipo de documento debe ser de alguna de estas extensiones: pdf, xls, xlsx, doc, docx, jpeg, png, zip.'
-            );
-
-            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                $mensajes["otro"] = $request->bandera_otro_documento;
-            }
-
-            return json_decode(json_encode($mensajes, true));
-        }
-
-        /* Validación N° 5: EL ID DEL SERVICIO DEBE ESTAR ESCRITO */
-        if($request->Id_servicio == ""){
-            $mensajes = array(
-                "parametro" => 'fallo',
-                "mensaje" => 'Debe seleccionar un servicio para poder cargar este documento.'
-            );
-
-            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                $mensajes["otro"] = $request->bandera_otro_documento;
-            }
-
-            return json_decode(json_encode($mensajes, true));
-        }
-
-        /* Si las validaciones son exitosas, Se procede a subir el documento */
-
-        // Captura de variables del formulario.
-        $file = $request->file('listadodocumento');
-        $id_documento = $request->Id_Documento;
-        
-        // Evaluamos si han enviado el OTRO DOCUMENTO para que así pueda reemplazar el nombre original por el nombre que indico en el formulario
-        if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-            $nombre_lista_documento = str_replace(' ', '_', str_replace('/', '_', $request->nombre_otro_documento));
-            $nombre_lista_documento = "Otro_Documento_".$nombre_lista_documento;
-        } else {
-            $nombre_lista_documento = str_replace(' ', '_', str_replace('/', '_', $request->Nombre_documento));
-        }
-        
-        $idEvento = $request->EventoID;
-        $Id_servicio = $request->Id_servicio;
-
-        // Creación de carpeta con el ID EVENTO para insertar los documentos
-        $path = public_path('Documentos_Eventos/'.$idEvento);
-        $mode = 777;
-        
-        if (!File::exists($path)) {
-            File::makeDirectory($path, 0777, true, true);
-
-            chmod($path, octdec($mode));
-
-            if(!empty($request->bandera_nombre_otro_doc)){
-                $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
-            }else{
-                
-                if ($request->string_nombre_doc == "") {
-                    // $nombre_con_extension = $file->getClientOriginalName();
-                    // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
-                    // $nombre_final_documento_en_carpeta = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
-
-                    $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
-                }else{
-                    $nombre_final_documento_en_carpeta = $request->string_nombre_doc.".".$file->extension();
-                }
-            }
-            Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
-
-        }else {
-
-            if(!empty($request->bandera_nombre_otro_doc)){
-                $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
-            }else{
-                
-                if ($request->string_nombre_doc == "") {
-                    // $nombre_con_extension = $file->getClientOriginalName();
-                    // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
-                    // $nombre_final_documento_en_carpeta = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
-
-                    $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
-                }else{
-                    $nombre_final_documento_en_carpeta = $request->string_nombre_doc.".".$file->extension();
-                }
-            }
-            Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
-        }
-
-        if($request->bandera == 'consultador_eventos'){
-            
-            $ubicacion_origen = public_path('Documentos_Eventos/'.$idEvento);
-            $ubicacion_destino = public_path('Documentos_Eventos/Temp/' .$idEvento);
-
-            $nombre_temp = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}_idDoc_{$id_documento}.{$file->extension()}";
-            $this->mover_archivo($ubicacion_origen,$ubicacion_destino,$nombre_final_documento_en_carpeta,$nombre_temp,$id_documento);
-
-            $mensajes = [
-                "parametro" => 'exito',
-                "mensaje" => 'Documento cargado satisfactoriamente.'
-            ];
-
-            return response()->json($mensajes);
-        }
-
-        // Registrar la información del documento con relación al ID del evento.
-        if(!empty($request->bandera_nombre_otro_doc)){
-            $nombrecompletodocumento = $request->bandera_nombre_otro_doc;
-        }else{
-            
-            if ($request->string_nombre_doc == "") {
-                // $nombre_con_extension = $file->getClientOriginalName();
-                // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
-                // $nombrecompletodocumento = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
-
-                $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
-            }else{
-                $nombrecompletodocumento = $request->string_nombre_doc;
-            }
-        }
-
-        $nuevoDocumento = [
-            'Id_Documento' => $id_documento,
-            'ID_evento' => $idEvento,
-            'Nombre_documento' => $nombrecompletodocumento,
-            'Formato_documento' => $file->extension(),
-            'Id_servicio' => $Id_servicio,
-            'Estado' => 'activo',
-            'F_cargue_documento' => $date,
-            'Descripcion' => $request->descripcion_documento,
-            'Nombre_usuario' => $nombre_usuario,
-            'F_registro' => $date
-        ];  
-
-        if (count($nuevoDocumento) > 0) {
-
-            // Consultamos si el documento ya se encuentra dentro de la tabla para no cargarlo nuevamente (se reemplaza por el nuevo).
-            $consulta_documento_bd = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
-                ->select( "Id_Registro_Documento", "Nombre_documento", "Formato_documento")
-                ->where([
-                    ["Nombre_documento", "=", $nombrecompletodocumento],
-                    ["Id_servicio", "=", $Id_servicio],
-                    ["ID_evento", "=", $idEvento]
-                ])->get();
-
-            $array_consulta_documento_bd = json_decode(json_encode($consulta_documento_bd), true);
-            
-            if(!empty($array_consulta_documento_bd)){
-                $Id_Registro_Documento_en_bd = $array_consulta_documento_bd[0]['Id_Registro_Documento'];
-                $Nombre_documento_en_bd = $array_consulta_documento_bd[0]['Nombre_documento'];
-
-                // $Formato_documento_en_bd = $array_consulta_documento_bd[0]['Formato_documento'];
-                // && $Formato_documento_en_bd == $file->extension()
-                
-                if ($Nombre_documento_en_bd == $nombrecompletodocumento) {
-                    $actualizar_documento = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
-                        ->where('Id_Registro_Documento', $Id_Registro_Documento_en_bd)->firstOrFail();
-    
-                    $actualizar_documento->fill($nuevoDocumento);
-                    $actualizar_documento->save();
-    
-                    $mensajes = array(
-                        "parametro" => 'exito',
-                        "mensaje" => 'Documento cargado satisfactoriamente.'
-                    );
-                    return json_decode(json_encode($mensajes, true));
-    
-                } 
-
-            }
-            else {
-                sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($nuevoDocumento);
-    
-                $mensajes = array(
-                    "parametro" => 'exito',
-                    "mensaje" => 'Documento cargado satisfactoriamente.'
-                );
-    
-                // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-                if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                    $mensajes["otro"] = $request->bandera_otro_documento;
-                }
-                
-                // SE VALIDA SI TODOS LOS DOCUMENTOS OBLIGATORIOS HAN SIDO CARGADOS PARA PROCEDER A HABILITAR EL BOTÓN QUE CREARÁ EL EVENTO
-                $id_docs_obligatorios = sigmel_lista_documentos::on('sigmel_gestiones')
-                        ->select('Id_Documento')
-                        ->where([
-                            ["Requerido", "=", "Si"],
-                            ["Estado", "=", "activo"]
-                        ])->get();
-        
-                $array_id_docs_obligatorios = json_decode(json_encode($id_docs_obligatorios), true);
-                $cantidad_id_docs_obligatorios = count($array_id_docs_obligatorios);
-        
-                $cantidad_id_docs_subidos = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
-                ->where([
-                    ['ID_evento', '=', $request->EventoID]
-                ])
-                ->whereIn('Id_Documento', $array_id_docs_obligatorios)->count();
-                
-                if ($cantidad_id_docs_obligatorios == $cantidad_id_docs_subidos) {
-                    $mensajes["todos_obligatorios"] = "Si";
-                }
-    
-                return json_decode(json_encode($mensajes, true));
-                
-            }
-
-        }
-
-    }
-
-    public static function mover_archivoTEMP($IdEvento,$Id_Asignacion,$servicio){
+    /**
+     * Saca los documentos de un evento dentro de la carpeta temporal para el evento correspondiente en funcion del servicio
+     * @param String $IdEvento Evento que se esta procesando
+     * @param Int $Id_Asignacion
+     * @param Int $servicio Id del servicio que se vaa crear
+     */
+    public static function mover_archivoTEMP(string $IdEvento,int $Id_Asignacion,int $servicio){
        $pathTmp =  public_path('Documentos_Eventos/Temp/' .$IdEvento);
        $ruta_documentos = public_path('Documentos_Eventos/' .$IdEvento);
        if (File::exists($pathTmp)) {  
@@ -5571,6 +5318,7 @@ class AdministradorController extends Controller
                 // saca los documentos de la carpeta temporal
                 File::move($pathorigen,$destino);
 
+                //Si no tiene un id para el documento no lo registra en la tabla
                 if(!isset($id_documento)){
                     return;
                 }
@@ -5593,7 +5341,15 @@ class AdministradorController extends Controller
         }
     }
 
-    public function mover_archivo($ubicacion,$destino,$nombre_origen,$nombre_destino,$id_documento,$mode = 777){
+    /**
+     * Mueve un documento en especifico a otra ubbicacion
+     * @param String $ubicacion Ubicacioon fisica del archivo
+     * @param String $destino Nueva ubicacion fisica del archivo
+     * @param String $nombre_origen Nombre del documento origen
+     * @param String $nombre_destino Nombre que tendra el doc en la nueva ubicacion
+     * @param Int $mode Permisos que asignaran para la nueva ubicacion del archivo
+     */
+    public function mover_archivo(string $ubicacion,string $destino, string $nombre_origen, string $nombre_destino, int $mode = 777){
         if (!File::exists($destino)) {
             File::makeDirectory($destino, 0777, true, true);
             chmod($destino, octdec($mode));

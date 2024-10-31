@@ -131,8 +131,8 @@
                                     <th>ID evento</th>
                                     <th>Tipo de documento</th>
                                     <th>N° de identificación</th>
-                                    <th>Nombre de afiliado / beneficiaro</th>
-                                    <th>Proceso - Servicio</th>
+                                    <th>Nombre de afiliado / beneficiario</th>
+                                    <th>Tipo de afiliado</th>
                                     <th>Proceso - Servicio</th>
                                     <th>Última acción</th>
                                     <th>Fecha última acción</th>
