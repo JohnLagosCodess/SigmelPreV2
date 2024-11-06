@@ -26,6 +26,7 @@ use App\Models\sigmel_informacion_comunicado_eventos;
 use App\Models\sigmel_auditorias_pronunciamiento_eventos;
 use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_afiliado_eventos;
+use App\Models\sigmel_lista_departamentos_municipios;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
@@ -375,7 +376,45 @@ class PronunciamientoPCLController extends Controller
         // Captura del array de los datos de la tabla
         
         $array_diagnosticos_motivo_calificacion = json_decode($request->datos_finales_diagnosticos_moticalifi);
+        if(isset($request->otro_calificador)){
+            $info_ciudad = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+            ->select('Id_municipios','Id_departamento')
+            ->where('Nombre_municipio', 'like', "%{$request->ciudad_calificador}%")
+            ->orWhere('Nombre_departamento', 'like', "%{$request->depar_calificador}%")
+            ->first();
 
+            if(empty($info_ciudad)){
+                $consecutivo_dep = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+                ->select('Id_departamento')->max('Id_departamento');
+                $consecutivo_dep += 1;
+                
+                $info_ciudad = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')->insertGetId([
+                    "Nombre_departamento" => $request->depar_calificador,
+                    "Nombre_municipio" => $request->ciudad_calificador, 
+                    "Id_departamento" =>  $consecutivo_dep,
+                    "F_registro" => date('Y-m-d'),
+                    "Estado" => "activo"
+                ]);
+            }
+
+            $info_entidad = [
+                "Direccion" => $request->dir_calificador,
+                "Dirigido" => $request->otro_calificador,
+                "Nombre_entidad" => $request->otro_calificador, 
+                "Emails" => $request->mail_calificador,
+                "Id_Departamento" => $info_ciudad->Id_departamento ?? $consecutivo_dep ,
+                "Id_Ciudad" => $info_ciudad->Id_municipios ?? $info_ciudad,
+                "Sucursal" => $request->ciudad_calificador,
+                "Nit_entidad" => $request->nit_calificador,
+                "Telefonos" => $request->telefono_calificador,
+                'IdTipo_entidad' => 6,
+                "Estado_entidad" => 'activo'
+            ];
+
+            $tmp_entidad = sigmel_informacion_entidades::on('sigmel_gestiones')->updateOrCreate(['Nombre_entidad' => $request->otro_calificador],$info_entidad);
+            @$request->nombre_calificador = $tmp_entidad->Id_Entidad;
+
+        }
        /* if(!empty($request->otro_calificador)){
             sigmel_informacion_entidades::on('sigmel_gestiones')->insert([
                 'IdTipo_entidad' => 6,
@@ -651,7 +690,7 @@ class PronunciamientoPCLController extends Controller
 
             sleep(2);
 
-            if($request->decision_pr != 'Silencio'){
+            if($request->decision_pr != 'Silencio' && !isset($request->otro_calificador)){
                 $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }
@@ -837,7 +876,7 @@ class PronunciamientoPCLController extends Controller
                 'F_registro' => $date,
             ];
             // dd($request->decision_pr);
-            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado){
+            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado && !isset($request->otro_calificador)){
                 $Id_Comunicado = $request->Id_Comunicado;
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
                     ['ID_evento', $Id_EventoPronuncia],
@@ -853,7 +892,7 @@ class PronunciamientoPCLController extends Controller
                     "Id_Comunicado" => $Id_Comunicado
                 );
             }
-            else if($request->decision_pr == 'Silencio' && $request->Id_Comunicado){
+            else if($request->decision_pr == 'Silencio' && $request->Id_Comunicado && !isset($request->otro_calificador)){
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $request->Id_Comunicado)->delete();
                 $archivos_a_eliminar = [
                     "PCL_ACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.pdf",
@@ -874,8 +913,7 @@ class PronunciamientoPCLController extends Controller
                     "parametro2" => 'guardo',
                     "mensaje2" => 'Información actualizada satisfactoriamente.',                    
                 );
-            }
-            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado == "null"){
+            }else if($request->decision_pr != 'Silencio' && $request->Id_Comunicado == "null" && !isset($request->otro_calificador)){
                 //Se asignan los IDs de destinatario por cada posible destinatario
                 $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
                 $datos_info_comunicado_eventos['Id_Destinatarios'] = $ids_destinatarios;
@@ -889,6 +927,13 @@ class PronunciamientoPCLController extends Controller
                     "mensaje2" => 'Información actualizada satisfactoriamente.',
                     "Id_Comunicado" => $Id_Comunicado
                 );
+            }else{
+                $mensajes = array(
+                    "parametro" => 'agregar_pronunciamiento',
+                    "parametro2" => 'guardo',
+                    "mensaje" => 'Información guardada satisfactoriamente.',
+                    "Id_Comunicado" => null,
+                ); 
             }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
             $Id_Pronuncia = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->select('Id_Pronuncia','Id_Asignacion')->latest('Id_Pronuncia')->first();
@@ -952,7 +997,9 @@ class PronunciamientoPCLController extends Controller
             ];   
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-            ->where([                
+            ->where([            
+                ['ID_evento', $Id_EventoPronuncia],
+                ['Id_Asignacion', $Id_Asignacion_Pronuncia],    
                 ['N_radicado',$radicado]
             ])->update($datos_info_comunicado_eventos);
             

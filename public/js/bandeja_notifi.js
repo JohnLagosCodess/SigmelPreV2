@@ -661,6 +661,13 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
                         });
                     });
                 });
+
+                //Habilita los checkbox siempre y cuando el checkbox principal este chequeado
+                if($("#toggleButton").prop('disabled') == false){ 
+                    console.log("hiiii");  // Imprimir en la consola
+                    $("input[id^='enviar_accion']").prop('disabled', false);  
+                }
+                
             },
             "language": {
                 "search": "Buscar",

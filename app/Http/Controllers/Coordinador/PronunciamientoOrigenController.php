@@ -27,6 +27,7 @@ use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_accion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Models\sigmel_lista_departamentos_municipios;
 use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
@@ -298,6 +299,46 @@ class PronunciamientoOrigenController extends Controller
         $Id_Asignacion_Pronuncia = $request->Id_Asignacion_Pronuncia;
         // Captura del array de los datos de la tabla
         
+        if(isset($request->otro_calificador)){
+            $info_ciudad = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+            ->select('Id_municipios','Id_departamento')
+            ->where('Nombre_municipio', 'like', "%{$request->ciudad_calificador}%")
+            ->orWhere('Nombre_departamento', 'like', "%{$request->depar_calificador}%")
+            ->first();
+
+            if(empty($info_ciudad)){
+                $consecutivo_dep = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+                ->select('Id_departamento')->max('Id_departamento');
+                $consecutivo_dep += 1;
+                
+                $info_ciudad = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')->insertGetId([
+                    "Nombre_departamento" => $request->depar_calificador,
+                    "Nombre_municipio" => $request->ciudad_calificador, 
+                    "Id_departamento" =>  $consecutivo_dep,
+                    "F_registro" => date('Y-m-d'),
+                    "Estado" => "activo"
+                ]);
+            }
+
+            $info_entidad = [
+                "Direccion" => $request->dir_calificador,
+                "Dirigido" => $request->otro_calificador,
+                "Nombre_entidad" => $request->otro_calificador, 
+                "Emails" => $request->mail_calificador,
+                "Id_Departamento" => $info_ciudad->Id_departamento ?? $consecutivo_dep ,
+                "Id_Ciudad" => $info_ciudad->Id_municipios ?? $info_ciudad,
+                "Sucursal" => $request->ciudad_calificador,
+                "Nit_entidad" => $request->nit_calificador,
+                "Telefonos" => $request->telefono_calificador,
+                'IdTipo_entidad' => 6,
+                "Estado_entidad" => 'activo'
+            ];
+
+            $tmp_entidad = sigmel_informacion_entidades::on('sigmel_gestiones')->updateOrCreate(['Nombre_entidad' => $request->otro_calificador],$info_entidad);
+            @$request->nombre_calificador = $tmp_entidad->Id_Entidad;
+
+        }
+
         $array_diagnosticos_motivo_calificacion = json_decode($request->datos_finales_diagnosticos_moticalifi);
 
         // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
@@ -576,7 +617,7 @@ class PronunciamientoOrigenController extends Controller
 
             sleep(2);
             $id_comunicado = null;
-            if($request->decision_pr != 'Silencio'){
+            if($request->decision_pr != 'Silencio' && !isset($request->otro_calificador)){
                 $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }
@@ -777,7 +818,7 @@ class PronunciamientoOrigenController extends Controller
                 'F_registro' => $date,
             ];
             // dd($request->decision_pr);
-            if($request->decision_pr != 'Silencio' && $id_comunicado){
+            if($request->decision_pr != 'Silencio' && $id_comunicado && !isset($request->otro_calificador)){
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
                     ['ID_evento', $Id_EventoPronuncia],
                     ['Id_Asignacion', $Id_Asignacion_Pronuncia],
@@ -785,7 +826,7 @@ class PronunciamientoOrigenController extends Controller
                 ])->update($datos_info_comunicado_eventos);
                 sleep(2);
             }
-            else if($request->decision_pr == 'Silencio' && $id_comunicado){
+            else if($request->decision_pr == 'Silencio' && $id_comunicado && !isset($request->otro_calificador)){
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $id_comunicado)->delete();
                 $archivos_a_eliminar = [
                     "ORI_ACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.pdf",
@@ -801,7 +842,7 @@ class PronunciamientoOrigenController extends Controller
                 }
                 sleep(2);
             }
-            if($request->decision_pr != 'Silencio' && !$id_comunicado){
+            if($request->decision_pr != 'Silencio' && !$id_comunicado && !isset($request->otro_calificador)){
                 //Se asignan los IDs de destinatario por cada posible destinatario
                 $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
                 $datos_info_comunicado_eventos['Id_Destinatarios'] = $ids_destinatarios;
@@ -877,7 +918,9 @@ class PronunciamientoOrigenController extends Controller
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
             ->where([                
-                ['N_radicado',$radicado]
+                ['N_radicado',$radicado],
+                ['ID_evento', $Id_EventoPronuncia],
+                ['Id_Asignacion', $Id_Asignacion_Pronuncia],
             ])->update($datos_info_comunicado_eventos);
 
             sleep(2);
