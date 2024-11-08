@@ -251,7 +251,7 @@ $(document).ready(function () {
                     
                     // console.log(cell_1[0].cellIndex);
 
-                    if(cell_1[0].cellIndex != 13){
+                    //if(cell_1[0].cellIndex != 13){
 
                         var cell = $('.filters th').eq(
                             $(api.column(colIdx).header()).index()
@@ -288,7 +288,7 @@ $(document).ready(function () {
                                     .setSelectionRange(cursorPosition, cursorPosition);
                             });
                         }
-                    }
+                    //}
 
                 });
             },
@@ -1395,7 +1395,8 @@ $(document).ready(function () {
         /* for (var pair of formData.entries()) {
             console.log(pair[0]+ ', ' + pair[1]); 
         } */
-
+        formData.append('bandera','consultador_eventos');
+        
         $.ajax({
             url: "/cargarDocumentos",
             type: "post",

@@ -1320,6 +1320,7 @@
             document.getElementById('Regreso_Adicion_Dx').submit();
         });
     </script> --}}
+    <script src="/js/funciones_helpers.js"></script>
     <script src="/js/selectores_gestion_edicion.js"></script>  
     <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script type="text/javascript">
