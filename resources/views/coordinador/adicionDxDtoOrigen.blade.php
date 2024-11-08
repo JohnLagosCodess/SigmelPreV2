@@ -938,15 +938,15 @@
                                                                         data-id_proce_checkbox_dx_principal_cie10_visual="{{$diagnosticos_adicionales->Id_proceso}}" <?php if($diagnosticos_adicionales->Principal == "Si"):?> checked <?php endif?> style="transform: scale(1.2) !important;">
                                                                     </td>
                                                                     <td>
-                                                                        <?php if($diagnosticos_adicionales->F_adicion_CIE10 == date("Y-m-d")):?>
-                                                                            <?php if($Id_asignacion_actual == $diagnosticos_adicionales->Id_Asignacion): ?>
+                                                                        {{-- <?php if($diagnosticos_adicionales->F_adicion_CIE10 == date("Y-m-d")):?> --}}
+                                                                            {{-- <?php if($Id_asignacion_actual == $diagnosticos_adicionales->Id_Asignacion): ?> --}}
                                                                                 <div class="centrar"><a href="javascript:void(0);" id="btn_remover_diagnosticos_moticalifi{{$diagnosticos_adicionales->Id_Diagnosticos_motcali}}" data-id_fila_quitar="{{$diagnosticos_adicionales->Id_Diagnosticos_motcali}}" data-clase_fila="fila_diagnosticos_{{$diagnosticos_adicionales->Id_Diagnosticos_motcali}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
-                                                                            <?php else: ?>
-                                                                                <div class="centrar">-</div>
-                                                                            <?php endif ?>
-                                                                        <?php else: ?>
-                                                                            <div class="centrar">-</div>
-                                                                        <?php endif?>
+                                                                            {{-- <?php else: ?> --}}
+                                                                                {{-- <div class="centrar">-</div> --}}
+                                                                            {{-- <?php endif ?> --}}
+                                                                        {{-- <?php else: ?> --}}
+                                                                            {{-- <div class="centrar">-</div> --}}
+                                                                        {{-- <?php endif?> --}}
                                                                     </td>
                                                                 </tr> 
                                                                 @endforeach

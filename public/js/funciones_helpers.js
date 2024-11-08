@@ -344,7 +344,37 @@ $(document).ready(function () {
         Maximo2Decimales(inputId);
     });
 
+    $(document).on('keyup', "input[id^='alerta_naranja_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='alerta_roja_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
     $(document).on('keyup', "input[id^='porcentaje_pcl']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='edicion_nombre_ans_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='edicion_valor_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='edicion_alerta_naranja_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='edicion_alerta_roja_ans_']", function(){
         var inputId = this.id;
         Maximo2Decimales(inputId);
     });
@@ -474,25 +504,7 @@ $(document).ready(function () {
     //     NumerosEnteros(this);
     // });
             
-    function Maximo2Decimales(idinput){
-        $('#'+idinput).on('input', function(){
-            var inputValue = $(this).val();
-            var decimalCount = (inputValue.split('.')[1] || []).length;        
-            if (decimalCount > 2) {
-              $(this).val(parseFloat(inputValue).toFixed(2));
-            }
-        });
-    };
-
-    function Maximo1Decimal(idinput){
-        $('#'+idinput).on('input', function(){
-            var inputValue = $(this).val();
-            var decimalCount = (inputValue.split('.')[1] || []).length;        
-            if (decimalCount > 1) {
-              $(this).val(parseFloat(inputValue).toFixed(1));
-            }
-        });
-    }
+    
 
     $(document).on("input", '[id^="deficienciadecreto3_"]', function() {
         var inputId = this.id;
@@ -700,49 +712,71 @@ $(document).ready(function () {
 
 
     });
+});
 
-        //evento cuando se le de click en el boton de eliminar
-        $(document).on('click', '.btn_eliminar_radicado', function() {  
-            // Deshabilita todo los botones de eliminar menos el clickeado
-            $('.btn_eliminar_radicado').css({
-                'color': '#ff4f4f',
-                'pointer-events': 'none', //deshabilita el click
-                'opacity': '0.5'
-            });
-    
-            $(this).css({
-                'color': 'red', 
-                'pointer-events': 'auto',
-                'opacity': '1'
-            });
-    
-            //Habilita nuevamente el boton tras finalizar el proceso.
-           let resultado = eliminar_evento($(this).data('id_comunicado'));
-           if(resultado == 'ok'){
-                $('.btn_eliminar_radicado').css({
-                    'color': 'red',
-                    'pointer-events': 'auto', //deshabilita el click
-                    'opacity': '1'
-                });
-           }
+// Función que permite solamente dos decimales escribir
+function Maximo2Decimales(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 2) {
+          $(this).val(parseFloat(inputValue).toFixed(2));
+        }
+    });
+};
+
+// Función que permite solamente un decimal escribir
+function Maximo1Decimal(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 1) {
+          $(this).val(parseFloat(inputValue).toFixed(1));
+        }
+    });
+}
+
+    //evento cuando se le de click en el boton de eliminar
+    $(document).on('click', '.btn_eliminar_radicado', function() {  
+        // Deshabilita todo los botones de eliminar menos el clickeado
+        $('.btn_eliminar_radicado').css({
+            'color': '#ff4f4f',
+            'pointer-events': 'none', //deshabilita el click
+            'opacity': '0.5'
         });
 
+        //Habilita el boton seleccionado
+        $(this).css({
+            'color': 'red', 
+            'pointer-events': 'auto',
+            'opacity': '1'
+        });
+
+        //Habilita nuevamente el boton tras finalizar el proceso.
+        let resultado = eliminar_evento($(this).data('id_comunicado'));
+        if(resultado == 'ok'){
+            $('.btn_eliminar_radicado').css({
+                'color': 'red',
+                'pointer-events': 'auto', //habilita el click
+                'opacity': '1'
+            });
+        }
+    });
     historial_servicios();
 
-    //Para que boostrap sea compatible con select2 cuando se abre una modal
+    //Mantiene el foco dentro del modal, principalmente para que sea compatible con select2
     $.fn.modal.Constructor.prototype._enforceFocus = function () {
         var that = this;
         $(document).on('focusin.modal', function (e) {
         if ($(e.target).hasClass('select2-input')) {
-          return true;
+            return true;
         }
 
-        if (that.$element && that.$element.length && that.$element[0] !== e.target && !that.$element.has(e.target).length) {
-          that.$element.focus();
+        if (that.$element[0] !== e.target && !that.$element.has(e.target).length) {
+            that.$element.focus();
         }
-        });
-    };
-});
+    });
+};
 
 /**
  * Obtiene el historial de servicio para el evento consultado con base a la identificacion del afiliado.
@@ -857,7 +891,7 @@ function historial_servicios(){
     });
 
 }
-
+// aqui mauro
 /**
  * Obtiene el id del formulario para el modulo principal actual
  * @returns Id del formulario cargado en el dom
@@ -1264,4 +1298,48 @@ function peticion_asincrona(...peticiones) {
         .finally(() => {
             console.log('Todas las peticiones han sido procesadas');
         });
+}
+
+/* Función para colorear el caso ya sea naranja o roja dependiendo del ANS */
+function ColoreadoEventosANS(Tiempo_actual,Fecha_alerta_naranja, Fecha_alerta_roja, tabla_bandeja) {
+    if (Fecha_alerta_naranja > Fecha_alerta_roja) {
+        if (Fecha_alerta_roja != "") {
+    
+            let alertaFechaRoja_ans = new Date(Fecha_alerta_roja);
+            
+            if (Tiempo_actual >= alertaFechaRoja_ans) {  
+                // console.log("ROJA: "+alertaFechaRoja_ans);
+                $(tabla_bandeja).find('td').css({'color':'red', 'font-weight': 'bold'});
+            }
+        }
+        if (Fecha_alerta_naranja != "") {
+            
+            let alertaFechaNaranja_ans = new Date(Fecha_alerta_naranja);
+            
+            if (Tiempo_actual >= alertaFechaNaranja_ans) {  
+                // console.log("NARANJA: "+alertaFechaNaranja_ans);
+                $(tabla_bandeja).find('td').css({'color':'orange', 'font-weight': 'bold'});
+            }
+        }
+    }
+    else{
+        if (Fecha_alerta_naranja != "") {
+                                
+            let alertaFechaNaranja_ans = new Date(Fecha_alerta_naranja);
+            
+            if (Tiempo_actual >= alertaFechaNaranja_ans) {  
+                // console.log("NARANJA: "+alertaFechaNaranja_ans);
+                $(tabla_bandeja).find('td').css({'color':'orange', 'font-weight': 'bold'});
+            }
+        }
+        if (Fecha_alerta_roja != "") {
+
+            let alertaFechaRoja_ans = new Date(Fecha_alerta_roja);
+            
+            if (Tiempo_actual >= alertaFechaRoja_ans) {  
+                // console.log("ROJA: "+alertaFechaRoja_ans);
+                $(tabla_bandeja).find('td').css({'color':'red', 'font-weight': 'bold'});
+            }
+        }
+    }
 }

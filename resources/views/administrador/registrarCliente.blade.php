@@ -360,7 +360,7 @@
                                     </div>
 
                                     {{-- ANS --}}
-                                    <div class="row">
+                                    {{-- <div class="row">
                                         <div class="col-12">
                                             <div class="alert alert-warning" role="alert">
                                                 <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Al momento de agregar una fila nueva es necesario
@@ -381,7 +381,7 @@
                                                 </table>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                             
