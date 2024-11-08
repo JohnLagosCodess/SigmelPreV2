@@ -652,6 +652,7 @@ $(document).ready(function(){
         formData.append('Id_servicio', $("#Id_servicio").val());
         formData.append('nueva_fecha_radicacion', $('#nueva_fecha_radicacion').val());
         formData.append('accion', $('#accion').val());
+        formData.append('fecha_radicacion_actual', $('#fecha_radicacion').val());
         formData.append('fecha_alerta', $('#fecha_alerta').val());
         formData.append('enviar', $('#enviar').val());
         formData.append('estado_facturacion', $('#estado_facturacion').val());
@@ -659,6 +660,8 @@ $(document).ready(function(){
         formData.append('descripcion_accion', $('#descripcion_accion').val());
         formData.append('fuente_info_juntas', $('#fuente_info_juntas').val());
         formData.append('fecha_cierre', $('#fecha_cierre').val());
+        formData.append('fecha_vencimiento_actual', $('#fecha_vencimiento_actual').val());
+        formData.append('tiempo_gestion', $('#tiempo_gestion').val());
         formData.append('banderaguardar', $('#bandera_accion_guardar_actualizar').val());
 
         $.ajax({

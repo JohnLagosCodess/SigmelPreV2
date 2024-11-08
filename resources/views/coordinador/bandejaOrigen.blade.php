@@ -107,14 +107,15 @@
                                         <th>ID evento</th>
                                         <th>Fecha de evento</th>
                                         <th>Fecha de radicación</th>
-                                        <th>Tiempo de gestión</th>
+                                        <th>Fecha de vencimiento</th>
+                                        <th>Fecha alerta</th>
+                                        <th>Tiempo de gestión (Días)</th>
                                         <th>Dias transcurridos desde el evento</th>
                                         <th>Empresa actual</th>
                                         <th>Proceso</th>
                                         <th>Proceso que envia</th>
                                         <th>Fecha asignación al proceso</th>
                                         <th>Asignado por</th>
-                                        <th>Fecha alerta</th>
                                         <th>Estado alerta</th>
                                         <th>Fecha solicitud documentos</th>
                                         <th>Fecha Primer seguimiento</th>
@@ -205,6 +206,7 @@
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.templates.min.js"></script>
 
     <script src="/js/bandeja_origen.js"></script>
+    <script src="/js/funciones_helpers.js"></script>
     
     <script>
         function ocultarBotonFiltrar(){

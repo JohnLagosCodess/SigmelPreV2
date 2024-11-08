@@ -16,9 +16,13 @@ class sigmel_informacion_ans_clientes extends Model
     protected $fillable = [
         'Id_cliente',
         'Nombre',
-        'Descripcion',
+        'Servicio',
+        'Accion',
         'Valor',
         'Unidad',
+        'Porcentaje_Alerta_Naranja',
+        'Porcentaje_Alerta_Roja',
+        'Estado',
         'Nombre_usuario',
         'F_registro'
     ];

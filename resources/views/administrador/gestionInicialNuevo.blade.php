@@ -745,7 +745,19 @@
                                                     <label for="profesional" class="col-form label">Profesional</label>
                                                     <select class="profesional custom-select" name="profesional" id="profesional" disabled></select>
                                                 </div>
-                                            </div> 
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <label for="" class="col-form label">Fecha de vencimiento</label>
+                                                    <input type="date" class="form-control" name="fecha_vencimiento_visual" id="fecha_vencimiento_visual" disabled>
+                                                    <div class="d-none1">
+                                                        <input type="text" class="form-control" name="Id_ans" id="Id_ans">
+                                                        <input type="text" class="form-control" name="fecha_vencimiento" id="fecha_vencimiento">
+                                                        <input type="text" class="form-control" name="fecha_alerta_naranja_ans" id="fecha_alerta_naranja_ans">
+                                                        <input type="text" class="form-control" name="fecha_alerta_roja_ans" id="fecha_alerta_roja_ans">
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>  
                                         <div class="row">
                                             <div class="col-sm">

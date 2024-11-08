@@ -19,6 +19,9 @@ use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_informacion_pronunciamiento_eventos;
 use App\Models\sigmel_registro_documentos_eventos;
 
+/* Procedimiento para calculo fecha vencimiento */
+use App\Models\sigmel_informacion_alertas_ans_eventos;
+
 class BuscarEventoController extends Controller
 {
     /* TODO LO REFERENTE AL FORMULARIO DE BUSCAR UN EVENTO*/
@@ -2250,6 +2253,13 @@ class BuscarEventoController extends Controller
             $N_orden_evento=null;
         }
 
+        // si hay ans se guarda la fecha de vencimiento, en caso de que no, manda un null
+        if ($request->fecha_vencimiento != "") {
+            $fecha_vencimiento = $request->fecha_vencimiento;
+        } else {
+            $fecha_vencimiento = null;
+        }
+
         // Recopilación de datos para insertar el nuevo servicio
         $datos_nuevo_servicio = [
             'ID_evento' => $request->id_evento,
@@ -2263,6 +2273,7 @@ class BuscarEventoController extends Controller
             'Id_Estado_evento' => $Id_Estado_evento,
             'F_accion' => $request->nueva_fecha_accion,
             'F_radicacion' => $request->nueva_fecha_radicacion,
+            'Fecha_vencimiento' => $fecha_vencimiento,
             'N_de_orden' => $N_orden_evento,
             'Id_proceso_anterior' => $request->id_proceso_actual,
             'Id_servicio_anterior' => $request->id_servicio_actual,
@@ -2277,6 +2288,22 @@ class BuscarEventoController extends Controller
         ];
 
         $Id_Asignacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insertGetId($datos_nuevo_servicio);
+
+        // Inserción en la tabla sigmel_informacion_alertas_ans_eventos para el tema de las alertas solo cuando existan datos
+        if ($request->fecha_vencimiento != "") {
+            sleep(2);
+            $datos_info_alertas_ans = [
+                'ID_evento' =>$request->id_evento,
+                'Id_Asignacion' => $Id_Asignacion,
+                'Id_ans' => $request->Id_ans,
+                'Fecha_alerta_naranja' => $request->fecha_alerta_naranja_ans,
+                'Fecha_alerta_roja' => $request->fecha_alerta_roja_ans,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro'  => $date
+            ];
+    
+            sigmel_informacion_alertas_ans_eventos::on('sigmel_gestiones')->insert($datos_info_alertas_ans);
+        }
 
         sleep(1);
 
@@ -2400,6 +2427,13 @@ class BuscarEventoController extends Controller
             $Id_Estado_evento = 223;
         }
 
+        // si hay ans se guarda la fecha de vencimiento, en caso de que no, manda un null
+        if ($request->fecha_vencimiento_nuevo_proceso != "") {
+            $fecha_vencimiento = $request->fecha_vencimiento_nuevo_proceso;
+        } else {
+            $fecha_vencimiento = null;
+        }
+
         $datos_nuevo_proceso = [
             'ID_evento' => $request->id_evento,
             'Id_proceso' => $request->selector_nuevo_proceso,
@@ -2412,6 +2446,7 @@ class BuscarEventoController extends Controller
             'Id_Estado_evento' => $Id_Estado_evento,
             'F_accion' => $request->nueva_fecha_accion_nuevo_proceso,
             'F_radicacion' => $request->fecha_radicacion_nuevo_proceso,
+            'Fecha_vencimiento' => $fecha_vencimiento,
             'Id_proceso_anterior' => $request->id_proceso_actual_nuevo_proceso,
             'Id_servicio_anterior' => $request->id_servicio_actual_nuevo_proceso,
             'F_asignacion_calificacion' => $F_asignacion_calificacion,
@@ -2425,6 +2460,22 @@ class BuscarEventoController extends Controller
         ];
 
         $Id_Asignacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insertGetId($datos_nuevo_proceso);
+
+        // Inserción en la tabla sigmel_informacion_alertas_ans_eventos para el tema de las alertas solo cuando existan datos
+        if ($request->fecha_vencimiento_nuevo_proceso != "") {
+            sleep(2);
+            $datos_info_alertas_ans = [
+                'ID_evento' =>$request->id_evento,
+                'Id_Asignacion' => $Id_Asignacion,
+                'Id_ans' => $request->Id_ans_nuevo_proceso,
+                'Fecha_alerta_naranja' => $request->fecha_alerta_naranja_ans_nuevo_proceso,
+                'Fecha_alerta_roja' => $request->fecha_alerta_roja_ans_nuevo_proceso,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro'  => $date
+            ];
+
+            sigmel_informacion_alertas_ans_eventos::on('sigmel_gestiones')->insert($datos_info_alertas_ans);
+        }
 
         sleep(1);
 

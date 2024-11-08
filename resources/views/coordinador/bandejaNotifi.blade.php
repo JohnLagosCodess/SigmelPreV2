@@ -110,7 +110,7 @@
                             <table id="Bandeja_Notifi" class="table table-striped table-bordered" style="width:100%;">
                                 <thead>
                                     <tr class="bg-info">
-                                        <th class="detallenotifi">Detalle  </th>
+                                        <th class="detallenotifi">Detalle</th>
                                         <th>Cliente</th>
                                         <th>Nombre de afiliado</th>
                                         <th>N° identificación</th>
@@ -122,14 +122,15 @@
                                         <th>ID evento</th>
                                         <th>Fecha de evento</th>
                                         <th>Fecha de radicación</th>
-                                        <th>Tiempo de gestión</th>
+                                        <th>Fecha de vencimiento</th>
+                                        <th>Fecha alerta</th>
+                                        <th>Tiempo de gestión (Días)</th>
                                         <th>Dias transcurridos desde el evento</th>
                                         <th>Empresa actual</th>
                                         <th>Proceso</th>
                                         <th>Proceso que envia</th>
                                         <th>Fecha asignación al proceso</th>
                                         <th>Asignado por</th>
-                                        <th>Fecha alerta</th>
                                         <th>Estado alerta</th>
                                         <th>Fecha de asignación para notificación</th>
                                         <th>N° de orden</th>
@@ -210,8 +211,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.templates.min.js"></script>
-    <script src="/js/funciones_helpers.js"></script>
+    
     <script src="/js/bandeja_notifi.js"></script>
+    <script src="/js/funciones_helpers.js"></script>
     
     <script>
         function ocultarBotonFiltrar(){

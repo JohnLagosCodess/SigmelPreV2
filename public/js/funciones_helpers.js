@@ -344,7 +344,37 @@ $(document).ready(function () {
         Maximo2Decimales(inputId);
     });
 
+    $(document).on('keyup', "input[id^='alerta_naranja_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='alerta_roja_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
     $(document).on('keyup', "input[id^='porcentaje_pcl']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='edicion_nombre_ans_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='edicion_valor_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='edicion_alerta_naranja_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='edicion_alerta_roja_ans_']", function(){
         var inputId = this.id;
         Maximo2Decimales(inputId);
     });
@@ -474,25 +504,7 @@ $(document).ready(function () {
     //     NumerosEnteros(this);
     // });
             
-    function Maximo2Decimales(idinput){
-        $('#'+idinput).on('input', function(){
-            var inputValue = $(this).val();
-            var decimalCount = (inputValue.split('.')[1] || []).length;        
-            if (decimalCount > 2) {
-              $(this).val(parseFloat(inputValue).toFixed(2));
-            }
-        });
-    };
-
-    function Maximo1Decimal(idinput){
-        $('#'+idinput).on('input', function(){
-            var inputValue = $(this).val();
-            var decimalCount = (inputValue.split('.')[1] || []).length;        
-            if (decimalCount > 1) {
-              $(this).val(parseFloat(inputValue).toFixed(1));
-            }
-        });
-    }
+    
 
     $(document).on("input", '[id^="deficienciadecreto3_"]', function() {
         var inputId = this.id;
@@ -702,6 +714,28 @@ $(document).ready(function () {
 
     });
 });
+
+// Función que permite solamente dos decimales escribir
+function Maximo2Decimales(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 2) {
+          $(this).val(parseFloat(inputValue).toFixed(2));
+        }
+    });
+};
+
+// Función que permite solamente un decimal escribir
+function Maximo1Decimal(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 1) {
+          $(this).val(parseFloat(inputValue).toFixed(1));
+        }
+    });
+}
 
 /**
  * Obtiene el id del formulario para el modulo principal actual
@@ -967,4 +1001,48 @@ function validarAccion_ejecutar(id_accion) {
                 reject(error);
             });
     });
+}
+
+/* Función para colorear el caso ya sea naranja o roja dependiendo del ANS */
+function ColoreadoEventosANS(Tiempo_actual,Fecha_alerta_naranja, Fecha_alerta_roja, tabla_bandeja) {
+    if (Fecha_alerta_naranja > Fecha_alerta_roja) {
+        if (Fecha_alerta_roja != "") {
+    
+            let alertaFechaRoja_ans = new Date(Fecha_alerta_roja);
+            
+            if (Tiempo_actual >= alertaFechaRoja_ans) {  
+                // console.log("ROJA: "+alertaFechaRoja_ans);
+                $(tabla_bandeja).find('td').css({'color':'red', 'font-weight': 'bold'});
+            }
+        }
+        if (Fecha_alerta_naranja != "") {
+            
+            let alertaFechaNaranja_ans = new Date(Fecha_alerta_naranja);
+            
+            if (Tiempo_actual >= alertaFechaNaranja_ans) {  
+                // console.log("NARANJA: "+alertaFechaNaranja_ans);
+                $(tabla_bandeja).find('td').css({'color':'orange', 'font-weight': 'bold'});
+            }
+        }
+    }
+    else{
+        if (Fecha_alerta_naranja != "") {
+                                
+            let alertaFechaNaranja_ans = new Date(Fecha_alerta_naranja);
+            
+            if (Tiempo_actual >= alertaFechaNaranja_ans) {  
+                // console.log("NARANJA: "+alertaFechaNaranja_ans);
+                $(tabla_bandeja).find('td').css({'color':'orange', 'font-weight': 'bold'});
+            }
+        }
+        if (Fecha_alerta_roja != "") {
+
+            let alertaFechaRoja_ans = new Date(Fecha_alerta_roja);
+            
+            if (Tiempo_actual >= alertaFechaRoja_ans) {  
+                // console.log("ROJA: "+alertaFechaRoja_ans);
+                $(tabla_bandeja).find('td').css({'color':'red', 'font-weight': 'bold'});
+            }
+        }
+    }
 }
