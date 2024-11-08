@@ -27,6 +27,7 @@ use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_accion_eventos;
 use App\Models\sigmel_registro_descarga_documentos;
+use App\Models\sigmel_lista_departamentos_municipios;
 use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
@@ -298,6 +299,46 @@ class PronunciamientoOrigenController extends Controller
         $Id_Asignacion_Pronuncia = $request->Id_Asignacion_Pronuncia;
         // Captura del array de los datos de la tabla
         
+        if(isset($request->otro_calificador)){
+            $info_ciudad = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+            ->select('Id_municipios','Id_departamento')
+            ->where('Nombre_municipio', 'like', "%{$request->ciudad_calificador}%")
+            ->orWhere('Nombre_departamento', 'like', "%{$request->depar_calificador}%")
+            ->first();
+
+            if(empty($info_ciudad)){
+                $consecutivo_dep = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+                ->select('Id_departamento')->max('Id_departamento');
+                $consecutivo_dep += 1;
+                
+                $info_ciudad = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')->insertGetId([
+                    "Nombre_departamento" => $request->depar_calificador,
+                    "Nombre_municipio" => $request->ciudad_calificador, 
+                    "Id_departamento" =>  $consecutivo_dep,
+                    "F_registro" => date('Y-m-d'),
+                    "Estado" => "activo"
+                ]);
+            }
+
+            $info_entidad = [
+                "Direccion" => $request->dir_calificador,
+                "Dirigido" => $request->otro_calificador,
+                "Nombre_entidad" => $request->otro_calificador, 
+                "Emails" => $request->mail_calificador,
+                "Id_Departamento" => $info_ciudad->Id_departamento ?? $consecutivo_dep ,
+                "Id_Ciudad" => $info_ciudad->Id_municipios ?? $info_ciudad,
+                "Sucursal" => $request->ciudad_calificador,
+                "Nit_entidad" => $request->nit_calificador,
+                "Telefonos" => $request->telefono_calificador,
+                'IdTipo_entidad' => 6,
+                "Estado_entidad" => 'activo'
+            ];
+
+            $tmp_entidad = sigmel_informacion_entidades::on('sigmel_gestiones')->updateOrCreate(['Nombre_entidad' => $request->otro_calificador],$info_entidad);
+            @$request->nombre_calificador = $tmp_entidad->Id_Entidad;
+
+        }
+
         $array_diagnosticos_motivo_calificacion = json_decode($request->datos_finales_diagnosticos_moticalifi);
 
         // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
@@ -576,7 +617,7 @@ class PronunciamientoOrigenController extends Controller
 
             sleep(2);
             $id_comunicado = null;
-            if($request->decision_pr != 'Silencio'){
+            if($request->decision_pr != 'Silencio' && !isset($request->otro_calificador)){
                 $id_comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }
@@ -777,7 +818,7 @@ class PronunciamientoOrigenController extends Controller
                 'F_registro' => $date,
             ];
             // dd($request->decision_pr);
-            if($request->decision_pr != 'Silencio' && $id_comunicado){
+            if($request->decision_pr != 'Silencio' && $id_comunicado && !isset($request->otro_calificador)){
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
                     ['ID_evento', $Id_EventoPronuncia],
                     ['Id_Asignacion', $Id_Asignacion_Pronuncia],
@@ -785,7 +826,7 @@ class PronunciamientoOrigenController extends Controller
                 ])->update($datos_info_comunicado_eventos);
                 sleep(2);
             }
-            else if($request->decision_pr == 'Silencio' && $id_comunicado){
+            else if($request->decision_pr == 'Silencio' && $id_comunicado && !isset($request->otro_calificador)){
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $id_comunicado)->delete();
                 $archivos_a_eliminar = [
                     "ORI_ACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.pdf",
@@ -801,7 +842,7 @@ class PronunciamientoOrigenController extends Controller
                 }
                 sleep(2);
             }
-            if($request->decision_pr != 'Silencio' && !$id_comunicado){
+            if($request->decision_pr != 'Silencio' && !$id_comunicado && !isset($request->otro_calificador)){
                 //Se asignan los IDs de destinatario por cada posible destinatario
                 $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
                 $datos_info_comunicado_eventos['Id_Destinatarios'] = $ids_destinatarios;
@@ -877,7 +918,9 @@ class PronunciamientoOrigenController extends Controller
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
             ->where([                
-                ['N_radicado',$radicado]
+                ['N_radicado',$radicado],
+                ['ID_evento', $Id_EventoPronuncia],
+                ['Id_Asignacion', $Id_Asignacion_Pronuncia],
             ])->update($datos_info_comunicado_eventos);
 
             sleep(2);
@@ -973,7 +1016,7 @@ class PronunciamientoOrigenController extends Controller
         $array_datos_pronunciamientoOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($Id_Asignacion_consulta_dx));
         $info_pronuncia = $this->globalService->retornarInformacionPronunciamiento($id_evento,$Id_Asignacion_consulta_dx);
         $info_comunicado = $this->globalService->retornarInformacionComunicado($Id_comunicado);
-        if(!empty($info_comunicado[0]->Tipo_descarga)){
+        if($info_comunicado && !empty($info_comunicado[0]->Tipo_descarga)){
             if($info_comunicado[0]->Tipo_descarga === 'Acuerdo'){
                 $bandera_tipo_proforma = "proforma_acuerdo";
             }
@@ -1000,6 +1043,7 @@ class PronunciamientoOrigenController extends Controller
         $num_identificacion = !empty($array_datos_pronunciamientoOrigen[0]->Nro_identificacion) ? $array_datos_pronunciamientoOrigen[0]->Nro_identificacion : null;
 
         $fecha_dictamen = $request->fecha_dictamen;
+        $fecha_dictamen = date("d/m/Y", strtotime($fecha_dictamen));
 
         $origen = "<b>".$request->origen."</b>";
 
@@ -1026,7 +1070,7 @@ class PronunciamientoOrigenController extends Controller
         $nro_anexos = $request->nro_anexos;
         
         // $nombre_entidad = $request->nombre_entidad;
-        $nombre_entidad = !empty($info_pronuncia[0]->Nombre_entidad) ? $info_pronuncia[0]->Nombre_entidad : null;
+        $nombre_entidad = $info_pronuncia && !empty($info_pronuncia[0]->Nombre_entidad) ? $info_pronuncia[0]->Nombre_entidad : null;
 
         $email_entidad = $request->email_entidad;
         $direccion_entidad = $request->direccion_entidad;
@@ -1551,11 +1595,11 @@ class PronunciamientoOrigenController extends Controller
             $header->addImage($imagenPath_header, array('width' => 110, 'height' => 30, 'align' => 'right'));
             $encabezado = $header->addTextRun(['alignment' => 'right']);
             //FontStyle del paginado
-            $fontStyle = ['name' => 'Calibri', 'size' => 8];
-            $encabezado->addText('Página ', $fontStyle);
-            $encabezado->addField('PAGE',[],[],null,$fontStyle);
-            $encabezado->addText(' de ',$fontStyle);
-            $encabezado->addField('NUMPAGES',[],[],null,$fontStyle);
+            $fontStylePaginado = ['name' => 'Calibri', 'size' => 8];
+            $encabezado->addText('Página ', $fontStylePaginado);
+            $encabezado->addField('PAGE',[],[],null,$fontStylePaginado);
+            $encabezado->addText(' de ',$fontStylePaginado);
+            $encabezado->addField('NUMPAGES',[],[],null,$fontStylePaginado);
             $header->addTextBreak();
                       
             // Creación de Contenido
@@ -1567,9 +1611,9 @@ class PronunciamientoOrigenController extends Controller
 
             $table->addRow();
 
-            $cell1 = $table->addCell(6000);
+            $cell = $table->addCell(7000);
 
-            $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
+            $textRun1 = $cell->addTextRun(array('alignment'=>'left'));
             $textRun1->addText('Señores: ',array('bold' => true));
             $textRun1->addTextBreak();
             $textRun1->addText($nombre_destinatario);
@@ -1582,24 +1626,10 @@ class PronunciamientoOrigenController extends Controller
             $textRun1->addText($telefono_destinatario);
             $textRun1->addTextBreak();
             if($ciudad_destinatario !== 'Bogota D.C.'){
-                $textRun1->addText($departamento_destinatario.' - '.$ciudad_destinatario);
+                $textRun1->addText($ciudad_destinatario.' - '.$departamento_destinatario);
             }else{
                 $textRun1->addText($ciudad_destinatario);
             }
-
-            $cell2 = $table->addCell(4000);
-
-            $nestedTable = $cell2->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80 * 60, 'alignment'=>'right'));
-            $nestedTable->addRow();
-            $nestedCell = $nestedTable->addCell();
-            $nestedTextRun = $nestedCell->addTextRun(array('alignment'=>'left'));
-            $nestedTextRun->addText('Nro. Radicado: ', array('bold' => true));
-            $nestedTextRun->addTextBreak();
-            $nestedTextRun->addText($nro_radicado, array('bold' => true));
-            $nestedTextRun->addTextBreak();
-            $nestedTextRun->addText($tipo_identificacion . ' ' . $num_identificacion, array('bold' => true));
-            $nestedTextRun->addTextBreak();
-            $nestedTextRun->addText('Siniestro: ' . $N_siniestro, array('bold' => true));
 
             $section->addTextBreak();
             $section->addTextBreak();
@@ -1622,10 +1652,12 @@ class PronunciamientoOrigenController extends Controller
             $table->addRow();
 
 
-            $cell1 = $table->addCell(8000);
+            $cell1 = $table->addCell(2000);
+            $cell2 = $table->addCell(8000);
 
-            $asuntoyafiliado = $cell1->addTextRun(array('alignment'=>'left'));
-            $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
+            $asuntotext = $cell1->addTextRun(array('alignment'=>'left'));
+            $asuntotext->addText('Asunto: ', array('bold' => true));
+            $asuntoyafiliado = $cell2->addTextRun(array('alignment'=>'both'));
             $asuntoyafiliado->addText($asunto, array('bold' => true));
             $asuntoyafiliado->addTextBreak();
             $asuntoyafiliado->addText('PACIENTE: ', array('bold' => true));
@@ -1699,13 +1731,18 @@ class PronunciamientoOrigenController extends Controller
                 
                 Html::addHtml($section, $htmlModificado, false, true);
             }else{
+                //PBS060 Piden "Eliminar la frase "No firma", dejar un espacio de 5 renglones entre "Cordialmente," y el nombre del representante legal Alfa".
+                $section->addTextBreak();
+                $section->addTextBreak();
+                $section->addTextBreak();
                 // $section->addText($Firma_cliente);
             }
 
             $section->addTextBreak();
             $section->addText('HUGO IGNACIO GÓMEZ DAZA', array('bold' => true));
-            $section->addText('Representante Legal para Asuntos de Seguridad Social', array('bold' => true));
-            $section->addText('Convenio Codess - Seguros de Vida Alfa S.A.', array('bold' => true));
+            $section->addText('C.C. 80413626');
+            $section->addText('Representante Legal');
+            $section->addText('Seguros de Vida Alfa S.A.');
             $section->addTextBreak();
             // $section->addText('Elaboró: '.Auth::user()->name, array('bold' => true));
             // $section->addTextBreak();
@@ -1715,14 +1752,13 @@ class PronunciamientoOrigenController extends Controller
             if (count($Agregar_copias) == 0) {
                 $htmltabla2 .= '
                     <tr>
-                        <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
+                        <td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>
                     </tr>';
             } else {
                 $htmltabla2 .= '
                     <tr>
-                        <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
+                        <td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Copia:</span></td>
                     </tr>';
-
                 $Afiliado = 'Afiliado';
                 $Empleador = 'Empleador';
                 $EPS = 'EPS';
@@ -1732,37 +1768,60 @@ class PronunciamientoOrigenController extends Controller
                 $JNCI = 'JNCI';
 
                 if (isset($Agregar_copias[$Afiliado])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$Empleador])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$EPS])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$AFP])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$ARL])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$JRCI])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$JNCI])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-size:13.5px;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
                 }
             }
 
             $htmltabla2 .= '</table>';
             Html::addHtml($section, $htmltabla2, false, true);
             $section->addTextBreak();
+            $section->addTextBreak();
+
+            //Cuadro con la información del siniestro
+            $tableCuadro = $section->addTable();
+
+            $tableCuadro->addRow();
+            
+            $cellCuadro = $tableCuadro->addCell(10000);
+            //Estilo del texto del cuadro
+            $styleTextCuadro = ['bold' => true,'name' => 'Calibri', 'size' => 8];
+            //Cuadro
+            $cuadro = $cellCuadro->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80*60, 'alignment'=>'center'));
+            $cuadro->addRow();
+            $celdaCuadro = $cuadro->addCell();
+            $cuadroTextRun = $celdaCuadro->addTextRun(array('alignment'=>'left'));
+            $cuadroTextRun->addText('Nro. Radicado: ', $styleTextCuadro);
+            $cuadroTextRun->addTextBreak();
+            $cuadroTextRun->addText($nro_radicado, $styleTextCuadro);
+            $cuadroTextRun->addTextBreak();
+            $cuadroTextRun->addText($tipo_identificacion . ' ' . $num_identificacion, $styleTextCuadro);
+            $cuadroTextRun->addTextBreak();
+            $cuadroTextRun->addText('Siniestro: ' . $N_siniestro, $styleTextCuadro);
+
             // Configuramos el footer
             // $info = $nombre_afiliado." - ".$tipo_identificacion." ".$num_identificacion." - Siniestro: ".$N_siniestro;
             $footer = $section->addFooter();

@@ -27,6 +27,7 @@
                 <a href="{{route("bandejaOrigen")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
             <?php endif ?>
             <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>                
+            <button label="Open Modal" data-toggle="modal" data-target="#historial_servicios" class="btn btn-info"><i class="fas fa-project-diagram mt-1"></i>Historial de servicios</button> 
             <p>
                 <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
             </p>
@@ -78,7 +79,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="identificacion">N° Identificación</label>
-                                                <input type="text" class="form-control" name="identificacion" id="identificacion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nro_identificacion)){echo $array_datos_calificacionOrigen[0]->Nro_identificacion;}?>" disabled>
+                                                <input type="text" class="form-control" name="identificacion" id="identificacion" data-tipo="{{$array_datos_calificacionOrigen[0]->Nombre_tipo_documento}}" value="{{$array_datos_calificacionOrigen[0]->Nro_identificacion}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -238,6 +239,7 @@
                                         <div class="form-group">
                                             <label for="">Nueva Fecha de radicación</label>
                                             <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Nueva_F_radicacion)){echo $array_datos_calificacionOrigen[0]->Nueva_F_radicacion;}?>">
+                                            <span class="d-none" id="alertaNuevaFechaDeRadicacion" style="color: red; font-style: italic;">La fecha ingresada debe ser superior a la fecha de radicación inicial</span>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -346,6 +348,7 @@
                                             <div class="form-group">
                                                 <label for="">Fecha de cierre</label>
                                                 <input type="date" class="form-control" name="fecha_cierre" id="fecha_cierre" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionOrigen[0]->F_cierre)){echo $array_datos_calificacionOrigen[0]->F_cierre;}?>">
+                                                <span class="d-none" id="fecha_cierre_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -1363,6 +1366,8 @@
 @include('//.coordinador.modalReemplazarArchivos')
 @include('//.coordinador.modalCorrespondencia')
 @include('//.modals.confirmacionAccion')
+@include('//.modals.historialServicios')
+@include('//.modals.alertaRadicado')
 @stop
 @section('js')
 
@@ -1442,50 +1447,75 @@
         $(document).ready(function(){
             //Deshabilitar el btn de descarga del pdf general lista de chequeo
             $("a[id^='btn_generar_descarga_15']").remove();
-           var listado_histo_seguimiento = $('#listado_histori_seguimiento').DataTable({
-               "responsive": true,
-               "info": false,
-               "searching": false,
-               "ordering": false,
-               "scrollCollapse": true,
-               "scrollY": "30vh",
-               "paging": false,
-               "language":{
-                   "emptyTable": "No se encontró información"
-               }
-           });
-           autoAdjustColumns(listado_histo_seguimiento);
-           var contador2 = 0;
-           $('#btn_agregar_segui_fila').click(function(){
-               contador2 = contador2 + 1;
-               var nueva_fila2 = [
-                '<input type="text" class="form-control" id="otro_causal_fila_'+contador2+'" name="otro_causal">',
-                '<input type="date" class="form-control" id="fecha_estipula_fila_'+contador2+'" name="fecha_estipula" max="{{date("Y-m-d")}}"/>',
-                '<input type="date" class="form-control" id="fecha_seguimiento_fila_'+contador2+'" name="fecha_segui" value="<?php echo date("Y-m-d");?>" readonly/>',
-                '<textarea id="descrip_segui_fila_'+contador2+'" class="form-control" name="descrip_segui" cols="90" rows="4"></textarea>',
-                '<input type="text" class="form-control" id="otro_realizo_fila_'+contador2+'" name="otro_realizo" value="{{$nombre_usuario}}" readonly>',
-                '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_segui_fila" class="text-info" data-fila="fila_'+contador2+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
-                   'fila_'+contador2
-                ]; 
-               var agregar_fila2 = listado_histo_seguimiento.row.add(nueva_fila2).draw().node();
-              
-               $(agregar_fila2).addClass('fila_'+contador2);
-               $(agregar_fila2).attr("id", 'fila_'+contador2);
+            var listado_histo_seguimiento = $('#listado_histori_seguimiento').DataTable({
+                "responsive": true,
+                "info": false,
+                "searching": false,
+                "ordering": false,
+                "scrollCollapse": true,
+                "scrollY": "30vh",
+                "paging": false,
+                "language":{
+                    "emptyTable": "No se encontró información"
+                }
+            });
+            autoAdjustColumns(listado_histo_seguimiento);
+            var contador2 = 0;
+            $('#btn_agregar_segui_fila').click(function(){
+                contador2 = contador2 + 1;
+                var nueva_fila2 = [
+                    '<input type="text" class="form-control" id="otro_causal_fila_'+contador2+'" name="otro_causal">',
+                    '<input type="date" class="form-control" id="fecha_estipula_fila_'+contador2+'" name="fecha_estipula" max="{{date("Y-m-d")}}"/><span class="d-none" id="fecha_estipula_fila_'+contador2+'_alerta" style="color: red; font-style: italic;"></span>',
+                    '<input type="date" class="form-control" id="fecha_seguimiento_fila_'+contador2+'" name="fecha_segui" value="<?php echo date("Y-m-d");?>" readonly/>',
+                    '<textarea id="descrip_segui_fila_'+contador2+'" class="form-control" name="descrip_segui" cols="90" rows="4"></textarea>',
+                    '<input type="text" class="form-control" id="otro_realizo_fila_'+contador2+'" name="otro_realizo" value="{{$nombre_usuario}}" readonly>',
+                    '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_segui_fila" class="text-info" data-fila="fila_'+contador2+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
+                    'fila_'+contador2
+                    ]; 
+                var agregar_fila2 = listado_histo_seguimiento.row.add(nueva_fila2).draw().node();
+                
+                $(agregar_fila2).addClass('fila_'+contador2);
+                $(agregar_fila2).attr("id", 'fila_'+contador2);
+
+                // Llamar a la función para añadir la validación al nuevo campo de tipo fecha
+                agregarValidacionFecha(`#fecha_estipula_fila_${contador2}`);
+                agregarValidacionFecha(`#fecha_seguimiento_fila_${contador2}`);
 
                // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionOrigen.js)
                //funciones_elementos_fila2(contador2);
-           });
+            });
 
-           $(document).on('click', '#btn_remover_segui_fila', function(){
-               var nombre_fila2 = $(this).data("fila");
-               listado_histo_seguimiento.row("."+nombre_fila2).remove().draw();
-           });
+            $(document).on('click', '#btn_remover_segui_fila', function(){
+                var nombre_fila2 = $(this).data("fila");
+                listado_histo_seguimiento.row("."+nombre_fila2).remove().draw();
+            });
 
-           $(document).on('click', "a[id^='btn_remover_fila_visual_segui_']", function(){
-               var nombre_fila2 = $(this).data("clase_fila");
-               listado_histo_seguimiento.row("."+nombre_fila2).remove().draw();
-           });
-           
+            $(document).on('click', "a[id^='btn_remover_fila_visual_segui_']", function(){
+                var nombre_fila2 = $(this).data("clase_fila");
+                listado_histo_seguimiento.row("."+nombre_fila2).remove().draw();
+            });
+            // Función para agregar la validación a los inputs de tipo fecha
+            function agregarValidacionFecha(selector) {
+                let today = new Date().toISOString().split("T")[0];
+                
+                $(selector).on('change', function() {
+                    // Validación de fecha mínima
+                    if (this.value < '1900-01-01') {
+                        $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                        $('#guardar_datos_seguimiento').addClass('d-none');
+                        return;
+                    }
+                    // Validación de fecha máxima (hoy)
+                    if (this.value > today) {
+                        $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                        $('#guardar_datos_seguimiento').addClass('d-none');
+                        return;
+                    }
+                    // Limpiar mensaje de error si la fecha es válida
+                    $(`#${this.id}_alerta`).text('').addClass("d-none");
+                    $('#guardar_datos_seguimiento').removeClass('d-none');
+                });
+            }
         });
    </script>
     <script>
@@ -1543,6 +1573,80 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script type="text/javascript" src="/js/calificacionOrigen.js"></script>
-    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
+    {{-- Validación de fechas, en las cuales la nueva fecha de radicación no puede ser menor a la fecha inicial de radicación. --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtener referencias a los campos de fecha y elementos de alerta
+            const nuevaFechaRadicación = document.getElementById('nueva_fecha_radicacion');
+            const fechaRadicacionInicial = document.getElementById('fecha_radicacion');
+            const alertaNuevaFechaRadicación = document.getElementById('alertaNuevaFechaDeRadicacion');
+            const alertaParametrica = $(".no_ejecutar_parametrica_modulo_principal")[0].classList;
+            const today = new Date().toISOString().split("T")[0];
+
+            // Evento para cuando se cambie la fecha de envío
+            nuevaFechaRadicación.addEventListener('change', function () {
+                // Obtener los valores de las fechas
+                const nuevaFechaDeRadicacion = new Date(nuevaFechaRadicación.value);
+                const fechaDeRadicacionInicial = fechaRadicacionInicial.value ? new Date(fechaRadicacionInicial.value) : null;
+
+                // Validar que la fecha ingresada no sea menor que 1900-01-01
+                if (nuevaFechaRadicación.value < '1900-01-01') {
+                    $("#alertaNuevaFechaDeRadicacion").text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+
+                // Validar que la fecha ingresada no sea mayor a la actual
+                if (nuevaFechaRadicación.value > today) {
+                    $("#alertaNuevaFechaDeRadicacion").text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+
+                // Validar que la nueva fecha de radicación no sea menor a la fecha de radicación inicial
+                if (fechaRadicacionInicial && fechaDeRadicacionInicial > nuevaFechaDeRadicacion) {
+                    $("#alertaNuevaFechaDeRadicacion").text('La fecha ingresada debe ser superior a la fecha de radicación inicial').removeClass('d-none');
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+
+                // Si pasa todas las validaciones, ocultar el mensaje de error y habilitar el botón
+                $("#alertaNuevaFechaDeRadicacion").text('').addClass('d-none');
+                if(alertaParametrica.contains('d-none')) {
+                    $('#Edicion').removeClass('d-none');
+                }
+            });
+        });
+    </script>
+    {{-- Validación general para todos los campos de tipo fecha --}}
+    <script>
+        let today = new Date().toISOString().split("T")[0];
+
+        // Seleccionar todos los inputs de tipo date
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+
+        // Agregar evento de escucha a cada input de tipo date que haya
+        dateInputs.forEach(input => {
+            //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
+            input.addEventListener('change', function() {
+                console.log('This is value of input type date ', this.value);
+                //Validamos que la fecha sea mayor a la fecha de 1900-01-01
+                if(this.value < '1900-01-01'){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea mayor a la fecha actual
+                if(this.value > today){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+                return $(`#${this.id}_alerta`).text('').addClass("d-none");
+            });
+        });
+    </script>
+
 @stop

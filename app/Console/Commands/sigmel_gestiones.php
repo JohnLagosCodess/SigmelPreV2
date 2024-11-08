@@ -120,7 +120,7 @@ class sigmel_gestiones extends Command
     {
         // Crear una instancia de Table
         $table = new Table($this->output);
-        $table->setHeaders(['Tabla', 'Status', 'Info']);
+        $table->setHeaders(['item', 'Status', 'Info']);
 
         // Formatear las filas de la tabla
         $rows = [];

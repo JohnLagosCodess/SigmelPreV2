@@ -320,28 +320,28 @@
                                             </div>
                                         </div>
                                         @endif
-                                        <div class="col-4">
+                                        <div class="col-4" style="display: none">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="n_pago_jnci_contro">N° orden de pago (JRCI)</label>
                                                 <input type="text" class="form-control n_pago_jnci_contro" name="n_pago_jnci_contro" id="n_pago_jnci_contro" value="<?php if(!empty($arrayinfo_controvertido[0]->N_pago_jnci_contro)) { echo $arrayinfo_controvertido[0]->N_pago_jnci_contro;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" style="display: none">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="f_pago_jnci_contro">Fecha pago (JRCI)</label>
                                                 <input type="date" class="form-control" name="f_pago_jnci_contro" id="f_pago_jnci_contro" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_pago_jnci_contro)) { echo $arrayinfo_controvertido[0]->F_pago_jnci_contro;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" style="display: none">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="f_radica_pago_jnci_contro">Fecha de radicación pago (JRCI)</label>
                                                 <input type="date" class="form-control" name="f_radica_pago_jnci_contro" id="f_radica_pago_jnci_contro" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_radica_pago_jnci_contro)) { echo $arrayinfo_controvertido[0]->F_radica_pago_jnci_contro;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" style="display: none">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="f_envio_jrci">Fecha de envío a (JRCI)</label>
@@ -1806,7 +1806,11 @@
                                         <div class="col-4"> 
                                             <div class="form-group">
                                                 <label for="radicado">N° Radicado</span></label>
-                                                <input type="text" class="form-control" name="radicado" id="radicado" value="{{$consecutivo}}" disabled> 
+                                                @if(!empty($array_comite_interdisciplinario[0]->N_radicado))
+                                                    <input type="text" class="form-control" name="radicado" id="radicado" value="{{$array_comite_interdisciplinario[0]->N_radicado}}" disabled>                                                
+                                                @else
+                                                    <input type="text" class="form-control" name="radicado" id="radicado" value="{{$consecutivo}}" disabled> 
+                                                @endif
                                                 <input type="hidden" class="form-control" name="radicado_comunicado_manual" id="radicado_comunicado_manual" value="{{$consecutivo}}" disabled>
                                             </div>
                                         </div> 
@@ -1815,10 +1819,13 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-group">
-                                                <?php if(!empty($arrayinfo_controvertido[0]->JrciNombre)):?>
+                                                @if(!empty($arrayinfo_controvertido[0]->JrciNombre) && count($array_comunicados_correspondencia) == 0)
                                                     <input type="submit" id="GuardarCorrespondencia" name="GuardarCorrespondencia" class="btn btn-info" value="Guardar">                                                
                                                     <input hidden="hidden" type="text" id="bandera_correspondecia_guardar_actualizar" value="Guardar">
-                                                <?php endif ?>
+                                                @elseif(!empty($arrayinfo_controvertido[0]->JrciNombre) && count($array_comunicados_correspondencia) > 0)
+                                                    <input type="submit" id="ActualizarCorrespondencia" name="ActualizarCorrespondencia" class="btn btn-info" value="Actualizar">                                                
+                                                    <input hidden="hidden" type="text" id="bandera_correspondecia_guardar_actualizar" value="Actualizar">
+                                                @endif
                                                 {{-- @if (count($array_comunicados_correspondencia) > 0) --}}
                                                     {{-- <button class="btn btn-info" id="generar_proforma_recurso_reposicion_pcl">Word</button> --}}
                                                 {{-- @endif --}}
@@ -1874,7 +1881,7 @@
                                                 <tbody>
                                                     @foreach ($array_comunicados_correspondencia as $key => $comunicados)
                                                         <tr>
-                                                            <td>{{$comunicados->N_radicado}}</td>
+                                                            <td data-id_comunicado="{{$comunicados->Id_Comunicado}}">{{$comunicados->N_radicado}}</td>
                                                             <td>{{$comunicados->Elaboro}}</td>
                                                             <td>{{$comunicados->F_comunicado}}</td>
                                                             <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
@@ -2014,7 +2021,7 @@
                                                                     type="button" style="font-weight: bold;"> --}}
                                                                     @foreach ($array_comite_interdisciplinario as $comite_inter)
                                                                         @if($comite_inter->N_radicado === $comunicados->N_radicado)
-                                                                            @if($comunicados->Correspondencia === '' || $comunicados->Correspondencia === null && $dato_rol !== '7')
+                                                                            @if(($comunicados->Correspondencia === '' || $comunicados->Correspondencia === null) && $dato_rol !== '7')
                                                                                 <a href="javascript:void(0);" id="editar_correspondencia_{{$comunicados->Id_Comunicado}}"
                                                                                     data-id_comite_inter={{$comite_inter->Id_com_inter}}              
                                                                                     data-tupla_comunicado="{{$comunicados->Id_Comunicado}}" 
@@ -2083,10 +2090,11 @@
     @include('//.administrador.modalProgressbar')
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.coordinador.modalCorrespondencia')
+    @include('//.modals.alertaRadicado')
 
 @stop
 @section('js')
-    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script type="text/javascript">
         document.getElementById('botonEnvioVista').addEventListener('click', function(event) {
             event.preventDefault();

@@ -77,7 +77,7 @@
             </div>
         </form>
         <!-- Información del afiliado-->
-        <div class="row contenedor_info_afiliado d-none">
+        <div class="row contenedor_info_afiliado d-none" style="display:none">
             <div class="col-12">
                 <div class="card-info">
                     <div class="card-header text-center" style="border: 1.5px solid black;">
@@ -127,22 +127,23 @@
                         <table id="Consulta_Eventos" class="table table-striped table-bordered" style="width:100%">
                             <thead>
                                 <tr class="bg-info">
+                                    <th>Detalle</th>
                                     <th>ID evento</th>
-                                    <th>Cliente</th>
-                                    <th>Empresa</th>
-                                    <th>Tipo de evento</th>
+                                    <th>Tipo de documento</th>
+                                    <th>N° de identificación</th>
+                                    <th>Nombre de afiliado / beneficiario</th>
+                                    <th>Tipo de afiliado</th>
+                                    <th>Proceso - Servicio</th>
+                                    <th>Última acción</th>
+                                    <th>Fecha última acción</th>
+                                    <th>Resultado</th>
+                                    <th>Profesional actual</th>
+                                    <th>Estado</th>
                                     <th>Fecha radicación</th>
                                     <th>Fecha registro</th>
-                                    <th>Proceso</th>
-                                    <th>Servicio</th>
-                                    <th>Estado</th>
-                                    <th>Resultado</th>
-                                    <th>Última acción</th>
-                                    <th>Fecha de acción</th>
-                                    <th>Fecha de dictamen</th>
                                     <th>Fecha de Notificación</th>
-                                    <th>Profesional actual</th>
-                                    <th>Detalle</th>
+                                    <th>Tipo de evento</th>
+                                    <th>Empresa</th>
                                 </tr>
                             </thead>
                             <tbody id="body_listado_eventos"></tbody>
@@ -171,6 +172,8 @@
         
         
     </div>
+
+    @include('modals.alertaBuscador');
 @stop
 @section('js')
     <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>

@@ -23,10 +23,6 @@ $(document).ready(function(){
         allowClear:false
     });
 
-    $(".nombre_calificador").select2({
-        placeholder:"Seleccione una opción",
-        allowClear:false
-    });
 
     $(".tipo_pronunciamiento").select2({
         placeholder:"Seleccione una opción",
@@ -91,7 +87,7 @@ $(document).ready(function(){
 
     var info_pronuncia = $('#info_pronuncia').val();
     // Si la pronuncia tiene como decisión Silencio, no genera proforma y deja visible el cuadro de correspondencia.
-    if(info_pronuncia){
+    if(info_pronuncia  && $("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?'){
         var info_pronunciamiento = JSON.parse(info_pronuncia)[0];
         if(info_pronunciamiento.Decision == 'Silencio'){
             $("#div_pronu_califi").removeClass('d-none');
@@ -103,6 +99,9 @@ $(document).ready(function(){
             $("#div_pronu_califi").addClass('d-none');
             $("#div_doc_pronu").addClass('d-none');
         }     
+    }else{
+        $('#asun_correspondencia, #susten_correspondencia, #div_doc_pronu').addClass('d-none');
+        $('#asunto_cali').prop('required', false);
     }
     // Listado Nombre Entidad    
     $('#primer_calificador').change( function(){
@@ -129,6 +128,11 @@ $(document).ready(function(){
                         $('#nombre_calificador').append('<option value="'+data[nombrecalifi[i]]["Id_Entidad"]+'">'+data[nombrecalifi[i]]["Nombre_entidad"]+'</option>');
                     }
                 }
+
+                $(".nombre_calificador").select2({
+                    placeholder:"Seleccione una opción",
+                    allowClear:false
+                });
             }
         });
     });
@@ -881,13 +885,15 @@ $(document).ready(function(){
     });
 
     $("#editar_correspondencia").click(function(e){
-        var info_pronunciamiento = JSON.parse(info_pronuncia)[0];
-        var decision = info_pronunciamiento.Decision;
-        $("input[name='decision_pr'][value='" + decision + "']").prop("checked", true);
-        $("#ActualizarPronuncia").removeClass('d-none');
-        $("#div_pronu_califi").removeClass('d-none');
-        $("#div_doc_pronu").removeClass('d-none');
-        $("#correspondencia-item").removeClass('d-none');  
+        if($("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?'){
+            var info_pronunciamiento = JSON.parse(info_pronuncia)[0];
+            var decision = info_pronunciamiento.Decision;
+            $("input[name='decision_pr'][value='" + decision + "']").prop("checked", true);
+            $("#ActualizarPronuncia").removeClass('d-none');
+            $("#div_pronu_califi").removeClass('d-none');
+            $("#div_doc_pronu").removeClass('d-none');
+            $("#correspondencia-item").removeClass('d-none'); 
+        } 
     });
     /* VALIDACIÓN MOSTRAR CUAL JUNTA REGIONAL */
     
@@ -980,7 +986,7 @@ $(document).ready(function(){
     $("[name='decision_pr']").on("change", function(){
     var opc_seleccionada = $(this).val();
 
-        if (opc_seleccionada == 'Acuerdo') {
+        if (opc_seleccionada == 'Acuerdo' && $("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?') {
             $('#asunto_cali').val('CONCEPTO MÉDICO DE DICTAMEN PÉRDIDA DE CAPACIDAD LABORAL');
             var texto_insertar = "";
             $('#sustenta_cali').summernote('code', texto_insertar);
@@ -1002,24 +1008,24 @@ $(document).ready(function(){
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', true);
 
-        }else if (opc_seleccionada == 'Desacuerdo') {
+        }else if (opc_seleccionada == 'Desacuerdo' && $("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?') {
             $('#asunto_cali').val('RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN FRENTE A DICTAMEN N°');
             var texto_insertar = "<p>Respetados Señores, </p>"+
-            "<p>Yo, <strong>HUGO IGNACIO GÓMEZ DAZA</strong>, identificado como aparece al pie de mi firma, actuando en nombre y representación de <strong>SEGUROS DE VIDA "+ 
-            "ALFA S.A.</strong> Aseguradora que expidió el seguro previsional a la <strong>AFP PORVENIR S.A.</strong>, debidamente facultado para ello, en atención al "+
+            "<p><strong>HUGO IGNACIO GÓMEZ DAZA</strong>, identificado como aparece al pie de mi firma, actuando en nombre y representación de <strong>SEGUROS DE VIDA "+ 
+            "ALFA S.A.</strong> Aseguradora que expidió el <b><u>seguro previsional a la AFP PORVENIR S.A.</u></b>, debidamente facultado para ello, en atención al "+
             "dictamen de la referencia, estando dentro de los términos de ley, me permito interponer <strong>RECURSO DE REPOSICIÓN Y EN SUBSIDIO DE "+
             "APELACIÓN</strong> ante la Junta, por los siguientes motivos: </p>"+
-            "<p>Nuestra inconformidad se dirige a la calificación de <strong>PERDIDA DE CAPACIDAD LABORAL</strong> dictaminada al afiliado {{$Nombre_afiliado}}, "+
+            "<p>Nuestra inconformidad se dirige a la calificación de <strong>PERDIDA DE CAPACIDAD LABORAL</strong> dictaminada al (la) afiliado(a) {{$Nombre_afiliado}}, "+
             "donde califican los diagnósticos: {{$CIE10_Nombres_Origen}}, PCL de {{$PorcentajePcl}}% y fecha de "+
             "estructuración {{$F_estructuracionPcl}}.</p>"+
             "<p>1. (Descripción de recurso)</p>"+
             "<p>Por lo anterior, presentamos el recurso de reposición y en subsidio el de apelación, contra la pérdida de capacidad laboral (PCL), "+
             "con el fin que se dictamine el valor correspondiente a las patologías del paciente dando aplicación al Decreto 1507/2014 como "+
-            "normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación, e "+
-            "informarnos con el fin de consignar los honorarios respectivos.</p>"+
-            "<p>ANEXO:</p>"+
+            "normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación.</p>"+
+            "<p>Por último, se informa que esta Administradora realizó pago de honorarios pertinentes, el cual se efectuó de manera efectiva y por lo tanto se anexará en los próximos días el soporte del mismo.</p>"+
+            "<p style='text-align:center;'>ANEXO:</p>"+
             "<p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera. </p>"+
-            "<p>NOTIFICACIONES:</p>"+
+            "<p style='text-align:center;'>NOTIFICACIONES:</p>"+
             "<p>Recibiré notificaciones en la Carrera 10 # 18 – 36 Edificio Córdoba Piso 4, en la ciudad de Bogotá, D.C. </p>"+
             "<p>Cualquier Información adicional con gusto le será suministrada,</p>";
             $('#sustenta_cali').summernote('code', texto_insertar);
@@ -1040,8 +1046,7 @@ $(document).ready(function(){
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
-        }
-        else{
+        }else if($("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?'){
             $('#asunto_cali').val('');
             var texto_insertar = "";
             $('#sustenta_cali').summernote('code', texto_insertar);
@@ -1139,51 +1144,51 @@ $(document).ready(function(){
         formData.append('datos_finales_diagnosticos_moticalifi', JSON.stringify(datos_finales_diagnosticos_moticalifi));
         //const arrayData = JSON.parse(formData.get('datos_finales_diagnosticos_moticalifi'));
         formData.append('token', $('input[name=_token]').val());
-        formData.append('Id_EventoPronuncia', $('#Id_Evento_pronuncia').val());
-        formData.append('Id_ProcesoPronuncia', $('#Id_Proceso_pronuncia').val());
-        formData.append('Id_Asignacion_Pronuncia', $('#Asignacion_Pronuncia').val());
-        formData.append('primer_calificador', $('#primer_calificador').val());
-        formData.append('nombre_calificador', $('#nombre_calificador').val());
-        formData.append('nit_calificador', $('#nit_calificador').val());
-        formData.append('nit_calificador', $('#nit_calificador').val());
-        formData.append('dir_calificador', $('#dir_calificador').val());
-        formData.append('mail_calificador', $('#mail_calificador').val());
-        formData.append('telefono_calificador', $('#telefono_calificador').val());
-        formData.append('depar_calificador', $('#depar_calificador').val());
-        formData.append('ciudad_calificador', $('#ciudad_calificador').val());
-        formData.append('tipo_pronunciamiento', $('#tipo_pronunciamiento').val());
-        formData.append('tipo_evento', $('#tipo_evento').val());
-        formData.append('tipo_origen', $('#tipo_origen').val());
-        formData.append('fecha_evento', $('#fecha_evento').val());
-        formData.append('dictamen_calificador', $('#dictamen_calificador').val());
-        formData.append('fecha_calificador', $('#fecha_calificador').val());
-        formData.append('n_siniestro', $('#n_siniestro').val());
-        formData.append('fecha_estruturacion', $('#fecha_estruturacion').val());
-        formData.append('porcentaje_pcl', $('#porcentaje_pcl').val());
-        formData.append('rango_pcl', $('#rango_pcl').val());
-        formData.append('decision_pr', $("[id^='di_']").filter(":checked").val());
-        formData.append('asunto_cali', $('#asunto_cali').val());
-        formData.append('sustenta_cali', sustenta_cali);
-        formData.append('destinatario_principal', $('#destinatario_principal').filter(":checked").val());
-        formData.append('tipo_entidad', $("#tipo_entidad").val());
-        formData.append('nombre_entidad', $("#nombre_entidad").val());
-        formData.append('copia_afiliado', $('#copia_afiliado').filter(":checked").val());
-        formData.append('copia_empleador', $('#copia_empleador').filter(":checked").val());
-        formData.append('copia_eps', $('#copia_eps').filter(":checked").val());
-        formData.append('copia_afp', $('#copia_afp').filter(":checked").val());
-        formData.append('copia_arl', $('#copia_arl').filter(":checked").val());
-        formData.append('junta_regional', $('#junta_regional').filter(":checked").val());
-        formData.append('junta_nacional', $('#junta_nacional').filter(":checked").val());
-        formData.append('junta_regional_cual', $('#junta_regional_cual').val());
-        formData.append('n_anexos', $('#n_anexos').val());
-        formData.append('elaboro', $('#elaboro').val());
-        formData.append('reviso', $('#reviso').val());
-        formData.append('ciudad_correspon', $('#ciudad_correspon').val());
-        formData.append('fecha_correspon', $('#fecha_correspon').val());
-        formData.append('n_radicado', $('#n_radicado').val());
-        formData.append('firmar', $('#firmar').filter(":checked").val());
-        formData.append('nombre_afiliado', $('#nombre_afiliado').val());
-        formData.append('identificacion', $('#identificacion').val());
+        formData.append('Id_EventoPronuncia', $('#Id_Evento_pronuncia').val() || '');
+        formData.append('Id_ProcesoPronuncia', $('#Id_Proceso_pronuncia').val() || '');
+        formData.append('Id_Asignacion_Pronuncia', $('#Asignacion_Pronuncia').val() || '');
+        formData.append('primer_calificador', $('#primer_calificador').val() || '');
+        formData.append('nombre_calificador', $('#nombre_calificador').val() || '');
+        formData.append('otro_calificador', $('#otro_calificador').val() || '');
+        formData.append('nit_calificador', $('#nit_calificador').val() || '');
+        formData.append('dir_calificador', $('#dir_calificador').val() || '');
+        formData.append('mail_calificador', $('#mail_calificador').val() || '');
+        formData.append('telefono_calificador', $('#telefono_calificador').val() || '');
+        formData.append('depar_calificador', $('#depar_calificador').val() || '');
+        formData.append('ciudad_calificador', $('#ciudad_calificador').val() || '');
+        formData.append('tipo_pronunciamiento', $('#tipo_pronunciamiento').val() || '');
+        formData.append('tipo_evento', $('#tipo_evento').val() || '');
+        formData.append('tipo_origen', $('#tipo_origen').val() || '');
+        formData.append('fecha_evento', $('#fecha_evento').val() || '');
+        formData.append('dictamen_calificador', $('#dictamen_calificador').val() || '');
+        formData.append('fecha_calificador', $('#fecha_calificador').val() || '');
+        formData.append('n_siniestro', $('#n_siniestro').val() || '');
+        formData.append('fecha_estruturacion', $('#fecha_estruturacion').val() || '');
+        formData.append('porcentaje_pcl', $('#porcentaje_pcl').val() || '');
+        formData.append('rango_pcl', $('#rango_pcl').val() || '');
+        formData.append('decision_pr', $("[id^='di_']").filter(":checked").val() || '');
+        formData.append('asunto_cali', $('#asunto_cali').val() || '');
+        formData.append('sustenta_cali', sustenta_cali || '');
+        formData.append('destinatario_principal', $('#destinatario_principal').filter(":checked").val() || '');
+        formData.append('tipo_entidad', $("#tipo_entidad").val() || '');
+        formData.append('nombre_entidad', $("#nombre_entidad").val() || '');
+        formData.append('copia_afiliado', $('#copia_afiliado').filter(":checked").val() || '');
+        formData.append('copia_empleador', $('#copia_empleador').filter(":checked").val() || '');
+        formData.append('copia_eps', $('#copia_eps').filter(":checked").val() || '');
+        formData.append('copia_afp', $('#copia_afp').filter(":checked").val() || '');
+        formData.append('copia_arl', $('#copia_arl').filter(":checked").val() || '');
+        formData.append('junta_regional', $('#junta_regional').filter(":checked").val() || '');
+        formData.append('junta_nacional', $('#junta_nacional').filter(":checked").val() || '');
+        formData.append('junta_regional_cual', $('#junta_regional_cual').val() || '');
+        formData.append('n_anexos', $('#n_anexos').val() || '');
+        formData.append('elaboro', $('#elaboro').val() || '');
+        formData.append('reviso', $('#reviso').val() || '');
+        formData.append('ciudad_correspon', $('#ciudad_correspon').val() || '');
+        formData.append('fecha_correspon', $('#fecha_correspon').val() || '');
+        formData.append('n_radicado', $('#n_radicado').val() || '');
+        formData.append('firmar', $('#firmar').filter(":checked").val() || '');
+        formData.append('nombre_afiliado', $('#nombre_afiliado').val() || '');
+        formData.append('identificacion', $('#identificacion').val() || '');        
         formData.append('DocPronuncia', $('#DocPronuncia')[0].files[0]);
         formData.append('bandera_pronuncia_guardar_actualizar', $('#bandera_pronuncia_guardar_actualizar').val());
         if($('#bandera_pronuncia_guardar_actualizar').val() == 'Actualizar'){
@@ -1320,6 +1325,27 @@ $(document).ready(function(){
                         document.querySelector('#ActualizarPronuncia').disabled=false;
                         location.reload();
                     }, 3000);
+                }else{
+                    if (response.parametro == 'agregar_pronunciamiento') {
+                        $('#div_alerta_pronuncia').removeClass('d-none');
+                        $('.alerta_pronucia').append('<strong>'+response.mensaje+'</strong>');                                            
+                        setTimeout(function(){
+                        document.querySelector('#GuardarPronuncia').disabled=false;
+                            $('#div_alerta_pronuncia').addClass('d-none');
+                            $('.alerta_pronucia').empty();   
+                            location.reload();
+                        }, 1500);   
+                    }else if(response.parametro == 'update_pronunciamiento'){
+                        $('#div_alerta_pronuncia').removeClass('d-none');
+                        $('.alerta_pronucia').append('<strong>'+response.mensaje+'</strong>');                                           
+                        setTimeout(function(){
+                        document.querySelector('#ActualizarPronuncia').disabled=false;
+                            $('#div_alerta_pronuncia').addClass('d-none');
+                            $('.alerta_pronucia').empty();
+                            document.querySelector('#ActualizarPronuncia').disabled=false;
+                            location.reload();
+                        }, 1500);
+                    }
                 }
             }
         })
@@ -1592,6 +1618,8 @@ $(document).ready(function(){
         let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
         //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
         let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
+        //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
+        copias = copias ? copias.split(',').map(copia => copia.trim()) : copias;
         //Información superior del modal 
         $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
         $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
@@ -1786,7 +1814,7 @@ $(document).ready(function(){
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.includes(tipo_correspondencia.toLowerCase())){
+                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && Array.isArray(copias) && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -1908,6 +1936,46 @@ $(document).ready(function(){
             }
         });
     });
+
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('listado_comunicados_clpcl');
+    }, 500);
+
+    /* Si se selecciona la opción Otro Cual Inserta un campo*/
+    $(document).on('change', "#primer_calificador", function() {
+        $("#content_entidad").addClass('d-none');
+
+        if ($(this).find('option:selected').text() === 'Otro/¿Cual?') {
+            $('#nombre_calificador, #asun_correspondencia, #susten_correspondencia, #div_doc_pronu').addClass('d-none');
+            $("#div_pronu_califi, #ActualizarPronuncia").removeClass("d-none");
+
+            $('#nombre_calificador, #asunto_cali').prop('required', false);
+            $("#nit_calificador, #dir_calificador, #mail_calificador, #telefono_calificador, #depar_calificador, #ciudad_calificador").removeAttr('readonly');
+
+            if ($('#otro_calificador').length === 0) {
+                let input = '<input type="text" class="form-control" name="otro_calificador" id="otro_calificador" placeholder="Escriba el nombre del calificador." required>';
+                $('#nombre_calificador').after(input);
+            }
+            
+            setTimeout(() => {
+                $('#nombre_calificador').next(".select2-container").hide();
+                $("#content_entidad").removeClass('d-none');
+            }, 250);
+        
+            
+        } else {
+            $("#otro_calificador").remove(); // Elimina el input si se selecciona otra opción
+            $("#content_entidad").removeClass('d-none');
+            //Muestra nuevamente el selector
+            $('#nombre_calificador, #asun_correspondencia, #susten_correspondencia, #div_doc_pronu').removeClass('d-none');
+            $('#nombre_calificador').next(".select2-container").show();
+            $('#nombre_calificador,  #asunto_cali').prop('required', true);
+            $("#nit_calificador, #dir_calificador, #mail_calificador, #telefono_calificador, #depar_calificador, #ciudad_calificador").attr('readonly',true);
+        }
+
+    });
+    
 });
 
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/

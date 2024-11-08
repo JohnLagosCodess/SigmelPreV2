@@ -31,7 +31,7 @@
 
         .logo_header{
             /* position: absolute; */
-            max-width: 40%;
+            max-width: 100%;
             height: auto;
             /* left: 535px; */
             max-height: 75px; 
@@ -131,6 +131,15 @@
 
         .tabla_header td {
             border: none;
+        }
+        .largos_textos{
+            margin-left: 1px;
+            width: 99%;
+            border: 1.5px solid black;
+            padding: 1.5px;
+            border-collapse: collapse;
+            font-family: sans-serif;
+            text-align: justify;
         }
 
         /* .hijo{
@@ -241,19 +250,22 @@
                 <tr>
                     <td colspan="8" class="titulo_tablas">4.1. JUSTIFICACIÓN PARA EMISIÓN DE CONCEPTO DE PRESUNTO ORIGEN DE EVENTO</td>
                 </tr>
-                <tr>
-                    <td colspan="8" class="dato_dinamico">{!! nl2br(e($justificacion_revision_origen)) !!}</td>
-                </tr>
+            </tbody>
+        </table>
+        <div class="largos_textos dato_dinamico">
+            {!! nl2br(e($justificacion_revision_origen)) !!}
+        </div>
+        <table class="tabla_dictamen">
+            <tbody>
                 <tr>
                     <td colspan="8" class="titulo_tablas">4.2 RELACIÓN DE DOCUMENTOS</td>
                 </tr>
                 <tr>
                     <td colspan="4" class="titulo_labels" style="text-align: center;">Nombre del documento</td>
-                    <td colspan="4" class="titulo_labels" style="text-align: center;">Descripción del documento </td>
+                    <td colspan="4" class="titulo_labels" style="text-align: center;">Descripción del documento</td>
                 </tr>
                 @foreach ($documentos_relacionados as $documento)
                     <tr>
-                        {{-- <td colspan="2" class="dato_dinamico">{{date('d/m/Y', strtotime($documento['fecha']))}}</td> --}}
                         <td colspan="4" class="dato_dinamico">{{$documento['nombre']}}</td>
                         <td colspan="4" class="dato_dinamico">{{$documento['descripcion']}}</td>
                     </tr>
@@ -273,9 +285,13 @@
                 <tr>
                     <td colspan="8"><span class="titulo_labels">FECHA DE FALLECIMIENTO: </span><span class="dato_dinamico">{{$fecha_fallecimiento}}</span></td>
                 </tr>
-                <tr>
-                    <td colspan="8"><span class="titulo_labels">SUSTENTACIÓN: </span><span class="dato_dinamico">{!! nl2br(e($sustentacion_califi_origen)) !!}</span></td>
-                </tr>
+            </tbody>
+        </table>
+        <div class="largos_textos dato_dinamico">
+            <span class="titulo_labels">SUSTENTACIÓN: </span>{!! nl2br(e($sustentacion_califi_origen)) !!}
+        </div>
+        <table class="tabla_dictamen">
+            <tbody>
                 <tr>
                     <td colspan="8">
                         <span class="titulo_labels">FUNDAMENTOS DE DERECHO: </span>
@@ -285,9 +301,6 @@
                             (Ley 100 de 1993, decreto 776 de 2002, Ley 1562 del 2012)
                         </span>
                     </td>
-                </tr>
-                <tr>
-                    <td colspan="8"><span class="titulo_labels">Elaborado por: </span><span class="dato_dinamico">{{$nombre_usuario}}</span></td>
                 </tr>
                 <tr>
                     <td colspan="8" class="consideracion_legal">

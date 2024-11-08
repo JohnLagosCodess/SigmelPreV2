@@ -136,19 +136,19 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="fecha_dictamen">Fecha Dictamen</label>
                                             <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" value="<?php if(!empty($array_comite_interdisciplinario[0]->F_visado_comite)){echo $array_comite_interdisciplinario[0]->F_visado_comite;}else{echo now()->format('Y-m-d');}?>" disabled>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="numero_dictamen">N° Dictamen</label>
                                             <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="{{$array_datos_calificacionPclTecnica[0]->Consecutivo_dictamen}}" disabled>                                                                                                                                        
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="motivo_solicitud">Motivo Solicitud<span style="color: red;">(*)</span></label>
                                             <select class="custom-select motivo_solicitud" name="motivo_solicitud" id="motivo_solicitud" style="width: 100%;" required>
@@ -158,6 +158,18 @@
                                                     <option value="">Seleccione una opción</option>
                                                 @endif
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">                                                
+                                            <label for="modalidad_calificacion">Modalidad Calificación<span style="color: red;">(*)</span></label>
+                                            <select class="modalidad_calificacion custom-select" name="modalidad_calificacion" id="modalidad_calificacion" required>
+                                                @if ($Modalidad_calificacion)
+                                                    <option value="{{$Modalidad_calificacion[0]->Modalidad_calificacion}}" selected>{{$Modalidad_calificacion[0]->Nombre_modalidad_calificacion}}</option>
+                                                @else
+                                                    <option value="">Seleccione una opción</option>
+                                                @endif
+                                            </select>                                                 
                                         </div>
                                     </div>
                                 </div>
@@ -7724,7 +7736,7 @@
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 1507 --}}
-                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td data-id_comunicado="{{$comunicados['Id_Comunicado'] ?? null}}">{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
                                                                     <td>{{$comunicados['F_comunicado']}}</td>
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
@@ -7774,7 +7786,18 @@
                                                                 <td>{{$comite_inter->N_radicado}}</td>
                                                                 <td>{{$comite_inter->Elaboro}}</td>
                                                                 <td>{{$comite_inter->F_visado_comite}}</td>
-                                                                <td>Oficio</td>
+                                                                <?php 
+                                                                    if($comite_inter->Oficio_pcl && $comite_inter->Oficio_pcl === 'Si'){
+                                                                        $tipo_descarga = 'Oficio PCL';
+                                                                    }
+                                                                    else if($comite_inter->Oficio_incapacidad && $comite_inter->Oficio_incapacidad === 'Si'){
+                                                                        $tipo_descarga = 'Oficio Incapacidad';
+                                                                    }
+                                                                    else{
+                                                                        $tipo_descarga = 'Oficio';
+                                                                    }
+                                                                ?>
+                                                                <td><?php echo $tipo_descarga;?></td>
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
                                                                     <form name="ver_notificacionPcl" data-archivo="{{json_encode($comite_inter)}}" @if($comite_inter->Reemplazado === 1) id="verNotificacionPCL" @else action="{{ route('generarOficio_Pcl') }}" @endif method="POST">
                                                                         @csrf
@@ -7810,7 +7833,7 @@
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL Cero --}}
-                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td data-id_comunicado="{{$comunicados['Id_Comunicado'] ?? null}}">{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
                                                                     <td>{{$comunicados['F_comunicado']}}</td>
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
@@ -7860,7 +7883,18 @@
                                                                 <td>{{$comite_inter->N_radicado}}</td>
                                                                 <td>{{$comite_inter->Elaboro}}</td>
                                                                 <td>{{$comite_inter->F_visado_comite}}</td>
-                                                                <td>Oficio</td>
+                                                                <?php 
+                                                                    if($comite_inter->Oficio_pcl && $comite_inter->Oficio_pcl === 'Si'){
+                                                                        $tipo_descarga = 'Oficio PCL';
+                                                                    }
+                                                                    else if($comite_inter->Oficio_incapacidad && $comite_inter->Oficio_incapacidad === 'Si'){
+                                                                        $tipo_descarga = 'Oficio Incapacidad';
+                                                                    }
+                                                                    else{
+                                                                        $tipo_descarga = 'Oficio';
+                                                                    }
+                                                                ?>
+                                                                <td><?php echo $tipo_descarga;?></td>
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
                                                                     <form name="ver_notificacionPcl" data-archivo="{{json_encode($comite_inter)}}" @if($comite_inter->Reemplazado === 1) id="verNotificacionPCL" @else action="{{ route('generarOficio_Pcl') }}" @endif method="POST">
                                                                         @csrf
@@ -7896,7 +7930,7 @@
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 917 --}}
-                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td data-id_comunicado="{{$comunicados['Id_Comunicado'] ?? null}}">{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
                                                                     <td>{{$comunicados['F_comunicado']}}</td>  
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td> 
@@ -7946,7 +7980,18 @@
                                                                 <td>{{$comite_inter->N_radicado}}</td>
                                                                 <td>{{$comite_inter->Elaboro}}</td>
                                                                 <td>{{$comite_inter->F_visado_comite}}</td>
-                                                                <td>Oficio</td>
+                                                                <?php 
+                                                                    if($comite_inter->Oficio_pcl && $comite_inter->Oficio_pcl === 'Si'){
+                                                                        $tipo_descarga = 'Oficio PCL';
+                                                                    }
+                                                                    else if($comite_inter->Oficio_incapacidad && $comite_inter->Oficio_incapacidad === 'Si'){
+                                                                        $tipo_descarga = 'Oficio Incapacidad';
+                                                                    }
+                                                                    else{
+                                                                        $tipo_descarga = 'Oficio';
+                                                                    }
+                                                                ?>
+                                                                <td><?php echo $tipo_descarga;?></td>
                                                                 <td style="display: flex; flex-direction:row; justify-content:space-around; align-items:center;">
                                                                     <form name="ver_notificacionPcl" data-archivo="{{json_encode($comite_inter)}}" @if($comite_inter->Reemplazado === 1) id="verNotificacionPCL" @else action="{{ route('generarOficio_Pcl') }}" @endif method="POST">
                                                                         @csrf
@@ -7982,7 +8027,7 @@
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Documentos cargados manualmente  --}}
-                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td data-id_comunicado="{{$comunicados['Id_Comunicado'] ?? null}}">{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
                                                                     <td>{{$comunicados['F_comunicado']}}</td>  
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
@@ -8347,7 +8392,7 @@
     });
 
 </script>
-<script type="text/javascript" src="/js/funciones_helpers.js"></script>
+<script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
 <script type="text/javascript" src="/js/calificacionpcl_tecnica.js"></script>
 {{-- JS: Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores --}}
 <script type="text/javascript" src="/js/datatable_deficiencias_alteraciones_sistemas.js"></script>

@@ -85,8 +85,12 @@
             font-weight: bold;
         }
         .fuente_todo_texto{
-            font-family: sans-serif; 
+            font-family: sans-serif;
             font-size: 12px;
+        }
+        .paddingTexto{
+            margin: 0;
+            padding: 0;
         }
         .tabla1{
             width: 80%;
@@ -105,12 +109,17 @@
             margin-right: 1.5cm;
         }
         .cuadro{
-            border: 3px solid black;
-            padding-left: 6px;
-            width: 5cm;
-            height: 2cm;
+            border: 2px solid black;
+            width: 4cm;
+            padding: 1px;
+            height: auto;
+        }     
+        .fuente_cuadro_inferior{
+            font-family: sans-serif;
+            font-size: 10px;
+            margin: 0;
+            padding: 0;
         }
-
         .derecha{
             float: right;
         }
@@ -178,23 +187,16 @@
             <div class="hijo">{{$i}}</div>
         @endfor --}}
 
-        <p class="fuente_todo_texto derecha"><span class="negrita">Bogotá D.C. {{$fecha}}</span></p>
+        <p class="fuente_todo_texto derecha"><span class="negrita">Bogotá D.C. {{$fecha_sustentacion_jrci}}</span></p>
         <br><br>
         <table class="tabla2">
             <tbody>
                 <tr>
                     <td style="width:100%;">
-                        <span class="fuente_todo_texto"><span class="negrita">Señores: </span><br>{{$nombre_junta}}</span><br>
+                        <span class="fuente_todo_texto negrita">Señores: <br>{{$nombre_junta}}</span><br>
                         <span class="fuente_todo_texto">{{$direccion_junta}}</span><br>
                         <span class="fuente_todo_texto">{{$telefono_junta}}</span><br>
                         <span class="fuente_todo_texto">{{$ciudad_junta}} - {{$departamento_junta}}</span>
-                    </td>
-                    <td>
-                        <div class="cuadro">
-                            <span class="fuente_todo_texto"><span class="negrita">Nro. Radicado: <br>{{$nro_radicado}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
-                        </div>
                     </td>
                 </tr>
             </tbody>
@@ -247,7 +249,7 @@
                     ) {
                         
                         $cuerpo_modificado = str_replace('{{$nro_dictamen}}', "<b>".$nro_dictamen."</b>", $cuerpo);
-                        $cuerpo_modificado = str_replace('{{$f_dictamen_jrci}}', "<b>".$f_dictamen_jrci_emitido."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$f_dictamen_jrci}}', "<b>".date("d/m/Y", strtotime($f_dictamen_jrci_emitido))."</b>", $cuerpo_modificado);
                         $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', "<b>".$nombre_afiliado."</b>", $cuerpo_modificado);
                         $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', "<b>".$tipo_identificacion."</b>", $cuerpo_modificado);
                         $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', "<b>".$num_identificacion."</b>", $cuerpo_modificado);
@@ -293,14 +295,14 @@
                     ){
                         
                         $cuerpo_modificado = str_replace('{{$nro_dictamen}}', "<b>".$nro_dictamen."</b>", $cuerpo);
-                        $cuerpo_modificado = str_replace('{{$f_dictamen_jrci}}', "<b>".$f_dictamen_jrci_emitido."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$f_dictamen_jrci}}', "<b>".date("d/m/Y", strtotime($f_dictamen_jrci_emitido))."</b>", $cuerpo_modificado);
                         $cuerpo_modificado = str_replace('{{$nombre_afiliado}}', "<b>".$nombre_afiliado."</b>", $cuerpo_modificado);
                         $cuerpo_modificado = str_replace('{{$tipo_identificacion_afiliado}}', "<b>".$tipo_identificacion."</b>", $cuerpo_modificado);
                         $cuerpo_modificado = str_replace('{{$num_identificacion_afiliado}}', "<b>".$num_identificacion."</b>", $cuerpo_modificado);
                         $cuerpo_modificado = str_replace('{{$cie10_nombre_cie10_jrci}}', $string_diagnosticos_cie10_jrci, $cuerpo_modificado);
                         $cuerpo_modificado = str_replace('{{$pcl_jrci}}', "<b>".$porcentaje_pcl_jrci_emitido."</b>", $cuerpo_modificado);
                         $cuerpo_modificado = str_replace('{{$origen_dx_jrci}}', "<b>".$origen_jrci_emitido."</b>", $cuerpo_modificado);
-                        $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', "<b>".$f_estructuracion_contro_jrci_emitido."</b>", $cuerpo_modificado);
+                        $cuerpo_modificado = str_replace('{{$f_estructuracion_jrci}}', "<b>".date("d/m/Y", strtotime($f_estructuracion_contro_jrci_emitido))."</b>", $cuerpo_modificado);
                         $cuerpo_modificado = str_replace('{{$decreto_calificador_jrci}}', "<b>".$manual_de_califi_jrci_emitido."</b>", $cuerpo_modificado);
                         $cuerpo_modificado = str_replace('ACUERDO', "<b>ACUERDO</b>", $cuerpo_modificado);
     
@@ -352,11 +354,11 @@
             <table style="text-align: justify; width:100%; margin-left: -3px;">
                 @if (count($Agregar_copia) == 0)
                     <tr>
-                        <td><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
+                        <td class="copias"><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
                     </tr>
                 @else
                     <tr>
-                        <td class="justificado"><span class="negrita">Copia:</span></td>                            
+                        <td class="justificado copias"><span class="negrita">Copia:</span></td>                            
                     </tr>
                     <?php 
                         $Afiliado = 'Afiliado';
@@ -418,6 +420,12 @@
                 @endif
             </table>
         </section>
+        <br>
+        <div class="cuadro fuente_cuadro_inferior" style="margin: 0 auto; page-break-before: always;">
+            <span class="fuente_cuadro_inferior"><span class="negrita">Nro. Radicado: <br>{{$nro_radicado}}</span></span><br>
+            <span class="fuente_cuadro_inferior"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
+            <span class="fuente_cuadro_inferior"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
+        </div>
     </div>
     <script type="text/php">
         if ( isset($pdf) ) {

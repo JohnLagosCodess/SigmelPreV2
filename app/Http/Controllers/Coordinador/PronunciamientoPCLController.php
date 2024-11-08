@@ -26,6 +26,7 @@ use App\Models\sigmel_informacion_comunicado_eventos;
 use App\Models\sigmel_auditorias_pronunciamiento_eventos;
 use App\Models\sigmel_clientes;
 use App\Models\sigmel_informacion_afiliado_eventos;
+use App\Models\sigmel_lista_departamentos_municipios;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_informacion_firmas_clientes;
@@ -40,6 +41,7 @@ use PhpOffice\PhpWord\Shared\Html;
 use PhpOffice\PhpWord\Style\Image;
 use Html2Text\Html2Text;
 use Mockery\Undefined;
+use PhpOffice\PhpWord\Shared\Converter;
 
 class PronunciamientoPCLController extends Controller
 {
@@ -374,6 +376,50 @@ class PronunciamientoPCLController extends Controller
         // Captura del array de los datos de la tabla
         
         $array_diagnosticos_motivo_calificacion = json_decode($request->datos_finales_diagnosticos_moticalifi);
+        if(isset($request->otro_calificador)){
+            $info_ciudad = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+            ->select('Id_municipios','Id_departamento')
+            ->where('Nombre_municipio', 'like', "%{$request->ciudad_calificador}%")
+            ->orWhere('Nombre_departamento', 'like', "%{$request->depar_calificador}%")
+            ->first();
+
+            if(empty($info_ciudad)){
+                $consecutivo_dep = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')
+                ->select('Id_departamento')->max('Id_departamento');
+                $consecutivo_dep += 1;
+                
+                $info_ciudad = sigmel_lista_departamentos_municipios::on('sigmel_gestiones')->insertGetId([
+                    "Nombre_departamento" => $request->depar_calificador,
+                    "Nombre_municipio" => $request->ciudad_calificador, 
+                    "Id_departamento" =>  $consecutivo_dep,
+                    "F_registro" => date('Y-m-d'),
+                    "Estado" => "activo"
+                ]);
+            }
+
+            $info_entidad = [
+                "Direccion" => $request->dir_calificador,
+                "Dirigido" => $request->otro_calificador,
+                "Nombre_entidad" => $request->otro_calificador, 
+                "Emails" => $request->mail_calificador,
+                "Id_Departamento" => $info_ciudad->Id_departamento ?? $consecutivo_dep ,
+                "Id_Ciudad" => $info_ciudad->Id_municipios ?? $info_ciudad,
+                "Sucursal" => $request->ciudad_calificador,
+                "Nit_entidad" => $request->nit_calificador,
+                "Telefonos" => $request->telefono_calificador,
+                'IdTipo_entidad' => 6,
+                "Estado_entidad" => 'activo'
+            ];
+
+            $tmp_entidad = sigmel_informacion_entidades::on('sigmel_gestiones')->updateOrCreate(['Nombre_entidad' => $request->otro_calificador],$info_entidad);
+            @$request->nombre_calificador = $tmp_entidad->Id_Entidad;
+
+        }
+       /* if(!empty($request->otro_calificador)){
+            sigmel_informacion_entidades::on('sigmel_gestiones')->insert([
+                'IdTipo_entidad' => 6,
+            ]);
+        }*/
 
         // Iteración para extraer los datos de la tabla y adicionar los datos de Id evento, Id asignacion y Id proceso
         //Valida que no este vacio el CIE10
@@ -644,7 +690,7 @@ class PronunciamientoPCLController extends Controller
 
             sleep(2);
 
-            if($request->decision_pr != 'Silencio'){
+            if($request->decision_pr != 'Silencio' && !isset($request->otro_calificador)){
                 $Id_Comunicado = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->insertGetId($datos_info_comunicado_eventos);
                 sleep(2);
             }
@@ -830,7 +876,7 @@ class PronunciamientoPCLController extends Controller
                 'F_registro' => $date,
             ];
             // dd($request->decision_pr);
-            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado){
+            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado && !isset($request->otro_calificador)){
                 $Id_Comunicado = $request->Id_Comunicado;
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
                     ['ID_evento', $Id_EventoPronuncia],
@@ -846,7 +892,7 @@ class PronunciamientoPCLController extends Controller
                     "Id_Comunicado" => $Id_Comunicado
                 );
             }
-            else if($request->decision_pr == 'Silencio' && $request->Id_Comunicado){
+            else if($request->decision_pr == 'Silencio' && $request->Id_Comunicado && !isset($request->otro_calificador)){
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where('Id_Comunicado', $request->Id_Comunicado)->delete();
                 $archivos_a_eliminar = [
                     "PCL_ACUERDO_{$Id_Asignacion_Pronuncia}_{$request->identificacion}.pdf",
@@ -867,8 +913,7 @@ class PronunciamientoPCLController extends Controller
                     "parametro2" => 'guardo',
                     "mensaje2" => 'Información actualizada satisfactoriamente.',                    
                 );
-            }
-            if($request->decision_pr != 'Silencio' && $request->Id_Comunicado == "null"){
+            }else if($request->decision_pr != 'Silencio' && $request->Id_Comunicado == "null" && !isset($request->otro_calificador)){
                 //Se asignan los IDs de destinatario por cada posible destinatario
                 $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
                 $datos_info_comunicado_eventos['Id_Destinatarios'] = $ids_destinatarios;
@@ -882,6 +927,13 @@ class PronunciamientoPCLController extends Controller
                     "mensaje2" => 'Información actualizada satisfactoriamente.',
                     "Id_Comunicado" => $Id_Comunicado
                 );
+            }else{
+                $mensajes = array(
+                    "parametro" => 'agregar_pronunciamiento',
+                    "parametro2" => 'guardo',
+                    "mensaje" => 'Información guardada satisfactoriamente.',
+                    "Id_Comunicado" => null,
+                ); 
             }
             // REGISTRO ACTIVIDAD PARA AUDITORIA //
             $Id_Pronuncia = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')->select('Id_Pronuncia','Id_Asignacion')->latest('Id_Pronuncia')->first();
@@ -945,7 +997,9 @@ class PronunciamientoPCLController extends Controller
             ];   
                 
             sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
-            ->where([                
+            ->where([            
+                ['ID_evento', $Id_EventoPronuncia],
+                ['Id_Asignacion', $Id_Asignacion_Pronuncia],    
                 ['N_radicado',$radicado]
             ])->update($datos_info_comunicado_eventos);
             
@@ -1060,7 +1114,6 @@ class PronunciamientoPCLController extends Controller
         // Destinatario Principal si y Decision Desacuerdo: Se saca la informacion de la entidad.
         // Destinatario Principal no y Decision Desacuerdo: Se saca la informacion del Calificador.
 
-
         if ($Destinatario_principal == 'Si' && $Decision == 'Acuerdo') {
             $Nombre_entidades = $info_pronunciamiento[0]->Nombre_entidades;  
             $Email_enti = $info_pronunciamiento[0]->Email_entidad;     
@@ -1106,6 +1159,7 @@ class PronunciamientoPCLController extends Controller
             $Dir_calificador = $info_pronunciamiento[0]->Direccion;
             $Telefono_calificador = $info_pronunciamiento[0]->Telefonos;
             $Ciudad_calificador = $info_pronunciamiento[0]->Nombre_ciudad;
+            $Departamento_calificador = $info_pronunciamiento[0]->Nombre_departamento;
             $Nombre_departamento_enti = $info_pronunciamiento[0]->Nombre_departamento;  
         }elseif($Destinatario_principal == 'No' && $Decision == 'Desacuerdo') {
             $Email_calificador = $info_pronunciamiento[0]->Email_calificador;
@@ -1113,15 +1167,18 @@ class PronunciamientoPCLController extends Controller
             $Dir_calificador = $info_pronunciamiento[0]->Dir_calificador;
             $Telefono_calificador = $info_pronunciamiento[0]->Telefono_calificador;
             $Ciudad_calificador = $info_pronunciamiento[0]->Ciudad_calificador; 
+            $Departamento_calificador = $info_pronunciamiento[0]->Depar_calificador;
         }
         
 
         $Asunto_cali = $info_pronunciamiento[0]->Asunto_cali;
         $Nombre_calificador = $info_pronunciamiento[0]->Nombre_calificador;        
         $Fecha_calificador = $info_pronunciamiento[0]->Fecha_calificador;
+        $Fecha_calificador = date("d/m/Y", strtotime($Fecha_calificador));
         $T_origen = $info_pronunciamiento[0]->T_origen;
         $Porcentaje_pcl = $info_pronunciamiento[0]->Porcentaje_pcl;
         $Fecha_estruturacion = $info_pronunciamiento[0]->Fecha_estruturacion;
+        $Fecha_estruturacion = date("d/m/Y", strtotime($Fecha_estruturacion));
         // $Sustenta_cali = $info_pronunciamiento[0]->Sustenta_cali;
         $Sustenta_cali = $request->Sustenta_cali;
         $N_anexos = $info_pronunciamiento[0]->N_anexos;
@@ -1357,9 +1414,6 @@ class PronunciamientoPCLController extends Controller
                 'Ciudad_correspon' => $Ciudad_correspon,
                 'Fecha_correspondencia' => fechaFormateada($Fecha_correspondencia),
                 'N_radicado' => $N_radicado,
-                'Nombre_afiliado_corre' => $Nombre_afiliado_corre,
-                'Tipo_documento_afi' => $Tipo_documento_afi,
-                'Iden_afiliado_corre' => $Iden_afiliado_corre,
                 'Nombre_entidades' => $Nombre_entidades,
                 'Direccion_enti' => $Direccion_enti,
                 'Telefonos_enti' => $Telefonos_enti,
@@ -1488,23 +1542,23 @@ class PronunciamientoPCLController extends Controller
 
             //Marca de agua
             $styleVigilado = [
-                'width' => 25,           
-                'height' => 200,            
-                'marginTop' => 0,           
+                'width' => 20,           
+                'height' => 100,  
+                'marginTop' => 600,        
                 'marginLeft' => -50,       
                 'wrappingStyle' => 'behind',   // Imagen detrás del texto
                 'positioning' => Image::POSITION_RELATIVE, 
                 'posVerticalRel' => 'page', 
                 'posHorizontal' => Image::POSITION_ABSOLUTE,
-                'posVertical' => Image::POSITION_VERTICAL_CENTER, // Centrado verticalmente en la página
+                'posVertical' => Image::POSITION_ABSOLUTE, // Centrado verticalmente en la página
             ];
 
             $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
 
             $phpWord = new PhpWord();
             // Configuramos la fuente y el tamaño de letra para todo el documento
-            $phpWord->setDefaultFontName('Arial');
-            $phpWord->setDefaultFontSize(12);
+            $phpWord->setDefaultFontName('Verdana');
+            $phpWord->setDefaultFontSize(10);
             // Configuramos la alineación justificada para todo el documento
             $phpWord->setDefaultParagraphStyle(
                 array('align' => 'both', 'spaceAfter' => 0, 'spaceBefore' => 0)
@@ -1512,12 +1566,23 @@ class PronunciamientoPCLController extends Controller
             // Configurar el idioma del documento a español
             $phpWord->getSettings()->setThemeFontLang(new \PhpOffice\PhpWord\Style\Language('es-ES'));
 
+            //Section header
+            $estilosPaginaWord = array(
+                'headerHeight'=> 0,
+                'footerHeight'=> Converter::inchToTwip(.2),
+                'marginLeft'  => Converter::inchToTwip(1),
+                'marginRight' => Converter::inchToTwip(1),
+                'marginTop'   => 0,
+                'marginBottom'=> 0,
+            );
+            $section = $phpWord->addSection($estilosPaginaWord);
+            
             // Configuramos las margenes del documento (estrechas)
-            $section = $phpWord->addSection();
-            $section->setMarginLeft(0.5 * 72);
-            $section->setMarginRight(0.5 * 72);
-            $section->setMarginTop(0.5 * 72);
-            $section->setMarginBottom(0.5 * 72);
+            // $section = $phpWord->addSection();
+            // $section->setMarginLeft(0.5 * 72);
+            // $section->setMarginRight(0.5 * 72);
+            // $section->setMarginTop(0.5 * 72);
+            // $section->setMarginBottom(0.5 * 72);
 
             // $ruta_vigilado = "/images/logos_preformas/vigilado.png";
             // $imagenPath_vigilado = public_path($ruta_vigilado);
@@ -1536,12 +1601,14 @@ class PronunciamientoPCLController extends Controller
             $header = $section->addHeader();
             $header->addWatermark($pathVigilado, $styleVigilado);
             $imagenPath_header = public_path($ruta_logo);
-            $header->addImage($imagenPath_header, array('width' => 150, 'align' => 'right'));
-            $test = $header->addTextRun(['alignment' => 'right']);
-            $test->addText('Página ');
-            $test->addField('PAGE');
-            $test->addText(' de ');
-            $test->addField('NUMPAGES');
+            $header->addImage($imagenPath_header, array('width' => 110, 'height' => 30, 'align' => 'right'));
+            $encabezado = $header->addTextRun(['alignment' => 'right']);
+            
+            $fontStylePaginado = ['name' => 'Calibri', 'size' => 8];
+            $encabezado->addText('Página ', $fontStylePaginado);
+            $encabezado->addField('PAGE',[],[],null,$fontStylePaginado);
+            $encabezado->addText(' de ',$fontStylePaginado);
+            $encabezado->addField('NUMPAGES',[],[],null,$fontStylePaginado);
             $header->addTextBreak();
                       
             // Creación de Contenido
@@ -1555,7 +1622,7 @@ class PronunciamientoPCLController extends Controller
             $table->addRow();
 
 
-            $cell1 = $table->addCell(6000);
+            $cell1 = $table->addCell(10000);
 
 
             $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
@@ -1567,23 +1634,14 @@ class PronunciamientoPCLController extends Controller
             $textRun1->addTextBreak();
             $textRun1->addText($Dir_calificador);
             $textRun1->addTextBreak();
-            $textRun1->addText($Telefono_calificador);
+            $textRun1->addText('Tel: '.$Telefono_calificador);
             $textRun1->addTextBreak();
-            $textRun1->addText($Ciudad_calificador);
+            if($Ciudad_calificador !== 'Bogota D.C.'){
+                $textRun1->addText($Ciudad_calificador.' - '.$Departamento_calificador);
+            }else{
+                $textRun1->addText($Ciudad_calificador);
+            }
 
-            $cell2 = $table->addCell(4000);
-
-            $nestedTable = $cell2->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80 * 60, 'alignment'=>'right'));
-            $nestedTable->addRow();
-            $nestedCell = $nestedTable->addCell();
-            $nestedTextRun = $nestedCell->addTextRun(array('alignment'=>'left'));
-            $nestedTextRun->addText('Nro. Radicado: ', array('bold' => true));
-            $nestedTextRun->addTextBreak();
-            $nestedTextRun->addText($nro_radicado, array('bold' => true));
-            $nestedTextRun->addTextBreak();
-            $nestedTextRun->addText($Tipo_documento_afi . ' ' . $Iden_afiliado_corre, array('bold' => true));
-            $nestedTextRun->addTextBreak();
-            $nestedTextRun->addText('Siniestro: ' . $N_siniestro, array('bold' => true));
             
             $section->addTextBreak();
             $section->addTextBreak();
@@ -1594,20 +1652,22 @@ class PronunciamientoPCLController extends Controller
             $table->addRow();
 
 
-            $cell1 = $table->addCell(8000);
+            $cell1 = $table->addCell(2000);
+            $cell2 = $table->addCell(8000);
 
-            $asuntoyafiliado = $cell1->addTextRun(array('alignment'=>'left'));
-            $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
+            $asunto = $cell1->addTextRun(array('alignment'=>'left'));
+            $asunto->addText('Asunto: ', array('bold' => true));
+            $asuntoyafiliado = $cell2->addTextRun(array('alignment'=>'both'));
             $asuntoyafiliado->addText($Asunto_cali, array('bold' => true));
             $asuntoyafiliado->addTextBreak();
-            $asuntoyafiliado->addText('Paciente: ', array('bold' => true));
-            $asuntoyafiliado->addText($Nombre_afiliado_corre." ".$Tipo_documento_afi." ".$Iden_afiliado_corre);
-            $asuntoyafiliado->addTextBreak();
-            $asuntoyafiliado->addText('Ramo: ', array('bold' => true));
-            $asuntoyafiliado->addText('Previsionales');
-            $asuntoyafiliado->addTextBreak();
-            $asuntoyafiliado->addText('Siniestro: ', array('bold' => true));
-            $asuntoyafiliado->addText($N_siniestro);
+            $asuntoyafiliado->addText('PACIENTE: ', array('bold' => true));
+            $asuntoyafiliado->addText($Nombre_afiliado_corre." ".$Tipo_documento_afi." ".$Iden_afiliado_corre, array('bold' => true));
+            // $asuntoyafiliado->addTextBreak();
+            // $asuntoyafiliado->addText('Ramo: ', array('bold' => true));
+            // $asuntoyafiliado->addText('Previsionales');
+            // $asuntoyafiliado->addTextBreak();
+            // $asuntoyafiliado->addText('Siniestro: ', array('bold' => true));
+            // $asuntoyafiliado->addText($N_siniestro);
             $section->addTextBreak();
 
             // $section->addText('Asunto: '.$Asunto_cali, array('bold' => true));
@@ -1660,12 +1720,16 @@ class PronunciamientoPCLController extends Controller
                 
                 Html::addHtml($section, $htmlModificado, false, true);
             }else{
-                // $section->addText($Firma_cliente);
+                //PBS060 Piden "Eliminar la frase "No firma", dejar un espacio de 5 renglones entre "Cordialmente," y el nombre del representante legal Alfa".
+                $section->addTextBreak();
+                $section->addTextBreak();
+                $section->addTextBreak();
             }
             $section->addTextBreak();
             $section->addText('HUGO IGNACIO GÓMEZ DAZA', array('bold' => true));
-            $section->addText('Representante Legal para Asuntos de Seguridad Social', array('bold' => true));
-            $section->addText('Convenio Codess - Seguros de Vida Alfa S.A', array('bold' => true));
+            $section->addText('C.C. 80413626');
+            $section->addText('Representante Legal');
+            $section->addText('Seguros de Vida Alfa S.A.');
             $section->addTextBreak();
             // $section->addText('Elaboró: '.Auth::user()->name, array('bold' => true));
             // $section->addTextBreak();
@@ -1674,12 +1738,12 @@ class PronunciamientoPCLController extends Controller
             if (count($Agregar_copias) == 0) {
                 $htmltabla2 .= '
                     <tr>
-                        <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
+                        <td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>
                     </tr>';
             } else {
                 $htmltabla2 .= '
                     <tr>
-                        <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
+                        <td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Copia:</span></td>
                     </tr>';
 
                 $Afiliado = 'Afiliado';
@@ -1689,32 +1753,55 @@ class PronunciamientoPCLController extends Controller
                 $ARL = 'ARL';
 
                 if (isset($Agregar_copias[$Afiliado])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$Empleador])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$EPS])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$AFP])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
                 }
 
                 if (isset($Agregar_copias[$ARL])) {
-                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                    $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
                 }
             }
 
             $htmltabla2 .= '</table>';
             Html::addHtml($section, $htmltabla2, false, true);
+            $section->addTextBreak();
+            $section->addTextBreak();
+
+            //Cuadro con información del siniestro
+            $tableCuadro = $section->addTable();
+
+            $tableCuadro->addRow();
+
+            $cellCuadro = $tableCuadro->addCell(10000);
+            //Estilo del texto del cuadro
+            $styleTextCuadro = ['bold' => true,'name' => 'Calibri', 'size' => 8];
+            //Cuadro
+            $cuadro = $cellCuadro->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80*60, 'alignment'=>'center', 'padding'=>20));
+            $cuadro->addRow();
+            $celdaCuadro = $cuadro->addCell();
+            $cuadroTextRun = $celdaCuadro->addTextRun(array('alignment'=>'left'));
+            $cuadroTextRun->addText('Nro. Radicado: ', $styleTextCuadro);
+            $cuadroTextRun->addTextBreak();
+            $cuadroTextRun->addText($nro_radicado, $styleTextCuadro);
+            $cuadroTextRun->addTextBreak();
+            $cuadroTextRun->addText($Tipo_documento_afi . ' ' . $Iden_afiliado_corre, $styleTextCuadro);
+            $cuadroTextRun->addTextBreak();
+            $cuadroTextRun->addText('Siniestro: ' . $N_siniestro, $styleTextCuadro);
             
             // Configuramos el footer
             $footer = $section->addFooter();
-            $footer-> addText($Nombre_afiliado_corre." - ".$Tipo_documento_afi." "."$Iden_afiliado_corre".' - Siniestro '."$N_siniestro", array('size' => 10, 'bold' => true), array('align' => 'center'));
+            // $footer-> addText($Nombre_afiliado_corre." - ".$Tipo_documento_afi." "."$Iden_afiliado_corre".' - Siniestro '."$N_siniestro", array('size' => 10, 'bold' => true), array('align' => 'center'));
             if($ruta_logo_footer != null){
                 $imagenPath_footer = public_path($ruta_logo_footer);
                 $footer->addImage($imagenPath_footer, array('width' => 450, 'height' => 70, 'alignment' => 'left'));

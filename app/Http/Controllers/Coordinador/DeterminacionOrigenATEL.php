@@ -723,6 +723,16 @@ class DeterminacionOrigenATEL extends Controller
             ];
         }
 
+        //Copias y destinatario de un dictamen segun la ficha PBS054
+        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($request->ID_Evento);
+        if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
+            $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL, AFP_Conocimiento";
+        }
+        else{
+            $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL";
+        }
+        $Destinatario = 'Afp';
+
         $Id_Dto_ATEL = $request->Id_Dto_ATEL;
         if ($Id_Dto_ATEL == "") {
             sigmel_informacion_dto_atel_eventos::on('sigmel_gestiones')->insert($datos_formulario);
@@ -737,15 +747,6 @@ class DeterminacionOrigenATEL extends Controller
 
             sleep(2);
 
-            $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($request->ID_Evento);
-            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL, AFP_Conocimiento";
-            }
-            else{
-                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL";
-            }
-            $Destinatario = 'Afp';
-
             //Se asignan los IDs de destinatario por cada posible destinatario
             $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
 
@@ -759,7 +760,7 @@ class DeterminacionOrigenATEL extends Controller
                 'Cliente' => 'N/A',
                 'Nombre_afiliado' => 'N/A',
                 'T_documento' => 'N/A',
-                'N_identificacion' => 'N/A',
+                'N_identificacion' => $request->n_identificacion,
                 'Destinatario' => $Destinatario,
                 'Nombre_destinatario' => 'N/A',
                 'Nit_cc' => 'N/A',
@@ -812,17 +813,8 @@ class DeterminacionOrigenATEL extends Controller
 
             sleep(2);
 
-            //Copias y destinatario de un dictamen segun la ficha PBS054
-            $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($request->ID_Evento);
-            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL, AFP_Conocimiento";
-            }
-            else{
-                $agregar_copias_dml = "Afiliado, Empleador, EPS, AFP, ARL";
-            }
-            $Destinatario = 'Afp';
-
             $comunicado_reemplazado = [
+                'N_identificacion' => $request->n_identificacion,
                 'Destinatario' => $Destinatario,
                 'Agregar_copia' => $agregar_copias_dml,
                 'Reemplazado' => 0,

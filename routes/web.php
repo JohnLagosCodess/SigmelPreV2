@@ -300,6 +300,7 @@ Route::post('/Sigmel/RolAdministrador/ActualizarEvento', [AdministradorControlle
 Route::get('/Sigmel/RolAdministrador/BusquedaEvento', [BuscarEventoController::class, 'mostrarVistaBuscarEvento'])->name('busquedaEvento');
 // Acción Consultar evento 
 Route::post('/consultaInformacionEvento', [BuscarEventoController::class, 'consultaInformacionEvento']);
+Route::post('/historial_servicios', [BuscarEventoController::class, 'historial_servicios']);
 
 // 28/06/2023
 // Vista: Bandeja PCL Coordinador
@@ -811,6 +812,8 @@ Route::post('/ConsecutivoIdEvento', [AdministradorController::class, 'Consecutiv
 Route::post('/eliminarSucursalCliente', [AdministradorController::class, 'eliminarSucursalCliente']);
 // Acción: Eliminar fila dinámica en tabla de ans modal edicion cliente
 Route::post('/eliminarAnsCliente', [AdministradorController::class, 'eliminarAnsCliente']);
+//Acción: Elimiar comunicado
+Route::post('/eliminar_evento', [AdministradorController::class, 'eliminar_comunicado']);
 // Acción: Actualizar información del cliente.
 Route::post('/ActualizarCliente', [AdministradorController::class, 'actualizar_cliente']);
 // Acción: Guardar los ANS del cliente

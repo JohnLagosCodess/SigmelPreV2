@@ -32,7 +32,8 @@
                 <?php else: ?>
                     <a href="{{route("bandejaPCL")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
                 <?php endif ?>
-                <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>                
+                <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>
+                <button label="Open Modal" data-toggle="modal" data-target="#historial_servicios" class="btn btn-info"><i class="fas fa-project-diagram mt-1"></i>Historial de servicios</button>
                 <p>
                     {{-- <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp;--> --}}
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
@@ -82,7 +83,7 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="identificacion">N° Identificación</label>
-                                                    <input type="text" class="form-control" name="identificacion" id="identificacion" value="{{$array_datos_calificacionPcl[0]->Nro_identificacion}}" disabled>
+                                                    <input type="text" class="form-control" name="identificacion" data-tipo="{{$array_datos_calificacionPcl[0]->Nombre_tipo_documento}}" id="identificacion" value="{{$array_datos_calificacionPcl[0]->Nro_identificacion}}" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -217,7 +218,7 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        {{-- <div class="col-4">
                                             <div class="form-group">                                                
                                                 <label for="modalidad_calificacion">Modalidad Calificación</label>                                                    
                                                 <select class="modalidad_calificacion custom-select" name="modalidad_calificacion" id="modalidad_calificacion">
@@ -228,7 +229,7 @@
                                                     @endif
                                                 </select>                                                 
                                             </div>
-                                        </div>
+                                        </div> --}}
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="modalidad_calificacion">Documentos adjuntos</label><br>
@@ -272,7 +273,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="">Nueva Fecha de radicación</label>
-                                                <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionPcl[0]->Nueva_F_radicacion)){echo $array_datos_calificacionPcl[0]->Nueva_F_radicacion;}?>">
+                                                <input type="date" class="form-control" name="nueva_fecha_radicacion" id="nueva_fecha_radicacion" max="{{now()->format('Y-m-d')}}" min="1900-01-01" value="<?php if(!empty($array_datos_calificacionPcl[0]->Nueva_F_radicacion)){echo $array_datos_calificacionPcl[0]->Nueva_F_radicacion;}?>">
+                                                <span class="d-none" id="alertaNuevaFechaDeRadicacion" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -361,7 +363,8 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="">Fecha de cierre</label>
-                                                    <input type="date" class="form-control" name="fecha_cierre" id="fecha_cierre" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_cierre)){echo $array_datos_calificacionPcl[0]->F_cierre;}?>">
+                                                    <input type="date" class="form-control" name="fecha_cierre" id="fecha_cierre" max="{{now()->format('Y-m-d')}}" min="1900-01-01" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_cierre)){echo $array_datos_calificacionPcl[0]->F_cierre;}?>">
+                                                    <span class="d-none" id="fecha_cierre_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -756,7 +759,7 @@
                                                     <div class="form-group">
                                                         <div class="form-check custom-control custom-radio">
                                                             <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documentos_pcl" value="Documento_PCL" required>
-                                                            <label class="form-check-label custom-control-label" for="documentos_pcl"><strong>Solicitud Documentos PCL</strong></label>
+                                                            <label class="form-check-label custom-control-label" for="documentos_pcl"><strong>SOLICITUD DOCUMENTOS (PCL)</strong></label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -783,7 +786,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documento_revisionpension" value="Documento_Revision_pension" required>
-                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension"><strong>oficio solicitud de documentos complementarios</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension"><strong>SOLICITUD DOCUMENTOS (R.V)</strong></label>
                                                     </div>
                                                 </div>
                                             </div>                                          
@@ -793,7 +796,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="No_procede_recali" value="Documento_No_Recalificacion" required>
-                                                        <label class="form-check-label custom-control-label" for="No_procede_recali"><strong>No Procede Recalificación</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="No_procede_recali"><strong>NO RECALIFICACIÓN</strong></label>
                                                     </div>
                                                 </div>
                                             </div> 
@@ -1105,7 +1108,7 @@
                                                     <div class="form-group">
                                                         <div class="form-check custom-control custom-radio">
                                                             <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="documentos_pcl_editar" value="Documento_PCL" required>
-                                                            <label class="form-check-label custom-control-label" for="documentos_pcl_editar"><strong>Solicitud Documentos PCL</strong></label>
+                                                            <label class="form-check-label custom-control-label" for="documentos_pcl_editar"><strong>SOLICITUD DOCIMENTOS (PCL)</strong></label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1132,7 +1135,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="documento_revisionpension_editar" value="Documento_Revision_pension" required>
-                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension_editar"><strong>oficio solicitud de documentos complementarios</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="documento_revisionpension_editar"><strong>SOLICITUD DOCUMENTOS (R.V)</strong></label>
                                                     </div>
                                                 </div>
                                             </div>                                          
@@ -1142,7 +1145,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="No_procede_recali_editar" value="Documento_No_Recalificacion" required>
-                                                        <label class="form-check-label custom-control-label" for="No_procede_recali_editar"><strong>No Procede Recalificación</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="No_procede_recali_editar"><strong>NO RECALIFICACIÓN</strong></label>
                                                     </div>
                                                 </div>
                                             </div> 
@@ -1388,6 +1391,8 @@
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.coordinador.modalCorrespondencia')
     @include('//.modals.confirmacionAccion')
+    @include('//.modals.historialServicios')
+    @include('//.modals.alertaRadicado')
 @stop
 @section('js')
     <script>
@@ -1437,6 +1442,80 @@
             document.getElementById('formulario2').submit();
         });
         
+    </script>
+
+    {{-- Validación de fechas, en las cuales la nueva fecha de radicación no puede ser menor a la fecha inicial de radicación. --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtener referencias a los campos de fecha y elementos de alerta
+            const nuevaFechaRadicación = document.getElementById('nueva_fecha_radicacion');
+            const fechaRadicacionInicial = document.getElementById('fecha_radicacion');
+            const alertaNuevaFechaRadicación = document.getElementById('alertaNuevaFechaDeRadicacion');
+            const alertaParametrica = $(".no_ejecutar_parametrica_modulo_principal")[0].classList;
+            const today = new Date().toISOString().split("T")[0];
+
+            // Evento para cuando se cambie la fecha de envío
+            nuevaFechaRadicación.addEventListener('change', function () {
+                // Obtener los valores de las fechas
+                const nuevaFechaDeRadicacion = new Date(nuevaFechaRadicación.value);
+                const fechaDeRadicacionInicial = fechaRadicacionInicial.value ? new Date(fechaRadicacionInicial.value) : null;
+
+                // Validar que la fecha ingresada no sea menor que 1900-01-01
+                if (nuevaFechaRadicación.value < '1900-01-01') {
+                    $("#alertaNuevaFechaDeRadicacion").text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+
+                // Validar que la fecha ingresada no sea mayor a la actual
+                if (nuevaFechaRadicación.value > today) {
+                    $("#alertaNuevaFechaDeRadicacion").text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+
+                // Validar que la nueva fecha de radicación no sea menor a la fecha de radicación inicial
+                if (fechaRadicacionInicial && fechaDeRadicacionInicial > nuevaFechaDeRadicacion) {
+                    $("#alertaNuevaFechaDeRadicacion").text('La fecha ingresada debe ser superior a la fecha de radicación inicial').removeClass('d-none');
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+
+                // Si pasa todas las validaciones, ocultar el mensaje de error y habilitar el botón
+                $("#alertaNuevaFechaDeRadicacion").text('').addClass('d-none');
+                if(alertaParametrica.contains('d-none')) {
+                    $('#Edicion').removeClass('d-none');
+                }
+            });
+        });
+    </script>
+    {{-- Validación general para todos los campos de tipo fecha --}}
+    <script>
+        let today = new Date().toISOString().split("T")[0];
+
+        // Seleccionar todos los inputs de tipo date
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+
+        // Agregar evento de escucha a cada input de tipo date que haya
+        dateInputs.forEach(input => {
+            //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
+            input.addEventListener('change', function() {
+                console.log('This is value of input type date ', this.value);
+                //Validamos que la fecha sea mayor a la fecha de 1900-01-01
+                if(this.value < '1900-01-01'){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea mayor a la fecha actual
+                if(this.value > today){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#Edicion').addClass('d-none');
+                    return;
+                }
+                return $(`#${this.id}_alerta`).text('').addClass("d-none");
+            });
+        });
     </script>
 
     <script type="text/javascript">
@@ -1523,7 +1602,7 @@
     </script>
     
     <script type="text/javascript" src="/js/calificacionpcl.js"></script>
-    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

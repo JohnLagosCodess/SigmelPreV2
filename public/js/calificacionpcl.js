@@ -591,9 +591,10 @@ $(document).ready(function(){
     /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
     $("input[id^='listadodocumento_']").click(function(){
         let idobtenido = $('#newId_evento').val();
+        let tipoDoc = $(this).data('tipo_documento');
         let idDoc = $(this).data('id_doc');
         $("input[id^='EventoID_']").val(idobtenido);
-        if(idDoc === 4){
+        if(idDoc === 4 && !tipoDoc){
             //Tomamos el input seleccionado
             let inputFile = $(`#listadodocumento_${idDoc}`)
             //Le asignamos el metodo de entrada de archivo el cual viene de nuestro input
@@ -603,7 +604,7 @@ $(document).ready(function(){
                 $(`#fileName_${idDoc}`).text(file.fileName);
                 resumable.opts.query.EventoID = idobtenido;
                 resumable.opts.query.Id_Documento = idDoc;
-                resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val();
+                resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val().replace(/ /g, "_");
                 resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
             });
         }
@@ -645,6 +646,7 @@ $(document).ready(function(){
         var formData = new FormData($(this)[0]);
         var id_reg_doc = $(this).data("id_reg_doc");
         var id_doc = $(this).data("id_doc");
+        let tipoDoc = $(this).data('tipo_documento');
 
         var cambio_estado = $(this).parents()[1]['children'][2]["id"];
         var input_documento = $(this).parents()[0]['children'][0][4]["id"];
@@ -652,7 +654,7 @@ $(document).ready(function(){
         //for (var pair of formData.entries()) {
         //   console.log(pair[0]+ ', ' + pair[1]); 
         //}
-        if(id_doc === 4){
+        if(id_doc === 4 && !tipoDoc){
             //Validación de posibles errores antes de enviar el documento
             if(resumable.opts.query.EventoID === ""){
                 errorCargueDocumentosID4('Debe diligenciar primero el formulario para poder cargar este documento.')
@@ -784,9 +786,9 @@ $(document).ready(function(){
     }
     var fechaActual_alerta = anioactual + '-' + mesactual + '-' + diaactual;
     Fecha_alerta_capturada.change(function() {
-        var valor_Fecha_alerta_capturada = $(this).val();        
+        var valor_Fecha_alerta_capturada = $(this).val(); 
         // Se saca solo la fecha de la F_alerta_capturada
-        var F_alerta_capturada = valor_Fecha_alerta_capturada.split('T')[0];        
+        var F_alerta_capturada = valor_Fecha_alerta_capturada.split('T')[0];
         if (F_alerta_capturada == ''){
             $('#Edicion').prop('disabled', false)
             $('#alerta_fecha_alerta').addClass('d-none');
@@ -1319,7 +1321,13 @@ $(document).ready(function(){
             { 
                 "data": function(row) {
                     if (row.Tipo_descarga === "Documento_PCL") {
-                        return "Solicitud Documentos PCL";
+                        return "SOLICITUD DOCUMENTOS (PCL)";
+                    }
+                    else if(row.Tipo_descarga === "Documento_No_Recalificacion") {
+                        return "NO RECALIFICACIÓN";
+                    }
+                    else if(row.Tipo_descarga === "Documento_Revision_pension") {
+                        return "SOLICITUD DOCUMENTOS (R.V)";
                     }
                     else if(row.Tipo_descarga === "Otro_Documento") {
                         return "Otro Documento";
@@ -1352,7 +1360,11 @@ $(document).ready(function(){
             data: response,
             paging: false,
             order: [[0, 'desc']],
-            "columns": columns,            
+            "columns": columns, 
+            createdRow: function(row, data, dataIndex) {
+                //agregamos el id del comunicado dentro del primer td
+                $(row).find('td').eq(0).attr('data-id_comunicado', data.Id_Comunicado);
+            },           
             "language":{                
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ registros",
@@ -1665,6 +1677,8 @@ $(document).ready(function(){
         let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
         //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
         let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
+        //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
+        copias = copias ? copias.split(',').map(copia => copia.trim()) : copias;
         //Información superior del modal 
         $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
         $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
@@ -1855,7 +1869,7 @@ $(document).ready(function(){
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.includes(tipo_correspondencia.toLowerCase())){
+                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && Array.isArray(copias) && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -2212,6 +2226,8 @@ $(document).ready(function(){
             $("#documento_revisionpension_editar").prop("checked", false);
             $("#No_procede_recali_editar").prop("checked", false);
         }else if (tipo_descarga == "Documento_Revision_pension") {
+            $("#asunto").prop('readonly', false);
+            $("#asunto_editar").prop('readonly', false);
             $("#documentos_pcl_editar").prop("checked", false);
             $("#otro_documento_pcl_editar").prop("checked", false);
             $("#formatoB_revisionpension_editar").prop("checked", false);
@@ -2624,64 +2640,66 @@ $(document).ready(function(){
     /* Funcionalidad radio buttons Solicitud documentos Origen y Otro documento (edición) */
     $("[name='tipo_documento_descarga_califi_editar']").on("change", function(){
         var opc_seleccionada = $(this).val();
+        $("#asunto_editar").prop('readonly', true);
         
         if (opc_seleccionada == "Documento_PCL") {
             $("#asunto_editar").val("Solicitud de documentos Calificación de Pérdida de Capacidad laboral al Fondo de Pensiones Porvenir S.A.");
 
             // Traemos la lista de los documentos solicitados y lo insertamos junto con el texto en el cuerpo del comunicado
-            var id_evento = $('#newId_evento').val();
-            var id_proceso = $('#Id_proceso').val();
-            var id_asignacion = $('#newId_asignacion').val();
+            // var id_evento = $('#newId_evento').val();
+            // var id_proceso = $('#Id_proceso').val();
+            // var id_asignacion = $('#newId_asignacion').val();
 
-            let datos_lista_soli_docs = {
-                '_token': token,
-                'parametro':"listado_solicitud_documentos",
-                'id_proceso': id_proceso,
-                'id_evento': id_evento,
-                'id_asignacion': id_asignacion 
-            };
+            // let datos_lista_soli_docs = {
+            //     '_token': token,
+            //     'parametro':"listado_solicitud_documentos",
+            //     'id_proceso': id_proceso,
+            //     'id_evento': id_evento,
+            //     'id_asignacion': id_asignacion 
+            // };
         
-            $.ajax({
-                type:'POST',
-                url:'/selectoresModuloCalificacionPCL',
-                data: datos_lista_soli_docs,
-                success:function(data){
+            // $.ajax({
+            //     type:'POST',
+            //     url:'/selectoresModuloCalificacionPCL',
+            //     data: datos_lista_soli_docs,
+            //     success:function(data){
 
-                    if (data.length > 0) {
-                        var listado = '<ul>';
-                        let listado_solicitud_documentos = Object.keys(data);
-                        for (let i = 0; i < listado_solicitud_documentos.length; i++) {
-                            var documento = data[listado_solicitud_documentos[i]];
-                            var nombre = documento['Nombre_documento'] ? documento['Nombre_documento'] : '';
-                            var descripcion = documento['Descripcion'] ? documento['Descripcion'] : '';
+            //         if (data.length > 0) {
+            //             var listado = '<ul>';
+            //             let listado_solicitud_documentos = Object.keys(data);
+            //             for (let i = 0; i < listado_solicitud_documentos.length; i++) {
+            //                 var documento = data[listado_solicitud_documentos[i]];
+            //                 var nombre = documento['Nombre_documento'] ? documento['Nombre_documento'] : '';
+            //                 var descripcion = documento['Descripcion'] ? documento['Descripcion'] : '';
                             
-                            if (nombre || descripcion) {
-                                var sumar = i + 1;
-                                listado += '<li>' + sumar + '. ' + nombre + ' ' + descripcion + '</li>';
-                            }
-                        }
+            //                 if (nombre || descripcion) {
+            //                     var sumar = i + 1;
+            //                     listado += '<li>' + sumar + '. ' + nombre + ' ' + descripcion + '</li>';
+            //                 }
+            //             }
     
-                        listado += '</ul>';
+            //             listado += '</ul>';
                         
-                    } else {
-                        listado = '';
-                    }
-                    var texto_insertar = "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo a tu solicitud de "+
-                    "calificación de pérdida de capacidad laboral (PCL) radicada en la AFP Porvenir S.A., te informamos que el historial médico aportado "+
-                    "ha sido revisado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.</p>"+
-                    "<p>No obstante, a que la información suministrada es relevante, se hace necesario que sean aportados documentos adicionales con el fin "+
-                    "de poder realizar la calificación de pérdida de capacidad laboral requerida, que a continuación relacionamos:</p>"+
-                    "<p>"+listado+"</p>"+
-                    "<p>Esta documentación debe suministrarla a los siguientes correos electrónicos: servicioalcliente@codess.org.co, "+
-                    "servicioalcliente@segurosalfa.com.co en un término de tres (3) meses contados a partir del recibido de la presente comunicación, y a "+
-                    "partir de ese momento se inicia nuevamente el estudio de tu solicitud. En el evento de no recibir la documentación médica "+
-                    "actualizada, se considerará desistimiento de tu solicitud por parte de esta aseguradora.</p>"+
-                    "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 "+
-                    "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o "+
-                    "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>";
-                    $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
-                }
-            });
+            //         } else {
+            //             listado = '';
+            //         }
+                    
+            //     }
+            // });
+            var texto_insertar = "<p>En <b>Seguros de Vida Alfa S.A.</b> siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo a tu solicitud de "+
+            "calificación de pérdida de capacidad laboral (PCL) radicada en la AFP Porvenir S.A., te informamos que el historial médico aportado "+
+            "ha sido revisado por el grupo interdisciplinario de calificación de <b>Seguros de Vida Alfa S.A.</b></p>"+
+            "<p>No obstante, a que la información suministrada es relevante, se hace necesario que sean aportados documentos adicionales con el fin "+
+            "de poder realizar la calificación de pérdida de capacidad laboral requerida, que a continuación relacionamos:</p>"+
+            "<p>{{$documentos_solicitados}}</p>"+
+            "<p>Esta documentación debe suministrarla al siguiente correo electrónico: servicioalcliente@segurosalfa.com.co "+
+            "en un término de tres (3) meses contados a partir del recibido de la presente comunicación, y a "+
+            "partir de ese momento se inicia nuevamente el estudio de tu solicitud. En el evento de no recibir la documentación médica "+
+            "actualizada, se considerará desistimiento de tu solicitud por parte de esta aseguradora.</p>"+
+            "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 "+
+            "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o "+
+            "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección <b>Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</b></p>";
+            $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
 
             // Auto selección de la opción Afiliado (Destinatario Principal)
             $('#afiliado_comunicado_editar').click();
@@ -2701,16 +2719,16 @@ $(document).ready(function(){
             var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
             "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica con "+ 
             "el fin de revisar sus condiciones de salud.</p>"+
-            "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida "+
-            "Alfa S.A., hemos definido que Usted actualmente mantiene las condiciones para continuar con el beneficio "+
+            "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de <b>Seguros de Vida "+
+            "Alfa S.A.</b>, hemos definido que Usted actualmente mantiene las condiciones para continuar con el beneficio "+
             "de pensión por invalidez sobre el cual esta compañía aseguradora ha venido pagando la mesada pensional "+
             "en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la Administradora de Fondos de "+
-            "Pensiones Porvenir S.A.</p>"+
+            "Pensiones <b>Porvenir S.A.</b></p>"+
             "<p>En forma sucinta, la revisión de invalidez, se fundamenta en: </p>"+
             "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al "+
             "cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de "+
             "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a "+
-            "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>";
+            "«servicioalcliente@segurosalfa.com.co» o a la dirección <b>Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</b></p>";
             $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
 
             // Auto selección de la opción Afiliado (Destinatario Principal)
@@ -2724,6 +2742,7 @@ $(document).ready(function(){
             $("#firmarcomunicado_editar").prop('checked', true);
 
         }else if (opc_seleccionada == "Documento_Revision_pension") {
+            $("#asunto_editar").prop('readonly', false);
             $("#asunto_editar").val("SOLICITUD DE DOCUMENTOS COMPLEMENTARIOS");
             var texto_insertar = '<p>Reciba un cordial saludo por parte de Seguros de Vida Alfa S.A.</p>'+
             '<p>En cumplimiento de la normatividad vigente, Seguros de Vida Alfa S.A., se encuentra realizando la actualización de información de las '+ 
@@ -2744,9 +2763,9 @@ $(document).ready(function(){
             'someterse a un nuevo dictamen. Los gastos de este nuevo dictamen serán pagados por el afiliado <br>'+
             '(...)”</p>'+
             '<p>De acuerdo con lo anterior y una vez revisado el expediente previsional de referencia, se estableció que es necesario que allegue '+
-            'esta documentación a los siguientes correos electrónicos: alfa.previsional2@codess.org.co, servicioalcliente@segurosalfa.com.co en '+
+            'esta documentación al siguiente correo electrónico: servicioalcliente@segurosalfa.com.co en '+
             'un término de tres (3) meses contados a partir del recibido de la presente comunicación, los siguientes documentos:</p>'+
-            '<p>1. </p>'+
+            '<p>{{$documentos_solicitados}}</p>'+
             '<p>Los documentos anteriormente mencionados deben ser solicitados en su EPS con su médico tratante; por otra parte, aclaramos que los '+
             'mismos se deben radicar en papelería física.</p>'+
             '<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 '+
@@ -2788,8 +2807,8 @@ $(document).ready(function(){
             // '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';
 
             var texto_insertar = '<p>Reciba un cordial saludo, </p>'+
-            '<p>Con ocasión de la solicitud de calificación de pérdida de capacidad laboral radicada por usted en la administradora de fondo de '+ 
-            'pensiones Porvenir, Seguros de Vida Alfa S.A., se permite dar respuesta en los términos que se describen a continuación.</p>'+
+            '<p>Con ocasión de la solicitud de calificación de pérdida de capacidad laboral radicada por usted en la administradora de <b>Fondo de '+ 
+            'Pensiones Porvenir, Seguros de Vida Alfa S.A.</b>, se permite dar respuesta en los términos que se describen a continuación.</p>'+
             '<p>(Sustentación de no recalificación)</p>'+
             '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';
 
@@ -3488,63 +3507,66 @@ $(document).ready(function(){
     /* Funcionalidad radio buttons Solicitud documentos Origen y Otro documento */
     $("[name='tipo_documento_descarga_califi']").on("change", function(){
         var opc_seleccionada = $(this).val();
+        $("#asunto").prop('readonly', true);
             
         if (opc_seleccionada == "Documento_PCL") {
             $("#asunto").val("SOLICITUD DE DOCUMENTOS PARA CALIFICACIÓN DE PÉRDIDA DE LA CAPACIDAD LABORAL");
 
             // Traemos la lista de los documentos solicitados y lo insertamos junto con el texto en el cuerpo del comunicado
-            var id_evento = $('#newId_evento').val();
-            var id_proceso = $('#Id_proceso').val();
-            var id_asignacion = $('#newId_asignacion').val();
+            // var id_evento = $('#newId_evento').val();
+            // var id_proceso = $('#Id_proceso').val();
+            // var id_asignacion = $('#newId_asignacion').val();
 
-            let datos_lista_soli_docs = {
-                '_token': token,
-                'parametro':"listado_solicitud_documentos",
-                'id_proceso': id_proceso,
-                'id_evento': id_evento,
-                'id_asignacion': id_asignacion 
-            };
+            // let datos_lista_soli_docs = {
+            //     '_token': token,
+            //     'parametro':"listado_solicitud_documentos",
+            //     'id_proceso': id_proceso,
+            //     'id_evento': id_evento,
+            //     'id_asignacion': id_asignacion 
+            // };
         
-            $.ajax({
-                type:'POST',
-                url:'/selectoresModuloCalificacionPCL',
-                data: datos_lista_soli_docs,
-                success:function(data){
+            // $.ajax({
+            //     type:'POST',
+            //     url:'/selectoresModuloCalificacionPCL',
+            //     data: datos_lista_soli_docs,
+            //     success:function(data){
 
-                    if (data.length > 0) {
-                        var listado = '<ul>';
-                        let listado_solicitud_documentos = Object.keys(data);
-                        for (let i = 0; i < listado_solicitud_documentos.length; i++) {
-                            var documento = data[listado_solicitud_documentos[i]];
-                            var nombre = documento['Nombre_documento'] ? documento['Nombre_documento'] : '';
-                            var descripcion = documento['Descripcion'] ? documento['Descripcion'] : '';
+            //         if (data.length > 0) {
+            //             var listado = '<ul>';
+            //             let listado_solicitud_documentos = Object.keys(data);
+            //             for (let i = 0; i < listado_solicitud_documentos.length; i++) {
+            //                 var documento = data[listado_solicitud_documentos[i]];
+            //                 var nombre = documento['Nombre_documento'] ? documento['Nombre_documento'] : '';
+            //                 var descripcion = documento['Descripcion'] ? documento['Descripcion'] : '';
                             
-                            if (nombre || descripcion) {
-                                var sumar = i + 1;
-                                listado += '<li>' + sumar + '. ' + nombre + ' ' + descripcion + '</li>';
-                            }
-                        }
+            //                 if (nombre || descripcion) {
+            //                     var sumar = i + 1;
+            //                     listado += '<li>' + sumar + '. ' + nombre + ' ' + descripcion + '</li>';
+            //                 }
+            //             }
     
-                        listado += '</ul>';
-                    } else {
-                        var listado = '';
-                    }
-                    var texto_insertar = "<p>En Seguros de Vida Alfa S.A. siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo a tu solicitud de "+
-                    "calificación de pérdida de capacidad laboral (PCL) radicada en la AFP Porvenir S.A., te informamos que el historial médico aportado "+
-                    "ha sido revisado por el grupo interdisciplinario de calificación de Seguros de Vida Alfa S.A.</p>"+
-                    "<p>No obstante, a que la información suministrada es relevante, se hace necesario que sean aportados documentos adicionales con el fin "+
-                    "de poder realizar la calificación de pérdida de capacidad laboral requerida, que a continuación relacionamos:</p>"+
-                    "<p>"+listado+"</p>"+
-                    "<p>Esta documentación debe suministrarla a los siguientes correos electrónicos: servicioalcliente@codess.org.co, "+
-                    "servicioalcliente@segurosalfa.com.co en un término de tres (3) meses contados a partir del recibido de la presente comunicación, y a "+
-                    "partir de ese momento se inicia nuevamente el estudio de tu solicitud. En el evento de no recibir la documentación médica "+
-                    "actualizada, se considerará desistimiento de tu solicitud por parte de esta aseguradora.</p>"+
-                    "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 "+
-                    "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o "+
-                    "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>";
-                    $('#cuerpo_comunicado').summernote('code', texto_insertar);
-                }
-            });
+            //             listado += '</ul>';
+            //         } else {
+            //             var listado = '';
+            //         }
+            //         console.log('LISTADO : ', listado)
+                    
+            //     }
+            // });
+            var texto_insertar = "<p>En <b>Seguros de Vida Alfa S.A.</b> siempre buscamos la protección y satisfacción de nuestros clientes. De acuerdo a tu solicitud de "+
+            "calificación de pérdida de capacidad laboral (PCL) radicada en la AFP Porvenir S.A., te informamos que el historial médico aportado "+
+            "ha sido revisado por el grupo interdisciplinario de calificación de <b>Seguros de Vida Alfa S.A.</b></p>"+
+            "<p>No obstante, a que la información suministrada es relevante, se hace necesario que sean aportados documentos adicionales con el fin "+
+            "de poder realizar la calificación de pérdida de capacidad laboral requerida, que a continuación relacionamos:</p>"+
+            "<p>{{$documentos_solicitados}}</p>"+
+            "<p>Esta documentación debe suministrarla al siguiente correo electrónico: servicioalcliente@segurosalfa.com.co "+
+            "en un término de tres (3) meses contados a partir del recibido de la presente comunicación, y a "+
+            "partir de ese momento se inicia nuevamente el estudio de tu solicitud. En el evento de no recibir la documentación médica "+
+            "actualizada, se considerará desistimiento de tu solicitud por parte de esta aseguradora.</p>"+
+            "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 "+
+            "70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o "+
+            "escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección <b>Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</b></p>";
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
             
             // $('#btn_insertar_Detalle_calificacion').addClass('d-none');
 
@@ -3566,16 +3588,16 @@ $(document).ready(function(){
             var texto_insertar = "<p>Reciba un cordial saludo, </p>"+
             "<p>Agradecemos la respuesta que hemos recibido a nuestra solicitud de actualización de historia clínica con "+ 
             "el fin de revisar sus condiciones de salud.</p>"+
-            "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de Seguros de Vida "+
-            "Alfa S.A., hemos definido que Usted actualmente mantiene las condiciones para continuar con el beneficio "+
+            "<p>De la revisión que ha realizado el Grupo Interdisciplinario de Calificación de Invalidez de <b>Seguros de Vida "+
+            "Alfa S.A.</b>, hemos definido que Usted actualmente mantiene las condiciones para continuar con el beneficio "+
             "de pensión por invalidez sobre el cual esta compañía aseguradora ha venido pagando la mesada pensional "+
             "en virtud del contrato de Renta Vitalicia Inmediata suscrito por encargo de la Administradora de Fondos de "+
-            "Pensiones Porvenir S.A.</p>"+
+            "Pensiones <b>Porvenir S.A.</b></p>"+
             "<p>En forma sucinta, la revisión de invalidez, se fundamenta en: </p>"+
             "<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al "+
             "cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de "+
             "8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a "+
-            "«servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>";
+            "«servicioalcliente@segurosalfa.com.co» o a la dirección <b>Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</b></p>";
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
@@ -3590,6 +3612,7 @@ $(document).ready(function(){
             $("#firmarcomunicado").prop('checked', true);
             
         }else if (opc_seleccionada == "Documento_Revision_pension") {
+            $("#asunto").prop('readonly', false);
             $("#asunto").val("SOLICITUD DE DOCUMENTOS COMPLEMENTARIOS");
             var texto_insertar = '<p>Reciba un cordial saludo por parte de Seguros de Vida Alfa S.A.</p>'+
             '<p>En cumplimiento de la normatividad vigente, Seguros de Vida Alfa S.A., se encuentra realizando la actualización de información de las '+ 
@@ -3610,14 +3633,14 @@ $(document).ready(function(){
             'someterse a un nuevo dictamen. Los gastos de este nuevo dictamen serán pagados por el afiliado <br>'+
             '(...)”</p>'+
             '<p>De acuerdo con lo anterior y una vez revisado el expediente previsional de referencia, se estableció que es necesario que allegue '+
-            'esta documentación a los siguientes correos electrónicos: alfa.previsional2@codess.org.co, servicioalcliente@segurosalfa.com.co en '+
+            'esta documentación al siguiente correo electrónico: servicioalcliente@segurosalfa.com.co en '+
             'un término de tres (3) meses contados a partir del recibido de la presente comunicación, los siguientes documentos:</p>'+
-            '<p>1. </p>'+
+            '<p>{{$documentos_solicitados}}</p>'+
             '<p>Los documentos anteriormente mencionados deben ser solicitados en su EPS con su médico tratante; por otra parte, aclaramos que los '+
             'mismos se deben radicar en papelería física.</p>'+
             '<p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 '+
             '70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p.m. - sábados de 8:00 a.m. a 12 m., o '+
-            'escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>';
+            'escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección <b>Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</b></p>';
             $('#cuerpo_comunicado').summernote('code', texto_insertar);
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
@@ -3654,8 +3677,8 @@ $(document).ready(function(){
             // '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';
 
             var texto_insertar = '<p>Reciba un cordial saludo, </p>'+
-            '<p>Con ocasión de la solicitud de calificación de pérdida de capacidad laboral radicada por usted en la administradora de fondo de '+ 
-            'pensiones Porvenir, Seguros de Vida Alfa S.A., se permite dar respuesta en los términos que se describen a continuación.</p>'+
+            '<p>Con ocasión de la solicitud de calificación de pérdida de capacidad laboral radicada por usted en la administradora de <b>Fondo de '+ 
+            'Pensiones Porvenir, Seguros de Vida Alfa S.A.</b>, se permite dar respuesta en los términos que se describen a continuación.</p>'+
             '<p>(Sustentación de no recalificación)</p>'+
             '<p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio. </p>';
 
@@ -4191,6 +4214,11 @@ $(document).ready(function(){
 
     }
     
+    //Validacion radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('listado_agregar_comunicados');
+    }, 500);
+    
     // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
     // inhabilita los campos nro anexos, asunto, etiquetas, cuerpo comunicado, firmar
     //28-05-24 Se inhabilita validacion de rol, dado que se solicita que sea de manera general y habilitar accciones sobre el cuerpo del comunicado
@@ -4199,7 +4227,6 @@ $(document).ready(function(){
         $("#anexos_editar").prop('readonly', true);
         $("#asunto").prop('readonly', true);
         $("#asunto_editar").prop('readonly', true);
-
         $('#btn_insertar_Origen').prop('disabled', false);
         $('#btn_insertar_nombreCIE10').prop('disabled', false);
         $('#btn_insertar_porPcl').prop('disabled', false);

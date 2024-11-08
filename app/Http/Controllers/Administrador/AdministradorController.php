@@ -80,6 +80,9 @@ use App\Models\sigmel_informacion_alertas_ans_eventos;
 /* Manejo de archivos */
 use ZipArchive;
 
+use App\Models\sigmel_informacion_comunicado_eventos;
+use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
+
 class AdministradorController extends Controller
 {
     
@@ -5460,7 +5463,8 @@ class AdministradorController extends Controller
         
         $idEvento = $request->EventoID;
         $Id_servicio = $request->Id_servicio;
-
+        //Homologacion cuando el documento es cargado desde el consultador o desde cualquiera de los otros modulos
+        $Id_asignacion = $request->bandera == 'consultador_eventos' ? '' : "_IdAsignacion_" . $request->Id_asignacion;
         // Creación de carpeta con el ID EVENTO para insertar los documentos
         $path = public_path('Documentos_Eventos/'.$idEvento);
         $mode = 777;
@@ -5479,7 +5483,7 @@ class AdministradorController extends Controller
                     // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
                     // $nombre_final_documento_en_carpeta = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
 
-                    $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
+                    $nombre_final_documento_en_carpeta = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}{$Id_asignacion}.{$file->extension()}";
                 }else{
                     $nombre_final_documento_en_carpeta = $request->string_nombre_doc.".".$file->extension();
                 }
@@ -5497,7 +5501,7 @@ class AdministradorController extends Controller
                     // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
                     // $nombre_final_documento_en_carpeta = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
 
-                    $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
+                    $nombre_final_documento_en_carpeta = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}{$Id_asignacion}.{$file->extension()}";
                 }else{
                     $nombre_final_documento_en_carpeta = $request->string_nombre_doc.".".$file->extension();
                 }
@@ -5505,6 +5509,24 @@ class AdministradorController extends Controller
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
         }
 
+        //Almacena los documentos cuando viene desde el consultador
+        if($request->bandera == 'consultador_eventos'){
+            
+            $ubicacion_origen = public_path('Documentos_Eventos/'.$idEvento);
+            $ubicacion_destino = public_path('Documentos_Eventos/Temp/' .$idEvento);
+
+            //Mueve el documento a la carpeta temporal
+            $nombre_temp = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}_idDoc_{$id_documento}.{$file->extension()}";
+            $this->mover_archivo($ubicacion_origen,$ubicacion_destino,$nombre_final_documento_en_carpeta,$nombre_temp);
+
+            $mensajes = [
+                "parametro" => 'exito',
+                "mensaje" => 'Documento cargado satisfactoriamente.'
+            ];
+
+            return response()->json($mensajes);
+        }
+        
         // Registrar la información del documento con relación al ID del evento.
         if(!empty($request->bandera_nombre_otro_doc)){
             $nombrecompletodocumento = $request->bandera_nombre_otro_doc;
@@ -5515,13 +5537,14 @@ class AdministradorController extends Controller
                 // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
                 // $nombrecompletodocumento = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
 
-                $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
+                $nombrecompletodocumento = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}{$Id_asignacion}";
             }else{
                 $nombrecompletodocumento = $request->string_nombre_doc;
             }
         }
 
         $nuevoDocumento = [
+            'Id_Asignacion' => $Id_asignacion,
             'Id_Documento' => $id_documento,
             'ID_evento' => $idEvento,
             'Nombre_documento' => $nombrecompletodocumento,
@@ -5610,6 +5633,83 @@ class AdministradorController extends Controller
 
         }
 
+    }
+
+    /**
+     * Saca los documentos de un evento dentro de la carpeta temporal para el evento correspondiente en funcion del servicio
+     * @param String $IdEvento Evento que se esta procesando
+     * @param Int $Id_Asignacion
+     * @param Int $servicio Id del servicio que se vaa crear
+     */
+    public static function mover_archivoTEMP(string $IdEvento,int $Id_Asignacion,int $servicio){
+       $pathTmp =  public_path('Documentos_Eventos/Temp/' .$IdEvento);
+       $ruta_documentos = public_path('Documentos_Eventos/' .$IdEvento);
+       if (File::exists($pathTmp)) {  
+            // Obtiene todos los archivos en la carpeta
+            $archivos = File::files($pathTmp);
+
+            foreach ($archivos as $archivo) {
+                // Obtiene el nombre del archivo y su extensión
+                $nombreArchivo = pathinfo($archivo->getFilename(), PATHINFO_FILENAME);
+                $extension = $archivo->getExtension();
+                $pathorigen = "{$pathTmp}/{$nombreArchivo}.{$extension}";
+
+                //extraer el idDocdel nombre y lo quita del idDoc
+                if (preg_match('/_idDoc_(\d+)/', $nombreArchivo, $matches)) {
+                    $id_documento = $matches[1]; 
+                
+                    $nombreArchivo = str_replace("_idDoc_{$id_documento}", '', $nombreArchivo);
+                }
+
+                $nuevo_nombre = "{$nombreArchivo}_IdAsignacion_{$Id_Asignacion}";
+
+                $destino = "{$ruta_documentos}/{$nuevo_nombre}.{$extension}";
+
+                // saca los documentos de la carpeta temporal
+                File::move($pathorigen,$destino);
+
+                //Si no tiene un id para el documento no lo registra en la tabla
+                if(!isset($id_documento)){
+                    return;
+                }
+
+                $info_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_Documento' => $id_documento,
+                    'ID_evento' => $IdEvento,
+                    'Nombre_documento' => $nuevo_nombre,
+                    'Formato_documento' => $extension,
+                    'Id_servicio' => $servicio,
+                    'Estado' => 'activo',
+                    'F_cargue_documento' => date('Y-m-d',time()),
+                    'Nombre_usuario' => Auth::user()->name,
+                    'F_registro' => date('Y-m-d',time()),
+                    ];
+                
+                sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($info_documento);
+            }
+        }
+    }
+
+    /**
+     * Mueve un documento en especifico a otra ubbicacion
+     * @param String $ubicacion Ubicacioon fisica del archivo
+     * @param String $destino Nueva ubicacion fisica del archivo
+     * @param String $nombre_origen Nombre del documento origen
+     * @param String $nombre_destino Nombre que tendra el doc en la nueva ubicacion
+     * @param Int $mode Permisos que asignaran para la nueva ubicacion del archivo
+     */
+    public function mover_archivo(string $ubicacion,string $destino, string $nombre_origen, string $nombre_destino, int $mode = 777){
+        if (!File::exists($destino)) {
+            File::makeDirectory($destino, 0777, true, true);
+            chmod($destino, octdec($mode));
+        }
+
+        $ubicacion .= "/" . $nombre_origen;
+
+        $destino .= "/{$nombre_destino}";
+
+        rename($ubicacion,$destino);
     }
 
     // Función para cargar documentos familia (es decir los complementarios)
@@ -6042,6 +6142,41 @@ class AdministradorController extends Controller
 
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($id_evento, 0));         
         return response()->json($arraylistado_documentos);
+    }
+
+    /**
+     * Elimina un comunicado en especifico
+     */
+    public function eliminar_comunicado(Request $request){
+        $request->validate([
+            'id_servicio' => 'required|int',
+            //'id_proceso' => 'required|int',
+            'id_asignacion' => 'required|int',
+            'id_evento' => 'required|string',
+            'id_comunicado' => 'required|int'
+        ]);
+
+        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')->where([
+            ['Id_Comunicado',$request->id_comunicado],
+            ['Id_Asignacion',$request->id_asignacion]
+        ])->delete();
+
+        $comite_repetido = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento',$request->id_evento],
+            ['Id_Asignacion',$request->id_asignacion]
+        ])->count();
+
+        if($comite_repetido > 1){
+            sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$request->id_evento],
+                ['Id_Asignacion',$request->id_asignacion]
+            ])->latest('Id_com_inter')->limit(1)->delete();
+        }
+
+        return 'ok';
+
     }
 
     

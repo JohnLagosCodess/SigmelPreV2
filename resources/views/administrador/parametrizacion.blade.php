@@ -319,7 +319,7 @@
                                                                 {{-- fecha creacion movimiento --}}
                                                                 <td>
                                                                     <input type="date" class="form-control d-none" id="bd_fecha_creacion_movimiento_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->F_creacion_movimiento}}" readonly>
-                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d-m-Y", strtotime($parametrizacion_origen_atel_editar->F_creacion_movimiento))}}</span>
+                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d/m/Y", strtotime($parametrizacion_origen_atel_editar->F_creacion_movimiento))}}</span>
                                                                 </td>
                                                                 {{-- servicio asociado --}}
                                                                 <input type="hidden" id="bd_id_servicio_asociado_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->Servicio_asociado}}">
@@ -507,7 +507,7 @@
                                                                 {{-- fecha actualizacion movimiento --}}
                                                                 <td>
                                                                     <input type="date" class="form-control d-none" id="bd_fecha_actualizacion_movimiento_origen_atel_{{$parametrizacion_origen_atel_editar->Id_parametrizacion}}" value="{{$parametrizacion_origen_atel_editar->F_actualizacion_movimiento}}" disabled>
-                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d-m-Y", strtotime($parametrizacion_origen_atel_editar->F_actualizacion_movimiento))}}</span>                                                                    
+                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d/m/Y", strtotime($parametrizacion_origen_atel_editar->F_actualizacion_movimiento))}}</span>                                                                    
                                                                 </td>
                                                                 <td>
                                                                     <div style="text-align:center;">-<div>
@@ -798,7 +798,7 @@
                                                                 {{-- fecha creacion movimiento --}}
                                                                 <td>
                                                                     <input type="date" class="form-control d-none" id="bd_fecha_creacion_movimiento_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->F_creacion_movimiento}}" readonly>
-                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d-m-Y", strtotime($parametrizacion_calificacion_pcl_editar->F_creacion_movimiento))}}</span>
+                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d/m/Y", strtotime($parametrizacion_calificacion_pcl_editar->F_creacion_movimiento))}}</span>
                                                                 </td>
                                                                 {{-- servicio asociado --}}
                                                                 <input type="hidden" id="bd_id_servicio_asociado_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->Servicio_asociado}}">
@@ -987,7 +987,7 @@
                                                                 {{-- fecha actualizacion movimiento --}}
                                                                 <td>
                                                                     <input type="date" class="form-control d-none" id="bd_fecha_actualizacion_movimiento_calificacion_pcl_{{$parametrizacion_calificacion_pcl_editar->Id_parametrizacion}}" value="{{$parametrizacion_calificacion_pcl_editar->F_actualizacion_movimiento}}" disabled>
-                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d-m-Y", strtotime($parametrizacion_calificacion_pcl_editar->F_actualizacion_movimiento))}}</span>                                                                    
+                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d/m/Y", strtotime($parametrizacion_calificacion_pcl_editar->F_actualizacion_movimiento))}}</span>                                                                    
                                                                 </td>
                                                                 <td>
                                                                     <div style="text-align:center;">-<div>
@@ -1279,7 +1279,7 @@
                                                                 {{-- fecha creacion movimiento --}}
                                                                 <td>
                                                                     <input type="date" class="form-control d-none" id="bd_fecha_creacion_movimiento_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->F_creacion_movimiento}}" readonly>
-                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d-m-Y", strtotime($parametrizacion_juntas_editar->F_creacion_movimiento))}}</span>                                                                    
+                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d/m/Y", strtotime($parametrizacion_juntas_editar->F_creacion_movimiento))}}</span>                                                                    
                                                                 </td>
                                                                 {{-- servicio asociado --}}
                                                                 <input type="hidden" id="bd_id_servicio_asociado_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->Servicio_asociado}}">
@@ -1467,7 +1467,7 @@
                                                                 {{-- fecha actualizacion movimiento --}}
                                                                 <td>
                                                                     <input type="date" class="form-control d-none" id="bd_fecha_actualizacion_movimiento_juntas_{{$parametrizacion_juntas_editar->Id_parametrizacion}}" value="{{$parametrizacion_juntas_editar->F_actualizacion_movimiento}}" disabled>
-                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d-m-Y", strtotime($parametrizacion_juntas_editar->F_actualizacion_movimiento))}}</span>
+                                                                    <span style="width:156px;" class="form-control" readonly>{{date("d/m/Y", strtotime($parametrizacion_juntas_editar->F_actualizacion_movimiento))}}</span>
                                                                 </td>
                                                                 <td>
                                                                     <div style="text-align:center;">-<div>
@@ -1519,6 +1519,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.templates.min.js"></script>
-    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script src="/js/parametrizacion.js"></script>
 @stop
