@@ -1902,6 +1902,14 @@ $(document).ready(function(){
                 });
             }
         });
+        if(arrayDatosDiagnostico.length == 0 && datos_finales_motivo_calificacion.length == 0){
+            setTimeout(function(){
+                $('.alerta_diagnosticos').append('<strong>Información incompleta. Por favor valide nuevamente</strong>').removeClass('d-none');
+                $('#guardar_datos_controvertido_j').prop('disabled',true);
+            }, 3000);
+            $('#guardar_datos_controvertido_j').prop('disabled',false);
+            return $('.alerta_diagnosticos').addClass('d-none')
+        }
         var datos_controvertido_juntas = {
             '_token': token,
             'newId_evento': $('#newId_evento').val(),

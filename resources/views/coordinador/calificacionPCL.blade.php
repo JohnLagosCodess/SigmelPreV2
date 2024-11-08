@@ -615,7 +615,8 @@
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <label for="fecha_seguimiento">Fecha Seguimiento <span style="color: red;">(*)</span></label>
-                                                <input class="form-control" type="date" name="fecha_seguimiento" id="fecha_seguimiento" value="{{now()->format('Y-m-d')}}" required>
+                                                <input class="form-control" type="date" name="fecha_seguimiento" id="fecha_seguimiento" value="{{now()->format('Y-m-d')}}" max="{{date("Y-m-d")}}" min='1900-01-01' required>
+                                                <span class="d-none" id="fecha_seguimiento_alerta" style="color: red; font-style: italic;"></span>
                                             </div> 
                                         </div>                                    
                                         <div class="col-6">
@@ -1489,19 +1490,25 @@
         dateInputs.forEach(input => {
             //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
             input.addEventListener('change', function() {
-                console.log('This is value of input type date ', this.value);
                 //Validamos que la fecha sea mayor a la fecha de 1900-01-01
                 if(this.value < '1900-01-01'){
                     $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
-                    $('#Edicion').addClass('d-none');
-                    return;
+                    if(this.id === 'fecha_seguimiento'){
+                        return $('#Guardar_seguimientos').addClass('d-none')
+                    }
+                    return $('#Edicion').addClass('d-none');
+                    
                 }
                 //Validamos que la fecha no sea mayor a la fecha actual
                 if(this.value > today){
                     $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
-                    $('#Edicion').addClass('d-none');
-                    return;
+                    if(this.id === 'fecha_seguimiento'){
+                        return $('#Guardar_seguimientos').addClass('d-none')
+                    }
+                    return $('#Edicion').addClass('d-none');
                 }
+                $('#Guardar_seguimientos').removeClass('d-none')
+                $('#Edicion').removeClass('d-none');
                 return $(`#${this.id}_alerta`).text('').addClass("d-none");
             });
         });

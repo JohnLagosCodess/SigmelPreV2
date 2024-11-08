@@ -150,7 +150,7 @@ class ControversiaJuntasController extends Controller
         ])->get(); 
 
         //Trae Documetos Generales del evento
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($Id_evento_juntas, $Id_servicio));
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento_juntas, $Id_servicio, $Id_asignacion_juntas));
 
         // cantidad de documentos cargados
 

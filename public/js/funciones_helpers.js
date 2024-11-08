@@ -730,18 +730,18 @@ $(document).ready(function () {
     historial_servicios();
 
     //Mantiene el foco dentro del modal, principalmente para que sea compatible con select2
-    $.fn.modal.Constructor.prototype._enforceFocus = function () {
-        var that = this;
-        $(document).on('focusin.modal', function (e) {
-        if ($(e.target).hasClass('select2-input')) {
-          return true;
-        }
+    // $.fn.modal.Constructor.prototype._enforceFocus = function () {
+    //     var that = this;
+    //     $(document).on('focusin.modal', function (e) {
+    //     if ($(e.target).hasClass('select2-input')) {
+    //       return true;
+    //     }
 
-        if (that.$element[0] !== e.target && !that.$element.has(e.target).length) {
-          that.$element.focus();
-        }
-        });
-    };
+    //     if (that.$element[0] !== e.target && !that.$element.has(e.target).length) {
+    //       that.$element.focus();
+    //     }
+    //     });
+    // };
 });
 
 /**
@@ -927,6 +927,38 @@ function Validarfecha(IdSelector,operador = '>',fecha = null,info = 'La fecha no
 
     });
 
+}
+/**
+ * Función para agregar la validación a los inputs de tipo fecha actualmente se esta usando en los que se generan dinamicamente
+ * @param {string} input Id del input tipo date al cual se le quieren agregar las validaciones generales de fecha.
+ * @param {string} hideButton Id del boton que se quiere ocultar para evitar acciones de guardado o demás en caso de que el input este con error.
+*/
+function agregarValidacionFecha(input,hideButton = null) {
+    let today = new Date().toISOString().split("T")[0];
+    
+    $(input).on('change', function() {
+        // Validación de fecha mínima
+        if (this.value < '1900-01-01') {
+            $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+            if(hideButton != null){
+                $(`#${hideButton}`).addClass("d-none");
+            }
+            return;
+        }
+        // Validación de fecha máxima (hoy)
+        if (this.value > today) {
+            $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+            if(hideButton != null){
+                $(`#${hideButton}`).addClass("d-none");
+            }
+            return;
+        }
+        // Limpiar mensaje de error si la fecha es válida
+        if(hideButton != null){
+            $(`#${hideButton}`).removeClass("d-none");
+        }
+        $(`#${this.id}_alerta`).text('').addClass("d-none");
+    });
 }
 /**
  * Funcion para descargar los documentos generales

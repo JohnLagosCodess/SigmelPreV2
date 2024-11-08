@@ -1620,7 +1620,6 @@
         dateInputs.forEach(input => {
             //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
             input.addEventListener('change', function() {
-                console.log('This is value of input type date ', this.value);
                 //Validamos que la fecha sea mayor a la fecha de 1900-01-01
                 if(this.value < '1900-01-01'){
                     $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
@@ -1633,6 +1632,7 @@
                     $('#Edicion').addClass('d-none');
                     return;
                 }
+                $('#Edicion').removeClass('d-none');
                 return $(`#${this.id}_alerta`).text('').addClass("d-none");
             });
         });

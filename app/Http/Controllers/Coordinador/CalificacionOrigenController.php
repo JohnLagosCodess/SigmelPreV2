@@ -67,7 +67,7 @@ class CalificacionOrigenController extends Controller
 
         $array_datos_calificacionOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($newIdAsignacion));
         //Trae Documetos Generales del evento
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento,$Id_servicio));
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento,$Id_servicio,$newIdAsignacion));
 
         // cantidad de documentos cargados
 

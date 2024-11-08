@@ -549,7 +549,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_dictamen_controvertido">Fecha dictámen controvertido</label>
-                                                <input type="date" class="form-control" name="f_dictamen_controvertido" id="f_dictamen_controvertido" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->F_dictamen_controvertido;} ?>">
+                                                <input type="date" class="form-control" name="f_dictamen_controvertido" id="f_dictamen_controvertido" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->F_dictamen_controvertido;} ?>">
+                                                <span class="d-none" id="f_dictamen_controvertido_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -561,7 +562,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_notifi_afiliado">Fecha notificación al afiliado</span></label>
-                                                <input type="date" class="form-control" name="f_notifi_afiliado" id="f_notifi_afiliado" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>">
+                                                <input type="date" class="form-control" name="f_notifi_afiliado" id="f_notifi_afiliado" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>">
+                                                <span class="d-none" id="f_notifi_afiliado_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -623,7 +625,7 @@
                                         <div class="col-2">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input" type="checkbox" id="contro_origen" name="contro_origen" value="Origen" @if (!empty($arrayinfo_controvertido[0]->Contro_origen) && $arrayinfo_controvertido[0]->Contro_origen=='Origen') checked @endif >
+                                                    <input class="custom-control-input" type="checkbox" id="contro_origen" name="contro_origen" value="Origen" @if (!empty($arrayinfo_controvertido[0]->Contro_origen) && $arrayinfo_controvertido[0]->Contro_origen=='Origen') checked @endif>
                                                     <label for="contro_origen" class="custom-control-label">Origen</label>                 
                                                 </div>
                                             </div>
@@ -631,7 +633,7 @@
                                         <div class="col-2">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input" type="checkbox" id="contro_pcl" name="contro_pcl" value="% PCL" @if (!empty($arrayinfo_controvertido[0]->Contro_pcl) && $arrayinfo_controvertido[0]->Contro_pcl=='% PCL') checked @endif>
+                                                    <input class="custom-control-input" type="checkbox" id="contro_pcl" name="contro_pcl" value="% PCL" @if (!empty($arrayinfo_controvertido[0]->Contro_pcl) && $arrayinfo_controvertido[0]->Contro_pcl=='% PCL') checked @endif @if(!empty($array_datos_calificacionJuntas[0]->Id_Servicio) && $array_datos_calificacionJuntas[0]->Id_Servicio == 12) disabled @endif>
                                                     <label for="contro_pcl" class="custom-control-label">%PCL</label>                 
                                                 </div>
                                             </div>
@@ -647,7 +649,7 @@
                                         <div class="col-2">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input" type="checkbox" id="contro_f_estructura" name="contro_f_estructura" value="Fecha estructuración" @if (!empty($arrayinfo_controvertido[0]->Contro_f_estructura) && $arrayinfo_controvertido[0]->Contro_f_estructura=='Fecha estructuración') checked @endif>
+                                                    <input class="custom-control-input" type="checkbox" id="contro_f_estructura" name="contro_f_estructura" value="Fecha estructuración" @if (!empty($arrayinfo_controvertido[0]->Contro_f_estructura) && $arrayinfo_controvertido[0]->Contro_f_estructura=='Fecha estructuración') checked @endif @if(!empty($array_datos_calificacionJuntas[0]->Id_Servicio) && $array_datos_calificacionJuntas[0]->Id_Servicio == 12) disabled @endif>
                                                     <label for="contro_f_estructura" class="custom-control-label">Fecha estructuración</label>                 
                                                 </div>
                                             </div>
@@ -655,7 +657,7 @@
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input" type="checkbox" id="contro_m_califi" name="contro_m_califi" value="Manual de calificación" @if (!empty($arrayinfo_controvertido[0]->Contro_m_califi) && $arrayinfo_controvertido[0]->Contro_m_califi=='Manual de calificación') checked @endif>
+                                                    <input class="custom-control-input" type="checkbox" id="contro_m_califi" name="contro_m_califi" value="Manual de calificación" @if (!empty($arrayinfo_controvertido[0]->Contro_m_califi) && $arrayinfo_controvertido[0]->Contro_m_califi=='Manual de calificación') checked @endif @if(!empty($array_datos_calificacionJuntas[0]->Id_Servicio) && $array_datos_calificacionJuntas[0]->Id_Servicio == 12) disabled @endif>
                                                     <label for="contro_m_califi" class="custom-control-label">Manual de calificación</label>                 
                                                 </div>
                                             </div>
@@ -663,19 +665,22 @@
                                         <div class="col-4">
                                             <div class="form-group mt-4">
                                                 <label for="f_contro_primer_califi">Fecha de controversia primera calificación</label>
-                                                <input type="date" class="form-control" name="f_contro_primer_califi" id="f_contro_primer_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_primer_califi)) { echo $arrayinfo_controvertido[0]->F_contro_primer_califi;} ?>" >
+                                                <input type="date" class="form-control" name="f_contro_primer_califi" id="f_contro_primer_califi" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_primer_califi)) { echo $arrayinfo_controvertido[0]->F_contro_primer_califi;} ?>" >
+                                                <span class="d-none" id="f_contro_primer_califi_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_contro_radi_califi">Fecha de radicación controversia primera calificación</label>
-                                                <input type="date" class="form-control" name="f_contro_radi_califi" id="f_contro_radi_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>">
+                                                <input type="date" class="form-control" name="f_contro_radi_califi" id="f_contro_radi_califi" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>">
+                                                <span class="d-none" id="f_contro_radi_califi_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group m-4">
                                                 <label for="fecha_plazo_contro">Fecha plazo para Controversia</label>
-                                                <input type="date" name="fecha_plazo_contro" id="fecha_plazo_contro" class="form-control" max="{{now()->format('Y-m-d')}}" value="<?php echo $arrayinfo_controvertido[0]->F_plazo_controversia ?? '' ?>" readonly>
+                                                <input type="date" name="fecha_plazo_contro" id="fecha_plazo_contro" class="form-control" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php echo $arrayinfo_controvertido[0]->F_plazo_controversia ?? '' ?>" readonly>
+                                                <span class="d-none" id="fecha_plazo_contro_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -699,13 +704,15 @@
                                         <div class="col-4 mt-4">
                                             <div class="form-group">
                                                 <label for="f_envio_jrci">Fecha de envío a JRCI</label>
-                                                <input type="date" class="form-control" name="f_envio_jrci" id="f_envio_jrci" max="{{now()->format('Y-m-d')}}" value="<?php echo $arrayinfo_controvertido[0]->F_envio_jrci ?? '' ?>">
+                                                <input type="date" class="form-control" name="f_envio_jrci" id="f_envio_jrci" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php echo $arrayinfo_controvertido[0]->F_envio_jrci ?? '' ?>">
+                                                <span class="d-none" id="f_envio_jrci_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4 mt-4">
                                             <div class="form-group">
                                                 <label for="f_envio_jnci">Fecha de envío a JNCI</label>
-                                                <input type="date" class="form-control" name="f_envio_jnci" id="f_envio_jnci" max="{{now()->format('Y-m-d')}}" value="<?php echo $arrayinfo_controvertido[0]->F_envio_jnci ?? '' ?>">
+                                                <input type="date" class="form-control" name="f_envio_jnci" id="f_envio_jnci" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php echo $arrayinfo_controvertido[0]->F_envio_jnci ?? '' ?>">
+                                                <span class="d-none" id="f_envio_jnci_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-12">
@@ -752,7 +759,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_solicitud_pago">Fecha solicitud de pago</label>
-                                                <input type="date" class="form-control" name="f_solicitud_pago" id="f_solicitud_pago" max="{{now()->format('Y-m-d')}}" >
+                                                <input type="date" class="form-control" name="f_solicitud_pago" id="f_solicitud_pago" max="{{now()->format('Y-m-d')}}" min='1900-01-01'>
+                                                <span class="d-none" id="f_solicitud_pago_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -778,13 +786,15 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_pago_honorarios">Fecha pago de honorarios<span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_pago_honorarios" id="f_pago_honorarios" max="{{now()->format('Y-m-d')}}" required>
+                                                <input type="date" class="form-control" name="f_pago_honorarios" id="f_pago_honorarios" max="{{now()->format('Y-m-d')}}" min='1900-01-01' required>
+                                                <span class="d-none" id="f_pago_honorarios_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_pago_radicacion">Fecha de radicación pago</label>
-                                                <input type="date" class="form-control" name="f_pago_radicacion" id="f_pago_radicacion" max="{{now()->format('Y-m-d')}}">
+                                                <input type="date" class="form-control" name="f_pago_radicacion" id="f_pago_radicacion" max="{{now()->format('Y-m-d')}}" min='1900-01-01'>
+                                                <span class="d-none" id="f_pago_radicacion_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -2153,7 +2163,6 @@
         dateInputs.forEach(input => {
             //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
             input.addEventListener('change', function() {
-                console.log('This is value of input type date ', this.value);
                 //Validamos que la fecha sea mayor a la fecha de 1900-01-01
                 if(this.value < '1900-01-01'){
                     $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
@@ -2166,6 +2175,7 @@
                     $('#Edicion').addClass('d-none');
                     return;
                 }
+                $('#Edicion').removeClass('d-none');
                 return $(`#${this.id}_alerta`).text('').addClass("d-none");
             });
         });

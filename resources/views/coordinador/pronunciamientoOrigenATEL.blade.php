@@ -216,10 +216,11 @@
                                         <div class="form-group">
                                             <label for="fecha_evento">Fecha del evento<span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Fecha_evento))
-                                                <input type="date" class="form-control" id="fecha_evento" name="fecha_evento" value="{{$info_pronuncia[0]->Fecha_evento}}">
+                                                <input type="date" class="form-control" id="fecha_evento" name="fecha_evento" max="{{date("Y-m-d")}}" min='1900-01-01' value="{{$info_pronuncia[0]->Fecha_evento}}">
                                             @else
-                                                <input type="date" class="form-control" id="fecha_evento" name="fecha_evento" max="{{date("Y-m-d")}}"/>
+                                                <input type="date" class="form-control" id="fecha_evento" name="fecha_evento" max="{{date("Y-m-d")}}" min='1900-01-01'/>
                                             @endif
+                                            <span class="d-none" id="fecha_evento_alerta" style="color: red; font-style: italic;"></span>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -236,10 +237,11 @@
                                         <div class="form-group">
                                             <label for="fecha_calificador">Fecha dictamen primer calificador<span style="color: red;">(*)</span></label>
                                             @if (!empty($info_pronuncia[0]->Fecha_calificador))
-                                                <input type="date" class="form-control" id="fecha_calificador" name="fecha_calificador" value="{{$info_pronuncia[0]->Fecha_calificador}}" required>
+                                                <input type="date" class="form-control" id="fecha_calificador" name="fecha_calificador" max="{{date("Y-m-d")}}" min='1900-01-01' value="{{$info_pronuncia[0]->Fecha_calificador}}" required>
                                             @else
-                                                <input type="date" class="form-control" id="fecha_calificador" name="fecha_calificador" max="{{date("Y-m-d")}}" required/>
+                                                <input type="date" class="form-control" id="fecha_calificador" name="fecha_calificador" max="{{date("Y-m-d")}}" min='1900-01-01' required/>
                                             @endif
+                                            <span class="d-none" id="fecha_calificador_alerta" style="color: red; font-style: italic;"></span>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -964,4 +966,35 @@
     <script type="text/javascript" src="/js/pronunciamientoOrigen.js"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
+    {{-- Validación general para todos los campos de tipo fecha --}}
+    <script>
+        let today = new Date().toISOString().split("T")[0];
+
+        // Seleccionar todos los inputs de tipo date
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+
+        // Agregar evento de escucha a cada input de tipo date que haya
+        dateInputs.forEach(input => {
+            //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
+            input.addEventListener('change', function() {
+                //Validamos que la fecha sea mayor a la fecha de 1900-01-01
+                if(this.value < '1900-01-01'){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#GuardarPronuncia').addClass('d-none');
+                    $('#ActualizarPronuncia').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea mayor a la fecha actual
+                if(this.value > today){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#GuardarPronuncia').addClass('d-none');
+                    $('#ActualizarPronuncia').addClass('d-none');
+                    return;
+                }
+                $('#GuardarPronuncia').removeClass('d-none');
+                $('#ActualizarPronuncia').removeClass('d-none');
+                return $(`#${this.id}_alerta`).text('').addClass("d-none");
+            });
+        });
+    </script>
 @stop

@@ -6959,22 +6959,24 @@
                                         <div class="form-group">
                                             <label for="f_evento_pericial">Fecha de evento<span style="color: red;">(*)</span></label>
                                             @if (!empty($array_dictamen_pericial[0]->F_evento) && $array_dictamen_pericial[0]->F_evento !== '0000-00-00')                                                
-                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_dictamen_pericial[0]->F_evento}}" max="{{now()->format('Y-m-d')}}"required>                                                                                                
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_dictamen_pericial[0]->F_evento}}" max="{{now()->format('Y-m-d')}}" min='1900-01-01' required>                                                                                                
                                             @elseif(!empty($array_tipo_fecha_evento[0]->F_evento))
-                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_tipo_fecha_evento[0]->F_evento}}" max="{{now()->format('Y-m-d')}}"required>
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_tipo_fecha_evento[0]->F_evento}}" max="{{now()->format('Y-m-d')}}" min='1900-01-01' required>
                                             @else
-                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" max="{{now()->format('Y-m-d')}}"required>                                                
-                                            @endif                                        
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" max="{{now()->format('Y-m-d')}}" min='1900-01-01' required>                                                
+                                            @endif 
+                                            <span class="d-none" id="f_evento_pericial_alerta" style="color: red; font-style: italic;"></span>
                                         </div>
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group">
                                             <label for="f_estructura_pericial">Fecha de estructuración<span style="color: red;">(*)</span></label>                                            
                                             @if (!empty($array_dictamen_pericial[0]->F_estructuracion))                                                
-                                                <input type="date" class="f_estructura_pericial form-control" id="f_estructura_pericial" name="f_estructura_pericial" value="{{$array_dictamen_pericial[0]->F_estructuracion}}" max="{{now()->format('Y-m-d')}}" required>                                                
+                                                <input type="date" class="f_estructura_pericial form-control" id="f_estructura_pericial" name="f_estructura_pericial" value="{{$array_dictamen_pericial[0]->F_estructuracion}}" max="{{now()->format('Y-m-d')}}" min='1900-01-01' required>                                                
                                             @else                                               
-                                                <input type="date" class="f_estructura_pericial form-control" id="f_estructura_pericial" name="f_estructura_pericial" max="{{now()->format('Y-m-d')}}" required>                                                
+                                                <input type="date" class="f_estructura_pericial form-control" id="f_estructura_pericial" name="f_estructura_pericial" max="{{now()->format('Y-m-d')}}" min='1900-01-01' required>                                                
                                             @endif
+                                            <span class="d-none" id="f_estructura_pericial_alerta" style="color: red; font-style: italic;"></span>
                                         </div>
                                     </div>
                                     <div class="col-3">
@@ -8167,7 +8169,7 @@
 
             contador_examen = contador_examen + 1;
             var nueva_fila_examen = [
-                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}" required/>',
+                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}" min="1900-01-01" required/><span class="d-none" id="fecha_examen_fila_'+contador_examen+'_alerta" style="color: red; font-style: italic;"></span>',
                 '<input type="text" class="form-control" id="nombre_examen_fila_'+contador_examen+'" name="nombre_examen"/>',
                 '<textarea id="descripcion_resultado_fila_'+contador_examen+'" class="form-control" name="descripcion_resultado" cols="90" rows="4"></textarea>',
                 '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_examen_fila" class="text-info" data-fila="fila_'+contador_examen+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
@@ -8178,8 +8180,8 @@
             $(agregar_examen_fila).addClass('fila_'+contador_examen);
             $(agregar_examen_fila).attr("id", 'fila_'+contador_examen);
 
-            //Valida que la fecha no sea mayor a la actual
-            Validarfecha("#fecha_examen_fila_"+contador_examen);
+            //Agrega las validaciones generales a las fechas
+            agregarValidacionFecha("#fecha_examen_fila_"+contador_examen, 'guardar_datos_examenes');
 
         });
 
@@ -8400,4 +8402,32 @@
 {{-- JS: DATATABLE AGUDEZA VISUAL --}}
 <script type="text/javascript" src="/js/datatable_agudeza_visual.js"></script>
 <script src="/plugins/summernote/summernote.min.js"></script>
+{{-- Validación general para todos los campos de tipo fecha --}}
+<script>
+    let today = new Date().toISOString().split("T")[0];
+
+    // Seleccionar todos los inputs de tipo date
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+
+    // Agregar evento de escucha a cada input de tipo date que haya
+    dateInputs.forEach(input => {
+        //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
+        input.addEventListener('change', function() {
+            //Validamos que la fecha sea mayor a la fecha de 1900-01-01
+            if(this.value < '1900-01-01'){
+                $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                $('#GuardrDictamenPericial').addClass('d-none');
+                return;
+            }
+            //Validamos que la fecha no sea mayor a la fecha actual
+            if(this.value > today){
+                $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                $('#GuardrDictamenPericial').addClass('d-none');
+                return;
+            }
+            $('#GuardrDictamenPericial').removeClass('d-none');
+            return $(`#${this.id}_alerta`).text('').addClass("d-none");
+        });
+    });
+</script>
 @stop

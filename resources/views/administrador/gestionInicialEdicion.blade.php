@@ -225,6 +225,7 @@
                                                 <div class="form-group">
                                                     <label for="fecha_evento" class="col-form-label">Fecha de evento <!-- <span style="color:red;">(*)</span> --></label>
                                                     <input type="date" class="fecha_evento form-control" name="fecha_evento" id="fecha_evento" value="{{$array_datos_info_evento[0]->F_evento}}"  max="{{date("Y-m-d")}}">
+                                                    <span class="d-none" id="fecha_evento_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -311,6 +312,7 @@
                                                     <div class="form-group">
                                                         <label for="fecha_nacimiento" class="col-form-label">Fecha de nacimiento <span style="color:red;">(*)</span></label>
                                                         <input type="date" class="fecha_nacimiento form-control" name="fecha_nacimiento" id="fecha_nacimiento" value="{{$array_datos_info_afiliados[0]->F_nacimiento}}" max="{{date("Y-m-d")}}" required>
+                                                        <span class="d-none" id="fecha_nacimiento_alerta" style="color: red; font-style: italic;"></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm">
@@ -853,6 +855,7 @@
                                                 <div class="form-group">
                                                     <label for="fecha_ingreso" class="col-form-label">Fecha de ingreso</label>
                                                     <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso" value="{{$array_datos_info_laboral[0]->F_ingreso}}" max="{{date("Y-m-d")}}">
+                                                    <span class="d-none" id="fecha_ingreso_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -884,7 +887,8 @@
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
-                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" value="{{$array_datos_info_laboral[0]->F_retiro}}">
+                                                    <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro" value="{{$array_datos_info_laboral[0]->F_retiro}}" max="{{date("Y-m-d")}}">
+                                                    <span class="d-none" id="fecha_retiro_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -1266,6 +1270,7 @@
                                     <div class="form-group">
                                         <label for="fecha_retiro_registrar" class="col-form-label">Fecha de retiro</label>
                                         <input type="date" class="fecha_retiro_registrar form-control" name="fecha_retiro_registrar" id="fecha_retiro_registrar" max="{{date("Y-m-d")}}">
+                                        <span class="d-none" id="fecha_retiro_alerta" style="color: red; font-style: italic;"></span>
                                     </div>
                                 </div>
                                 <div class="col-12">
@@ -1317,7 +1322,6 @@
     </script> --}}
     <script src="/js/selectores_gestion_edicion.js"></script>  
     <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
-
     <script type="text/javascript">
         // var conteo = 0;
         $('#llenar_tabla_historico_empresas').click(function(){
@@ -1465,7 +1469,6 @@
             });
         }
     </script>
-
     <script>
         function OcultarbotonActualizar(){
             $("#gestion_inicial").submit(function(e){
@@ -1529,6 +1532,34 @@
         $("#fecha_ingreso").on("change", function() {
             var fechaEvento = $(this).val();
             $("#fecha_retiro").val('').attr("min", fechaEvento);
+        });
+    </script>
+    {{-- Validación general para todos los campos de tipo fecha --}}
+    <script>
+        let today = new Date().toISOString().split("T")[0];
+
+        // Seleccionar todos los inputs de tipo date
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+
+        // Agregar evento de escucha a cada input de tipo date que haya
+        dateInputs.forEach(input => {
+            //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
+            input.addEventListener('change', function() {
+                //Validamos que la fecha sea mayor a la fecha de 1900-01-01
+                if(this.value < '1900-01-01'){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#Edicion_editar').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea mayor a la fecha actual
+                if(this.value > today){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#Edicion_editar').addClass('d-none');
+                    return;
+                }
+                $('#Edicion_editar').removeClass('d-none');
+                return $(`#${this.id}_alerta`).text('').addClass("d-none");
+            });
         });
     </script>
 @stop
