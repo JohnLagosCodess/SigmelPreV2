@@ -754,7 +754,7 @@
                                                 <div class="form-group">
                                                     <label for="" class="col-form label">Fecha de vencimiento</label>
                                                     <input type="date" class="form-control" name="fecha_vencimiento_visual" id="fecha_vencimiento_visual" disabled>
-                                                    <div class="d-none1">
+                                                    <div class="d-none">
                                                         <input type="text" class="form-control" name="Id_ans" id="Id_ans">
                                                         <input type="text" class="form-control" name="fecha_vencimiento" id="fecha_vencimiento">
                                                         <input type="text" class="form-control" name="fecha_alerta_naranja_ans" id="fecha_alerta_naranja_ans">
