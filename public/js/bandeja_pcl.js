@@ -307,7 +307,7 @@ $(document).ready(function () {
         }, 
         "destroy": true,
         "pageLength": 20,
-        "order": [[5, 'desc']],            
+        // "order": [[5, 'desc']],            
         "language":{                
             "search": "Buscar",
             "lengthMenu": "Mostrar _MENU_ resgistros",
@@ -698,6 +698,8 @@ function renderizarRegistros(data, inicio, fin, bandejaPclTable) {
                 data[a].ID_evento,
                 data[a].F_evento,
                 f_radicacion,
+                data[a].F_vencimiento,
+                data[a].F_alerta,
                 data[a].Tiempo_de_gestion,
                 data[a].Dias_transcurridos_desde_el_evento,
                 data[a].Empresa,
@@ -705,7 +707,6 @@ function renderizarRegistros(data, inicio, fin, bandejaPclTable) {
                 data[a].Nombre_proceso_anterior,
                 data[a].Fecha_asignacion_al_proceso,
                 data[a].Asignado_por,
-                data[a].F_alerta,
                 data[a].Fecha_alerta,
                 data[a].F_solicitud_documento,
                 data[a].F_recepcion_documento,
@@ -716,30 +717,59 @@ function renderizarRegistros(data, inicio, fin, bandejaPclTable) {
 
             let rowNode = bandejaPclTable.row.add(datos).draw(false).node();
 
-            if (alertasNaranjaRojaMap.has(data[a].Id_Asignacion)) {
-                let alertaFechas = alertasNaranjaRojaMap.get(data[a].Id_Asignacion);
-                let currentTime = new Date();
+             /* 
+                Con el id de asignacion consultamos si ya se ha ejecutado un ANS, ya que este tendrá la prioridad
+                de coloreo naranja o rojo.
+            */
 
-                // Verificar alerta naranja
-                if (alertaFechas.naranja) {
-                    let alertaFechaNaranja = new Date(alertaFechas.naranja);
-                    // let diferenciaNaranja = Math.abs(currentTime - alertaFechaNaranja);
-
-                    if (currentTime >= alertaFechaNaranja) {  
-                        $(rowNode).find('td').css('color', 'orange');
-                    }
-                }
-
-                // Verificar alerta roja
-                if (alertaFechas.roja) {
-                    let alertaFechaRoja = new Date(alertaFechas.roja);
-                    // let diferenciaRoja = Math.abs(currentTime - alertaFechaRoja);
-
-                    if (currentTime >= alertaFechaRoja) { 
-                        $(rowNode).find('td').css('color', 'red');
-                    }
-                }
+            var datos_ejecucion_ans ={
+                '_token': $('meta[name="csrf-token"]').attr('content'),
+                'id_asignacion': data[a].Id_Asignacion
             }
+    
+            $.ajax({
+                url:'/consultaANSejecutadoPcl',          
+                type:'POST',
+                data: datos_ejecucion_ans,
+                success: function (response) 
+                {
+                    // si tiene un ANS ejecutado es porque ya trae info de la bd y el coloreado es en base a la fechas de alerta del ans
+                    // En caso de que no, el coloreado es en base a la fechas de alerta de la paramétrica.
+                    if (response.length == 1) {
+                        
+                        let currentTime_ans = new Date();
+                        ColoreadoEventosANS(currentTime_ans, response[0].Fecha_alerta_naranja, response[0].Fecha_alerta_roja, rowNode);
+                    }
+                    else{
+                        if (alertasNaranjaRojaMap.has(data[a].Id_Asignacion)) {
+                            let alertaFechas = alertasNaranjaRojaMap.get(data[a].Id_Asignacion);
+                            let currentTime = new Date();
+            
+                            // Verificar alerta naranja
+                            if (alertaFechas.naranja) {
+                                let alertaFechaNaranja = new Date(alertaFechas.naranja);
+                                // let diferenciaNaranja = Math.abs(currentTime - alertaFechaNaranja);
+            
+                                if (currentTime >= alertaFechaNaranja) {  
+                                    $(rowNode).find('td').css('color', 'orange');
+                                }
+                            }
+            
+                            // Verificar alerta roja
+                            if (alertaFechas.roja) {
+                                let alertaFechaRoja = new Date(alertaFechas.roja);
+                                // let diferenciaRoja = Math.abs(currentTime - alertaFechaRoja);
+            
+                                if (currentTime >= alertaFechaRoja) { 
+                                    $(rowNode).find('td').css('color', 'red');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            
 
             datos = [];
         }

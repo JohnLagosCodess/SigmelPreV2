@@ -227,8 +227,12 @@
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label for="tiempo_gestion">Tiempo de gestión</label>
-                                            <input type="text" class="form-control" name="tiempo_gestion" id="tiempo_gestion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Tiempo_de_gestion)){echo $array_datos_calificacionOrigen[0]->Tiempo_de_gestion;}?>" disabled>
+                                            <label for="tiempo_gestion">Tiempo de gestión (Días)</label>
+                                            <?php if((!empty($array_datos_calificacionOrigen[0]->Detener_tiempo_gestion) && $array_datos_calificacionOrigen[0]->Detener_tiempo_gestion == "Si")):?>
+                                                <input type="text" class="form-control" name="tiempo_gestion" id="tiempo_gestion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Tiempo_gestion_evento)){echo $array_datos_calificacionOrigen[0]->Tiempo_gestion_evento;}?>" disabled>
+                                            <?php else: ?>
+                                                <input type="text" class="form-control" name="tiempo_gestion" id="tiempo_gestion" value="<?php if(!empty($array_datos_calificacionOrigen[0]->Tiempo_de_gestion)){echo $array_datos_calificacionOrigen[0]->Tiempo_de_gestion;}?>" disabled>
+                                            <?php endif ?>
                                         </div>
                                     </div>
                                     <div class="col-4">
@@ -345,6 +349,13 @@
                                                 <label for="">Fecha de cierre</label>
                                                 <input type="date" class="form-control" name="fecha_cierre" id="fecha_cierre" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionOrigen[0]->F_cierre)){echo $array_datos_calificacionOrigen[0]->F_cierre;}?>">
                                                 <span class="d-none" id="fecha_cierre_alerta" style="color: red; font-style: italic;"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="">Fecha de vencimiento</label>
+                                                <input type="date" class="form-control" name="fecha_vencimiento" id="fecha_vencimiento" value="<?php if(!empty($array_datos_calificacionOrigen[0]->F_vencimiento)){echo date("Y-m-d", strtotime($array_datos_calificacionOrigen[0]->F_vencimiento));}?>" disabled>
+                                                <input type="hidden" class="form-control" name="fecha_vencimiento_actual" id="fecha_vencimiento_actual" value="<?php if(!empty($array_datos_calificacionOrigen[0]->F_vencimiento)){echo $array_datos_calificacionOrigen[0]->F_vencimiento;}?>">
                                             </div>
                                         </div>
                                         <div class="col-12">

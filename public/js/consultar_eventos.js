@@ -483,6 +483,18 @@ $(document).ready(function () {
                                                 <input type="date" class="form-control" name="nueva_fecha_alerta" id="nueva_fecha_alerta_'+id_evento_nuevo_servicio+'" min="'+fecha_de_hoy+'">\
                                             </div>\
                                         </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Fecha de vencimiento</label>\
+                                            <div class="col-sm-9">\
+                                                <input type="date" class="form-control" name="fecha_vencimiento_visual" id="fecha_visual_vencimiento_'+id_evento_nuevo_servicio+'" disabled>\
+                                                <div class="d-none">\
+                                                    <input type="text" class="form-control" name="Id_ans" id="Id_ans_'+id_evento_nuevo_servicio+'">\
+                                                    <input type="text" class="form-control" name="fecha_vencimiento" id="fecha_vencimiento_'+id_evento_nuevo_servicio+'">\
+                                                    <input type="text" class="form-control" name="fecha_alerta_naranja_ans" id="fecha_alerta_naranja_ans_'+id_evento_nuevo_servicio+'">\
+                                                    <input type="text" class="form-control" name="fecha_alerta_roja_ans" id="fecha_alerta_roja_ans_'+id_evento_nuevo_servicio+'">\
+                                                </div>\
+                                            </div>\
+                                        </div>\
                                     </div>\
                                 </div>\
                             </div>\
@@ -614,6 +626,13 @@ $(document).ready(function () {
 
         let selector_nuevo_profesional = $('.renderizar_nuevo_servicio').find("select[id^='nuevo_profesional_']").attr("id");
 
+        let fecha_radicacion = $('.renderizar_nuevo_servicio').find("input[id^='nueva_fecha_radicacion_']").attr("id");
+        let fecha_vencimiento_visual = $('.renderizar_nuevo_servicio').find("input[id^='fecha_visual_vencimiento_']").attr("id");
+        let fecha_vencimiento = $('.renderizar_nuevo_servicio').find("input[id^='fecha_vencimiento_']").attr("id");
+        let fecha_alerta_naranja_ans = $('.renderizar_nuevo_servicio').find("input[id^='fecha_alerta_naranja_ans_']").attr("id");
+        let fecha_alerta_roja_ans = $('.renderizar_nuevo_servicio').find("input[id^='fecha_alerta_roja_ans_']").attr("id");
+        let Id_ans = $('.renderizar_nuevo_servicio').find("input[id^='Id_ans_']").attr("id");
+
         // CARGUE LISTADO DE PROFESIONALES DEPENDIENDO DE LA SELECCIÓN DE LA ACCIÓN
         $("#"+selector_nueva_accion_nuevo_servicio).change(function(){
             let datos_listado_profesionales_proceso = {
@@ -648,6 +667,28 @@ $(document).ready(function () {
                     }else{
                         $('.mensaje_no_hay_profesionales_servicio').removeClass("d-none");
                     }
+                }
+            });
+
+            // Cálculo de la fecha de vencimiento acorde al ANS
+            let datos_calculo_f_vencimiento = {
+                '_token':token,
+                'fecha_radicacion': $("#"+fecha_radicacion).val(),
+                'Id_servicio': $("#"+selector_nuevo_servicio).val(),
+                'Id_accion': $(this).val(),
+            };
+            
+            $.ajax({
+                type:'POST',
+                url:'/calculoFechaVencimiento',
+                data: datos_calculo_f_vencimiento,
+                success:function (data) {
+                    // Seteamos los campos: Fecha de vencimiento y a parte seteamos los campos de Id_ans, fecha de alerta naranja y fecha de alerta roja los cuales están ocultos.
+                    $("#"+fecha_vencimiento_visual).val(data.fecha_vencimiento_visual);
+                    $("#"+fecha_vencimiento).val(data.fecha_vencimiento);
+                    $("#"+Id_ans).val(data.Id_ans);
+                    $("#"+fecha_alerta_naranja_ans).val(data.fecha_alerta_naranja_ans);
+                    $("#"+fecha_alerta_roja_ans).val(data.fecha_alerta_roja_ans);
                 }
             });
         });
@@ -951,6 +992,18 @@ $(document).ready(function () {
                                                 <input type="date" class="form-control" name="nueva_fecha_alerta_nuevo_proceso" id="nueva_fecha_alerta_nuevo_proceso_'+id_evento_nuevo_proceso+'" min="'+fecha_de_hoy+'">\
                                             </div>\
                                         </div>\
+                                        <div class="form-group row">\
+                                            <label for="" class="col-sm-3 col-form-label">Fecha de vencimiento</label>\
+                                            <div class="col-sm-9">\
+                                                <input type="date" class="form-control" name="fecha_visual_vencimiento_nuevo_proceso" id="fecha_visual_vencimiento_nuevo_proceso_'+id_evento_nuevo_proceso+'" disabled>\
+                                                <div class="d-none">\
+                                                    <input type="text" class="form-control" name="Id_ans_nuevo_proceso" id="Id_ans_nuevo_proceso_'+id_evento_nuevo_proceso+'">\
+                                                    <input type="text" class="form-control" name="fecha_vencimiento_nuevo_proceso" id="fecha_vencimiento_nuevo_proceso_'+id_evento_nuevo_proceso+'">\
+                                                    <input type="text" class="form-control" name="fecha_alerta_naranja_ans_nuevo_proceso" id="fecha_alerta_naranja_ans_nuevo_proceso_'+id_evento_nuevo_proceso+'">\
+                                                    <input type="text" class="form-control" name="fecha_alerta_roja_ans_nuevo_proceso" id="fecha_alerta_roja_ans_nuevo_proceso_'+id_evento_nuevo_proceso+'">\
+                                                </div>\
+                                            </div>\
+                                        </div>\
                                     </div>\
                                 </div>\
                             </div>\
@@ -1142,6 +1195,7 @@ $(document).ready(function () {
                 'id_servicio': $("#"+selector_nuevo_servicio).val(),
                 'id_accion': $(this).val()
             };
+
             // CARGUE DE PROFESIONALES
             $.ajax({
                 type:'POST',
@@ -1166,6 +1220,37 @@ $(document).ready(function () {
                     }else{
                         $('.mensaje_no_hay_profesionales_proceso').removeClass("d-none");
                     }
+                }
+            });
+
+            // mau ans2
+            let fecha_radicacion = $('.renderizar_nuevo_proceso').find("input[id^='fecha_radicacion_nuevo_proceso']").attr("id");
+            let fecha_vencimiento_visual = $('.renderizar_nuevo_proceso').find("input[id^='fecha_visual_vencimiento_nuevo_proceso_']").attr("id");
+            let fecha_vencimiento = $('.renderizar_nuevo_proceso').find("input[id^='fecha_vencimiento_nuevo_proceso_']").attr("id");
+            let fecha_alerta_naranja_ans = $('.renderizar_nuevo_proceso').find("input[id^='fecha_alerta_naranja_ans_nuevo_proceso_']").attr("id");
+            let fecha_alerta_roja_ans = $('.renderizar_nuevo_proceso').find("input[id^='fecha_alerta_roja_ans_nuevo_proceso_']").attr("id");
+            let Id_ans = $('.renderizar_nuevo_proceso').find("input[id^='Id_ans_nuevo_proceso_']").attr("id");
+
+            // mau ans
+            // Cálculo de la fecha de vencimiento acorde al ANS
+            let datos_calculo_f_vencimiento = {
+                '_token':token,
+                'fecha_radicacion': $("#"+fecha_radicacion).val(),
+                'Id_servicio': $("#"+selector_nuevo_servicio).val(),
+                'Id_accion': $(this).val(),
+            };
+            // console.log(datos_calculo_f_vencimiento);
+            $.ajax({
+                type:'POST',
+                url:'/calculoFechaVencimiento',
+                data: datos_calculo_f_vencimiento,
+                success:function (data) {
+                    // Seteamos los campos: Fecha de vencimiento y a parte seteamos los campos de Id_ans, fecha de alerta naranja y fecha de alerta roja los cuales están ocultos.
+                    $("#"+fecha_vencimiento_visual).val(data.fecha_vencimiento_visual);
+                    $("#"+fecha_vencimiento).val(data.fecha_vencimiento);
+                    $("#"+Id_ans).val(data.Id_ans);
+                    $("#"+fecha_alerta_naranja_ans).val(data.fecha_alerta_naranja_ans);
+                    $("#"+fecha_alerta_roja_ans).val(data.fecha_alerta_roja_ans);
                 }
             });
         });

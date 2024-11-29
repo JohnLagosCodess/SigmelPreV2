@@ -166,23 +166,6 @@ $(document).ready(function(){
         }
     });     
 
-    // Función solo numeros para input valor ans
-    $(document).on('input', "input[id^='valor_ans_']", function(event){
-        var value = $(this).val();
-      
-        // Eliminar todos los caracteres no numéricos y no "."
-        value = value.replace(/[^0-9.]/g, '');
-        
-        // Verificar si hay más de un punto decimal y eliminar el exceso
-        var decimalCount = (value.match(/\./g) || []).length;
-        if (decimalCount > 1) {
-            value = value.replace(/\.+$/,"");
-        }
-        
-        // Actualizar el valor del input
-        $(this).val(value);
-    });
-
     /* INICIALIZACIÓN SUMMERNOTE PARA FIRMAS DEL CLIENTE */
     $('#firma_del_cliente').summernote({
         height: 210,
@@ -686,6 +669,9 @@ $(document).ready(function(){
 
                     /* DATATABLE ANS */
                     ans = $('#ans').DataTable({
+                        scrollY: 350,
+                        scrollX: true,
+                        fixedHeader: true,
                         "responsive": true,
                         "info": false,
                         "searching": false,
@@ -702,6 +688,7 @@ $(document).ready(function(){
                     no_datos_ans = 1;
                 }else{
                     
+                    // llenado dinámico de los ans que trae la bd
                     $.each(data_ans, function(index, value){
                         llenar_tabla_ans(data_ans);
                     });
@@ -975,113 +962,6 @@ $(document).ready(function(){
         });  
 
     });
-
-    // FUNCIÓN PARA LLENAR LOS DATOS DEL DATATABLE ANS
-    var ans = "";
-    function llenar_tabla_ans(response){
-        /* DATATABLE ANS */
-        ans = $('#ans').DataTable({
-            "responsive": true,
-            "info": false,
-            "searching": false,
-            "ordering": false,
-            "scrollCollapse": true,
-            "paging": false,
-            "destroy": true,
-            "data": response,
-            createdRow: function(row, data, index) {
-                $(row).addClass("fila_ans_" + data.Id_ans);
-                $(row).attr("id", "datos_ans");
-            },
-            "columns":[
-                {data:"Nombre"},
-                {data:"Descripcion"},
-                {data:"Valor"},
-                {data:"Nombre_unidad"},
-                {data:"string_html"},
-            ],
-            "language":{
-                "emptyTable": "No se encontró información"
-            }
-        });
-
-        autoAdjustColumns(ans);
-    }
-
-    // FUNCIONALIDADES TABLA ANS
-    var contador_ans = 0;
-    $("#btn_agregar_ans_fila").click(function(){
-        contador_ans = contador_ans + 1;
-
-        if (no_datos_ans == 0) {
-            var nueva_fila_ans = {
-                Nombre: '<input type="text" class="form-control" name="nombre_ans" id="nombre_ans_'+contador_ans+'">',
-                Descripcion:'<textarea id="descripcion_ans_'+contador_ans+'" class="form-control" name="descripcion_ans" cols="90" rows="3"></textarea>',
-                Valor:'<input type="text" class="form-control" name="valor_ans" id="valor_ans_'+contador_ans+'">',
-                Nombre_unidad:'<select  name="unidad_ans" id="unidad_ans_'+contador_ans+'" class="custom-select unidad_ans_'+contador_ans+'"><option></option></select>',
-                string_html:'<div class="centrar"><a href="javascript:void(0);" id="btn_remover_ans_fila" class="text-info" data-fila="fila_'+contador_ans+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
-                fila_:'fila_'+contador_ans
-            };
-            
-        } else {
-            var nueva_fila_ans = [
-                '<input type="text" class="form-control" name="nombre_ans" id="nombre_ans_'+contador_ans+'">',
-                '<textarea id="descripcion_ans_'+contador_ans+'" class="form-control" name="descripcion_ans" cols="90" rows="3"></textarea>',
-                '<input type="text" class="form-control" name="valor_ans" id="valor_ans_'+contador_ans+'">',
-                '<select  name="unidad_ans" id="unidad_ans_'+contador_ans+'" class="custom-select unidad_ans_'+contador_ans+'"><option></option></select>',
-                '<div class="centrar"><a href="javascript:void(0);" id="btn_remover_ans_fila" class="text-info" data-fila="fila_'+contador_ans+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
-                'fila_'+contador_ans
-            ];
-        }
-
-        var agregar_ans_fila = ans.row.add(nueva_fila_ans).draw().node();
-        $(agregar_ans_fila).addClass('fila_'+contador_ans);
-        $(agregar_ans_fila).attr("id", 'fila_'+contador_ans);
-
-        // Esta función realiza los controles de cada elemento por fila (está dentro del archivo clientes.js)
-        funciones_elementos_fila_ans(contador_ans);
-
-    });
-
-    // Remover filas nuevas insertadas
-    $(document).on('click', '#btn_remover_ans_fila', function(){
-        var nombre_ans_fila = $(this).data("fila");
-        ans.row("."+nombre_ans_fila).remove().draw();
-    });
-
-    // Remover filas visuales que se traen de la bd
-    $(document).on('click', "a[id^='btn_remover_fila_ans_']", function(){
-        var nombre_ans_fila = $(this).data("clase_fila");
-        ans.row("."+nombre_ans_fila).remove().draw();
-
-        var datos_fila_quitar_ans = {
-            '_token': token,
-            'fila':$(this).data("id_fila_quitar"),
-            'id_cliente': $('#id_cliente_editar').val()
-        };
-
-        $.ajax({
-            type:'POST',
-            url:'/eliminarAnsCliente',
-            data: datos_fila_quitar_ans,
-            success:function(response){
-                if (response.parametro == "fila_ans_eliminada") {
-                    $('#resultado_ans').empty();
-                    $('#resultado_ans').removeClass('d-none');
-                    $('#resultado_ans').addClass('alert-success');
-                    $('#resultado_ans').append('<strong>'+response.mensaje+'</strong>');
-                    
-                    setTimeout(() => {
-                        $('#resultado_ans').addClass('d-none');
-                        $('#resultado_ans').removeClass('alert-success');
-                        $('#resultado_ans').empty();
-                    }, 3000);
-                }
-            }
-        });  
-
-    });
-
 
     // FUNCIÓN PARA LLENAR LOS DATOS DEL DATATABLE FIRMAS CLIENTE
     var firmas_cliente = "";
@@ -1796,6 +1676,530 @@ $(document).ready(function(){
         }
     });
 
+    
+    // FUNCIÓN PARA LLENAR LOS DATOS DEL DATATABLE ANS
+    var ans = "";
+    function llenar_tabla_ans(response){
+        
+        /* DATATABLE ANS */
+        ans = $('#ans').DataTable({
+            scrollY: 350,
+            scrollX: true,
+            fixedHeader: true,
+            "responsive": true,
+            "info": false,
+            "searching": false,
+            "ordering": false,
+            "scrollCollapse": true,
+            "paging": false,
+            "destroy": true,
+            "data": response,
+            createdRow: function(row, data, index) {
+                $(row).addClass("fila_ans_visual_" + data.Id_ans);
+                $(row).attr("id", "datos_ans_visual_" + data.Id_ans);
+            },
+            "columns":[
+                {data:"Nombre"},
+                {data:"Nombre_servicio"},
+                {data:"Accion"},
+                {data:"Valor"},
+                {data:"Nombre_unidad"},
+                {data:"Alerta_Naranja"},
+                {data:"Alerta_Roja"},
+                {data:"Estado"},
+                {data:"string_html"},
+            ],
+            "language":{
+                "emptyTable": "No se encontró información"
+            }
+        });
+
+        autoAdjustColumns(ans);
+    }
+
+    // FUNCIONALIDADES TABLA ANS
+    var contador_ans = 0;
+    $("#btn_agregar_ans_fila").click(function(){
+        contador_ans = contador_ans + 1;
+       
+        if (no_datos_ans == 0) {
+            var nueva_fila_ans = {
+                Nombre: '<input type="text" style="width: 240px;" class="form-control" name="nombre_ans" id="nombre_ans_'+contador_ans+'" maxlength="200">',
+                Nombre_servicio: '<select name="servicio_contratado_ans" id="servicio_contratado_ans_'+contador_ans+'" class="custom-select servicio_contratado_ans_'+contador_ans+'"><option></option></select>',
+                Accion: '<select name="accion_ans" id="accion_ans_'+contador_ans+'" class="custom-select accion_ans_'+contador_ans+'"><option></option></select>',
+                Valor:'<input type="text" style="width: 100px;" class="form-control" name="valor_ans" id="valor_ans_'+contador_ans+'">',
+                Nombre_unidad:'<select  name="unidad_ans" id="unidad_ans_'+contador_ans+'" class="custom-select unidad_ans_'+contador_ans+'"><option></option></select>',
+                Alerta_Naranja: '<input type="text" style="width: 100px;" class="form-control" name="alerta_naranja_ans" id="alerta_naranja_ans_'+contador_ans+'">',
+                Alerta_Roja: '<input type="text" style="width: 100px;" class="form-control" name="alerta_roja_ans" id="alerta_roja_ans_'+contador_ans+'">',
+                Estado: '<select  name="estado_ans" id="estado_ans_'+contador_ans+'" class="custom-select estado_ans_'+contador_ans+'"><option></option></select>',
+                string_html:'<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_ans_fila" class="text-info remover_ans_fila_'+contador_ans+'" data-fila="fila_'+contador_ans+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a> <a href="javascript:void(0);" id="guardar_fila_ans_'+contador_ans+'"><i class="fa fa-sm fa-check text-success"></i></a></div>',
+                fila_:'fila_'+contador_ans
+            };
+            
+        } else {
+            var nueva_fila_ans = [
+                '<input type="text" style="width: 240px;" class="form-control" name="nombre_ans" id="nombre_ans_'+contador_ans+'" maxlength="200">',
+                '<select name="servicio_contratado_ans" id="servicio_contratado_ans_'+contador_ans+'" class="custom-select servicio_contratado_ans_'+contador_ans+'"><option></option></select>',
+                '<select name="accion_ans" id="accion_ans_'+contador_ans+'" class="custom-select accion_ans_'+contador_ans+'"><option></option></select>',
+                '<input type="text" style="width: 100px;" class="form-control" name="valor_ans" id="valor_ans_'+contador_ans+'">',
+                '<select  name="unidad_ans" id="unidad_ans_'+contador_ans+'" class="custom-select unidad_ans_'+contador_ans+'"><option></option></select>',
+                '<input type="text" style="width: 100px;" class="form-control" name="alerta_naranja_ans" id="alerta_naranja_ans_'+contador_ans+'">',
+                '<input type="text" style="width: 100px;" class="form-control" name="alerta_roja_ans" id="alerta_roja_ans_'+contador_ans+'">',
+                '<select  name="estado_ans" id="estado_ans_'+contador_ans+'" class="custom-select estado_ans_'+contador_ans+'"><option></option></select>',
+                '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_ans_fila" class="text-info remover_ans_fila_'+contador_ans+'" data-fila="fila_'+contador_ans+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a> <a href="javascript:void(0);" id="guardar_fila_ans_'+contador_ans+'"><i class="fa fa-sm fa-check text-success"></i></a></div>',
+                'fila_'+contador_ans
+            ];
+        }
+
+        var agregar_ans_fila = ans.row.add(nueva_fila_ans).draw().node();
+        $(agregar_ans_fila).addClass('fila_'+contador_ans);
+        $(agregar_ans_fila).attr("id", 'fila_'+contador_ans);
+        $(agregar_ans_fila).removeClass('fila_ans_visual_undefined');
+
+        // Esta función realiza los controles de cada elemento por fila (está dentro del archivo clientes.js)
+        funciones_elementos_fila_ans(contador_ans);
+    });
+
+    // Remover filas nuevas insertadas
+    $(document).on('click', '#btn_remover_ans_fila', function(){
+        var nombre_ans_fila = $(this).data("fila");
+        ans.row("."+nombre_ans_fila).remove().draw();
+    });
+
+    // Remover filas visuales que se traen de la bd
+    // $(document).on('click', "a[id^='btn_remover_fila_ans_']", function(){
+    //     var nombre_ans_fila = $(this).data("clase_fila");
+    //     ans.row("."+nombre_ans_fila).remove().draw();
+
+    //     var datos_fila_quitar_ans = {
+    //         '_token': token,
+    //         'fila':$(this).data("id_fila_quitar"),
+    //         'id_cliente': $('#id_cliente_editar').val()
+    //     };
+
+    //     $.ajax({
+    //         type:'POST',
+    //         url:'/eliminarAnsCliente',
+    //         data: datos_fila_quitar_ans,
+    //         success:function(response){
+    //             if (response.parametro == "fila_ans_eliminada") {
+    //                 $('#resultado_ans').empty();
+    //                 $('#resultado_ans').removeClass('d-none');
+    //                 $('#resultado_ans').addClass('alert-success');
+    //                 $('#resultado_ans').append('<strong>'+response.mensaje+'</strong>');
+                    
+    //                 setTimeout(() => {
+    //                     $('#resultado_ans').addClass('d-none');
+    //                     $('#resultado_ans').removeClass('alert-success');
+    //                     $('#resultado_ans').empty();
+    //                 }, 3000);
+    //             }
+    //         }
+    //     });  
+
+    // });
+
+    
+    /* Funcionalidad para editar un ANS */
+    $(document).on('click', "a[id^='btn_editar_fila_ans_']", function(e){
+        e.preventDefault();
+
+        // Extraemos el id del ans seleccionado y lo usamos para traer sus datos de la bd
+        let id_ans_seleccionado = $(this).data('id_ans');
+
+        let datos_ans_seleccionado = {
+            '_token': token,
+            'parametro': "edicion_ans",
+            'id_ans_seleccionado': id_ans_seleccionado,
+        };
+        
+        $.ajax({
+            type:'POST',
+            url: $('#traer_datos_cliente').val(),
+            data: datos_ans_seleccionado,
+            success:function(ans){
+                // console.log(ans[0].Accion);
+
+                // Traemos la información por cada td y la mostramos como formulario para poder realizar la correspondiente modificación de la información
+                $('tr.fila_ans_visual_'+id_ans_seleccionado).each(function(){
+                    // Columna Nombre ANS
+                    $(this).find('td').eq(0).html('<input type="text" style="width: 240px;" class="form-control" name="edicion_nombre_ans" id="edicion_nombre_ans_'+id_ans_seleccionado+'" value="'+ans[0].Nombre+'">');
+
+                    // Columna Servicio
+                    $(this).find('td').eq(1).html(`
+                        <select name="edicion_servicio_contratado_ans" id="edicion_servicio_contratado_ans_${id_ans_seleccionado}" class="custom-select edicion_servicio_contratado_ans_${id_ans_seleccionado}">
+                            <option></option>
+                        </select>
+                    `);
+
+                    // Columna Acción inicio
+                    $(this).find('td').eq(2).html(`
+                        <select name="edicion_accion_ans" id="edicion_accion_ans_${id_ans_seleccionado}" class="custom-select edicion_accion_ans_${id_ans_seleccionado}">
+                            <option></option>
+                        </select>
+                    `);
+
+                    // Columna Valor
+                    $(this).find('td').eq(3).html('<input type="text" style="width: 100px;" class="form-control" name="edicion_valor_ans" id="edicion_valor_ans_'+id_ans_seleccionado+'" value="'+ans[0].Valor+'">');
+
+                    // Columna Unidad
+                    $(this).find('td').eq(4).html(`
+                        <select name="edicion_unidad_ans" id="edicion_unidad_ans_${id_ans_seleccionado}" class="custom-select edicion_unidad_ans_${id_ans_seleccionado}">
+                            <option></option>
+                        </select>
+                    `);
+
+                    // Columna % Alerta Naranja
+                    $(this).find('td').eq(5).html('<input type="text" style="width: 100px;" class="form-control" name="edicion_alerta_naranja_ans" id="edicion_alerta_naranja_ans_'+id_ans_seleccionado+'" value="'+ans[0].Porcentaje_Alerta_Naranja+'">');
+
+                    // Columna % Alerta Roja
+                    $(this).find('td').eq(6).html('<input type="text" style="width: 100px;" class="form-control" name="edicion_alerta_roja_ans" id="edicion_alerta_roja_ans_'+id_ans_seleccionado+'" value="'+ans[0].Porcentaje_Alerta_Roja+'">');
+
+                    // Columna Estado
+                    $(this).find('td').eq(7).html(`
+                        <select name="edicion_estado_ans" id="edicion_estado_ans_${id_ans_seleccionado}" class="custom-select edicion_estado_ans_${id_ans_seleccionado}">
+                            <option></option>
+                        </select>
+                    `);
+                });
+
+                // Usamos el select2 y seteamos la información de los selectores, recreamos la funcionalidad propia de cada campo.
+
+                let token = $("input[name='_token']").val();
+
+                // SELECT 2 SERVICIO ANS
+                $(".edicion_servicio_contratado_ans_"+id_ans_seleccionado).select2({
+                    width: '240px',
+                    placeholder: "Seleccione",
+                    allowClear: false
+                });
+
+                // SELECT 2 ACCION ANS
+                $(".edicion_accion_ans_"+id_ans_seleccionado).select2({
+                    width: '240px',
+                    placeholder: "Seleccione",
+                    allowClear: false
+                });
+
+                // SELECT 2 UNIDAD ANS
+                $(".edicion_unidad_ans_"+id_ans_seleccionado).select2({
+                    width: '240px',
+                    placeholder: "Seleccione",
+                    allowClear: false
+                });
+
+                // SELECT 2 ESTADO ANS
+                $(".edicion_estado_ans_"+id_ans_seleccionado).select2({
+                    width: '120px',
+                    placeholder: "Seleccione",
+                    allowClear: false
+                });
+
+                /* Cargue del listado de los servicios contratados que tiene el cliente (marcados en la tabla de servicios contratados) */
+                var listado_ids_servicios_seleccionados = [];
+                ed_llenar_listado_servicios(listado_ids_servicios_seleccionados, token, id_ans_seleccionado, ans[0].Servicio);
+
+                // Cuando se hace click en cada checkbox de servicio para marcar o desmarcar y así saber que servicio se van mostrar.
+                $('#checkbox_servicio_dto, #checkbox_servicio_adicion_dx, #checkbox_servicio_pronunciamiento, #checkbox_servicio_calificacion_tecnica, #checkbox_servicio_recalificacion, #checkbox_servicio_revision_pension, #checkbox_servicio_pronunciamiento_pcl, #checkbox_servicio_controversia_origen, #checkbox_servicio_controversia_pcl').click(function() {
+                    edServiciosCheckbox(this, listado_ids_servicios_seleccionados, token);
+                });
+
+                /* Cargue listado de acciones ans dependiendo del servicio que guardó en el ANS */
+                let datos_lista_acciones_ans = {
+                    '_token': token,
+                    'parametro':"listado_acciones_ans",
+                    'id_servicio_seleccionado' : ans[0].Servicio
+                };
+
+                $.ajax({
+                    type:'POST',
+                    url: $('#traer_datos_cliente').val(),
+                    data: datos_lista_acciones_ans,
+                    success:function(data_acciones_ans) {
+                        $('#edicion_accion_ans_'+id_ans_seleccionado).empty();
+                        $('#edicion_accion_ans_'+id_ans_seleccionado).append('<option value="" selected>Seleccione</option>');
+                        let claves = Object.keys(data_acciones_ans);
+
+                        for (let i = 0; i < claves.length; i++) {
+                            if (ans[0].Id_Accion == data_acciones_ans[claves[i]]["Id_Accion"]) {
+                                $('#edicion_accion_ans_'+id_ans_seleccionado).append('<option value="'+data_acciones_ans[claves[i]]["Id_Accion"]+'" selected>'+data_acciones_ans[claves[i]]["Accion"]+'</option>');
+                            } else {
+                                $('#edicion_accion_ans_'+id_ans_seleccionado).append('<option value="'+data_acciones_ans[claves[i]]["Id_Accion"]+'">'+data_acciones_ans[claves[i]]["Accion"]+'</option>');
+                            }
+                        }
+                    }
+                });
+
+                /* Cargue listado de acciones ans dependiendo del servicio seleccionado */
+                $('#edicion_servicio_contratado_ans_' + id_ans_seleccionado).change(function(){
+                    var id_servicio_seleccionado = $(this).val();
+                    
+                    $('#edicion_accion_ans_' + id_ans_seleccionado).attr('data-servicio_viene', id_servicio_seleccionado);
+
+                    let datos_lista_acciones_ans = {
+                        '_token': token,
+                        'parametro':"listado_acciones_ans",
+                        'id_servicio_seleccionado' : id_servicio_seleccionado
+                    };
+                
+                    $.ajax({
+                        type:'POST',
+                        url: $('#traer_datos_cliente').val(),
+                        data: datos_lista_acciones_ans,
+                        success:function(data_acciones_ans) {
+                            $('#edicion_accion_ans_'+id_ans_seleccionado).empty();
+                            $('#edicion_accion_ans_'+id_ans_seleccionado).append('<option value="" selected>Seleccione</option>');
+
+                            let claves = Object.keys(data_acciones_ans);
+
+                            for (let i = 0; i < claves.length; i++) {
+                                $('#edicion_accion_ans_'+id_ans_seleccionado).append('<option value="'+data_acciones_ans[claves[i]]["Id_Accion"]+'">'+data_acciones_ans[claves[i]]["Accion"]+'</option>');
+                            }
+                        }
+                    });
+                    
+                });
+
+                // controles de validación para cuando un ans se repite.
+                $('#edicion_accion_ans_'+id_ans_seleccionado).change(function(){
+                    var ed_accion_seleccionada = $(this).val();
+                    $('#ans').find("input[id^='accion_bd_']").each(function(){
+                        var bd_accion = $(this).val();
+                        
+                        var nombre_accion = $(this).next().text();
+                        
+                        if (ed_accion_seleccionada == bd_accion) {
+                            $('#accion_repetida').empty();
+                            $('#accion_repetida').removeClass('d-none');
+                            $('#accion_repetida').addClass('alert-danger');
+                            $('#accion_repetida').append('<strong>Ya existe un ANS guardado con la acción: '+nombre_accion+', por favor valide su configuración.</strong>');
+                            $("#bd_guardar_fila_ans_"+id_ans_seleccionado).addClass('d-none');
+
+                            $('tr.fila_ans_visual_'+id_ans_seleccionado).each(function(){
+                                $(this).find('input').css('border', '2px solid red');
+                            });
+                            return false;
+                        }else{
+                            $('#accion_repetida').addClass('d-none');
+                            $('#accion_repetida').removeClass('alert-danger');
+                            $('#accion_repetida').empty();
+                            $("#bd_guardar_fila_ans_"+id_ans_seleccionado).removeClass('d-none');
+
+                            $('tr.fila_ans_visual_'+id_ans_seleccionado).each(function(){
+                                $(this).find('input').css('border', '1px solid #343a40');
+                            });
+                        }
+                    });
+                });
+
+                /* Funcionalidad solo dos numeros decimales separados por punto y que no permita valores negativos para los input de valor ans */
+                $(document).on('input', "input[id^='edicion_valor_ans_']", function(event){
+                    var ed_valor_ans = $(this).val();
+                    
+                    // Eliminar todos los caracteres no numéricos y no "."
+                    ed_valor_ans = ed_valor_ans.replace(/[^0-9.]/g, '');
+                    
+                    // Verificar si hay más de un punto decimal y eliminar el exceso
+                    var decimalCount_ed_valor_ans = (ed_valor_ans.match(/\./g) || []).length;
+                    if (decimalCount_ed_valor_ans > 1) {
+                        ed_valor_ans = ed_valor_ans.replace(/\.+$/,"");
+                    }
+                    
+                    // Actualizar el valor del input
+                    $(this).val(ed_valor_ans);
+                });
+
+                /* Cargue Listado de unidades ans */
+                let datos_lista_unidades_ans = {
+                    '_token': token,
+                    'parametro':"lista_unidades_ans"
+                };
+
+                $.ajax({
+                    type:'POST',
+                    url: $('#traer_datos_cliente').val(),
+                    data: datos_lista_unidades_ans,
+                    success:function(data) {
+                        //console.log(data);
+                        $('#edicion_unidad_ans_'+id_ans_seleccionado).empty();
+                        $('#edicion_unidad_ans_'+id_ans_seleccionado).append('<option value="" selected>Seleccione</option>');
+                        let claves = Object.keys(data);
+                        for (let i = 0; i < claves.length; i++) {
+                            if (ans[0].Unidad == data[claves[i]]["Id_Parametro"]) {
+                                $('#edicion_unidad_ans_'+id_ans_seleccionado).append('<option value="'+data[claves[i]]["Id_Parametro"]+'" selected>'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                            } else {
+                                $('#edicion_unidad_ans_'+id_ans_seleccionado).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                            }
+                        }
+                    }
+                });       
+                
+                /*  Funcionalidad solo dos numeros decimales separados por punto y que 
+                    no permita el registro de números menores a 0.00 y mayores a 100.00 para los input de % alerta naranja ans 
+                */
+                $(document).on('input', "input[id^='edicion_alerta_naranja_ans_']", function(event){
+                    var ed_valor_naranja = $(this).val();
+
+                    // Eliminar todos los caracteres no numéricos y no "."
+                    ed_valor_naranja = ed_valor_naranja.replace(/[^0-9.]/g, '');
+
+                    // Verificar si hay más de un punto decimal y eliminar el exceso
+                    var decimalCount_ed_valor_naranja = (ed_valor_naranja.match(/\./g) || []).length;
+                    if (decimalCount_ed_valor_naranja > 1) {
+                        ed_valor_naranja = ed_valor_naranja.replace(/\.+$/,"");
+                    }
+
+                    // Evaluamos la condición que si el número es mayor a 100.00 retorne siempre el valor de 100.00
+                    if (ed_valor_naranja > 100.00) {
+                        ed_valor_naranja = 100.00;
+                    }
+
+                    // Actualizar el valor del input
+                    $(this).val(ed_valor_naranja);
+                });
+
+                /*  Funcionalidad solo dos numeros decimales separados por punto y que 
+                    no permita el registro de números menores a 0.00 y mayores a 100.00 para los input de % alerta roja ans 
+                */
+                $(document).on('input', "input[id^='edicion_alerta_roja_ans_']", function(event){
+                        var ed_valor_roja = $(this).val();
+
+                        // Eliminar todos los caracteres no numéricos y no "."
+                        ed_valor_roja = ed_valor_roja.replace(/[^0-9.]/g, '');
+
+                        // Verificar si hay más de un punto decimal y eliminar el exceso
+                        var decimalCount_ed_valor_roja = (ed_valor_roja.match(/\./g) || []).length;
+                        if (decimalCount_ed_valor_roja > 1) {
+                            ed_valor_roja = ed_valor_roja.replace(/\.+$/,"");
+                        }
+                    
+                        // Evaluamos la condición que si el número es mayor a 100.00 retorne siempre el valor de 100.00
+                        if (ed_valor_roja > 100.00) {
+                            ed_valor_roja = 100.00;
+                        }
+
+                        // Actualizar el valor del input
+                        $(this).val(ed_valor_roja);
+                });
+
+                /* Cargue Listado de estados ans */
+                let datos_lista_estados_ans = {
+                    '_token': token,
+                    'parametro':"lista_estados_ans"
+                };
+
+                $.ajax({
+                    type:'POST',
+                    url: $('#traer_datos_cliente').val(),
+                    data: datos_lista_estados_ans,
+                    success:function(data) {
+                        //console.log(data);
+                        $('#edicion_estado_ans_'+id_ans_seleccionado).empty();
+                        $('#edicion_estado_ans_'+id_ans_seleccionado).append('<option value="" selected>Seleccione</option>');
+                        let claves = Object.keys(data);
+                        for (let i = 0; i < claves.length; i++) {
+                            if (ans[0].Id_estado == data[claves[i]]["Id_Parametro"]) {
+                                $('#edicion_estado_ans_'+id_ans_seleccionado).append('<option value="'+data[claves[i]]["Id_Parametro"]+'" selected>'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                            } else {
+                                $('#edicion_estado_ans_'+id_ans_seleccionado).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                            }
+                        }
+                    }
+                });
+            }
+        });
+
+        /* Ocultamos el lapiz y mostramos el chulo para guardar la edición */
+        $(this).addClass('d-none');
+        var row = $(this).closest('tr');
+        row.find('#bd_guardar_fila_ans_'+id_ans_seleccionado).removeClass('d-none');
+
+
+    });
+
+    /* Funcionalidad para guardar el ANS editado */
+    $(document).on('click', "a[id^='bd_guardar_fila_ans_']", function(e){
+        e.preventDefault();
+
+        // Extraemos el id del ans seleccionado y lo usamos para traer sus datos de la bd
+        let id_ans_seleccionado = $(this).data('id_ans');
+
+        // Capturamos los datos de cada tr
+        var row = $(this).closest('tr');
+        // A todos los input, textarea, select se les adiciona las propiedades readonlu y disabled
+        row.find('input, textarea, select').prop('readonly', true).prop('disabled', true);
+
+        // mostrar el botón para editar de nuevo
+        row.find('#btn_editar_fila_ans_'+id_ans_seleccionado).removeClass('d-none');
+        $(this).addClass('d-none');
+
+        // Inicializamos un objeto para almacenar los valores de la fila
+        var datos_edicion_fila_ans = {};
+
+        // Recorre todas las celdas de la fila
+        row.find('td').each(function() {
+            // Obtén el valor de la celda y luego cada id correspondiente
+            var cell = $(this);
+            var input = cell.find('input, textarea, select');
+            var fieldName = input.attr('id'); 
+
+            // Se valida los checkbox para verificar si fueron marcados o no.
+            if (input.is(':checkbox')) {
+                datos_edicion_fila_ans[fieldName] = input.is(':checked') ? 'Si' : 'No';
+
+            } else if (input.val() !== undefined ) {
+                datos_edicion_fila_ans[fieldName] = input.val();
+            }
+        });
+
+        // Convierte el objeto en un array para mejor manejo de los datos
+        var array_datos_fila_ans = $.map(datos_edicion_fila_ans, function(value, key) {
+            return { nombre: key, valor: value };
+        });
+
+        // console.log(array_datos_fila_ans);
+
+        // Enviamos la información para actualizar
+        let enviar_info_ans = {
+            '_token': token,
+            'array_datos_fila_ans': array_datos_fila_ans,
+            'Id_ans': id_ans_seleccionado,
+            'Id_cliente': $("#id_cliente_editar").val()
+        }
+
+
+        $.ajax({
+            type:'POST',
+            url:'/ActualizarANSCliente',
+            data: enviar_info_ans,
+            success:function(response){
+                if (response.parametro == "actualizo_ans") {
+                    $('#resultado_ans').empty();
+                    $('#resultado_ans').removeClass('d-none');
+                    $('#resultado_ans').addClass('alert-success');
+                    $('#resultado_ans').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#resultado_ans').addClass('d-none');
+                        $('#resultado_ans').removeClass('alert-success');
+                        $('#resultado_ans').empty();
+                    }, 3000);
+                } else {
+                    $('#resultado_ans').empty();
+                    $('#resultado_ans').removeClass('d-none');
+                    $('#resultado_ans').addClass('alert-danger');
+                    $('#resultado_ans').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#resultado_ans').addClass('d-none');
+                        $('#resultado_ans').removeClass('alert-danger');
+                        $('#resultado_ans').empty();
+                    }, 3000);
+                }
+            }
+        });
+    });
+
 
     // Previsualización de la imagen
     $("#logo_cliente").change(function(){
@@ -2015,32 +2419,32 @@ $(document).ready(function(){
         });
 
         // Creación de array con los datos de la tabla dinámica ANS
-        var guardar_datos_ans = [];
-        var datos_finales_ans = [];
+        // var guardar_datos_ans = [];
+        // var datos_finales_ans = [];
 
-        // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO 
-        // (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
-        $('#ans tbody tr').each(function (index) {
-            if ($(this).attr('id') !== "datos_ans") {
-                $(this).children("td").each(function (index2) {
-                    var nombres_ids = $(this).find('*').attr("id");
-                    if (nombres_ids != undefined) {
-                        guardar_datos_ans.push($('#'+nombres_ids).val());                        
-                    }
-                    if((index2+1) % 4 === 0){
-                        datos_finales_ans.push(guardar_datos_ans);
-                        guardar_datos_ans = [];
-                    }
-                });
-            }
-        });
+        // // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO 
+        // // (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
+        // $('#ans tbody tr').each(function (index) {
+        //     if ($(this).attr('id') !== "datos_ans") {
+        //         $(this).children("td").each(function (index2) {
+        //             var nombres_ids = $(this).find('*').attr("id");
+        //             if (nombres_ids != undefined) {
+        //                 guardar_datos_ans.push($('#'+nombres_ids).val());                        
+        //             }
+        //             if((index2+1) % 4 === 0){
+        //                 datos_finales_ans.push(guardar_datos_ans);
+        //                 guardar_datos_ans = [];
+        //             }
+        //         });
+        //     }
+        // });
 
         /* Datos del Footer */
-        var footer_dato_1 = $("#footer_dato_1").val();
-        var footer_dato_2 = $("#footer_dato_2").val();
-        var footer_dato_3 = $("#footer_dato_3").val();
-        var footer_dato_4 = $("#footer_dato_4").val();
-        var footer_dato_5 = $("#footer_dato_5").val();
+        // var footer_dato_1 = $("#footer_dato_1").val();
+        // var footer_dato_2 = $("#footer_dato_2").val();
+        // var footer_dato_3 = $("#footer_dato_3").val();
+        // var footer_dato_4 = $("#footer_dato_4").val();
+        // var footer_dato_5 = $("#footer_dato_5").val();
 
         // Recolección de la información para crear un cliente
         var enviar_info_actualizar_cliente = {
@@ -2068,7 +2472,7 @@ $(document).ready(function(){
             'Fecha_creacion': $("#fecha_creacion").val(),
             'Sucursales': datos_finales_sucursales,
             'Servicios_contratados': array_servicios_contratados,
-            'ANS': datos_finales_ans,
+            // 'ANS': datos_finales_ans,
             'Nombre_logo_bd': $("#nombre_logo_bd").val(),
             'Logo': $("#img_codificada").val(),
             'Extension_logo': $("#nombre_ext_imagen").val(),
@@ -2187,25 +2591,134 @@ function funciones_elementos_fila_sucursales(num_consecutivo){
 }
 
 /* Función para añadir los controles de cada elemento de cada fila en la tabla ans */
+var accionesNoSeleccionadas = {};
 function funciones_elementos_fila_ans(num_consecutivo){
 
-    // SELECT 2 DEPARTAMENTOS
+    // SELECT 2 SERVICIO ANS
+    $(".servicio_contratado_ans_"+num_consecutivo).select2({
+        width: '240px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    // SELECT 2 ACCION ANS
+    $(".accion_ans_"+num_consecutivo).select2({
+        width: '240px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    // SELECT 2 UNIDAD ANS
     $(".unidad_ans_"+num_consecutivo).select2({
-        // width: '140px',
+        width: '240px',
+        placeholder: "Seleccione",
+        allowClear: false
+    });
+
+    // SELECT 2 ESTADO ANS
+    $(".estado_ans_"+num_consecutivo).select2({
+        width: '120px',
         placeholder: "Seleccione",
         allowClear: false
     });
 
     let token = $("input[name='_token']").val();
 
-    //Listado de departamento
+    /* Cargue del listado de los servicios contratados que tiene el cliente (marcados en la tabla de servicios contratados) */
+    var listado_ids_servicios_seleccionados = [];
+    llenar_listado_servicios(listado_ids_servicios_seleccionados, token, num_consecutivo);
+
+    // Cuando se hace click en cada checkbox de servicio para marcar o desmarcar y así saber que servicio se van mostrar.
+    $('#checkbox_servicio_dto, #checkbox_servicio_adicion_dx, #checkbox_servicio_pronunciamiento, #checkbox_servicio_calificacion_tecnica, #checkbox_servicio_recalificacion, #checkbox_servicio_revision_pension, #checkbox_servicio_pronunciamiento_pcl, #checkbox_servicio_controversia_origen, #checkbox_servicio_controversia_pcl').click(function() {
+        ServiciosCheckbox(this, listado_ids_servicios_seleccionados, token);
+    });
+
+    /* Cargue listado de acciones ans dependiendo de la selección de un servicio y de las paramétricas activas configuradas para el */
+    $('#servicio_contratado_ans_' + num_consecutivo).change(function(){
+        var id_servicio_seleccionado = $(this).val();
+        
+        $('#accion_ans_' + num_consecutivo).attr('data-servicio_viene', id_servicio_seleccionado);
+
+        // preguntamos si el servicio seleccionado ya tiene una key en el array de acciones no seleccionadas y extraemos sus valores
+        var claveBuscar = `_Servicio_${id_servicio_seleccionado}`;
+        var acciones = null;
+
+        for (var clave in accionesNoSeleccionadas) {
+            if (accionesNoSeleccionadas.hasOwnProperty(clave) && clave.includes(claveBuscar)) {
+                // console.log("Clave encontrada:", clave);
+                // console.log(accionesNoSeleccionadas[clave]);
+                acciones = accionesNoSeleccionadas[clave];
+            }
+        }
+        
+        let datos_lista_acciones_ans = {
+            '_token': token,
+            'parametro':"listado_acciones_ans",
+            'id_servicio_seleccionado' : id_servicio_seleccionado,
+            'acciones': acciones
+        };
+    
+        $.ajax({
+            type:'POST',
+            url: $('#traer_datos_cliente').val(),
+            data: datos_lista_acciones_ans,
+            success:function(data_acciones_ans) {
+
+                $('#accion_ans_'+num_consecutivo).empty();
+                $('#accion_ans_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(data_acciones_ans);
+                for (let i = 0; i < claves.length; i++) {
+                    $('#accion_ans_'+num_consecutivo).append('<option value="'+data_acciones_ans[claves[i]]["Id_Accion"]+'">'+data_acciones_ans[claves[i]]["Accion"]+'</option>');
+                }
+                
+            }
+        });
+
+    });
+
+    $('#accion_ans_' + num_consecutivo).change(function(){
+        var de_que_servicio_viene = $(this).data('servicio_viene');
+        var accionSeleccionada = $(this).val();
+
+        // Obtener todas las opciones del select excepto la seleccionada
+        var accionesNoSeleccionadasArray = [];
+        $(this).find('option').each(function() {
+            var accion = $(this).val();
+            if (accion !== accionSeleccionada && accion !== "") {
+                accionesNoSeleccionadasArray.push(accion);
+            }
+        });
+        
+        // Actualizar el objeto con las acciones no seleccionadas
+        accionesNoSeleccionadas['Fila_'+num_consecutivo+'_Servicio_'+de_que_servicio_viene] = accionesNoSeleccionadasArray;
+    });
+
+    /* Funcionalidad solo dos numeros decimales separados por punto y que no permita valores negativos para los input de valor ans */
+    $(document).on('input', "input[id^='valor_ans_']", function(event){
+        var value = $(this).val();
+      
+        // Eliminar todos los caracteres no numéricos y no "."
+        value = value.replace(/[^0-9.]/g, '');
+        
+        // Verificar si hay más de un punto decimal y eliminar el exceso
+        var decimalCount = (value.match(/\./g) || []).length;
+        if (decimalCount > 1) {
+            value = value.replace(/\.+$/,"");
+        }
+        
+        // Actualizar el valor del input
+        $(this).val(value);
+    });
+
+    /* Cargue Listado de unidades ans */
     let datos_lista_unidades_ans = {
         '_token': token,
         'parametro':"lista_unidades_ans"
     };
+
     $.ajax({
         type:'POST',
-        url:'/cargarselectores',
+        url: $('#traer_datos_cliente').val(),
         data: datos_lista_unidades_ans,
         success:function(data) {
             //console.log(data);
@@ -2213,9 +2726,420 @@ function funciones_elementos_fila_ans(num_consecutivo){
             $('#unidad_ans_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#unidad_ans_'+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+                $('#unidad_ans_'+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'" selected>'+data[claves[i]]["Nombre_parametro"]+'</option>');
             }
         }
     });
 
+    /*  Funcionalidad solo dos numeros decimales separados por punto y que 
+        no permita el registro de números menores a 0.00 y mayores a 100.00 para los input de % alerta naranja ans 
+    */
+    $(document).on('input', "input[id^='alerta_naranja_ans_']", function(event){
+        var value_naranja = $(this).val();
+        
+        // Eliminar todos los caracteres no numéricos y no "."
+        value_naranja = value_naranja.replace(/[^0-9.]/g, '');
+        
+        // Verificar si hay más de un punto decimal y eliminar el exceso
+        var decimalCount_naranja = (value_naranja.match(/\./g) || []).length;
+        if (decimalCount_naranja > 1) {
+            value_naranja = value_naranja.replace(/\.+$/,"");
+        }
+
+        // Evaluamos la condición que si el número es mayor a 100.00 retorne siempre el valor de 100.00
+        if (value_naranja > 100.00) {
+            value_naranja = 100.00;
+        }
+        
+        // Actualizar el valor del input
+        $(this).val(value_naranja);
+    });
+
+    /*  Funcionalidad solo dos numeros decimales separados por punto y que 
+        no permita el registro de números menores a 0.00 y mayores a 100.00 para los input de % alerta roja ans 
+    */
+    $(document).on('input', "input[id^='alerta_roja_ans_']", function(event){
+            var value_roja = $(this).val();
+            
+            // Eliminar todos los caracteres no numéricos y no "."
+            value_roja = value_roja.replace(/[^0-9.]/g, '');
+            
+            // Verificar si hay más de un punto decimal y eliminar el exceso
+            var decimalCount_roja = (value_roja.match(/\./g) || []).length;
+            if (decimalCount_roja > 1) {
+                value_roja = value_roja.replace(/\.+$/,"");
+            }
+    
+            // Evaluamos la condición que si el número es mayor a 100.00 retorne siempre el valor de 100.00
+            if (value_roja > 100.00) {
+                value_roja = 100.00;
+            }
+            
+            // Actualizar el valor del input
+            $(this).val(value_roja);
+    });
+
+
+    /* Cargue Listado de estados ans */
+    let datos_lista_estados_ans = {
+        '_token': token,
+        'parametro':"lista_estados_ans"
+    };
+
+    $.ajax({
+        type:'POST',
+        url: $('#traer_datos_cliente').val(),
+        data: datos_lista_estados_ans,
+        success:function(data) {
+            //console.log(data);
+            $('#estado_ans_'+num_consecutivo).empty();
+            $('#estado_ans_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                $('#estado_ans_'+num_consecutivo).append('<option value="'+data[claves[i]]["Id_Parametro"]+'">'+data[claves[i]]["Nombre_parametro"]+'</option>');
+            }
+        }
+    });
+
+    /* Funcionalidad para guardar los ans de manera paralela al formulario de actualización de datos del cliente */
+    $('#guardar_fila_ans_' + num_consecutivo).click(function(){
+        // ocultamos el botón de eliminación de fila y el botón de guardado de ans para evitar guardar varias veces el mismo.
+        $(".remover_ans_fila_"+num_consecutivo).addClass('d-none');
+        $(this).addClass('d-none');
+
+        // Capturamos los datos de cada tr
+        var row = $(this).closest('tr');
+        // A todos los input, textarea, select se les adiciona las propiedades readonlu y disabled
+        row.find('input, textarea, select').prop('readonly', true).prop('disabled', true);
+        // mostrar el botón para editar de nuevo
+        // row.find('#editar_fila_origen_atel_'+num_consecutivo).removeClass('d-none');
+        // row.find('#guardar_fila_origen_atel_'+num_consecutivo).addClass('d-none');
+
+        // Inicializamos un objeto para almacenar los valores de la fila
+        var datos_cada_fila_ans = {};
+
+        // Recorre todas las celdas de la fila
+        row.find('td').each(function() {
+            // Obtén el valor de la celda y luego cada id correspondiente
+            var cell = $(this);
+            var input = cell.find('input, textarea, select');
+            var fieldName = input.attr('id'); 
+
+            // Se valida los checkbox para verificar si fueron marcados o no.
+            if (input.is(':checkbox')) {
+                datos_cada_fila_ans[fieldName] = input.is(':checked') ? 'Si' : 'No';
+
+            } else if (input.val() !== undefined ) {
+                datos_cada_fila_ans[fieldName] = input.val();
+            }
+        });
+
+        // Convierte el objeto en un array para mejor manejo de los datos
+        var array_datos_fila_ans = $.map(datos_cada_fila_ans, function(value, key) {
+            return { nombre: key, valor: value };
+        });
+
+        // console.log(array_datos_fila_ans);
+
+        // Enviamos la información para insertar
+        let enviar_info_ans = {
+            '_token': token,
+            'array_datos_fila_ans': array_datos_fila_ans,
+            'Id_cliente': $("#id_cliente_editar").val()
+        }
+
+        $.ajax({
+            type:'POST',
+            url:'/EnvioANSCliente',
+            data: enviar_info_ans,
+            success:function(response){
+                if (response.parametro == "agrego_ans") {
+                    $('#resultado_ans').empty();
+                    $('#resultado_ans').removeClass('d-none');
+                    $('#resultado_ans').addClass('alert-success');
+                    $('#resultado_ans').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#resultado_ans').addClass('d-none');
+                        $('#resultado_ans').removeClass('alert-success');
+                        $('#resultado_ans').empty();
+                    }, 3000);
+                } else {
+                    $('#resultado_ans').empty();
+                    $('#resultado_ans').removeClass('d-none');
+                    $('#resultado_ans').addClass('alert-danger');
+                    $('#resultado_ans').append('<strong>'+response.mensaje+'</strong>');
+                    
+                    setTimeout(() => {
+                        $('#resultado_ans').addClass('d-none');
+                        $('#resultado_ans').removeClass('alert-danger');
+                        $('#resultado_ans').empty();
+                    }, 3000);
+                }
+            }
+        });
+
+
+    });
+
+}
+
+/* Función para el cargue del listado de los servicios contratados que tiene el cliente (marcados en la tabla de servicios contratados) para insertar nuevos ANS */
+function llenar_listado_servicios(listado_ids_servicios_seleccionados, token, num_consecutivo){
+
+    // Cuando se carga la página se hace un análisis de cuales checkbox están marcados para cargar un listado inicial de servicios.
+    var checkboxes = [
+        '#checkbox_servicio_dto',
+        '#checkbox_servicio_adicion_dx',
+        '#checkbox_servicio_pronunciamiento',
+        '#checkbox_servicio_calificacion_tecnica',
+        '#checkbox_servicio_recalificacion',
+        '#checkbox_servicio_revision_pension',
+        '#checkbox_servicio_pronunciamiento_pcl',
+        '#checkbox_servicio_controversia_origen',
+        '#checkbox_servicio_controversia_pcl'
+    ];
+
+    checkboxes.forEach(function(checkbox) {
+        var $checkbox = $(checkbox);
+        var valor_servicio = $checkbox.val();
+
+        if ($checkbox.is(':checked')) {
+            if (listado_ids_servicios_seleccionados.indexOf(valor_servicio) === -1) {
+                listado_ids_servicios_seleccionados.push(valor_servicio);
+            }
+        } else {
+            var index = listado_ids_servicios_seleccionados.indexOf(valor_servicio);
+            if (index !== -1) {
+                listado_ids_servicios_seleccionados.splice(index, 1);
+            }
+        }
+
+        let datos_servicios_seleccionados = {
+            '_token': token,
+            'parametro': "servicios_ans",
+            'servicios_seleccionados': listado_ids_servicios_seleccionados
+        };
+        
+        setTimeout(() => {
+            $.ajax({
+                type: 'POST',
+                url: $('#traer_datos_cliente').val(),
+                data: datos_servicios_seleccionados,
+                success: function(servicios_cliente) {
+                    
+                    $('#servicio_contratado_ans_' + num_consecutivo).empty();
+                    $('#servicio_contratado_ans_'+num_consecutivo).append('<option value="" selected>Seleccione</option>');
+                    let claves = Object.keys(servicios_cliente);
+                    for (let i = 0; i < claves.length; i++) {
+                        if (servicios_cliente[claves[i]]["Id_Servicio"] == 3) {
+                            servicios_cliente[claves[i]]["Nombre_servicio"] = "Pronunciamiento Origen";
+                        }
+        
+                        if (servicios_cliente[claves[i]]["Id_Servicio"] == 9) {
+                            servicios_cliente[claves[i]]["Nombre_servicio"] = "Pronunciamiento PCL";
+                        }
+        
+                        $('#servicio_contratado_ans_' + num_consecutivo).append(
+                            '<option value="' + servicios_cliente[claves[i]]["Id_Servicio"] + '">' + servicios_cliente[claves[i]]["Nombre_servicio"] + '</option>'
+                        );
+                    }
+                }
+            });
+        }, 2000);
+    });
+}
+
+/* Función para cuando se hace click en cada checkbox de servicio para marcar o desmarcar y así saber que servicio se van mostrar. para insertar nuevos ANS */
+function ServiciosCheckbox(checkbox, listado_ids_servicios_seleccionados, token) {
+    var valor_servicio = $(checkbox).val();
+    
+    if ($(checkbox).is(':checked')) {
+        if (listado_ids_servicios_seleccionados.indexOf(valor_servicio) === -1) {
+            listado_ids_servicios_seleccionados.push(valor_servicio);
+        }
+    } else {
+        var index = listado_ids_servicios_seleccionados.indexOf(valor_servicio);
+        if (index !== -1) {
+            listado_ids_servicios_seleccionados.splice(index, 1);
+        }
+    }
+
+    let datos_servicios_seleccionados = {
+        '_token': token,
+        'parametro': "servicios_ans",
+        'servicios_seleccionados': listado_ids_servicios_seleccionados
+    };
+
+    $.ajax({
+        type: 'POST',
+        url: $('#traer_datos_cliente').val(),
+        data: datos_servicios_seleccionados,
+        success: function(servicios_cliente) {
+            
+            $('select[id^="servicio_contratado_ans_"]').each(function() {
+                var select_id = $(this).attr('id');
+                
+                // Guardamos el valor seleccionado antes de vaciar el select
+                var valor_seleccionado = $(this).val();
+
+                // Vaciamos y llenamos el select con los nuevos valores
+                $('#' + select_id).empty();
+                $('#' + select_id).append('<option value="" selected>Seleccione</option>');
+                
+                let claves = Object.keys(servicios_cliente);
+                for (let i = 0; i < claves.length; i++) {
+                    if (servicios_cliente[claves[i]]["Id_Servicio"] == 3) {
+                        servicios_cliente[claves[i]]["Nombre_servicio"] = "Pronunciamiento Origen";
+                    }
+    
+                    if (servicios_cliente[claves[i]]["Id_Servicio"] == 9) {
+                        servicios_cliente[claves[i]]["Nombre_servicio"] = "Pronunciamiento PCL";
+                    }
+    
+                    $('#' + select_id).append(
+                        '<option value="' + servicios_cliente[claves[i]]["Id_Servicio"] + '">' + servicios_cliente[claves[i]]["Nombre_servicio"] + '</option>'
+                    );
+                }
+
+                // Restauramos el valor seleccionado si sigue existiendo en las nuevas opciones
+                if ($('#' + select_id + ' option[value="' + valor_seleccionado + '"]').length) {
+                    $('#' + select_id).val(valor_seleccionado);
+                }
+            });
+        }
+    });
+}
+
+/* Función para el cargue del listado de los servicios contratados que tiene el cliente (marcados en la tabla de servicios contratados) para editar ANS */
+function ed_llenar_listado_servicios(listado_ids_servicios_seleccionados, token, id_ans_seleccionado, id_servicio_seleccionado){
+
+    // Cuando se carga la página se hace un análisis de cuales checkbox están marcados para cargar un listado inicial de servicios.
+    var checkboxes = [
+        '#checkbox_servicio_dto',
+        '#checkbox_servicio_adicion_dx',
+        '#checkbox_servicio_pronunciamiento',
+        '#checkbox_servicio_calificacion_tecnica',
+        '#checkbox_servicio_recalificacion',
+        '#checkbox_servicio_revision_pension',
+        '#checkbox_servicio_pronunciamiento_pcl',
+        '#checkbox_servicio_controversia_origen',
+        '#checkbox_servicio_controversia_pcl'
+    ];
+
+    checkboxes.forEach(function(checkbox) {
+        var $checkbox = $(checkbox);
+        var valor_servicio = $checkbox.val();
+
+        if ($checkbox.is(':checked')) {
+            if (listado_ids_servicios_seleccionados.indexOf(valor_servicio) === -1) {
+                listado_ids_servicios_seleccionados.push(valor_servicio);
+            }
+        } else {
+            var index = listado_ids_servicios_seleccionados.indexOf(valor_servicio);
+            if (index !== -1) {
+                listado_ids_servicios_seleccionados.splice(index, 1);
+            }
+        }
+
+        let datos_servicios_seleccionados = {
+            '_token': token,
+            'parametro': "servicios_ans",
+            'servicios_seleccionados': listado_ids_servicios_seleccionados
+        };
+        
+        // setTimeout(() => {
+        // }, 2000);
+        $.ajax({
+            type: 'POST',
+            url: $('#traer_datos_cliente').val(),
+            data: datos_servicios_seleccionados,
+            success: function(servicios_cliente) {
+                
+                $('#edicion_servicio_contratado_ans_' + id_ans_seleccionado).empty();
+                $('#edicion_servicio_contratado_ans_'+id_ans_seleccionado).append('<option value="" selected>Seleccione</option>');
+                let claves = Object.keys(servicios_cliente);
+                for (let i = 0; i < claves.length; i++) {
+                    if (servicios_cliente[claves[i]]["Id_Servicio"] == 3) {
+                        servicios_cliente[claves[i]]["Nombre_servicio"] = "Pronunciamiento Origen";
+                    }
+    
+                    if (servicios_cliente[claves[i]]["Id_Servicio"] == 9) {
+                        servicios_cliente[claves[i]]["Nombre_servicio"] = "Pronunciamiento PCL";
+                    }
+    
+                    if (servicios_cliente[claves[i]]["Id_Servicio"] == id_servicio_seleccionado) {
+                        $('#edicion_servicio_contratado_ans_' + id_ans_seleccionado).append(
+                            '<option value="' + servicios_cliente[claves[i]]["Id_Servicio"] + '" selected>' + servicios_cliente[claves[i]]["Nombre_servicio"] + '</option>'
+                        );
+                    } else {
+                        $('#edicion_servicio_contratado_ans_' + id_ans_seleccionado).append(
+                            '<option value="' + servicios_cliente[claves[i]]["Id_Servicio"] + '">' + servicios_cliente[claves[i]]["Nombre_servicio"] + '</option>'
+                        );
+                    }
+                }
+            }
+        });
+    });
+}
+
+/* Función para cuando se hace click en cada checkbox de servicio para marcar o desmarcar y así saber que servicio se van mostrar. para editar ANS */
+function edServiciosCheckbox(checkbox, listado_ids_servicios_seleccionados, token) {
+    var valor_servicio = $(checkbox).val();
+    
+    if ($(checkbox).is(':checked')) {
+        if (listado_ids_servicios_seleccionados.indexOf(valor_servicio) === -1) {
+            listado_ids_servicios_seleccionados.push(valor_servicio);
+        }
+    } else {
+        var index = listado_ids_servicios_seleccionados.indexOf(valor_servicio);
+        if (index !== -1) {
+            listado_ids_servicios_seleccionados.splice(index, 1);
+        }
+    }
+
+    let datos_servicios_seleccionados = {
+        '_token': token,
+        'parametro': "servicios_ans",
+        'servicios_seleccionados': listado_ids_servicios_seleccionados
+    };
+
+    $.ajax({
+        type: 'POST',
+        url: $('#traer_datos_cliente').val(),
+        data: datos_servicios_seleccionados,
+        success: function(servicios_cliente) {
+            
+            $('select[id^="edicion_servicio_contratado_ans_"]').each(function() {
+                var select_id = $(this).attr('id');
+                
+                // Guardamos el valor seleccionado antes de vaciar el select
+                var valor_seleccionado = $(this).val();
+
+                // Vaciamos y llenamos el select con los nuevos valores
+                $('#' + select_id).empty();
+                $('#' + select_id).append('<option value="" selected>Seleccione</option>');
+                
+                let claves = Object.keys(servicios_cliente);
+                for (let i = 0; i < claves.length; i++) {
+                    if (servicios_cliente[claves[i]]["Id_Servicio"] == 3) {
+                        servicios_cliente[claves[i]]["Nombre_servicio"] = "Pronunciamiento Origen";
+                    }
+    
+                    if (servicios_cliente[claves[i]]["Id_Servicio"] == 9) {
+                        servicios_cliente[claves[i]]["Nombre_servicio"] = "Pronunciamiento PCL";
+                    }
+    
+                    $('#' + select_id).append(
+                        '<option value="' + servicios_cliente[claves[i]]["Id_Servicio"] + '">' + servicios_cliente[claves[i]]["Nombre_servicio"] + '</option>'
+                    );
+                }
+
+                // Restauramos el valor seleccionado si sigue existiendo en las nuevas opciones
+                if ($('#' + select_id + ' option[value="' + valor_seleccionado + '"]').length) {
+                    $('#' + select_id).val(valor_seleccionado);
+                }
+            });
+        }
+    });
 }

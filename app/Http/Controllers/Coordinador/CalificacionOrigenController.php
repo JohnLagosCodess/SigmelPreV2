@@ -37,6 +37,10 @@ use App\Models\sigmel_registro_documentos_eventos;
 use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
 
+/* ANS */
+use App\Models\sigmel_informacion_ans_clientes;
+use App\Models\sigmel_informacion_alertas_ans_eventos;
+
 use DateTime;
 
 class CalificacionOrigenController extends Controller
@@ -527,6 +531,118 @@ class CalificacionOrigenController extends Controller
             }   
             sleep(2);
 
+            /*  Consultamos si el servicio y acción tiene un ANS configurado y en caso de ser así
+                extraemos el valor de ans, el porcentaje de alerta naranja, el porcentaje de alerta roja, id de ans, su parte entera y su parte decimal.
+                El ans debe estar activo (parametro 365)
+            */
+
+            // Consultamos si con el servicio y acción tiene un ANS configurado
+            $array_tiene_ans = sigmel_informacion_ans_clientes::on('sigmel_gestiones')
+            ->select('Valor', 'Porcentaje_Alerta_Naranja', 'Porcentaje_Alerta_Roja', 'Id_ans')
+            ->where([
+                ['Servicio', $Id_servicio],
+                ['Accion', $Accion_realizar],
+                ['Estado', '=', 366]
+            ])
+            ->get();
+
+            /* En caso de que tenga un ANS se realiza el correspondiente análisis */
+            if (count($array_tiene_ans) > 0) {
+
+                $id_ans = $array_tiene_ans[0]->Id_ans;
+                $valor_ans = $array_tiene_ans[0]->Valor;
+                $parte_entera_ans = floor($valor_ans);
+                $parte_decimal_ans = $valor_ans - $parte_entera_ans;
+
+                // Caso 1: La acción a ejecutar tiene un ANS parametrizado y además se selecciona una Nueva Fecha de Radicación
+                // Caso 2: La acción a ejecutar tiene un ANS parametrizado pero no se selecciona una Nueva Fecha de Radicación.
+
+                switch (true) {
+                    case (!empty($id_ans) && $Nueva_fecha_radicacion <> ""):
+                        /*  Enviamos la nueva fecha de radicacion, la parte entera y parte decimal del ans a un 
+                            procedimiento almacenado para realizar el calculo de la fecha de vencimiento
+                        */
+                        $array_fecha_vencimiento = DB::select('CALL psrFechaVencimientoEventos(?,?,?)', array($Nueva_fecha_radicacion, $parte_entera_ans, $parte_decimal_ans));
+
+                        $fecha_vencimiento = $array_fecha_vencimiento[0]->fecha_vencimiento;
+
+                        /*  Enviamos la nueva fecha de radicacion, el porcentaje de alerta naranja, 
+                            el porcentaje de alerta roja, el valor del ans a un procedimiento almacenado
+                            para calcular el tiempo de alertas naranja y roja y obtener así las fechas de
+                            alertas naranja y roja
+                        */
+
+                        $porcentaje_alerta_naranja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Naranja;
+                        $porcentaje_alerta_roja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Roja;
+
+                        $array_datos_alertas_ans = DB::select('CALL psrFechasAlertaAnsEventos(?,?,?,?)', array($Nueva_fecha_radicacion, $valor_ans, $porcentaje_alerta_naranja_ans, $porcentaje_alerta_roja_ans));
+
+                        $fecha_alerta_naranja_ans = $array_datos_alertas_ans[0]->fecha_alerta_naranja_ans;
+                        $fecha_alerta_roja_ans = $array_datos_alertas_ans[0]->fecha_alerta_roja_ans;
+
+                        // Actualizamos las fechas de alerta en la tabla sigmel_informacion_alertas_ans_eventos
+                        $datos_actualizar_alertas_ans = [
+                            'Id_ans' => $id_ans,
+                            'Fecha_alerta_naranja' => $fecha_alerta_naranja_ans,
+                            'Fecha_alerta_roja' => $fecha_alerta_roja_ans,
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date
+                        ];
+
+                        sigmel_informacion_alertas_ans_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento', $newIdEvento],
+                            ['Id_Asignacion', $newIdAsignacion]
+                        ])->update($datos_actualizar_alertas_ans);
+
+                    break; 
+                    case (!empty($id_ans) && empty($Nueva_fecha_radicacion)):
+                        /*  Enviamos la fecha de radicacion actual del formulario, la parte entera y parte decimal del ans a un 
+                            procedimiento almacenado para realizar el calculo de la fecha de vencimiento
+                        */
+                        $array_fecha_vencimiento = DB::select('CALL psrFechaVencimientoEventos(?,?,?)', array($request->fecha_radicacion_actual, $parte_entera_ans, $parte_decimal_ans));
+                        $fecha_vencimiento = $array_fecha_vencimiento[0]->fecha_vencimiento;
+
+                        /*  Enviamos la fecha de radicacion actual, el porcentaje de alerta naranja, 
+                            el porcentaje de alerta roja, el valor del ans a un procedimiento almacenado
+                            para calcular el tiempo de alertas naranja y roja y obtener así las fechas de
+                            alertas naranja y roja
+                        */
+
+                        $porcentaje_alerta_naranja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Naranja;
+                        $porcentaje_alerta_roja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Roja;
+
+                        $array_datos_alertas_ans = DB::select('CALL psrFechasAlertaAnsEventos(?,?,?,?)', array($request->fecha_radicacion_actual, $valor_ans, $porcentaje_alerta_naranja_ans, $porcentaje_alerta_roja_ans));
+
+                        $fecha_alerta_naranja_ans = $array_datos_alertas_ans[0]->fecha_alerta_naranja_ans;
+                        $fecha_alerta_roja_ans = $array_datos_alertas_ans[0]->fecha_alerta_roja_ans;
+
+                        // Actualizamos las fechas de alerta en la tabla sigmel_informacion_alertas_ans_eventos
+                        $datos_actualizar_alertas_ans = [
+                            'Id_ans' => $id_ans,
+                            'Fecha_alerta_naranja' => $fecha_alerta_naranja_ans,
+                            'Fecha_alerta_roja' => $fecha_alerta_roja_ans,
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date
+                        ];
+
+                        sigmel_informacion_alertas_ans_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento', $newIdEvento],
+                            ['Id_Asignacion', $newIdAsignacion]
+                        ])->update($datos_actualizar_alertas_ans);
+
+                    break;
+                    default:
+                        # code...
+                    break;
+                }
+
+            }else{
+                // Caso 3: La acción a ejecutar no tiene un ANS parametrizado la fecha de vencimiento será la misma.
+                $fecha_vencimiento = $request->fecha_vencimiento_actual;
+            }
+
             // Actualizar la tabla sigmel_informacion_asignacion_eventos
             $datos_info_actualizarAsignacionEvento= [    
                 'Id_accion' => $request->accion,
@@ -536,6 +652,8 @@ class CalificacionOrigenController extends Controller
                 'Id_profesional' => $id_profesional,
                 'Nombre_profesional' => $asignacion_profesional,
                 'Nueva_F_radicacion' => $Nueva_fecha_radicacion,
+                'Tiempo_gestion' => $request->tiempo_gestion,
+                'Fecha_vencimiento' => $fecha_vencimiento,
                 'N_de_orden' =>  $N_orden_evento,
                 'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
                 'Nombre_usuario' => $nombre_usuario,
@@ -1123,6 +1241,121 @@ class CalificacionOrigenController extends Controller
             
             sleep(2);
 
+            /*  Consultamos si el servicio y acción tiene un ANS configurado y en caso de ser así
+                extraemos el valor de ans, el porcentaje de alerta naranja, el porcentaje de alerta roja, id de ans, su parte entera y su parte decimal.
+                El ans debe estar activo (parametro 365)
+            */
+
+            // Consultamos si con el servicio y acción tiene un ANS configurado
+            $array_tiene_ans = sigmel_informacion_ans_clientes::on('sigmel_gestiones')
+            ->select('Valor', 'Porcentaje_Alerta_Naranja', 'Porcentaje_Alerta_Roja', 'Id_ans')
+            ->where([
+                ['Servicio', $Id_servicio],
+                ['Accion', $Accion_realizar],
+                ['Estado', '=', 366]
+            ])
+            ->get();
+
+            /* En caso de que tenga un ANS se realiza el correspondiente análisis */
+            if (count($array_tiene_ans) > 0) {
+
+                $id_ans = $array_tiene_ans[0]->Id_ans;
+                $valor_ans = $array_tiene_ans[0]->Valor;
+                $parte_entera_ans = floor($valor_ans);
+                $parte_decimal_ans = $valor_ans - $parte_entera_ans;
+
+                // Caso 1: La acción a ejecutar tiene un ANS parametrizado y además se selecciona una Nueva Fecha de Radicación
+                // Caso 2: La acción a ejecutar tiene un ANS parametrizado pero no se selecciona una Nueva Fecha de Radicación.
+
+                switch (true) {
+                    case (!empty($id_ans) && $Nueva_fecha_radicacion <> ""):
+
+                        /*  Enviamos la nueva fecha de radicacion, la parte entera y parte decimal del ans a un 
+                            procedimiento almacenado para realizar el calculo de la fecha de vencimiento
+                        */
+                        $array_fecha_vencimiento = DB::select('CALL psrFechaVencimientoEventos(?,?,?)', array($Nueva_fecha_radicacion, $parte_entera_ans, $parte_decimal_ans));
+
+                        $fecha_vencimiento = $array_fecha_vencimiento[0]->fecha_vencimiento;
+
+                        /*  Enviamos la nueva fecha de radicacion, el porcentaje de alerta naranja, 
+                            el porcentaje de alerta roja, el valor del ans a un procedimiento almacenado
+                            para calcular el tiempo de alertas naranja y roja y obtener así las fechas de
+                            alertas naranja y roja
+                        */
+
+                        $porcentaje_alerta_naranja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Naranja;
+                        $porcentaje_alerta_roja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Roja;
+
+                        $array_datos_alertas_ans = DB::select('CALL psrFechasAlertaAnsEventos(?,?,?,?)', array($Nueva_fecha_radicacion, $valor_ans, $porcentaje_alerta_naranja_ans, $porcentaje_alerta_roja_ans));
+
+                        $fecha_alerta_naranja_ans = $array_datos_alertas_ans[0]->fecha_alerta_naranja_ans;
+                        $fecha_alerta_roja_ans = $array_datos_alertas_ans[0]->fecha_alerta_roja_ans;
+
+                        // Actualizamos las fechas de alerta en la tabla sigmel_informacion_alertas_ans_eventos
+                        $datos_actualizar_alertas_ans = [
+                            'Id_ans' => $id_ans,
+                            'Fecha_alerta_naranja' => $fecha_alerta_naranja_ans,
+                            'Fecha_alerta_roja' => $fecha_alerta_roja_ans,
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date
+                        ];
+
+                        sigmel_informacion_alertas_ans_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento', $newIdEvento],
+                            ['Id_Asignacion', $newIdAsignacion]
+                        ])->update($datos_actualizar_alertas_ans);
+
+                    break; 
+                    case (!empty($id_ans) && empty($Nueva_fecha_radicacion)):
+
+                        /*  Enviamos la fecha de radicacion actual del formulario, la parte entera y parte decimal del ans a un 
+                            procedimiento almacenado para realizar el calculo de la fecha de vencimiento
+                        */
+                        $array_fecha_vencimiento = DB::select('CALL psrFechaVencimientoEventos(?,?,?)', array($request->fecha_radicacion_actual, $parte_entera_ans, $parte_decimal_ans));
+
+                        $fecha_vencimiento = $array_fecha_vencimiento[0]->fecha_vencimiento;
+
+                        /*  Enviamos la fecha de radicacion actual, el porcentaje de alerta naranja, 
+                            el porcentaje de alerta roja, el valor del ans a un procedimiento almacenado
+                            para calcular el tiempo de alertas naranja y roja y obtener así las fechas de
+                            alertas naranja y roja
+                        */
+
+                        $porcentaje_alerta_naranja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Naranja;
+                        $porcentaje_alerta_roja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Roja;
+
+                        $array_datos_alertas_ans = DB::select('CALL psrFechasAlertaAnsEventos(?,?,?,?)', array($request->fecha_radicacion_actual, $valor_ans, $porcentaje_alerta_naranja_ans, $porcentaje_alerta_roja_ans));
+
+                        $fecha_alerta_naranja_ans = $array_datos_alertas_ans[0]->fecha_alerta_naranja_ans;
+                        $fecha_alerta_roja_ans = $array_datos_alertas_ans[0]->fecha_alerta_roja_ans;
+
+                        // Actualizamos las fechas de alerta en la tabla sigmel_informacion_alertas_ans_eventos
+                        $datos_actualizar_alertas_ans = [
+                            'Id_ans' => $id_ans,
+                            'Fecha_alerta_naranja' => $fecha_alerta_naranja_ans,
+                            'Fecha_alerta_roja' => $fecha_alerta_roja_ans,
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date
+                        ];
+
+                        sigmel_informacion_alertas_ans_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento', $newIdEvento],
+                            ['Id_Asignacion', $newIdAsignacion]
+                        ])->update($datos_actualizar_alertas_ans);
+
+                    break;
+                    default:
+                        # code...
+                    break;
+                }
+
+            }else{
+                // Caso 3: La acción a ejecutar no tiene un ANS parametrizado la fecha de vencimiento será la misma.
+                $fecha_vencimiento = $request->fecha_vencimiento_actual;
+            }
+
             // Actualizacion tabla sigmel_informacion_asignacion_eventos
             $datos_info_actualizarAsignacionEvento= [    
                 'Id_accion' => $request->accion,
@@ -1131,7 +1364,9 @@ class CalificacionOrigenController extends Controller
                 'F_accion' => $date_time,
                 'Id_profesional' => $id_profesional,
                 'Nombre_profesional' => $asignacion_profesional,   
-                'Nueva_F_radicacion' => $Nueva_fecha_radicacion,   
+                'Nueva_F_radicacion' => $Nueva_fecha_radicacion,
+                'Tiempo_gestion' => $request->tiempo_gestion,
+                'Fecha_vencimiento' => $fecha_vencimiento,
                 'N_de_orden' =>  $N_orden_evento,
                 'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',  
                 'Nombre_usuario' => $nombre_usuario,

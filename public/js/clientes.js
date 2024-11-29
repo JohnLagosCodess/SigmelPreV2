@@ -597,26 +597,26 @@ $(document).ready(function(){
             }
         });
 
-        // Creación de array con los datos de la tabla dinámica ANS
-        var guardar_datos_ans = [];
-        var datos_finales_ans = [];
+        // // Creación de array con los datos de la tabla dinámica ANS
+        // var guardar_datos_ans = [];
+        // var datos_finales_ans = [];
 
-        // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO 
-        // (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
-        $('#ans tbody tr').each(function (index) {
-            // if ($(this).attr('id') !== "datos_examenes_interconsulta") {
-                $(this).children("td").each(function (index2) {
-                    var nombres_ids = $(this).find('*').attr("id");
-                    if (nombres_ids != undefined) {
-                        guardar_datos_ans.push($('#'+nombres_ids).val());                        
-                    }
-                    if((index2+1) % 4 === 0){
-                        datos_finales_ans.push(guardar_datos_ans);
-                        guardar_datos_ans = [];
-                    }
-                });
-            // }
-        });
+        // // RECORREMOS LOS TD DE LA TABLA PARA EXTRAER LOS DATOS E INSERTARLOS EN UN ARREGLO 
+        // // (LA INSERCIÓN LA HACE POR CADA FILA, POR ENDE, ES UN ARRAY MULTIDIMENSIONAL)
+        // $('#ans tbody tr').each(function (index) {
+        //     // if ($(this).attr('id') !== "datos_examenes_interconsulta") {
+        //         $(this).children("td").each(function (index2) {
+        //             var nombres_ids = $(this).find('*').attr("id");
+        //             if (nombres_ids != undefined) {
+        //                 guardar_datos_ans.push($('#'+nombres_ids).val());                        
+        //             }
+        //             if((index2+1) % 4 === 0){
+        //                 datos_finales_ans.push(guardar_datos_ans);
+        //                 guardar_datos_ans = [];
+        //             }
+        //         });
+        //     // }
+        // });
         
 
         // Creación de arrays con los datos de la firma cliente
@@ -712,7 +712,8 @@ $(document).ready(function(){
             'Fecha_creacion': $("#fecha_creacion").val(),
             'Sucursales': datos_finales_sucursales,
             'Servicios_contratados': array_servicios_contratados,
-            'ANS': datos_finales_ans,
+            // 'ANS': datos_finales_ans,
+            'ANS': '',
             'Logo': $("#img_codificada").val(),
             'Extension_logo': $("#nombre_ext_imagen").val(),
             'Footer': $("#footer_codificado").val(),
@@ -874,7 +875,7 @@ function funciones_elementos_fila_sucursales(num_consecutivo){
 /* Función para añadir los controles de cada elemento de cada fila en la tabla ans */
 function funciones_elementos_fila_ans(num_consecutivo){
 
-    // SELECT 2 DEPARTAMENTOS
+    // SELECT 2 UNIDAD ANS
     $(".unidad_ans_"+num_consecutivo).select2({
         width: '140px',
         placeholder: "Seleccione",

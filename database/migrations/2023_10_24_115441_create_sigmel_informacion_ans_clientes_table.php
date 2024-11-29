@@ -15,10 +15,13 @@ return new class extends Migration
             $table->increments('Id_ans');
             $table->integer('Id_cliente')->nullable();
             $table->text('Nombre')->nullable();
-            $table->text('Descripcion')->nullable();
+            $table->integer('Servicio')->nullable();
+            $table->integer('Accion')->nullable();
             $table->text('Valor')->nullable();
             $table->integer('Unidad')->nullable();
-            $table->enum('Estado', ['Activo', 'Inactivo'])->default('Activo')->nullable();
+            $table->text('Porcentaje_Alerta_Naranja')->nullable();
+            $table->text('Porcentaje_Alerta_Roja')->nullable();
+            $table->integer('Estado')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

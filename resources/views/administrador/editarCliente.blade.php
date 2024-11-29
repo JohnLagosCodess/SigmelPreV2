@@ -309,7 +309,7 @@
                             </div>
                         </div>
                         
-                        {{-- SERVICIOS CONTRATADOS Y ANS --}}
+                        {{-- SERVICIOS CONTRATADOS --}}
                         <div class="card-info">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Servicios Contratados</h5>
@@ -425,7 +425,15 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
+                        </div>
 
+                        {{-- ANS --}}
+                        <div class="card-info">
+                            <div class="card-header text-center" style="border: 1.5px solid black;">
+                                <h5>Control de ANS</h5>
+                            </div>
+                            <div class="card-body">
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="alert alert-warning" role="alert">
@@ -433,23 +441,29 @@
                                             que diligencie en su totalidad los campos.
                                         </div>
                                         <div class="alert d-none" id="resultado_ans" role="alert"></div>
+                                        <div class="alert d-none" id="no_hay_servicio_ans" role="alert"></div>
                                         <div class="table-responsive">
                                             <table id="ans" class="table table-striped table-bordered" width="100%">
                                                 <thead>
                                                     <tr class="bg-info">
                                                         <th>Nombre ANS</th>
-                                                        <th>Descripción</th>
+                                                        <th>Servicio</th>
+                                                        <th>Acción inicio</th>
                                                         <th>Valor</th>
                                                         <th>Unidad</th>
+                                                        <th>% Alerta Naranja</th>
+                                                        <th>% Alerta Roja</th>
+                                                        <th>Estado</th>
                                                         <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_ans_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                     </tr>
                                                 </thead>
-                                                <tbody id="borrar_tabla_ans"></tbody>
+                                                <tbody id="borrar_tabla_ans">
+                                                    
+                                                </tbody>
                                             </table>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
 

@@ -204,9 +204,14 @@ function procesar_accion(id,procesos){
 
             for (let i = 0; i < data.length; i++) {
 
-                let dataTMP = crearHipervinculos(data[i],alertasNaranjaMap,procesos,false);
-                data[i] = dataTMP.datos;
-                cellCss.push(dataTMP.estilos);
+                // let dataTMP = crearHipervinculos(data[i],alertasNaranjaMap,procesos,false);
+                // data[i] = dataTMP.datos;
+                // cellCss.push(dataTMP.estilos);
+
+                crearHipervinculos(data[i], alertasNaranjaMap, procesos, true, function(result) {
+                    data[i] = result.datos;
+                    cellCss.push(result.estilos);
+                });
             }
 
             capturar_informacion_bandejaNotifi(data,cellCss)
@@ -259,9 +264,14 @@ function sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token) {
 
                 for (let i = 0; i < data.length; i++) {
 
-                    let dataTMP = crearHipervinculos(data[i],alertasNaranjaMap,procesos);
-                    data[i] = dataTMP.datos;
-                    cellCss.push(dataTMP.estilos);
+                    // let dataTMP = crearHipervinculos(data[i],alertasNaranjaMap,procesos);
+                    // data[i] = dataTMP.datos;
+                    // cellCss.push(dataTMP.estilos);
+
+                    crearHipervinculos(data[i], alertasNaranjaMap, procesos, true, function(result) {
+                        data[i] = result.datos;
+                        cellCss.push(result.estilos);
+                    });
                 }
 
                 capturar_informacion_bandejaNotifi(data,cellCss)
@@ -280,17 +290,85 @@ function sinfiltrosBandejaNotifi(datos_sin_filtro,procesos,token) {
     });
 }
 
-function crearHipervinculos(data,alertasNaranjaMap,procesos,deshabilitar_check = true){
+// function crearHipervinculos(data,alertasNaranjaMap,procesos,deshabilitar_check = true){
+//     let check = 'disabled';
+
+//     if(!deshabilitar_check){
+//         check = '';
+//         $(".principal").prop('disabled',false);
+//     }
+//     let cellCss = {};
+//     if (data['Id_Asignacion'] != '') {
+//         let token = $('input[name=_token]').val();
+//         //Seteamos los datos y construimos el formulario para cada fila en funcion del proceso actual.
+//         let action = procesos[data['Nombre_proceso_actual']]().url;
+//         let idInput = procesos[data['Nombre_proceso_actual']]().id + data["Id_Asignacion"];
+//         let nombreInput = procesos[data['Nombre_proceso_actual']]().Nombre;
+
+//         data['moduloNotifi'] = `<form action="${action}" method="POST">
+//                                 <input type="hidden" name="_token" value="${token}">
+//                                 <input type="checkbox" name="procesar_accion" id="enviar_accion" ${check}>
+//                                 <input class="btn btn-sm text-info"  id=${idInput} value="Modulo ${nombreInput}" type="submit" style="font-weight: bold; padding-left: inherit;">
+//                                 <input type="hidden" name="bd_notificacion" value="true">
+//                                 <input type="hidden" name="newIdAsignacion" value="${data["Id_Asignacion"]}">
+//                                 <input type="hidden" name="newIdEvento" id="newIdEvento" value="${data["ID_evento"]}">
+//                                 <input type="hidden" name="Id_Servicio" id="Id_Servicio" value="${data["Id_Servicio"]}">
+//                                 <input type="hidden" name="Id_proceso" id="Id_proceso" value="${data["Id_proceso"]}">
+//                             </form>`;
+
+//         if (alertasNaranjaMap.has(data['Id_Asignacion'])) {
+//             let alertaFechas = alertasNaranjaMap.get(data['Id_Asignacion']);
+//             let currentTime = new Date();
+
+//             // Verificar alerta naranja
+//             if (alertaFechas.naranja) {
+                
+//                 let alertaFechaNaranja = new Date(alertaFechas.naranja);
+//                 // let diferenciaNaranja = Math.abs(currentTime - alertaFechaNaranja);
+
+//                 if (currentTime >= alertaFechaNaranja) {  
+//                     cellCss = {
+//                         color: 'orange',
+//                         evento: data["ID_evento"],
+//                         id_aignacion: data['Id_Asignacion']
+//                     };
+//                 }
+//             }
+
+//             // Verificar alerta roja
+//             if (alertaFechas.roja) {
+//                 let alertaFechaRoja = new Date(alertaFechas.roja);
+//                 // let diferenciaRoja = Math.abs(currentTime - alertaFechaRoja);
+//                 if (currentTime >= alertaFechaRoja) { 
+//                     cellCss = {
+//                         color: 'red',
+//                         evento: data["ID_evento"],
+//                         id_aignacion: data['Id_Asignacion']
+//                     };
+//                 }
+//             }
+//         }
+//     } else {
+//         data['moduloNotifi'] = "";
+//     }
+
+//     return {
+//         "datos": data,
+//         "estilos": cellCss
+//     };
+// }
+
+function crearHipervinculos(data, alertasNaranjaMap, procesos, deshabilitar_check = true, callback) {
     let check = 'disabled';
 
-    if(!deshabilitar_check){
+    if (!deshabilitar_check) {
         check = '';
-        $(".principal").prop('disabled',false);
+        $(".principal").prop('disabled', false);
     }
     let cellCss = {};
+
     if (data['Id_Asignacion'] != '') {
         let token = $('input[name=_token]').val();
-        //Seteamos los datos y construimos el formulario para cada fila en funcion del proceso actual.
         let action = procesos[data['Nombre_proceso_actual']]().url;
         let idInput = procesos[data['Nombre_proceso_actual']]().id + data["Id_Asignacion"];
         let nombreInput = procesos[data['Nombre_proceso_actual']]().Nombre;
@@ -298,7 +376,7 @@ function crearHipervinculos(data,alertasNaranjaMap,procesos,deshabilitar_check =
         data['moduloNotifi'] = `<form action="${action}" method="POST">
                                 <input type="hidden" name="_token" value="${token}">
                                 <input type="checkbox" name="procesar_accion" id="enviar_accion" ${check}>
-                                <input class="btn btn-sm text-info"  id=${idInput} value="Modulo ${nombreInput}" type="submit" style="font-weight: bold; padding-left: inherit;">
+                                <input class="btn btn-sm text-info" id=${idInput} value="Modulo ${nombreInput}" type="submit" style="font-weight: bold; padding-left: inherit;">
                                 <input type="hidden" name="bd_notificacion" value="true">
                                 <input type="hidden" name="newIdAsignacion" value="${data["Id_Asignacion"]}">
                                 <input type="hidden" name="newIdEvento" id="newIdEvento" value="${data["ID_evento"]}">
@@ -306,46 +384,81 @@ function crearHipervinculos(data,alertasNaranjaMap,procesos,deshabilitar_check =
                                 <input type="hidden" name="Id_proceso" id="Id_proceso" value="${data["Id_proceso"]}">
                             </form>`;
 
-        if (alertasNaranjaMap.has(data['Id_Asignacion'])) {
-            let alertaFechas = alertasNaranjaMap.get(data['Id_Asignacion']);
-            let currentTime = new Date();
+        let datos_ejecucion_ans = {
+            '_token': token,
+            'id_asignacion': data['Id_Asignacion']
+        };
 
-            // Verificar alerta naranja
-            if (alertaFechas.naranja) {
-                
-                let alertaFechaNaranja = new Date(alertaFechas.naranja);
-                // let diferenciaNaranja = Math.abs(currentTime - alertaFechaNaranja);
+        // Llamada AJAX con callback
+        $.ajax({
+            url: '/consultaANSejecutadoNotifi',
+            type: 'POST',
+            data: datos_ejecucion_ans,
+            success: function (response) {
+                let currentTime_ans = new Date();
 
-                if (currentTime >= alertaFechaNaranja) {  
-                    cellCss = {
-                        color: 'orange',
-                        evento: data["ID_evento"],
-                        id_aignacion: data['Id_Asignacion']
-                    };
+                if (response.length === 1) {
+                    if (response[0].Fecha_alerta_naranja > response[0].Fecha_alerta_roja) {
+                        if (response[0].Fecha_alerta_roja) {
+                            let alertaFechaRoja_ans = new Date(response[0].Fecha_alerta_roja);
+                            if (currentTime_ans >= alertaFechaRoja_ans) {
+                                cellCss = { color: 'red', evento: data["ID_evento"], id_aignacion: data['Id_Asignacion'] };
+                            }
+                        }
+                        if (response[0].Fecha_alerta_naranja) {
+                            let alertaFechaNaranja_ans = new Date(response[0].Fecha_alerta_naranja);
+                            if (currentTime_ans >= alertaFechaNaranja_ans) {
+                                cellCss = { color: 'orange', evento: data["ID_evento"], id_aignacion: data['Id_Asignacion'] };
+                            }
+                        }
+                    } else {
+                        if (response[0].Fecha_alerta_naranja) {
+                            let alertaFechaNaranja_ans = new Date(response[0].Fecha_alerta_naranja);
+                            if (currentTime_ans >= alertaFechaNaranja_ans) {
+                                cellCss = { color: 'orange', evento: data["ID_evento"], id_aignacion: data['Id_Asignacion'] };
+                            }
+                        }
+                        if (response[0].Fecha_alerta_roja) {
+                            let alertaFechaRoja_ans = new Date(response[0].Fecha_alerta_roja);
+                            if (currentTime_ans >= alertaFechaRoja_ans) {
+                                cellCss = { color: 'red', evento: data["ID_evento"], id_aignacion: data['Id_Asignacion'] };
+                            }
+                        }
+                    }
+                } else {
+                    if (alertasNaranjaMap.has(data['Id_Asignacion'])) {
+                        let alertaFechas = alertasNaranjaMap.get(data['Id_Asignacion']);
+                        let currentTime = new Date();
+                        if (alertaFechas.naranja) {
+                            let alertaFechaNaranja = new Date(alertaFechas.naranja);
+                            if (currentTime >= alertaFechaNaranja) {
+                                cellCss = { color: 'orange', evento: data["ID_evento"], id_aignacion: data['Id_Asignacion'] };
+                            }
+                        }
+                        if (alertaFechas.roja) {
+                            let alertaFechaRoja = new Date(alertaFechas.roja);
+                            if (currentTime >= alertaFechaRoja) {
+                                cellCss = { color: 'red', evento: data["ID_evento"], id_aignacion: data['Id_Asignacion'] };
+                            }
+                        }
+                    }
                 }
-            }
 
-            // Verificar alerta roja
-            if (alertaFechas.roja) {
-                let alertaFechaRoja = new Date(alertaFechas.roja);
-                // let diferenciaRoja = Math.abs(currentTime - alertaFechaRoja);
-                if (currentTime >= alertaFechaRoja) { 
-                    cellCss = {
-                        color: 'red',
-                        evento: data["ID_evento"],
-                        id_aignacion: data['Id_Asignacion']
-                    };
+                // Llamar al callback pasando cellCss y data como argumentos
+                if (typeof callback === "function") {
+                    callback({ datos: data, estilos: cellCss });
                 }
+            },
+            error: function (error) {
+                console.error("Error en la llamada AJAX:", error);
             }
-        }
+        });
     } else {
         data['moduloNotifi'] = "";
+        if (typeof callback === "function") {
+            callback({ datos: data, estilos: cellCss });
+        }
     }
-
-    return {
-        "datos": data,
-        "estilos": cellCss
-    };
 }
 
 function filtro_bandejaNotifi(procesos) {
@@ -442,39 +555,91 @@ function filtro_bandejaNotifi(procesos) {
                                                     </form>`;
                                 data[i]['moduloNotifi'] = enlaceModuloPrincipal;
 
-                                //Manejo de alertas
-                                if (alertasNaranjaMap.has(data[i]['Id_Asignacion'])) {
-                                    let alertaFechas = alertasNaranjaMap.get(data[i]['Id_Asignacion']);
-                                    let currentTime = new Date();
-                    
-                                    // Verificar alerta naranja
-                                    if (alertaFechas.naranja) {
-                                        let alertaFechaNaranja = new Date(alertaFechas.naranja);
-                                        // let diferenciaNaranja = Math.abs(currentTime - alertaFechaNaranja);
-                    
-                                        if (currentTime >= alertaFechaNaranja) {  
-                                            cellCss.push({
-                                                color: 'orange',
-                                                evento: data[i]["ID_evento"],
-                                                id_aignacion: data[i]['Id_Asignacion']
-                                            });
-                                        }
-                                    }
-                    
-                                    // Verificar alerta roja
-                                    if (alertaFechas.roja) {
-                                        let alertaFechaRoja = new Date(alertaFechas.roja);
-                                        // let diferenciaRoja = Math.abs(currentTime - alertaFechaRoja);
-                    
-                                        if (currentTime >= alertaFechaRoja) { 
-                                            cellCss.push({
-                                                color: 'red',
-                                                evento: data[i]["ID_evento"],
-                                                id_aignacion: data[i]['Id_Asignacion']
-                                            });
-                                        }
-                                    }
+                                /* 
+                                    Con el id de asignacion consultamos si ya se ha ejecutado un ANS, ya que este tendrá la prioridad
+                                    de coloreo naranja o rojo.
+                                */
+
+                                var datos_ejecucion_ans ={
+                                    '_token': $('meta[name="csrf-token"]').attr('content'),
+                                    'id_asignacion': data[i]['Id_Asignacion']
                                 }
+                                $.ajax({
+                                    url:'/consultaANSejecutadoNotifi',          
+                                    type:'POST',
+                                    data: datos_ejecucion_ans,
+                                    success: function (response) 
+                                    {
+                                        // si tiene un ANS ejecutado es porque ya trae info de la bd y el coloreado es en base a la fechas de alerta del ans
+                                        // En caso de que no, el coloreado es en base a la fechas de alerta de la paramétrica.
+                                        if (response.length == 1) {
+                                            let currentTime_ans = new Date();
+
+                                            if (response[0].Fecha_alerta_naranja > response[0].Fecha_alerta_roja) {
+                                                if (response[0].Fecha_alerta_roja) {
+                                                    let alertaFechaRoja_ans = new Date(response[0].Fecha_alerta_roja);
+                                                    if (currentTime_ans >= alertaFechaRoja_ans) {
+                                                        cellCss = { color: 'red', evento: data[i]["ID_evento"], id_aignacion: data[i]['Id_Asignacion'] };
+                                                    }
+                                                }
+                                                if (response[0].Fecha_alerta_naranja) {
+                                                    let alertaFechaNaranja_ans = new Date(response[0].Fecha_alerta_naranja);
+                                                    if (currentTime_ans >= alertaFechaNaranja_ans) {
+                                                        cellCss = { color: 'orange', evento: data[i]["ID_evento"], id_aignacion: data[i]['Id_Asignacion'] };
+                                                    }
+                                                }
+                                            } else {
+                                                if (response[0].Fecha_alerta_naranja) {
+                                                    let alertaFechaNaranja_ans = new Date(response[0].Fecha_alerta_naranja);
+                                                    if (currentTime_ans >= alertaFechaNaranja_ans) {
+                                                        cellCss = { color: 'orange', evento: data[i]["ID_evento"], id_aignacion: data[i]['Id_Asignacion'] };
+                                                    }
+                                                }
+                                                if (response[0].Fecha_alerta_roja) {
+                                                    let alertaFechaRoja_ans = new Date(response[0].Fecha_alerta_roja);
+                                                    if (currentTime_ans >= alertaFechaRoja_ans) {
+                                                        cellCss = { color: 'red', evento: data[i]["ID_evento"], id_aignacion: data[i]['Id_Asignacion'] };
+                                                    }
+                                                }
+                                            }
+                                        }else{
+                                            
+                                            if (alertasNaranjaMap.has(data[i]['Id_Asignacion'])) {
+                                                let alertaFechas = alertasNaranjaMap.get(data[i]['Id_Asignacion']);
+                                                let currentTime = new Date();
+                                
+                                                // Verificar alerta naranja
+                                                if (alertaFechas.naranja) {
+                                                    let alertaFechaNaranja = new Date(alertaFechas.naranja);
+                                                    // let diferenciaNaranja = Math.abs(currentTime - alertaFechaNaranja);
+                                
+                                                    if (currentTime >= alertaFechaNaranja) {  
+                                                        cellCss.push({
+                                                            color: 'orange',
+                                                            evento: data[i]["ID_evento"],
+                                                            id_aignacion: data[i]['Id_Asignacion']
+                                                        });
+                                                    }
+                                                }
+                                
+                                                // Verificar alerta roja
+                                                if (alertaFechas.roja) {
+                                                    let alertaFechaRoja = new Date(alertaFechas.roja);
+                                                    // let diferenciaRoja = Math.abs(currentTime - alertaFechaRoja);
+                                
+                                                    if (currentTime >= alertaFechaRoja) { 
+                                                        cellCss.push({
+                                                            color: 'red',
+                                                            evento: data[i]["ID_evento"],
+                                                            id_aignacion: data[i]['Id_Asignacion']
+                                                        });
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                                
                             }else {
                                 data[i]['moduloNotifi'] = "";
                             }
@@ -590,7 +755,7 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
             "destroy": true,
             "data": response,
             "pageLength": 20,
-            "order": [[5, 'desc']],
+            // "order": [[5, 'desc']],
             "columns": [
                 {"data": "moduloNotifi"},
                 { "data": "Nombre_Cliente" },
@@ -607,6 +772,8 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
                     return data.Nueva_F_radicacion != null ? data.Nueva_F_radicacion : data.F_radicacion;
                     }
                 },
+                { "data": "F_vencimiento" },
+                { "data": "F_alerta" },
                 { "data": "Tiempo_de_gestion" },
                 { "data": "Dias_transcurridos_desde_el_evento" },
                 { "data": "Empresa" },
@@ -634,7 +801,7 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
                     }
                 },
                 { "data": "Asignado_por" },
-                { "data": "F_alerta" },
+                
                 { "data": "Fecha_alerta" },
                 { "data": "F_asigna_notifi" },
                 { "data": "N_de_orden" },
