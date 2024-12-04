@@ -633,12 +633,17 @@
                                                     <input type="submit" id="guardar_datos_revision_jrci" class="btn btn-info" value="Guardar">
                                                     <input type="hidden" id="bandera_porfesional_pronunciamiento" value="Actualizar">                                                                                                        
                                                 @else
-                                                    <input type="submit" id="guardar_datos_revision_jrci" class="btn btn-info" value="Guardar">
+                                                    <input type="submit" id="guardar_datos_revision_jrci" class="btn btn-info" {{empty($arrayinfo_controvertido[0]->JrciNombre) ? 'disabled' : ''}} value="Guardar">
                                                     <input type="hidden" id="bandera_porfesional_pronunciamiento" value="Guardar">                                                    
                                                 @endif
                                             </div>
                                         </div>
                                         <div class="col-12">
+                                            @empty($arrayinfo_controvertido[0]->JrciNombre)
+                                            <div class="alerta_revision_jrci alert alert-danger mt-2 mr-auto" role="alert">
+                                                No ha selecionado un destinatario principal para la correspondencia, por favor seleccione uno en la seccion correspondiente.
+                                            </div>
+                                            @endempty
                                             <div class="alerta_revision_jrci alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                         </div>
                                     </div>

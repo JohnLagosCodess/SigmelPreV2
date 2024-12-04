@@ -2417,8 +2417,11 @@ $(document).ready(function(){
 
     Visar.change(function(){
         if ($(this).prop('checked')) {
-            $("#profesional_comite").val(NombreUsuario);            
-        } else {            
+            $("#profesional_comite").val(NombreUsuario);
+            $("#oficio_origen").prop('checked',true);      
+            $("#oficio_origen").trigger('change');    
+        } else {     
+            $("#oficio_origen").prop('checked',false);       
             $("#profesional_comite").val('');            
         }
     });    
@@ -2452,12 +2455,9 @@ $(document).ready(function(){
                 if (response.parametro == 'insertar_comite_interdisciplinario') {
                     $('#GuardarComiteInter').prop('disabled', true);
                     $('#div_alerta_comiteInter').removeClass('d-none');
-                    $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');                                            
-                    setTimeout(function(){
-                        $('#div_alerta_comiteInter').addClass('d-none');
-                        $('.alerta_comiteInter').empty();   
-                        location.reload();
-                    }, 3000);   
+                    $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');
+                    $('#form_correspondencia_dto').trigger('submit');
+
                 }
             }          
         })
@@ -2508,39 +2508,42 @@ $(document).ready(function(){
 
     // Funcionalidad para introducir el texto predeterminado para la proforma Notificación DML ORIGEN
     var entidad_conocimiento = $("#entidad_conocimiento").val();
-    if ($('#oficio_origen').is(":checked")) {
-        var asunto_insertar = "Dictamen presunto origen evento";
-        var texto_insertar = '<p>Respetados Señores.</p><p>En atención a la solicitud de emisión de dictamen sobre el presunto origen de la contingencia, le informamos que una vez estudiada la documentación del paciente por el Comité Interdisciplinario de Calificación de Pérdida de la Capacidad Laboral y Origen de Seguros de Vida ALFA S.A., experto en la materia, se considera que el presunto origen de la muerte del señor(a) {{$nombre_afiliado}}, es con ocasión de un {{$tipo_evento}} {{$origen_evento}}.</p><p>Para los efectos, se adjunta el dictamen que sustenta lo manifestado.</p><p>En caso de que no se encuentre de acuerdo con la calificación emitida por Seguros de Vida Alfa S.A., cuenta con diez (10) días hábiles siguientes a partir de la fecha de recibida la notificación para manifestar la inconformidad frente al resultado. Esta manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde se exprese sobre cuál o cuáles aspectos se encuentra en desacuerdo.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3077032 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co»; o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>';
+    $('#oficio_origen').on('change',function(){
+        if ($(this).is(":checked")) {
 
-        $("#Asunto").val(asunto_insertar);
-        $("#cuerpo_comunicado").summernote('code', texto_insertar);
-
-        // Habilitación etiquetas
-        $("#btn_insertar_nombre_afiliado").prop('disabled', false);
-        $("#btn_insertar_tipo_evento").prop('disabled', false);
-        $("#btn_insertar_origen_evento").prop('disabled', false);
-
-        // Selección automática de las copias a partes interesadas: Benficiario, Empleador, EPS, ARL
-        $("#beneficiario").prop('checked', true);
-        $("#empleador").prop('checked', true);
-        $("#eps").prop('checked', true);
-        // $("#afp").prop('checked', true);
-        $("#arl").prop('checked', true);
-
-        // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
-        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
-            $("#afp_conocimiento").prop('checked', true);
+            var asunto_insertar = "Dictamen presunto origen evento";
+            var texto_insertar = '<p>Respetados Señores.</p><p>En atención a la solicitud de emisión de dictamen sobre el presunto origen de la contingencia, le informamos que una vez estudiada la documentación del paciente por el Comité Interdisciplinario de Calificación de Pérdida de la Capacidad Laboral y Origen de Seguros de Vida ALFA S.A., experto en la materia, se considera que el presunto origen de la muerte del señor(a) {{$nombre_afiliado}}, es con ocasión de un {{$tipo_evento}} {{$origen_evento}}.</p><p>Para los efectos, se adjunta el dictamen que sustenta lo manifestado.</p><p>En caso de que no se encuentre de acuerdo con la calificación emitida por Seguros de Vida Alfa S.A., cuenta con diez (10) días hábiles siguientes a partir de la fecha de recibida la notificación para manifestar la inconformidad frente al resultado. Esta manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde se exprese sobre cuál o cuáles aspectos se encuentra en desacuerdo.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3077032 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co»; o a la dirección Carrera 10 # 18-36, piso 4, Edificio José María Córdoba, Bogotá D.C.</p>';
+    
+            $("#Asunto").val(asunto_insertar);
+            $("#cuerpo_comunicado").summernote('code', texto_insertar);
+    
+            // Habilitación etiquetas
+            $("#btn_insertar_nombre_afiliado").prop('disabled', false);
+            $("#btn_insertar_tipo_evento").prop('disabled', false);
+            $("#btn_insertar_origen_evento").prop('disabled', false);
+    
+            // Selección automática de las copias a partes interesadas: Benficiario, Empleador, EPS, ARL
+            $("#beneficiario").prop('checked', true);
+            $("#empleador").prop('checked', true);
+            $("#eps").prop('checked', true);
+            // $("#afp").prop('checked', true);
+            $("#arl").prop('checked', true);
+    
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', true);
+            }
+    
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 1;
+            $("#anexos").val(seteo_nro_anexos);
+    
+            // Selección automática del checkbox firmar
+            $("#firmar").prop('checked', true);
+    
         }
+    })
 
-        // Seteo automático del nro de anexos:
-        var seteo_nro_anexos = 1;
-        $("#anexos").val(seteo_nro_anexos);
-
-        // Selección automática del checkbox firmar
-        $("#firmar").prop('checked', true);
-
-
-    }
 
     // validar si el otro destinatario principal esta marcado
 
@@ -2905,10 +2908,15 @@ $(document).ready(function(){
                                 $('#GuardarCorrespondencia').prop('disabled', true);
                                 $('#ActualizarCorrespondencia').prop('disabled', true);
                                 $('#div_alerta_Correspondencia').removeClass('d-none');
-                                $('.alerta_Correspondencia').append('<strong>'+mensaje+'</strong>');                                            
+                                $('.alerta_Correspondencia').append('<strong>'+mensaje+'</strong>'); 
+                                $('.alerta_comiteInter').empty();
+                                $('.alerta_comiteInter').append('<strong>' + mensaje + '</strong>');                                          
                                 setTimeout(function(){
                                     $('#div_alerta_Correspondencia').addClass('d-none');
-                                    $('.alerta_Correspondencia').empty();   
+                                    $('.alerta_Correspondencia').empty();
+                                    $('#div_alerta_comiteInter').addClass('d-none');
+                                    $('.alerta_comiteInter').empty();     
+
                                     location.reload();
                                 }, 1500);
                             }
@@ -2918,6 +2926,8 @@ $(document).ready(function(){
                                 setTimeout(() => {
                                     $("#mostrar_mensaje_error_correspondencia").addClass('d-none');
                                     $(".mostrar_mensaje_error_correspondencia").empty();
+                                    hideLoading();
+                                    location.reload();
                                 }, 1000);
                             }
                         },
@@ -3294,7 +3304,7 @@ $(document).ready(function(){
     //Valida si hay radicados duplicados
     setTimeout(function() {
         radicados_duplicados('listado_comunicados_dto');
-    }, 500);
+    }, 500);    
 });
 
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/

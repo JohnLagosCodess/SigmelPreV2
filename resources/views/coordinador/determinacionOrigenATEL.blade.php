@@ -1023,7 +1023,7 @@
                             </div>
                             <div class="col-2 form-group align-self-end">
                                 <div class="custom-control custom-checkbox">                                                
-                                    <input type="checkbox" class="custom-control-input" name="oficio_origen" value="Si" id="oficio_origen" {{isset($array_comite_interdisciplinario[0]->Visar) ? 'checked' : ''}} required>                                                
+                                    <input  class="custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si" {{isset($array_comite_interdisciplinario[0]->Visar) ? 'checked' : ''}} required>                                                
                                     <label for="oficio_origen" class="custom-control-label">Oficio origen<span style="color: red;">(*)</label>
                                 </div>
                             </div>                                    

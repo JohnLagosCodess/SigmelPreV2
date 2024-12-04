@@ -7167,7 +7167,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="profesional_comite">Profesional comité</label>                                                                                           
                                             @if(!empty($array_comite_interdisciplinario[0]->Profesional_comite))
@@ -7186,7 +7186,19 @@
                                                 <input type="date" class="form-control" name="f_visado_comite" id="f_visado_comite" value="{{now()->format('Y-m-d')}}"  disabled>                                                
                                             @endif
                                         </div>
-                                    </div>                                    
+                                    </div>
+                                    <div class="col-3 form-group align-self-end">
+                                        <div class="custom-control custom-checkbox d-flex flex-column">                                                
+                                            <div>
+                                                <input  class="custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" {{ @$array_comite_interdisciplinario[0]->Oficio_pcl == 'Si' ? 'checked' : '' }} required>                                                
+                                                <label for="oficiopcl" class="custom-control-label">Oficio PCL
+                                            </div>
+                                            <div>
+                                                <input  class=" custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" {{ @$array_comite_interdisciplinario[0]->Oficio_incapacidad  == 'Si' ? 'checked' : '' }} required>                                                
+                                                <label for="oficioinca" class="custom-control-label">Oficio Incapacidad
+                                            </div>
+                                        </div>
+                                    </div>  
                                     <div class="col-2">
                                         <div class="form-group" style="padding-top: 31px;">                                             
                                             <input type="submit" id="GuardarComiteInter" name="GuardarComiteInter" class="btn btn-info" value="Guardar">                                                
@@ -7229,30 +7241,7 @@
                                             </div>
                                         </div>
                                     @endif --}}
-                                    <div class="col-3">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_comite_interdisciplinario[0]->Oficio_pcl) && $array_comite_interdisciplinario[0]->Oficio_pcl == 'Si')
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" checked>
-                                                @else
-                                                    <input class="custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" required>                                                    
-                                                @endif
-                                                <label for="oficiopcl" class="custom-control-label">Oficio PCL</label>
-                                            </div>
-                                        </div>
-                                    </div> 
-                                    <div class="col-3">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_comite_interdisciplinario[0]->Oficio_incapacidad) && $array_comite_interdisciplinario[0]->Oficio_incapacidad == 'Si')
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" checked>
-                                                @else
-                                                    <input class="custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" required>                                                    
-                                                @endif
-                                                <label for="oficioinca" class="custom-control-label">Oficio Incapacidad</label>
-                                            </div>
-                                        </div>
-                                    </div> 
+
                                     {{-- <div class="col-3" style="display: flex; flex-direction: row; justify-content:space-between;">
                                         <div>
                                             <div class="form-group">
