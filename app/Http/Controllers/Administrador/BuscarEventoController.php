@@ -3106,12 +3106,12 @@ class BuscarEventoController extends Controller
             if($documento["estado_documento"] == 'Cargado'){
 
                 //Para los dictamenes que esten repetidos se evaluaran como complementario
-                $dictamen_repetido = ($documento["Id_Documento"] === 13) ? 1 : 0;
+                $dictamen_repetido += ($documento["Id_Documento"] === 13) ? 1 : 0;
 
                 if(isset($documento["bandera"]) && $documento["bandera"] == "doc_adicional"){
                     $infoDocumento[$contador] = $documento;
-                    $infoDocumento[$contador]["Tipo"] = $dictamen_repetido > 0 ? "Complementario" : null;
-                    $nombreDocumento = $dictamen_repetido > 0 ? $infoDocumento[$contador]['Alias'] . "_IdEvento_{$evento}_IdServicio_{$servicio}_IdAsignacion_{$nuevo_id_asignacion}" : $infoDocumento[$contador]['nuevo_nombre']; //Deja el nombre del pdf, en caso de que sea un dictamen
+                    $infoDocumento[$contador]["Tipo"] = $dictamen_repetido > 1 ? "Complementario" : null;
+                    $nombreDocumento = $dictamen_repetido > 1 ? $infoDocumento[$contador]['Alias'] . "_IdEvento_{$evento}_IdServicio_{$servicio}_IdAsignacion_{$nuevo_id_asignacion}" : $infoDocumento[$contador]['nuevo_nombre']; //Deja el nombre del pdf, en caso de que sea un dictamen
 
                     $nombreFisico = $infoDocumento[$contador]['Nombre_fisico'];
 

@@ -588,9 +588,11 @@ $(document).ready(function () {
     var id_rol = $("#id_rol").val();
     if (id_rol == 10) {
         $("#visar").prop('disabled', false);
+        $("#oficio_origen").prop("disabled", false);
         $("#GuardarComiteInter").prop('disabled', false);
     } else {
         $("#visar").prop('disabled', true);
+        $("#oficio_origen").prop("disabled", true);
         $("#GuardarComiteInter").prop('disabled', true);
     }
 

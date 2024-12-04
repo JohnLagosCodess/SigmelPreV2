@@ -2861,7 +2861,7 @@ $(document).ready(function(){
 
     Visar.change(function(){
         if ($(this).prop('checked')) {
-            $("#profesional_comite").val(NombreUsuario);            
+            $("#profesional_comite").val(NombreUsuario);
         } else {            
             $("#profesional_comite").val('');            
         }
@@ -2897,11 +2897,7 @@ $(document).ready(function(){
                     $('#GuardarComiteInter').prop('disabled', true);
                     $('#div_alerta_comiteInter').removeClass('d-none');
                     $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');                                            
-                    setTimeout(function(){
-                        $('#div_alerta_comiteInter').addClass('d-none');
-                        $('.alerta_comiteInter').empty();   
-                        location.reload();
-                    }, 3000);   
+                    $('#form_correspondencia_pcl').trigger('submit'); 
                 }
             }          
         })
@@ -2966,7 +2962,7 @@ $(document).ready(function(){
 
         // formulario corrrespondencia
         $("#GuardarComiteInter").prop('disabled', true);
-        $("#div_correspondecia").removeClass('d-none');
+        //$("#div_correspondecia").removeClass('d-none');
     }
 
     // Validar cual de los oficios esta marcado
@@ -4159,6 +4155,8 @@ $(document).ready(function(){
                     $('#GuardarCorrespondencia').prop('disabled', true);
                     $('#div_alerta_Correspondencia').removeClass('d-none');
                     $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');
+                    $('.alerta_comiteInter').empty();
+                    $('.alerta_comiteInter').append('<strong>' + response.mensaje + '</strong>'); 
                     let Id_Comunicado = response.Id_Comunicado;
                     let Bandera_boton_guardar_oficio = response.Bandera_boton_guardar_oficio;
                     let datos_generar_oficios = {
