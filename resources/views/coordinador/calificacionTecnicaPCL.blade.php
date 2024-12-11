@@ -164,7 +164,7 @@
                                         <div class="form-group">                                                
                                             <label for="modalidad_calificacion">Modalidad Calificación<span style="color: red;">(*)</span></label>
                                             <select class="modalidad_calificacion custom-select" name="modalidad_calificacion" id="modalidad_calificacion" required>
-                                                @if ($Modalidad_calificacion)
+                                                @if ($Modalidad_calificacion && $Modalidad_calificacion[0]->Modalidad_calificacion)
                                                     <option value="{{$Modalidad_calificacion[0]->Modalidad_calificacion}}" selected>{{$Modalidad_calificacion[0]->Nombre_modalidad_calificacion}}</option>
                                                 @else
                                                     <option value="">Seleccione una opción</option>

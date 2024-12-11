@@ -116,7 +116,7 @@
                                         {{-- action="{{route('cargaDocumento')}}" --}}
                                         <form id="formulario_documento_{{$documento->Id_Documento}}" data-id_reg_doc="{{$documento->id_Registro_Documento}}" data-id_doc="{{$documento->Id_Documento}}" data-tipo_documento="{{$documento->Tipo}}" method="POST" enctype="multipart/form-data">
                                             @csrf
-                                            <div class="d-nones">
+                                            <div class="d-none">
                                                 <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
                                                 <?php if($documento->Tipo == "Complementario"):?>
                                                     <?php 
