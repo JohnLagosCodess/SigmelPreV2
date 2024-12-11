@@ -320,28 +320,28 @@
                                             </div>
                                         </div>
                                         @endif
-                                        <div class="col-4">
+                                        <div class="col-4" style="display: none">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="n_pago_jnci_contro">N° orden de pago (JRCI)</label>
                                                 <input type="text" class="form-control n_pago_jnci_contro" name="n_pago_jnci_contro" id="n_pago_jnci_contro" value="<?php if(!empty($arrayinfo_controvertido[0]->N_pago_jnci_contro)) { echo $arrayinfo_controvertido[0]->N_pago_jnci_contro;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" style="display: none">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="f_pago_jnci_contro">Fecha pago (JRCI)</label>
                                                 <input type="date" class="form-control" name="f_pago_jnci_contro" id="f_pago_jnci_contro" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_pago_jnci_contro)) { echo $arrayinfo_controvertido[0]->F_pago_jnci_contro;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" style="display: none">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="f_radica_pago_jnci_contro">Fecha de radicación pago (JRCI)</label>
                                                 <input type="date" class="form-control" name="f_radica_pago_jnci_contro" id="f_radica_pago_jnci_contro" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_radica_pago_jnci_contro)) { echo $arrayinfo_controvertido[0]->F_radica_pago_jnci_contro;} ?>">
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4" style="display: none">
                                             <div class="form-group">
                                                 <br>
                                                 <label for="f_envio_jrci">Fecha de envío a (JRCI)</label>
@@ -633,12 +633,17 @@
                                                     <input type="submit" id="guardar_datos_revision_jrci" class="btn btn-info" value="Guardar">
                                                     <input type="hidden" id="bandera_porfesional_pronunciamiento" value="Actualizar">                                                                                                        
                                                 @else
-                                                    <input type="submit" id="guardar_datos_revision_jrci" class="btn btn-info" value="Guardar">
+                                                    <input type="submit" id="guardar_datos_revision_jrci" class="btn btn-info" {{empty($arrayinfo_controvertido[0]->JrciNombre) ? 'disabled' : ''}} value="Guardar">
                                                     <input type="hidden" id="bandera_porfesional_pronunciamiento" value="Guardar">                                                    
                                                 @endif
                                             </div>
                                         </div>
                                         <div class="col-12">
+                                            @empty($arrayinfo_controvertido[0]->JrciNombre)
+                                            <div class="alerta_revision_jrci alert alert-danger mt-2 mr-auto" role="alert">
+                                                No ha selecionado un destinatario principal para la correspondencia, por favor seleccione uno en la seccion correspondiente.
+                                            </div>
+                                            @endempty
                                             <div class="alerta_revision_jrci alert alert-success mt-2 mr-auto d-none" role="alert"></div>
                                         </div>
                                     </div>
@@ -1881,7 +1886,7 @@
                                                 <tbody>
                                                     @foreach ($array_comunicados_correspondencia as $key => $comunicados)
                                                         <tr>
-                                                            <td>{{$comunicados->N_radicado}}</td>
+                                                            <td data-id_comunicado="{{$comunicados->Id_Comunicado}}">{{$comunicados->N_radicado}}</td>
                                                             <td>{{$comunicados->Elaboro}}</td>
                                                             <td>{{$comunicados->F_comunicado}}</td>
                                                             <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
@@ -2090,10 +2095,11 @@
     @include('//.administrador.modalProgressbar')
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.coordinador.modalCorrespondencia')
+    @include('//.modals.alertaRadicado')
 
 @stop
 @section('js')
-    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script type="text/javascript">
         document.getElementById('botonEnvioVista').addEventListener('click', function(event) {
             event.preventDefault();

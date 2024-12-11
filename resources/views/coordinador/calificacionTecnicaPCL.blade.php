@@ -136,19 +136,19 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="fecha_dictamen">Fecha Dictamen</label>
                                             <input type="text" class="form-control" name="fecha_dictamen" id="fecha_dictamen" value="<?php if(!empty($array_comite_interdisciplinario[0]->F_visado_comite)){echo $array_comite_interdisciplinario[0]->F_visado_comite;}else{echo now()->format('Y-m-d');}?>" disabled>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="numero_dictamen">N° Dictamen</label>
                                             <input type="text" class="form-control" name="numero_dictamen" id="numero_dictamen" value="{{$array_datos_calificacionPclTecnica[0]->Consecutivo_dictamen}}" disabled>                                                                                                                                        
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="motivo_solicitud">Motivo Solicitud<span style="color: red;">(*)</span></label>
                                             <select class="custom-select motivo_solicitud" name="motivo_solicitud" id="motivo_solicitud" style="width: 100%;" required>
@@ -158,6 +158,18 @@
                                                     <option value="">Seleccione una opción</option>
                                                 @endif
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">                                                
+                                            <label for="modalidad_calificacion">Modalidad Calificación<span style="color: red;">(*)</span></label>
+                                            <select class="modalidad_calificacion custom-select" name="modalidad_calificacion" id="modalidad_calificacion" required>
+                                                @if ($Modalidad_calificacion)
+                                                    <option value="{{$Modalidad_calificacion[0]->Modalidad_calificacion}}" selected>{{$Modalidad_calificacion[0]->Nombre_modalidad_calificacion}}</option>
+                                                @else
+                                                    <option value="">Seleccione una opción</option>
+                                                @endif
+                                            </select>                                                 
                                         </div>
                                     </div>
                                 </div>
@@ -7155,7 +7167,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="profesional_comite">Profesional comité</label>                                                                                           
                                             @if(!empty($array_comite_interdisciplinario[0]->Profesional_comite))
@@ -7174,7 +7186,19 @@
                                                 <input type="date" class="form-control" name="f_visado_comite" id="f_visado_comite" value="{{now()->format('Y-m-d')}}"  disabled>                                                
                                             @endif
                                         </div>
-                                    </div>                                    
+                                    </div>
+                                    <div class="col-3 form-group align-self-end">
+                                        <div class="custom-control custom-checkbox d-flex flex-column">                                                
+                                            <div>
+                                                <input  class="custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" {{ @$array_comite_interdisciplinario[0]->Oficio_pcl == 'Si' ? 'checked' : '' }} required>                                                
+                                                <label for="oficiopcl" class="custom-control-label">Oficio PCL
+                                            </div>
+                                            <div>
+                                                <input  class=" custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" {{ @$array_comite_interdisciplinario[0]->Oficio_incapacidad  == 'Si' ? 'checked' : '' }} required>                                                
+                                                <label for="oficioinca" class="custom-control-label">Oficio Incapacidad
+                                            </div>
+                                        </div>
+                                    </div>  
                                     <div class="col-2">
                                         <div class="form-group" style="padding-top: 31px;">                                             
                                             <input type="submit" id="GuardarComiteInter" name="GuardarComiteInter" class="btn btn-info" value="Guardar">                                                
@@ -7217,30 +7241,7 @@
                                             </div>
                                         </div>
                                     @endif --}}
-                                    <div class="col-3">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_comite_interdisciplinario[0]->Oficio_pcl) && $array_comite_interdisciplinario[0]->Oficio_pcl == 'Si')
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" checked>
-                                                @else
-                                                    <input class="custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" required>                                                    
-                                                @endif
-                                                <label for="oficiopcl" class="custom-control-label">Oficio PCL</label>
-                                            </div>
-                                        </div>
-                                    </div> 
-                                    <div class="col-3">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_comite_interdisciplinario[0]->Oficio_incapacidad) && $array_comite_interdisciplinario[0]->Oficio_incapacidad == 'Si')
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" checked>
-                                                @else
-                                                    <input class="custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" required>                                                    
-                                                @endif
-                                                <label for="oficioinca" class="custom-control-label">Oficio Incapacidad</label>
-                                            </div>
-                                        </div>
-                                    </div> 
+
                                     {{-- <div class="col-3" style="display: flex; flex-direction: row; justify-content:space-between;">
                                         <div>
                                             <div class="form-group">
@@ -7724,7 +7725,7 @@
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 1507 --}}
-                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td data-id_comunicado="{{$comunicados['Id_Comunicado'] ?? null}}">{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
                                                                     <td>{{$comunicados['F_comunicado']}}</td>
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
@@ -7821,7 +7822,7 @@
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL Cero --}}
-                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td data-id_comunicado="{{$comunicados['Id_Comunicado'] ?? null}}">{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
                                                                     <td>{{$comunicados['F_comunicado']}}</td>
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
@@ -7918,7 +7919,7 @@
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Generar pdf Dictamen PCL 917 --}}
-                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td data-id_comunicado="{{$comunicados['Id_Comunicado'] ?? null}}">{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
                                                                     <td>{{$comunicados['F_comunicado']}}</td>  
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td> 
@@ -8015,7 +8016,7 @@
                                                             @if ($comunicados->Tipo_descarga != 'Oficio')
                                                                 <tr>
                                                                     {{-- Documentos cargados manualmente  --}}
-                                                                    <td>{{$comunicados['N_radicado']}}</td>
+                                                                    <td data-id_comunicado="{{$comunicados['Id_Comunicado'] ?? null}}">{{$comunicados['N_radicado']}}</td>
                                                                     <td>{{$comunicados['Elaboro']}}</td>
                                                                     <td>{{$comunicados['F_comunicado']}}</td>  
                                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>                                                                       
@@ -8380,7 +8381,7 @@
     });
 
 </script>
-<script type="text/javascript" src="/js/funciones_helpers.js"></script>
+<script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
 <script type="text/javascript" src="/js/calificacionpcl_tecnica.js"></script>
 {{-- JS: Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores --}}
 <script type="text/javascript" src="/js/datatable_deficiencias_alteraciones_sistemas.js"></script>

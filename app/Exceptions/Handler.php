@@ -45,4 +45,15 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    public function render($request, Throwable $e)
+    {
+        // Verificar si es una excepción de permiso denegado
+        if ($e instanceof \ErrorException && strpos($e->getMessage(), 'Permission denied') !== false) {
+            return response()->json(['error' => 'Logging failed, but continuing.'], 500);
+        }
+
+        return parent::render($request, $e);
+    }
+
 }

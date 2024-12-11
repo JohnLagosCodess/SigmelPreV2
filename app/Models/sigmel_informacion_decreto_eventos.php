@@ -49,6 +49,7 @@ class sigmel_informacion_decreto_eventos extends Model
     'N_radicado',
     'N_siniestro',
     'Estado_decreto',
+    'Modalidad_calificacion',
     'Nombre_usuario',
     'F_registro',
     ];

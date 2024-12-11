@@ -419,7 +419,8 @@
                                             <div class="form-group">
                                                 <label for="fecha_evento">Fecha del evento <span style="color:red;">(*)</span></label>
                                                 <input type="hidden" id="bd_fecha_evento" value="">
-                                                <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>" required>
+                                                <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>" required>
+                                                <span class="d-none" id="fecha_evento_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -476,7 +477,8 @@
                                         <div class="col-4 d-none" id="mostrar_f_fallecimiento">
                                             <div class="form-group">
                                                 <label for="fecha_fallecimiento">Fecha de fallecimiento <span style="color:red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)){echo $datos_bd_DTO_ATEL[0]->Fecha_fallecimiento;}?>">
+                                                <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)){echo $datos_bd_DTO_ATEL[0]->Fecha_fallecimiento;}?>">
+                                                <span class="d-none" id="fecha_fallecimiento_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -986,7 +988,7 @@
                 </div>
                 <form id="form_comite_interdisciplinario" action="POST">                            
                     <div class="card-body">
-                        <div class="row">   
+                        <div class="row d-flex align-items-center">   
                             <div class="col-1">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">                                                
@@ -1018,6 +1020,12 @@
                                         <input type="date" class="form-control" name="f_visado_comite" id="f_visado_comite" value="{{now()->format('Y-m-d')}}"  disabled>                                                
                                     @endif
                                 </div>
+                            </div>
+                            <div class="col-2 form-group align-self-end">
+                                <div class="custom-control custom-checkbox">                                                
+                                    <input  class="custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si" {{isset($array_comite_interdisciplinario[0]->Visar) ? 'checked' : ''}} required>                                                
+                                    <label for="oficio_origen" class="custom-control-label">Oficio origen<span style="color: red;">(*)</label>
+                                </div>
                             </div>                                    
                             <div class="col-2">
                                 <div class="form-group" style="padding-top: 31px;">                                             
@@ -1047,18 +1055,6 @@
                 <form id="form_correspondencia_dto" action="POST">                            
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-3">
-                                <div class="form-group">
-                                    <div class="custom-control custom-checkbox">
-                                        @if (!empty($array_comite_interdisciplinario[0]->Oficio_Origen) && $array_comite_interdisciplinario[0]->Oficio_Origen == 'Si')
-                                            <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si" checked>
-                                        @else
-                                            <input class="custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si">                                                    
-                                        @endif
-                                        <label for="oficio_origen" class="custom-control-label">Oficio Origen</label>
-                                    </div>
-                                </div>
-                            </div> 
                             {{-- <div class="col-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
@@ -1482,7 +1478,7 @@
                                         <tbody>
                                             @foreach ($array_comunicados_correspondencia as $comunicados)
                                                 <tr>
-                                                    <td>{{$comunicados->N_radicado}}</td>
+                                                    <td data-id_comunicado="{{$comunicados->Id_Comunicado}}">{{$comunicados->N_radicado}}</td>
                                                     <td>{{$comunicados->Elaboro}}</td>
                                                     <td>{{$comunicados->F_comunicado}}</td>
                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
@@ -1681,12 +1677,13 @@
    </form>
    @include('//.coordinador.modalReemplazarArchivos')
    @include('//.coordinador.modalCorrespondencia')
+   @include('//.modals.alertaRadicado')
 
 @stop
 
 @section('js')
 
-    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script type="text/javascript">
         document.getElementById('botonEnvioVista').addEventListener('click', function(event) {
             event.preventDefault();
@@ -1902,4 +1899,32 @@
     </script>
     <script type="text/javascript" src="/js/dto_atel.js"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
+    {{-- Validación general para todos los campos de tipo fecha --}}
+    <script>
+        let today = new Date().toISOString().split("T")[0];
+
+        // Seleccionar todos los inputs de tipo date
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+
+        // Agregar evento de escucha a cada input de tipo date que haya
+        dateInputs.forEach(input => {
+            //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
+            input.addEventListener('change', function() {
+                console.log('This is value of input type date ', this.value);
+                //Validamos que la fecha sea mayor a la fecha de 1900-01-01
+                if(this.value < '1900-01-01'){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#EditarDTOATEL').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea mayor a la fecha actual
+                if(this.value > today){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#EditarDTOATEL').addClass('d-none');
+                    return;
+                }
+                return $(`#${this.id}_alerta`).text('').addClass("d-none");
+            });
+        });
+    </script>
 @stop

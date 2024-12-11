@@ -172,14 +172,15 @@
                                                     <div class="col-4">
                                                         <div class="form-group">
                                                             <label for="f_envio">Fecha de envio</label>
-                                                            <input class="form-control" type="date"  name="f_envio" id="f_envio" max="{{ date('Y-m-d') }}">
+                                                            <input class="form-control" type="date"  name="f_envio" id="f_envio" max="{{ date('Y-m-d') }}" min="1900-01-01">
+                                                            <span class="d-none" id="alerta_fecha_envio" style="color: red; font-style: italic;">La fecha ingresada no debe ser superior a la fecha de Notificación</span>
                                                         </div>
                                                     </div>
 
                                                     <div class="col-4">
                                                         <div class="form-group">
                                                             <label for="f_notificacion">Fecha de notificacion</label>
-                                                            <input class="form-control" type="date" name="f_notificacion" id="f_notificacion" max="{{ date('Y-m-d') }}">
+                                                            <input class="form-control" type="date" name="f_notificacion" id="f_notificacion" max="{{ date('Y-m-d') }}" min="1900-01-01">
                                                         </div>
                                                     </div>
 
@@ -222,3 +223,37 @@
     <section id="loading">
         <div id="loading-content"></div>
     </section>
+
+    {{-- Validación en los campos de fecha, en el cual la fecha de envio no debe ser mayor a la fecha de notificación, y ninguna de esas dos fechas pueden ser mayores a la fecha actual --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtener referencias a los campos de fecha
+            const fechaEnvio = document.getElementById('f_envio');
+            const fechaNotificacion = document.getElementById('f_notificacion');
+            const alerta_fecha_envio = document.getElementById('alerta_fecha_envio');
+    
+            // Evento para cuando se cambie la fecha de envío
+            fechaEnvio.addEventListener('change', function () {
+                // Obtener los valores de las fechas
+                const envioValue = fechaEnvio.value;
+                const notificacionValue = fechaNotificacion.value ? fechaNotificacion.value : null;
+                // Validar que la fecha de envío no sea mayor a la fecha de notificación
+                if (notificacionValue && envioValue > notificacionValue) {
+                    $("#alerta_fecha_envio").removeClass('d-none')
+                    fechaEnvio.value = ''; // Limpiar el campo
+                }
+                else{
+                    $("#alerta_fecha_envio").addClass('d-none')
+                }
+            });
+            //Fecha de notificación
+            fechaNotificacion.addEventListener('change', function () {
+                if(fechaEnvio.value && fechaNotificacion.value && fechaEnvio.value > fechaNotificacion.value){
+                        $("#alerta_fecha_envio").removeClass('d-none');
+                        fechaEnvio.value = ''; // Limpiar el campo
+                }else{
+                    $("#alerta_fecha_envio").addClass('d-none')
+                }
+            });
+        });
+    </script>

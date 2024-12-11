@@ -61,7 +61,7 @@
             font-family: sans-serif;
             text-align: justify;
             width: 100%; /* Ancho total de la tabla */
-            /* table-layout: fixed; */
+            table-layout: fixed;
             border-collapse: collapse; /* Borde de celda colapsado para evitar espacios adicionales */
         }
 
@@ -262,11 +262,10 @@
                 </tr>
                 <tr>
                     <td colspan="4" class="titulo_labels" style="text-align: center;">Nombre del documento</td>
-                    <td colspan="4" class="titulo_labels" style="text-align: center;">Descripción del documento </td>
+                    <td colspan="4" class="titulo_labels" style="text-align: center;">Descripción del documento</td>
                 </tr>
                 @foreach ($documentos_relacionados as $documento)
                     <tr>
-                        {{-- <td colspan="2" class="dato_dinamico">{{date('d/m/Y', strtotime($documento['fecha']))}}</td> --}}
                         <td colspan="4" class="dato_dinamico">{{$documento['nombre']}}</td>
                         <td colspan="4" class="dato_dinamico">{{$documento['descripcion']}}</td>
                     </tr>
@@ -289,7 +288,7 @@
             </tbody>
         </table>
         <div class="largos_textos dato_dinamico">
-            <span class="titulo_labels">SUSTENTACIÓN: </span><span class="dato_dinamico">{!! nl2br(e($sustentacion_califi_origen)) !!}</span>
+            <span class="titulo_labels">SUSTENTACIÓN: </span>{!! nl2br(e($sustentacion_califi_origen)) !!}
         </div>
         <table class="tabla_dictamen">
             <tbody>
@@ -302,9 +301,6 @@
                             (Ley 100 de 1993, decreto 776 de 2002, Ley 1562 del 2012)
                         </span>
                     </td>
-                </tr>
-                <tr>
-                    <td colspan="8"><span class="titulo_labels">Elaborado por: </span><span class="dato_dinamico">{{$nombre_usuario}}</span></td>
                 </tr>
                 <tr>
                     <td colspan="8" class="consideracion_legal">

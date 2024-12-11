@@ -1069,6 +1069,29 @@ $(document).ready(function(){
                 }
             }
         });
+
+        // Cálculo de la fecha de vencimiento y fechas de alerta naranja y roja acorde al ANS
+        let datos_calculo_f_vencimiento = {
+            '_token':token,
+            'fecha_radicacion': $("#fecha_radicacion").val(),
+            'Id_servicio': $("#servicio").val(),
+            'Id_accion': $(this).val(),
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/calculoFechaVencimiento',
+            data: datos_calculo_f_vencimiento,
+            success:function (data) {
+                // Seteamos los campos: Fecha de vencimiento y a parte seteamos los campos de Id_ans, fecha de alerta naranja y fecha de alerta roja los cuales están ocultos. Incluimos la fecha de vencimiento visual la cual esta será la que se guarde en la bd
+                $("#fecha_vencimiento_visual").val(data.fecha_vencimiento_visual);
+                $("#fecha_vencimiento").val(data.fecha_vencimiento);
+                $("#fecha_alerta_naranja_ans").val(data.fecha_alerta_naranja_ans);
+                $("#fecha_alerta_roja_ans").val(data.fecha_alerta_roja_ans);
+                $("#Id_ans").val(data.Id_ans);
+            }
+        });
+        
     });
 
     /* VALIDACIÓN OPCIONES OTRO */
@@ -1700,7 +1723,7 @@ $(document).ready(function(){
                 $(`#fileName_${idDoc}`).text(file.fileName);
                 resumable.opts.query.EventoID = idobtenido;
                 resumable.opts.query.Id_Documento = idDoc;
-                resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val();
+                resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val().replace(/ /g, "_");
                 resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
                 resumable.opts.query.Id_asignacion = $(`#Id_asignacion_${idDoc}`).val();
             });

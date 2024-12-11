@@ -69,6 +69,11 @@ use App\Models\sigmel_lista_procesos_servicios;
 use App\Models\sigmel_lista_regional_juntas;
 use App\Models\sigmel_auditorias_informacion_accion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
+
+/* ANS */
+use App\Models\sigmel_informacion_ans_clientes;
+use App\Models\sigmel_informacion_alertas_ans_eventos;
+
 use App\Services\GenerarDictamenesPcl;
 use App\Services\GlobalService;
 use App\Traits\GenerarRadicados;
@@ -651,7 +656,7 @@ class CalificacionPCLController extends Controller
                 'ID_evento' => $request->newId_evento,
                 'Id_Asignacion' => $request->newId_asignacion,
                 'Id_proceso' => $request->Id_proceso,
-                'Modalidad_calificacion' => $request->modalidad_calificacion,
+                // 'Modalidad_calificacion' => $request->modalidad_calificacion,
                 'fuente_informacion' => $request->fuente_informacion,
                 'F_accion' => $date_time,
                 'Accion' => $request->accion,
@@ -670,7 +675,7 @@ class CalificacionPCLController extends Controller
                 'Aud_ID_evento' => $request->newId_evento,
                 'Aud_Id_Asignacion' => $request->newId_asignacion,
                 'Aud_Id_proceso' => $request->Id_proceso,
-                'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
+                // 'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
                 'Aud_fuente_informacion' => $request->fuente_informacion,
                 'Aud_F_accion' => $date_time,
                 'Aud_Accion' => $request->accion,
@@ -781,6 +786,118 @@ class CalificacionPCLController extends Controller
 
             sleep(2);
 
+            /*  Consultamos si el servicio y acción tiene un ANS configurado y en caso de ser así
+                extraemos el valor de ans, el porcentaje de alerta naranja, el porcentaje de alerta roja, id de ans, su parte entera y su parte decimal.
+                El ans debe estar activo (parametro 365)
+            */
+
+            // Consultamos si con el servicio y acción tiene un ANS configurado
+            $array_tiene_ans = sigmel_informacion_ans_clientes::on('sigmel_gestiones')
+            ->select('Valor', 'Porcentaje_Alerta_Naranja', 'Porcentaje_Alerta_Roja', 'Id_ans')
+            ->where([
+                ['Servicio', $Id_servicio],
+                ['Accion', $Accion_realizar],
+                ['Estado', '=', 366]
+            ])
+            ->get();
+
+            /* En caso de que tenga un ANS se realiza el correspondiente análisis */
+            if (count($array_tiene_ans) > 0) {
+
+                $id_ans = $array_tiene_ans[0]->Id_ans;
+                $valor_ans = $array_tiene_ans[0]->Valor;
+                $parte_entera_ans = floor($valor_ans);
+                $parte_decimal_ans = $valor_ans - $parte_entera_ans;
+
+                // Caso 1: La acción a ejecutar tiene un ANS parametrizado y además se selecciona una Nueva Fecha de Radicación
+                // Caso 2: La acción a ejecutar tiene un ANS parametrizado pero no se selecciona una Nueva Fecha de Radicación.
+
+                switch (true) {
+                    case (!empty($id_ans) && $Nueva_fecha_radicacion <> ""):
+                        /*  Enviamos la nueva fecha de radicacion, la parte entera y parte decimal del ans a un 
+                            procedimiento almacenado para realizar el calculo de la fecha de vencimiento
+                        */
+                        $array_fecha_vencimiento = DB::select('CALL psrFechaVencimientoEventos(?,?,?)', array($Nueva_fecha_radicacion, $parte_entera_ans, $parte_decimal_ans));
+
+                        $fecha_vencimiento = $array_fecha_vencimiento[0]->fecha_vencimiento;
+
+                        /*  Enviamos la nueva fecha de radicacion, el porcentaje de alerta naranja, 
+                            el porcentaje de alerta roja, el valor del ans a un procedimiento almacenado
+                            para calcular el tiempo de alertas naranja y roja y obtener así las fechas de
+                            alertas naranja y roja
+                        */
+
+                        $porcentaje_alerta_naranja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Naranja;
+                        $porcentaje_alerta_roja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Roja;
+
+                        $array_datos_alertas_ans = DB::select('CALL psrFechasAlertaAnsEventos(?,?,?,?)', array($Nueva_fecha_radicacion, $valor_ans, $porcentaje_alerta_naranja_ans, $porcentaje_alerta_roja_ans));
+
+                        $fecha_alerta_naranja_ans = $array_datos_alertas_ans[0]->fecha_alerta_naranja_ans;
+                        $fecha_alerta_roja_ans = $array_datos_alertas_ans[0]->fecha_alerta_roja_ans;
+
+                        // Actualizamos las fechas de alerta en la tabla sigmel_informacion_alertas_ans_eventos
+                        $datos_actualizar_alertas_ans = [
+                            'Id_ans' => $id_ans,
+                            'Fecha_alerta_naranja' => $fecha_alerta_naranja_ans,
+                            'Fecha_alerta_roja' => $fecha_alerta_roja_ans,
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date
+                        ];
+
+                        sigmel_informacion_alertas_ans_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento', $newIdEvento],
+                            ['Id_Asignacion', $newIdAsignacion]
+                        ])->update($datos_actualizar_alertas_ans);
+
+                    break; 
+                    case (!empty($id_ans) && empty($Nueva_fecha_radicacion)):
+                        /*  Enviamos la fecha de radicacion actual del formulario, la parte entera y parte decimal del ans a un 
+                            procedimiento almacenado para realizar el calculo de la fecha de vencimiento
+                        */
+                        $array_fecha_vencimiento = DB::select('CALL psrFechaVencimientoEventos(?,?,?)', array($request->fecha_radicacion_actual, $parte_entera_ans, $parte_decimal_ans));
+                        $fecha_vencimiento = $array_fecha_vencimiento[0]->fecha_vencimiento;
+
+                        /*  Enviamos la fecha de radicacion actual, el porcentaje de alerta naranja, 
+                            el porcentaje de alerta roja, el valor del ans a un procedimiento almacenado
+                            para calcular el tiempo de alertas naranja y roja y obtener así las fechas de
+                            alertas naranja y roja
+                        */
+
+                        $porcentaje_alerta_naranja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Naranja;
+                        $porcentaje_alerta_roja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Roja;
+
+                        $array_datos_alertas_ans = DB::select('CALL psrFechasAlertaAnsEventos(?,?,?,?)', array($request->fecha_radicacion_actual, $valor_ans, $porcentaje_alerta_naranja_ans, $porcentaje_alerta_roja_ans));
+
+                        $fecha_alerta_naranja_ans = $array_datos_alertas_ans[0]->fecha_alerta_naranja_ans;
+                        $fecha_alerta_roja_ans = $array_datos_alertas_ans[0]->fecha_alerta_roja_ans;
+
+                        // Actualizamos las fechas de alerta en la tabla sigmel_informacion_alertas_ans_eventos
+                        $datos_actualizar_alertas_ans = [
+                            'Id_ans' => $id_ans,
+                            'Fecha_alerta_naranja' => $fecha_alerta_naranja_ans,
+                            'Fecha_alerta_roja' => $fecha_alerta_roja_ans,
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date
+                        ];
+
+                        sigmel_informacion_alertas_ans_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento', $newIdEvento],
+                            ['Id_Asignacion', $newIdAsignacion]
+                        ])->update($datos_actualizar_alertas_ans);
+
+                    break;
+                    default:
+                        # code...
+                    break;
+                }
+
+            }else{
+                // Caso 3: La acción a ejecutar no tiene un ANS parametrizado la fecha de vencimiento será la misma.
+                $fecha_vencimiento = $request->fecha_vencimiento_actual;
+            }
+
             // Actualización tabla sigmel_informacion_asginacion_eventos
             $datos_info_actualizarAsignacionEvento= [      
                 'Id_accion' => $request->accion,
@@ -790,6 +907,8 @@ class CalificacionPCLController extends Controller
                 'Id_profesional' => $id_profesional,
                 'Nombre_profesional' => $asignacion_profesional,
                 'Nueva_F_radicacion' => $Nueva_fecha_radicacion,
+                'Tiempo_gestion' => $request->tiempo_gestion,
+                'Fecha_vencimiento' => $fecha_vencimiento,
                 'N_de_orden' =>  $N_orden_evento,
                 'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',          
                 'Nombre_usuario' => $nombre_usuario,
@@ -1211,7 +1330,7 @@ class CalificacionPCLController extends Controller
                 'ID_evento' => $request->newId_evento,
                 'Id_Asignacion' => $request->newId_asignacion,
                 'Id_proceso' => $request->Id_proceso,
-                'Modalidad_calificacion' => $request->modalidad_calificacion,
+                // 'Modalidad_calificacion' => $request->modalidad_calificacion,
                 'fuente_informacion' => $request->fuente_informacion,
                 'F_accion' => $date_time,
                 'Accion' => $request->accion,
@@ -1230,7 +1349,7 @@ class CalificacionPCLController extends Controller
                 'Aud_ID_evento' => $request->newId_evento,
                 'Aud_Id_Asignacion' => $request->newId_asignacion,
                 'Aud_Id_proceso' => $request->Id_proceso,
-                'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
+                // 'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
                 'Aud_fuente_informacion' => $request->fuente_informacion,
                 'Aud_F_accion' => $date_time,
                 'Aud_Accion' => $request->accion,
@@ -1376,6 +1495,121 @@ class CalificacionPCLController extends Controller
 
             sleep(2);
 
+            /*  Consultamos si el servicio y acción tiene un ANS configurado y en caso de ser así
+                extraemos el valor de ans, el porcentaje de alerta naranja, el porcentaje de alerta roja, id de ans, su parte entera y su parte decimal.
+                El ans debe estar activo (parametro 365)
+            */
+
+            // Consultamos si con el servicio y acción tiene un ANS configurado
+            $array_tiene_ans = sigmel_informacion_ans_clientes::on('sigmel_gestiones')
+            ->select('Valor', 'Porcentaje_Alerta_Naranja', 'Porcentaje_Alerta_Roja', 'Id_ans')
+            ->where([
+                ['Servicio', $Id_servicio],
+                ['Accion', $Accion_realizar],
+                ['Estado', '=', 366]
+            ])
+            ->get();
+
+            /* En caso de que tenga un ANS se realiza el correspondiente análisis */
+            if (count($array_tiene_ans) > 0) {
+
+                $id_ans = $array_tiene_ans[0]->Id_ans;
+                $valor_ans = $array_tiene_ans[0]->Valor;
+                $parte_entera_ans = floor($valor_ans);
+                $parte_decimal_ans = $valor_ans - $parte_entera_ans;
+
+                // Caso 1: La acción a ejecutar tiene un ANS parametrizado y además se selecciona una Nueva Fecha de Radicación
+                // Caso 2: La acción a ejecutar tiene un ANS parametrizado pero no se selecciona una Nueva Fecha de Radicación.
+
+                switch (true) {
+                    case (!empty($id_ans) && $Nueva_fecha_radicacion <> ""):
+
+                        /*  Enviamos la nueva fecha de radicacion, la parte entera y parte decimal del ans a un 
+                            procedimiento almacenado para realizar el calculo de la fecha de vencimiento
+                        */
+                        $array_fecha_vencimiento = DB::select('CALL psrFechaVencimientoEventos(?,?,?)', array($Nueva_fecha_radicacion, $parte_entera_ans, $parte_decimal_ans));
+
+                        $fecha_vencimiento = $array_fecha_vencimiento[0]->fecha_vencimiento;
+
+                        /*  Enviamos la nueva fecha de radicacion, el porcentaje de alerta naranja, 
+                            el porcentaje de alerta roja, el valor del ans a un procedimiento almacenado
+                            para calcular el tiempo de alertas naranja y roja y obtener así las fechas de
+                            alertas naranja y roja
+                        */
+
+                        $porcentaje_alerta_naranja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Naranja;
+                        $porcentaje_alerta_roja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Roja;
+
+                        $array_datos_alertas_ans = DB::select('CALL psrFechasAlertaAnsEventos(?,?,?,?)', array($Nueva_fecha_radicacion, $valor_ans, $porcentaje_alerta_naranja_ans, $porcentaje_alerta_roja_ans));
+
+                        $fecha_alerta_naranja_ans = $array_datos_alertas_ans[0]->fecha_alerta_naranja_ans;
+                        $fecha_alerta_roja_ans = $array_datos_alertas_ans[0]->fecha_alerta_roja_ans;
+
+                        // Actualizamos las fechas de alerta en la tabla sigmel_informacion_alertas_ans_eventos
+                        $datos_actualizar_alertas_ans = [
+                            'Id_ans' => $id_ans,
+                            'Fecha_alerta_naranja' => $fecha_alerta_naranja_ans,
+                            'Fecha_alerta_roja' => $fecha_alerta_roja_ans,
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date
+                        ];
+
+                        sigmel_informacion_alertas_ans_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento', $newIdEvento],
+                            ['Id_Asignacion', $newIdAsignacion]
+                        ])->update($datos_actualizar_alertas_ans);
+
+                    break; 
+                    case (!empty($id_ans) && empty($Nueva_fecha_radicacion)):
+
+                        /*  Enviamos la fecha de radicacion actual del formulario, la parte entera y parte decimal del ans a un 
+                            procedimiento almacenado para realizar el calculo de la fecha de vencimiento
+                        */
+                        $array_fecha_vencimiento = DB::select('CALL psrFechaVencimientoEventos(?,?,?)', array($request->fecha_radicacion_actual, $parte_entera_ans, $parte_decimal_ans));
+
+                        $fecha_vencimiento = $array_fecha_vencimiento[0]->fecha_vencimiento;
+
+                        /*  Enviamos la fecha de radicacion actual, el porcentaje de alerta naranja, 
+                            el porcentaje de alerta roja, el valor del ans a un procedimiento almacenado
+                            para calcular el tiempo de alertas naranja y roja y obtener así las fechas de
+                            alertas naranja y roja
+                        */
+
+                        $porcentaje_alerta_naranja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Naranja;
+                        $porcentaje_alerta_roja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Roja;
+
+                        $array_datos_alertas_ans = DB::select('CALL psrFechasAlertaAnsEventos(?,?,?,?)', array($request->fecha_radicacion_actual, $valor_ans, $porcentaje_alerta_naranja_ans, $porcentaje_alerta_roja_ans));
+
+                        $fecha_alerta_naranja_ans = $array_datos_alertas_ans[0]->fecha_alerta_naranja_ans;
+                        $fecha_alerta_roja_ans = $array_datos_alertas_ans[0]->fecha_alerta_roja_ans;
+
+                        // Actualizamos las fechas de alerta en la tabla sigmel_informacion_alertas_ans_eventos
+                        $datos_actualizar_alertas_ans = [
+                            'Id_ans' => $id_ans,
+                            'Fecha_alerta_naranja' => $fecha_alerta_naranja_ans,
+                            'Fecha_alerta_roja' => $fecha_alerta_roja_ans,
+                            'Nombre_usuario' => $nombre_usuario,
+                            'F_registro' => $date
+                        ];
+
+                        sigmel_informacion_alertas_ans_eventos::on('sigmel_gestiones')
+                        ->where([
+                            ['ID_evento', $newIdEvento],
+                            ['Id_Asignacion', $newIdAsignacion]
+                        ])->update($datos_actualizar_alertas_ans);
+
+                    break;
+                    default:
+                        # code...
+                    break;
+                }
+
+            }else{
+                // Caso 3: La acción a ejecutar no tiene un ANS parametrizado la fecha de vencimiento será la misma.
+                $fecha_vencimiento = $request->fecha_vencimiento_actual;
+            }
+
             // Actualizar la tabla sigmel_informacion_asignacion_eventos
             $datos_info_actualizarAsignacionEvento= [      
                 'Id_accion' => $request->accion,
@@ -1385,6 +1619,8 @@ class CalificacionPCLController extends Controller
                 'Id_profesional' => $id_profesional,
                 'Nombre_profesional' => $asignacion_profesional,
                 'Nueva_F_radicacion' => $Nueva_fecha_radicacion,
+                'Tiempo_gestion' => $request->tiempo_gestion,
+                'Fecha_vencimiento' => $fecha_vencimiento,
                 'N_de_orden' =>  $N_orden_evento,
                 'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',  
                 'Nombre_usuario' => $nombre_usuario,
@@ -3378,15 +3614,17 @@ class CalificacionPCLController extends Controller
 
             //Trae Documentos Solicitados
             $listado_documentos_solicitados = $this->globalService->retornarListadoDocumentos($ID_evento,$Id_proceso,$Id_Asignacion);
-
-            $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
-            $string_documentos_solicitados = "<ul>";
-
-            for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
-                $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+            if($listado_documentos_solicitados){
+                $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
+                $string_documentos_solicitados = "<ul>";
+    
+                for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
+                    $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+                }
+                $string_documentos_solicitados .= "</ul>";
+            }else{
+                $string_documentos_solicitados = '';
             }
-            $string_documentos_solicitados .= "</ul>";
-            
             // $datos_footer = sigmel_clientes::on('sigmel_gestiones')
             // ->select('footer_dato_1', 'footer_dato_2', 'footer_dato_3', 'footer_dato_4', 'footer_dato_5')
             // ->where('Id_cliente', $id_cliente)->get();
@@ -3405,7 +3643,6 @@ class CalificacionPCLController extends Controller
             //     $footer_dato_4 = "";
             //     $footer_dato_5 = "";
             // }
-
             $data = [
                 'logo_header' => $logo_header,
                 'id_cliente' => $id_cliente,
@@ -3959,14 +4196,17 @@ class CalificacionPCLController extends Controller
             
             //Trae Documentos Solicitados
             $listado_documentos_solicitados = $this->globalService->retornarListadoDocumentos($ID_evento,$Id_proceso,$Id_Asignacion);
+            if($listado_documentos_solicitados){
+                $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
+                $string_documentos_solicitados = "<ul>";
 
-            $array_listado_documentos_solicitados = json_decode(json_encode($listado_documentos_solicitados), true);
-            $string_documentos_solicitados = "<ul>";
-
-            for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
-                $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+                for ($i=0; $i < count($array_listado_documentos_solicitados); $i++) { 
+                    $string_documentos_solicitados .= "<li>".$array_listado_documentos_solicitados[$i]["Descripcion"]."</li>";
+                }
+                $string_documentos_solicitados .= "</ul>";
+            }else{
+                $string_documentos_solicitados = '';
             }
-            $string_documentos_solicitados .= "</ul>";
             
             $Agregar_copias = [];
             if (isset($copia_afiliado)) {
@@ -5652,16 +5892,16 @@ class CalificacionPCLController extends Controller
         ->get();
 
         //Traer el N_siniestro del evento
-        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
-        ->select('N_siniestro')
-        ->where([['ID_evento',$Id_evento_calitec]])
-        ->get();
+        $N_siniestro_evento = $this->globalService->retornarNumeroSiniestro($Id_evento_calitec);
+
+        //Traer la modalidad de calificación
+        $Modalidad_calificacion = $this->globalService->retornarModalidadCalificacionPCL($Id_evento_calitec,$Id_asignacion_calitec);
 
         return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 
         'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo',
         'array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 
         'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 
-        'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado'));
+        'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado', 'Modalidad_calificacion'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
@@ -5949,7 +6189,8 @@ class CalificacionPCLController extends Controller
         $id_Proceso_decreto = $request->Id_Proceso_decreto;
         $id_Asignacion_decreto = $request->Id_Asignacion_decreto;
         $origen_firme = $request->origen_firme;
-        $origen_cobertura = $request->origen_cobertura;        
+        $origen_cobertura = $request->origen_cobertura;
+        $modalidad_calificacion = $request->modalidad_calificacion;
 
         if ($origen_firme == 49 && $origen_cobertura == 51 || $origen_firme == 48 && $origen_cobertura == 51 || $origen_firme == 49 && $origen_cobertura == 50) {
             $banderaGuardarNoDecreto = $request->banderaGuardarNoDecreto;
@@ -5964,6 +6205,7 @@ class CalificacionPCLController extends Controller
                         'Cobertura' => $origen_cobertura,
                         'Decreto_calificacion' => $decreto_califi,   
                         'Estado_decreto' =>  'Abierto',
+                        'Modalidad_calificacion' => $modalidad_calificacion,
                         'Nombre_usuario' => $usuario,
                         'F_registro' => $date,
                 ];
@@ -5985,7 +6227,8 @@ class CalificacionPCLController extends Controller
                     'Id_Asignacion' => $id_Asignacion_decreto,
                     'Origen_firme' => $origen_firme,
                     'Cobertura' => $origen_cobertura,
-                    'Decreto_calificacion' => $decreto_califi,                    
+                    'Decreto_calificacion' => $decreto_califi,
+                    'Modalidad_calificacion' => $modalidad_calificacion,
                     'Nombre_usuario' => $usuario,
                     'F_registro' => $date,
                 ];
@@ -6034,6 +6277,7 @@ class CalificacionPCLController extends Controller
                     'Otros_relacion_doc' => $descripcion_otros,
                     'Descripcion_enfermedad_actual' => $descripcion_enfermedad,
                     'Estado_decreto' =>  'Abierto',
+                    'Modalidad_calificacion' => $modalidad_calificacion,
                     'Nombre_usuario' => $usuario,
                     'F_registro' => $date,
                 ];
@@ -6096,6 +6340,7 @@ class CalificacionPCLController extends Controller
                     'Relacion_documentos' => $total_relacion_documentos,
                     'Otros_relacion_doc' => $descripcion_otros,
                     'Descripcion_enfermedad_actual' => $descripcion_enfermedad,
+                    'Modalidad_calificacion' => $modalidad_calificacion,
                     'Nombre_usuario' => $usuario,
                     'F_registro' => $date,
                 ];
@@ -8763,6 +9008,8 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'siae.Tipo_documento')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpa', 'slpa.Id_Parametro', '=', 'siae.Nivel_escolar')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slpar', 'slpar.Id_Parametro', '=', 'siae.Estado_civil')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldmdafi','sldmdafi.Id_departamento','=','siae.Id_departamento')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldmdbenefi','sldmdbenefi.Id_departamento','=','siae.Id_departamento_benefi')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sldm.Id_municipios', '=', 'siae.Id_municipio')
         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldmu', 'sldmu.Id_municipios', '=', 'siae.Id_municipio_benefi')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'sie.Id_Entidad', '=', 'siae.Id_eps')
@@ -8772,32 +9019,34 @@ class CalificacionPCLController extends Controller
         'siae.F_nacimiento', 'siae.Edad', 'siae.Genero', 'siae.Email', 'siae.Telefono_contacto', 'siae.Estado_civil', 
         'slpar.Nombre_parametro as Estado_civi', 'siae.Nivel_escolar', 'slpa.Nombre_parametro as Escolaridad', 
         'siae.Apoderado', 'siae.Nombre_apoderado', 'siae.Nro_identificacion_apoderado', 'siae.Id_dominancia', 'siae.Direccion', 
-        'siae.Id_departamento', 'siae.Id_municipio', 'sldm.Nombre_municipio as Nombre_municipio', 'siae.Ocupacion', 'siae.Tipo_afiliado', 
+        'siae.Id_departamento', 'siae.Id_municipio', 'siae.Ocupacion', 'siae.Tipo_afiliado', 
         'siae.Ibc', 'siae.Id_eps', 'sie.Nombre_entidad as Entidad_eps', 'siae.Id_afp', 'sien.Nombre_entidad as Entidad_afp', 'siae.Id_arl', 
         'sient.Nombre_entidad as Entidad_arl', 'siae.Activo', 'siae.Medio_notificacion', 'siae.Nombre_afiliado_benefi', 
-        'siae.Tipo_documento_benefi', 'siae.Nro_identificacion_benefi', 'siae.Direccion_benefi', 'siae.Id_departamento_benefi', 
-        'siae.Id_municipio_benefi', 'sldmu.Nombre_municipio as Nombre_municipio_benefi', 'siae.Nombre_usuario', 'siae.F_registro', 
-        'F_actualizacion')
-        ->where([['ID_Evento',$ID_Evento_comuni]])->get();        
-
+        'siae.Tipo_documento_benefi', 'siae.Nro_identificacion_benefi', 'siae.Direccion_benefi', 'siae.Id_departamento_benefi','sldmdafi.Nombre_departamento as Nombre_departamento_afi',
+        'sldm.Nombre_municipio as Nombre_municipio','sldmdbenefi.Nombre_departamento as Nombre_departamento_benefi','sldmu.Nombre_municipio as Nombre_municipio_benefi','siae.Id_municipio_benefi','siae.Nombre_usuario', 
+        'siae.F_registro','F_actualizacion')
+        ->where([['ID_Evento',$ID_Evento_comuni]])->get();  
+                
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
         $Ocupacion_afiliado = $array_datos_info_afiliado[0]->Ocupacion;
+        
+        // Debido a un error en el modulo nuevo, guarda beneficiario donde va el afiliado y afiliado donde va el beneficiario, por eso ya no es relevante el tipo de afiliado
 
-        if ($Tipo_afiliado !== 27 ) {
+        // if ($Tipo_afiliado !== 27 ) {
             $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado;
             $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion;
             $Telefono_afiliado_dic = $array_datos_info_afiliado[0]->Telefono_contacto;
             $Email_afiliado_dic = $array_datos_info_afiliado[0]->Email;
             $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion;
             $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio;
-        }else{
-            $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
-            $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
-            $Telefono_afiliado_dic = '';
-            $Email_afiliado_dic = '';
-            $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion_benefi;
-            $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
-        }
+        // }else{
+        //     $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
+        //     $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
+        //     $Telefono_afiliado_dic = '';
+        //     $Email_afiliado_dic = '';
+        //     $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion_benefi;
+        //     $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
+        // }
 
         if($Id_solicitante_dic == 1 || $Id_solicitante_dic == 2 ||  $Id_solicitante_dic == 3){
             $Solicitante_dic = $motivo_solicitud_dictamen[0]->Solicitante;
@@ -8883,7 +9132,7 @@ class CalificacionPCLController extends Controller
             $Ciudad_per_cal = $array_datos_info_afiliado[0]->Nombre_municipio;
             $Email_per_cal = $array_datos_info_afiliado[0]->Email;
             $Nombre_ben = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
-            $Tipo_iden_ben = $array_datos_info_afiliado[0]->Tipo_documento_benefi;            
+            $Tipo_iden_ben = $array_datos_info_afiliado[0]->T_documento;            
             $Documento_iden_ben = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
             $Telefono_iden_ben = '';
             $Ciudad_iden_ben = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
@@ -8946,15 +9195,15 @@ class CalificacionPCLController extends Controller
             $Ciudad_acudiente = '';
         }
 
-        if ($Documento_iden_ben == '') {
+        // if ($Documento_iden_ben == '') {
             $Numero_documento_afiliado = $NroIden_per_cal;
             $Documento_afiliado = $Tipo_documento_per_cal;
             $Nombre_afiliado_pre = $Nombre_per_cal;
-        } else {            
-            $Numero_documento_afiliado = $Documento_iden_ben;
-            $Documento_afiliado = $Tipo_iden_ben;
-            $Nombre_afiliado_pre = $Nombre_ben;
-        }
+        // } else {            
+        //     $Numero_documento_afiliado = $Documento_iden_ben;
+        //     $Documento_afiliado = $Tipo_iden_ben;
+        //     $Nombre_afiliado_pre = $Nombre_ben;
+        // }
         
 
         //Captura de datos de Etapas del ciclo vital
@@ -9396,11 +9645,11 @@ class CalificacionPCLController extends Controller
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
         $Ocupacion_afiliado = $array_datos_info_afiliado[0]->Ocupacion;
 
-        if ($Tipo_afiliado !== 27 ) {
+        // if ($Tipo_afiliado !== 27 ) {
             $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado;            
-        }else{
-            $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;            
-        }
+        // }else{
+            // $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;            
+        // }
 
         if($Id_solicitante_dic == 1 || $Id_solicitante_dic == 2 ||  $Id_solicitante_dic == 3){
             $Solicitante_dic = $motivo_solicitud_dictamen[0]->Solicitante;
@@ -10669,21 +10918,21 @@ class CalificacionPCLController extends Controller
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
         $Ocupacion_afiliado = $array_datos_info_afiliado[0]->Ocupacion;
 
-        if ($Tipo_afiliado !== 27 ) {
+        // if ($Tipo_afiliado !== 27 ) {
             $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado;
             $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion;
             $Telefono_afiliado_dic = $array_datos_info_afiliado[0]->Telefono_contacto;
             $Email_afiliado_dic = $array_datos_info_afiliado[0]->Email;
             $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion;
             $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio;
-        }else{
-            $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
-            $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
-            $Telefono_afiliado_dic = '';
-            $Email_afiliado_dic = '';
-            $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion_benefi;
-            $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
-        }
+        // }else{
+        //     $Nombre_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
+        //     $NroIden_afiliado_dic = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
+        //     $Telefono_afiliado_dic = '';
+        //     $Email_afiliado_dic = '';
+        //     $Direccion_afiliado_dic = $array_datos_info_afiliado[0]->Direccion_benefi;
+        //     $Ciudad_afiliado_dic = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
+        // }
 
         if($Id_solicitante_dic == 1 || $Id_solicitante_dic == 2 ||  $Id_solicitante_dic == 3){
             $Solicitante_dic = $motivo_solicitud_dictamen[0]->Solicitante;
@@ -10769,7 +11018,7 @@ class CalificacionPCLController extends Controller
             $Ciudad_per_cal = $array_datos_info_afiliado[0]->Nombre_municipio;
             $Email_per_cal = $array_datos_info_afiliado[0]->Email;
             $Nombre_ben = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
-            $Tipo_iden_ben = $array_datos_info_afiliado[0]->Tipo_documento_benefi;            
+            $Tipo_iden_ben = $array_datos_info_afiliado[0]->T_documento;            
             $Documento_iden_ben = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
             $Telefono_iden_ben = '';
             $Ciudad_iden_ben = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
@@ -10832,15 +11081,15 @@ class CalificacionPCLController extends Controller
             $Ciudad_acudiente = '';
         }
 
-        if ($Documento_iden_ben == '') {
+        // if ($Documento_iden_ben == '') {
             $Numero_documento_afiliado = $NroIden_per_cal;
             $Documento_afiliado = $Tipo_documento_per_cal;
             $Nombre_afiliado_pre = $Nombre_per_cal;
-        } else {            
-            $Numero_documento_afiliado = $Documento_iden_ben;
-            $Documento_afiliado = $Tipo_iden_ben;
-            $Nombre_afiliado_pre = $Nombre_ben;
-        }
+        // } else {            
+        //     $Numero_documento_afiliado = $Documento_iden_ben;
+        //     $Documento_afiliado = $Tipo_iden_ben;
+        //     $Nombre_afiliado_pre = $Nombre_ben;
+        // }
         
 
         //Captura de datos de Etapas del ciclo vital
@@ -11276,7 +11525,7 @@ class CalificacionPCLController extends Controller
 
         $Tipo_afiliado = $array_datos_info_afiliado[0]->Tipo_afiliado;
 
-        if ($Tipo_afiliado !== 27 ) {
+        // if ($Tipo_afiliado !== 27 ) {
             $Nombre_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_afiliado;
             $Direccion_afiliado_noti = $array_datos_info_afiliado[0]->Direccion;
             $Telefono_afiliado_noti = $array_datos_info_afiliado[0]->Telefono_contacto;
@@ -11285,16 +11534,16 @@ class CalificacionPCLController extends Controller
             $T_documento_noti = $array_datos_info_afiliado[0]->T_documento;            
             $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion;
             $Email_afiliado_noti = $array_datos_info_afiliado[0]->Email;
-        }else{
-            $Nombre_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
-            $Direccion_afiliado_noti = $array_datos_info_afiliado[0]->Direccion_benefi;
-            $Telefono_afiliado_noti = '';
-            $Departamento_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_departamento_benefi;            
-            $Ciudad_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
-            $T_documento_noti = $array_datos_info_afiliado[0]->Tipo_documento_benfi;            
-            $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
-            $Email_afiliado_noti = '';
-        }
+        // }else{
+        //     $Nombre_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_afiliado_benefi;
+        //     $Direccion_afiliado_noti = $array_datos_info_afiliado[0]->Direccion_benefi;
+        //     $Telefono_afiliado_noti = '';
+        //     $Departamento_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_departamento_benefi;            
+        //     $Ciudad_afiliado_noti = $array_datos_info_afiliado[0]->Nombre_municipio_benefi;
+        //     $T_documento_noti = $array_datos_info_afiliado[0]->Tipo_documento_benfi;            
+        //     $NroIden_afiliado_noti = $array_datos_info_afiliado[0]->Nro_identificacion_benefi;
+        //     $Email_afiliado_noti = '';
+        // }
 
         if(!empty($Copia_eps_correspondecia) && $Copia_eps_correspondecia == 'EPS'){
             $Nombre_eps = $array_datos_info_afiliado[0]->Entidad_eps;

@@ -1820,13 +1820,13 @@ $(document).ready(function(){
     });
 
     // Dehabilitar los requiered si el checked de pcl no esta esta checked
-    var checkboxcontro_pcl = $('#contro_pcl');
+    /*var checkboxcontro_pcl = $('#contro_pcl');
 
     if (!checkboxcontro_pcl.prop('checked')) {
         $('#manual_de_califi').prop('required', false);
         $('#total_deficiencia').prop('required', false);
         $('#f_estructuracion_contro').prop('required', false);        
-    }   
+    }*/
 
     //Mostrar o Ocultar la seccion de Firmeza o controversia por otra parte interesada del Dictamen Junta Regional de Calificación de Invalidez (JRCI) 
     // si los Pronunciamiento ante Dictamen de JRCI estan checked
@@ -2382,11 +2382,7 @@ $(document).ready(function(){
                 if (response.parametro == 'registro_revision_jrci') {
                     $('.alerta_revision_jrci').removeClass('d-none');
                     $('.alerta_revision_jrci').append('<strong>'+response.mensaje+'</strong>');
-                    setTimeout(function(){
-                        $('.alerta_revision_jrci').addClass('d-none');
-                        $('.alerta_revision_jrci').empty();
-                        location.reload();
-                    }, 3000);
+                    $('#form_correspondencia_juntas').trigger('submit');
                 }
             }
         })
@@ -3216,9 +3212,7 @@ $(document).ready(function(){
             var existeOtroOficio = arrayComunicadosCorrespondencia.some(function(comunicado) {
                 return comunicado.Tipo_descarga !== 'Manual';
             });
-            if(!existeOtroOficio){
-                $("#div_correspondencia").removeClass('d-none');
-            }
+
         }else{
             $("#div_correspondencia").removeClass('d-none');
         }
@@ -3710,7 +3704,10 @@ $(document).ready(function(){
                 if (response.parametro == 'insertar_correspondencia') {
                     $('#GuardarCorrespondencia').prop('disabled', true);
                     $('#div_alerta_Correspondencia').removeClass('d-none');
-                    $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');                                            
+                    $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');      
+                    $('.alerta_revision_jrci').removeClass('d-none');
+                    $('.alerta_revision_jrci').empty();
+                    $('.alerta_revision_jrci').append('<strong>'+response.mensaje+'</strong>');                                      
                     setTimeout(function(){
                         $('#div_alerta_Correspondencia').addClass('d-none');
                         $('.alerta_Correspondencia').empty();   
@@ -3818,7 +3815,7 @@ $(document).ready(function(){
         //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
         let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
         //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
-        copias = copias.split(',').map(copia => copia.trim());
+        copias = copias ? copias.split(',').map(copia => copia.trim()) : copias;
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
             $("#btn_guardar_actualizar_correspondencia").remove();
@@ -4017,7 +4014,7 @@ $(document).ready(function(){
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
+                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && Array.isArray(copias) && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -5117,6 +5114,10 @@ $(document).ready(function(){
     }
 
 
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('tabla_comunicados_juntas');
+    }, 500);
 });
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/
 /*Para Diagnosticos Controvertido*/

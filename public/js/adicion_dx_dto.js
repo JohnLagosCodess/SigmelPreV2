@@ -1615,8 +1615,11 @@ $(document).ready(function(){
 
     Visar.change(function(){
         if ($(this).prop('checked')) {
-            $("#profesional_comite").val(NombreUsuario);            
+            $("#profesional_comite").val(NombreUsuario); 
+            $("#oficio_origen").prop('checked',true);      
+            $("#oficio_origen").trigger('change');              
         } else {            
+            $("#oficio_origen").prop('checked',false); 
             $("#profesional_comite").val('');            
         }
     });    
@@ -1651,11 +1654,7 @@ $(document).ready(function(){
                     $('#GuardarComiteInter').prop('disabled', true);
                     $('#div_alerta_comiteInter').removeClass('d-none');
                     $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');                                            
-                    setTimeout(function(){
-                        $('#div_alerta_comiteInter').addClass('d-none');
-                        $('.alerta_comiteInter').empty();   
-                        location.reload();
-                    }, 3000);   
+                    $('#form_correspondencia_adx').trigger('submit');
                 }
             }          
         })
@@ -2133,10 +2132,14 @@ $(document).ready(function(){
                                 $('#GuardarCorrespondencia').prop('disabled', true);
                                 $('#ActualizarCorrespondencia').prop('disabled', true);
                                 $('#div_alerta_Correspondencia').removeClass('d-none');
-                                $('.alerta_Correspondencia').append('<strong>'+mensaje+'</strong>');                                            
+                                $('.alerta_Correspondencia').append('<strong>'+mensaje+'</strong>');
+                                $('.alerta_comiteInter').empty();
+                                $('.alerta_comiteInter').append('<strong>' + mensaje + '</strong>');                                               
                                 setTimeout(function(){
                                     $('#div_alerta_Correspondencia').addClass('d-none');
                                     $('.alerta_Correspondencia').empty();   
+                                    $('#div_alerta_comiteInter').addClass('d-none');
+                                    $('.alerta_comiteInter').empty();    
                                     location.reload();
                                 }, 1500);  
                             }
@@ -2320,7 +2323,7 @@ $(document).ready(function(){
         //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
         let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
         //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
-        copias = copias.split(',').map(copia => copia.trim());
+        copias = copias ? copias.split(',').map(copia => copia.trim()) : copias;
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
             $("#btn_guardar_actualizar_correspondencia").remove();
@@ -2516,7 +2519,7 @@ $(document).ready(function(){
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
+                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && Array.isArray(copias) && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -3113,6 +3116,11 @@ $(document).ready(function(){
         $(".note-editable").attr("contenteditable", false);
         $("#firmar").prop('disabled', true);
     }
+
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('listado_comunicados_adx');
+    }, 500);
 });
 
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnosticos motivo de calificación*/

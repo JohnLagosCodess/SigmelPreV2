@@ -329,12 +329,14 @@ $(document).ready(function(){
                 
                 $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
                 $("#Edicion").removeClass('d-none');
+                $("#Edicion").prop('disabled',false);
             }else{
                 $("#accion").empty();
                 $("#accion").append('<option></option>');
 
                 $(".no_ejecutar_parametrica_modulo_principal").removeClass('d-none');
                 $("#Edicion").addClass('d-none');
+                $("#Edicion").prop('disabled',true);
             }
         }
     });
@@ -360,9 +362,11 @@ $(document).ready(function(){
                     if (data[0]["Modulo_principal"] !== "Si") {
                         $(".no_ejecutar_parametrica_modulo_principal").removeClass('d-none');
                         $("#Edicion").addClass('d-none');
+                        $("#Edicion").prop('disabled',true);
                     } else {
                         $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
                         $("#Edicion").removeClass('d-none');
+                        $("#Edicion").prop('disabled',false);
 
                         // llenado del input Estado de Facturación
                         $("#estado_facturacion").val(data[0]["Estado_facturacion"]);
@@ -445,9 +449,11 @@ $(document).ready(function(){
                     if (data[0]["Modulo_principal"] !== "Si") {
                         $(".no_ejecutar_parametrica_modulo_principal").removeClass('d-none');
                         $("#Edicion").addClass('d-none');
+                        $("#Edicion").prop('disabled',true);
                     } else {
                         $(".no_ejecutar_parametrica_modulo_principal").addClass('d-none');
                         $("#Edicion").removeClass('d-none');
+                        $("#Edicion").prop('disabled',false);
 
                         // llenado del input Estado de Facturación
                         $("#estado_facturacion").val(data[0]["Estado_facturacion"]);
@@ -658,9 +664,10 @@ $(document).ready(function(){
     /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
     $("input[id^='listadodocumento_']").click(function(){
         let idobtenido = $('#newId_evento').val();
+        let tipoDoc = $(this).data('tipo_documento');
         let idDoc = $(this).data('id_doc');
         $("input[id^='EventoID_']").val(idobtenido);
-        if(idDoc === 4){
+        if(idDoc === 4 && !tipoDoc){
             //Tomamos el input seleccionado
             let inputFile = $(`#listadodocumento_${idDoc}`)
             //Le asignamos el metodo de entrada de archivo el cual viene de nuestro input
@@ -670,7 +677,7 @@ $(document).ready(function(){
                 $(`#fileName_${idDoc}`).text(file.fileName);
                 resumable.opts.query.EventoID = idobtenido;
                 resumable.opts.query.Id_Documento = idDoc;
-                resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val();
+                resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val().replace(/ /g, "_");
                 resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
                 resumable.opts.query.Id_asignacion = $(`#Id_asignacion_${idDoc}`).val();
             });
@@ -712,11 +719,12 @@ $(document).ready(function(){
         e.preventDefault();
         var id_reg_doc = $(this).data("id_reg_doc");
         var id_doc = $(this).data("id_doc");
+        let tipoDoc = $(this).data('tipo_documento');
 
         var formData = new FormData($(this)[0]);
         var cambio_estado = $(this).parents()[1]['children'][2]["id"];
         var input_documento = $(this).parents()[0]['children'][0][4]["id"];  
-        if(id_doc === 4){
+        if(id_doc === 4 && !tipoDoc){
             //Validación de posibles errores antes de enviar el documento
             if(resumable.opts.query.EventoID === ""){
                 errorCargueDocumentosID4('Debe diligenciar primero el formulario para poder cargar este documento.')
@@ -894,6 +902,7 @@ $(document).ready(function(){
         formData.append('Id_proceso', $('#Id_proceso').val());
         formData.append('Id_servicio', $("#Id_servicio").val());
         formData.append('fecha_devolucion', $('#fecha_devolucion').val());
+        formData.append('fecha_radicacion_actual', $('#fecha_radicacion').val());
         formData.append('nueva_fecha_radicacion', $('#nueva_fecha_radicacion').val());
         formData.append('accion', $('#accion').val());
         formData.append('fecha_alerta', $('#fecha_alerta').val());
@@ -901,10 +910,12 @@ $(document).ready(function(){
         formData.append('estado_facturacion', $('#estado_facturacion').val());
         formData.append('causal_devolucion_comite', $('#causal_devolucion_comite').val());
         formData.append('fecha_cierre', $('#fecha_cierre').val());
+        formData.append('fecha_vencimiento_actual', $('#fecha_vencimiento_actual').val());
         formData.append('profesional', $('#profesional').val());
         formData.append('descripcion_accion', $('#descripcion_accion').val());        
-        formData.append('banderaguardar', $('#bandera_accion_guardar_actualizar').val());
         formData.append('fuente_informacion', $('#fuente_informacion').val());       
+        formData.append('tiempo_gestion', $('#tiempo_gestion').val());
+        formData.append('banderaguardar', $('#bandera_accion_guardar_actualizar').val());
 
         $.ajax({
             type:'POST',
@@ -2209,7 +2220,11 @@ $(document).ready(function(){
             data: response,
             paging: false,
             order: [[0, 'desc']],
-            "columns":columns,            
+            "columns":columns,     
+            createdRow: function(row, data, dataIndex) {
+                //agregamos el id del comunicado dentro del primer td
+                $(row).find('td').eq(0).attr('data-id_comunicado', data.Id_Comunicado);
+            },       
             "language":{                
                 "search": "Buscar",
                 "lengthMenu": "Mostrar _MENU_ registros",
@@ -2727,7 +2742,7 @@ $(document).ready(function(){
         //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
         let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
         //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
-        copias = copias.split(',').map(copia => copia.trim());
+        copias = copias ? copias.split(',').map(copia => copia.trim()) : copias;
         //Información superior del modal 
         $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
         $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
@@ -2917,7 +2932,7 @@ $(document).ready(function(){
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
+                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && Array.isArray(copias) && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -4091,6 +4106,10 @@ $(document).ready(function(){
     }
 
 
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('listado_agregar_comunicados');
+    }, 500);
 });
 
 /* Función para añadir los controles de cada elemento de cada fila */

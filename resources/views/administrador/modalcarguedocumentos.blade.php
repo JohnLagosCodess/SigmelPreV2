@@ -114,7 +114,7 @@
                                         </form>
                                     <?php else:?>
                                         {{-- action="{{route('cargaDocumento')}}" --}}
-                                        <form id="formulario_documento_{{$documento->Id_Documento}}" data-id_reg_doc="{{$documento->id_Registro_Documento}}" data-id_doc="{{$documento->Id_Documento}}" method="POST" enctype="multipart/form-data">
+                                        <form id="formulario_documento_{{$documento->Id_Documento}}" data-id_reg_doc="{{$documento->id_Registro_Documento}}" data-id_doc="{{$documento->Id_Documento}}" data-tipo_documento="{{$documento->Tipo}}" method="POST" enctype="multipart/form-data">
                                             @csrf
                                             <div class="d-nones">
                                                 <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
@@ -139,9 +139,26 @@
                                             <div class="row">
                                                 <p><?php if($documento->nombre_Documento <> ""){echo "{$documento->nombre_Documento}.{$documento->formato_documento}";}?></p>
                                                 <div class="input-group" style="justify-content: space-between;">
-                                                    @if($documento->Id_Documento !== 4)
+                                                    @if($documento->Id_Documento === 4 && $documento->Tipo === null)
+                                                        <input type="file" class="form-control select-doc" style="display: none;" data-id_reg_doc="{{$documento->id_Registro_Documento}}" data-tipo_documento="{{$documento->Tipo}}" id="listadodocumento_{{$documento->Id_Documento}}" data-id_doc="{{$documento->Id_Documento}}" aria-describedby="Carguedocumentos" aria-label="Upload" <?php if($documento->Requerido === "Si"):?>
+                                                        required
+                                                        <?php endif?>>
+                                                        <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%;">
+                                                            <div style="display: flex;flex-direction: row;align-items: center;width: 82%; max-width:520px; border: 1px solid black; border-radius: 4px;">
+                                                                <label for="listadodocumento_{{$documento->Id_Documento}}" id="thebutton_{{$documento->Id_Documento}}" class="btn btn-info button-doc-select" style="margin:0;font-weight: 400; border-radius: 1px 0px 0px 1px;">Seleccionar archivo</label>
+                                                                <label for="listadodocumento_{{$documento->Id_Documento}}" id="fileName_{{$documento->Id_Documento}}" style="width: 60%; margin:0;padding-left: 5px;font-weight: 400; overflow: hidden;text-wrap: nowrap;text-overflow: ellipsis;">Sin archivos seleccionados</label>
+                                                            </div>
+                                                            <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_{{$documento->Id_Documento}}">
+                                                                <?php if($documento->estado_documento == "Cargado"):?>
+                                                                    Actualizar
+                                                                <?php else:?>
+                                                                    Cargar
+                                                                <?php endif?>
+                                                            </button>
+                                                        </div>
+                                                    @else
                                                         <input type="file" class="form-control select-doc" name="listadodocumento" 
-                                                        id="listadodocumento_{{$documento->Id_Documento}}" data-id_doc="{{$documento->Id_Documento}}" aria-describedby="Carguedocumentos" aria-label="Upload"
+                                                        id="listadodocumento_{{$documento->Id_Documento}}" data-id_doc="{{$documento->Id_Documento}}" data-tipo_documento="{{$documento->Tipo}}" aria-describedby="Carguedocumentos" aria-label="Upload"
                                                         <?php if($documento->Requerido === "Si"):?>
                                                             required
                                                         <?php endif?>
@@ -154,25 +171,7 @@
                                                                 Cargar
                                                             <?php endif?>
                                                         </button>
-                                                    @else
-                                                        <input type="file" class="form-control select-doc" style="display: none;" id="listadodocumento_{{$documento->Id_Documento}}" data-id_doc="{{$documento->Id_Documento}}" <?php if($documento->Requerido === "Si"):?>
-                                                            required
-                                                            <?php endif?>
-                                                        >
-                                                        <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%;">
-                                                            <div style="display: flex;flex-direction: row;align-items: center;width: 82%; max-width:520px; border: 1px solid black; border-radius: 4px;">
-                                                                <label for="listadodocumento_{{$documento->Id_Documento}}" id="thebutton_{{$documento->Id_Documento}}" class="btn btn-info button-doc-select" style="margin:0;font-weight: 400; border-radius: 1px 0px 0px 1px;">Seleccionar archivo</label>
-                                                                <label for="listadodocumento_{{$documento->Id_Documento}}" id="fileName_{{$documento->Id_Documento}}" style="width: 60%; margin:0;padding-left: 5px;font-weight: 400; overflow: hidden;text-wrap: nowrap;text-overflow: ellipsis;">Sin archivos seleccionados</label>
-                                                                
-                                                            </div>
-                                                            <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_{{$documento->Id_Documento}}">
-                                                                <?php if($documento->estado_documento == "Cargado"):?>
-                                                                    Actualizar
-                                                                <?php else:?>
-                                                                    Cargar
-                                                                <?php endif?>
-                                                            </button>
-                                                        </div>
+                                                        
                                                     @endif
                                                 </div>                                                                                                                                                              
                                             </div>

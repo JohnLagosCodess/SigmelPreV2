@@ -344,7 +344,37 @@ $(document).ready(function () {
         Maximo2Decimales(inputId);
     });
 
+    $(document).on('keyup', "input[id^='alerta_naranja_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='alerta_roja_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
     $(document).on('keyup', "input[id^='porcentaje_pcl']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='edicion_nombre_ans_']", function(){
+        var textoEscrito = $(this).val();
+        $(this).val(LetraMayusPrimeraLetraTexto(textoEscrito));
+    });
+
+    $(document).on('keyup', "input[id^='edicion_valor_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='edicion_alerta_naranja_ans_']", function(){
+        var inputId = this.id;
+        Maximo2Decimales(inputId);
+    });
+
+    $(document).on('keyup', "input[id^='edicion_alerta_roja_ans_']", function(){
         var inputId = this.id;
         Maximo2Decimales(inputId);
     });
@@ -481,25 +511,7 @@ $(document).ready(function () {
     //     NumerosEnteros(this);
     // });
             
-    function Maximo2Decimales(idinput){
-        $('#'+idinput).on('input', function(){
-            var inputValue = $(this).val();
-            var decimalCount = (inputValue.split('.')[1] || []).length;        
-            if (decimalCount > 2) {
-              $(this).val(parseFloat(inputValue).toFixed(2));
-            }
-        });
-    };
-
-    function Maximo1Decimal(idinput){
-        $('#'+idinput).on('input', function(){
-            var inputValue = $(this).val();
-            var decimalCount = (inputValue.split('.')[1] || []).length;        
-            if (decimalCount > 1) {
-              $(this).val(parseFloat(inputValue).toFixed(1));
-            }
-        });
-    }
+    
 
     $(document).on("input", '[id^="deficienciadecreto3_"]', function() {
         var inputId = this.id;
@@ -583,9 +595,11 @@ $(document).ready(function () {
     var id_rol = $("#id_rol").val();
     if (id_rol == 10) {
         $("#visar").prop('disabled', false);
+        $("#oficio_origen").prop("disabled", false);
         $("#GuardarComiteInter").prop('disabled', false);
     } else {
         $("#visar").prop('disabled', true);
+        $("#oficio_origen").prop("disabled", true);
         $("#GuardarComiteInter").prop('disabled', true);
     }
 
@@ -638,8 +652,7 @@ $(document).ready(function () {
         /**
          * Datos que se incluiran en la modal
          */
-        const ahora = new Date();
-        let f_accion =  ahora.toISOString().slice(0, 16).replace('T', ' ');
+        let f_accion =  $('#fecha_accion').val();
         let accion_ejecutar = $("#accion option:selected").text();
         let estado_facturacion = $("#estado_facturacion").val();
         let profecional_asignado = $("#profesional option:selected").text();
@@ -708,7 +721,32 @@ $(document).ready(function () {
 
 
     });
+    //evento cuando se le de click en el boton de eliminar
+    $(document).on('click', '.btn_eliminar_radicado', function() {  
+        // Deshabilita todo los botones de eliminar menos el clickeado
+        $('.btn_eliminar_radicado').css({
+            'color': '#ff4f4f',
+            'pointer-events': 'none', //deshabilita el click
+            'opacity': '0.5'
+        });
 
+        //Habilita el boton seleccionado
+        $(this).css({
+            'color': 'red', 
+            'pointer-events': 'auto',
+            'opacity': '1'
+        });
+
+        //Habilita nuevamente el boton tras finalizar el proceso.
+        let resultado = eliminar_evento($(this).data('id_comunicado'));
+        if(resultado == 'ok'){
+            $('.btn_eliminar_radicado').css({
+                'color': 'red',
+                'pointer-events': 'auto', //habilita el click
+                'opacity': '1'
+            });
+        }
+    });
     historial_servicios();
 
     //Mantiene el foco dentro del modal, principalmente para que sea compatible con select2
@@ -716,21 +754,43 @@ $(document).ready(function () {
         var that = this;
         $(document).on('focusin.modal', function (e) {
         if ($(e.target).hasClass('select2-input')) {
-        return true;
+           return true;
         }
 
         if (that && that.$element && that.$element[0] !== e.target && !that.$element.has(e.target).length) {
-        that.$element.focus();
+            that.$element.focus();
         }
         });
     };
 });
 
+// Función que permite solamente dos decimales escribir
+function Maximo2Decimales(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 2) {
+        $(this).val(parseFloat(inputValue).toFixed(2));
+        }
+    });
+};
+
+// Función que permite solamente un decimal escribir
+function Maximo1Decimal(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 1) {
+        $(this).val(parseFloat(inputValue).toFixed(1));
+        }
+    });
+}
+
 /**
  * Obtiene el historial de servicio para el evento consultado con base a la identificacion del afiliado.
  */
 function historial_servicios(){
-    let identificacion = $("#identificacion").val();
+    let identificacion = $("#identificacion").val() || $("#nro_identificacion").val();
     if(identificacion == ""){
         return;
     }
@@ -760,7 +820,7 @@ function historial_servicios(){
     }
 
     let afiliado =  $("#nombre_afiliado").val();
-    let tipo_doc = $("#identificacion").data('tipo');
+    let tipo_doc = $("#identificacion").data('tipo') || $("#tipo_documento").text();
     $('#historial_servicios .modal-header h4').append(`${afiliado} - ${tipo_doc} - ${identificacion}`);
 
     let token = $("input[name='_token']").val();
@@ -839,7 +899,7 @@ function historial_servicios(){
     });
 
 }
-
+// aqui mauro
 /**
  * Obtiene el id del formulario para el modulo principal actual
  * @returns Id del formulario cargado en el dom
@@ -1044,34 +1104,39 @@ function retornarIdDestinatario(ids_destinatario, destinatario){
         lo haga desde la de comunicados.
     */
     function consultarRegistroPorIdDestinatario(id_destinatario){
-        return new Promise((resolve, reject) => {
-            let datos = {
-                '_token': $('input[name=_token]').val(),
-                'id_destinatario': id_destinatario
-            };
-    
-            $.ajax({
-                url: '/getInfoCorrespByIdDest',
-                type: 'POST',
-                data: datos,
-                beforeSend: function () {
-                    showLoading();
-                },
-                success: function (response) {
-                    if (response.length > 0) {
-                        resolve(response[0]['Tipo_correspondencia']);
-                    } else {
-                        resolve(null);
+        if(id_destinatario){
+            return new Promise((resolve, reject) => {
+                let datos = {
+                    '_token': $('input[name=_token]').val(),
+                    'id_destinatario': id_destinatario
+                };
+        
+                $.ajax({
+                    url: '/getInfoCorrespByIdDest',
+                    type: 'POST',
+                    data: datos,
+                    beforeSend: function () {
+                        showLoading();
+                    },
+                    success: function (response) {
+                        if (response.length > 0) {
+                            resolve(response[0]['Tipo_correspondencia']);
+                        } else {
+                            resolve(null);
+                        }
+                    },
+                    error: function (error) {
+                        reject(error);
+                    },
+                    complete: function () {
+                        hideLoading();
                     }
-                },
-                error: function (error) {
-                    reject(error);
-                },
-                complete: function () {
-                    hideLoading();
-                }
+                });
             });
-        });
+        }
+        else{
+            return null;
+        }
 }
 
 /**
@@ -1104,4 +1169,153 @@ function validarAccion_ejecutar(id_accion) {
                 reject(error);
             });
     });
+}
+
+/**
+ * Funcion para eliminar un comunicado en especifico, principalmente cuando este se encuentra repetido
+ * @param {int} id_comunicado id del comunicado a eliminar 
+ * @param {int} proceso proceso al cual pertenece el comunicado
+ * @returns 
+ */
+function eliminar_evento(id_comunicado,proceso){
+    if(id_comunicado == "" || proceso == ""){
+        return;
+    }
+
+    let mensajeConfirmacion = '¿Está seguro de eliminar este registro? tenga en cuenta que una vez eliminado, este no se podrá recuperar.';
+
+    let data = {
+        '_token': $("input[name='_token']").val(),
+        'id_servicio': $("#Id_Servicio").val() || $("#Id_servicio").val(),
+        'id_evento': $("#newIdEvento").val(),
+        'id_asignacion': $("#newIdAsignacion").val(),
+        'id_comunicado': id_comunicado
+    };
+
+    if(confirm(mensajeConfirmacion)){
+        $.post('/eliminar_evento',data,function(response){
+            if(response == 'ok'){
+                $('.alerta_externa_comunicado').removeClass('d-none');
+                $('.alerta_externa_comunicado').append('<strong>El comunicado se elimino de manera correcta</strong>');
+                setTimeout(function(){
+                    $('.alerta_externa_comunicado').addClass('d-none');
+                    $('.alerta_externa_comunicado').empty();
+                    location.reload();
+                }, 3000);
+            }
+        });
+    }
+    return 'ok';
+}
+
+/**
+ * Funcion para verificar si dentro los comunicados hay algun radicado duplicado
+ */
+function radicados_duplicados(tabla){
+
+    let radicados_usados = [];
+    let radicados_duplicados = [];
+
+    $(`#${tabla} tr`).each(function() {
+        let radicado = $(this).find('td:first-child').text().trim(); //Obtenemos el radicado y el id del comunicado ubicado en la primera columna
+        let id_comunicado = $(this).find('td:first-child').data('id_comunicado')
+
+        //So el radicado actual ya fue usado habilita el boton de eliminar
+        if (radicados_usados.includes(radicado)) {
+            radicados_duplicados.push(radicado);
+            $(this).find('td:last-child').append(`<button class="btn_eliminar_radicado" data-id_comunicado="${id_comunicado}" style="border: none; background: transparent;"><i class="fas fa-trash" style="color: red;"></i></button>`);
+        } else {
+            radicados_usados.push(radicado);
+        }
+    });
+
+    //Muestra la alerta informando la cantidad de radicados duplicados
+    if(radicados_duplicados.length > 0){
+
+        $("#alertaRadicado").show();
+        $("#alerta_radicado_msj").empty();
+        $("#alerta_radicado_msj").append(`se encontraron <strong>${radicados_duplicados.length }</strong> radicados duplicados, por favor verifique.`);
+        $("#alertaRadicado").show();
+
+        setTimeout(() => {
+            $("#alertaRadicado").hide();
+        }, 3500);
+    }   
+}
+
+/**
+ * Función para ejecutar varias peticiones de manera asíncrona
+ * @param  {...Promise} peticiones - Las peticiones a ejecutar (promesas).
+ * @returns {Promise} - Devuelve una promesa que se resuelve cuando todas las peticiones han finalizado.
+ * @example 
+ * let peticion = $.ajax({
+ *     type: 'POST',
+ *     url: '/url',
+ *     data: {...}
+ *
+ * peticion_asincrona(peticion, otraPeticion);
+ */
+function peticion_asincrona(...peticiones) {
+    if (peticiones.length === 0) {
+        console.error('No se han proporcionado peticiones.');
+        return Promise.reject('No se han proporcionado peticiones.');
+    }
+
+    return Promise.allSettled(peticiones)
+        .then(results => {
+            results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                    console.log(`Petición ${index + 1} completada con éxito:`, result.value);
+                } else {
+                    console.error(`Petición ${index + 1} fallida:`, result.reason);
+                }
+            });
+        })
+        .finally(() => {
+            console.log('Todas las peticiones han sido procesadas');
+        });
+}
+
+/* Función para colorear el caso ya sea naranja o roja dependiendo del ANS */
+function ColoreadoEventosANS(Tiempo_actual,Fecha_alerta_naranja, Fecha_alerta_roja, tabla_bandeja) {
+    if (Fecha_alerta_naranja > Fecha_alerta_roja) {
+        if (Fecha_alerta_roja != "") {
+    
+            let alertaFechaRoja_ans = new Date(Fecha_alerta_roja);
+            
+            if (Tiempo_actual >= alertaFechaRoja_ans) {  
+                // console.log("ROJA: "+alertaFechaRoja_ans);
+                $(tabla_bandeja).find('td').css({'color':'red', 'font-weight': 'bold'});
+            }
+        }
+        if (Fecha_alerta_naranja != "") {
+            
+            let alertaFechaNaranja_ans = new Date(Fecha_alerta_naranja);
+            
+            if (Tiempo_actual >= alertaFechaNaranja_ans) {  
+                // console.log("NARANJA: "+alertaFechaNaranja_ans);
+                $(tabla_bandeja).find('td').css({'color':'orange', 'font-weight': 'bold'});
+            }
+        }
+    }
+    else{
+        if (Fecha_alerta_naranja != "") {
+                                
+            let alertaFechaNaranja_ans = new Date(Fecha_alerta_naranja);
+            
+            if (Tiempo_actual >= alertaFechaNaranja_ans) {  
+                // console.log("NARANJA: "+alertaFechaNaranja_ans);
+                $(tabla_bandeja).find('td').css({'color':'orange', 'font-weight': 'bold'});
+            }
+        }
+        if (Fecha_alerta_roja != "") {
+
+            let alertaFechaRoja_ans = new Date(Fecha_alerta_roja);
+            
+            if (Tiempo_actual >= alertaFechaRoja_ans) {  
+                // console.log("ROJA: "+alertaFechaRoja_ans);
+                $(tabla_bandeja).find('td').css({'color':'red', 'font-weight': 'bold'});
+            }
+        }
+    }
 }

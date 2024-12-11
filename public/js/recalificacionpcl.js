@@ -10,6 +10,12 @@ $(document).ready(function(){
         allowClear:false
     });
 
+    $(".modalidad_calificacion").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false,
+        width: '100%'
+    });
+
     $(".origen_cobertura").select2({
         placeholder:"Seleccione una opción",
         allowClear:false
@@ -77,6 +83,29 @@ $(document).ready(function(){
 
     // llenado de selectores
     var token = $('input[name=_token]').val();
+
+    //Listado de Modalidad calificacion PCL
+
+    let datos_lista_modalidad_calificacion = {
+        '_token': token,
+        'parametro':"lista_modalidad_calificacion_pcl"
+    };
+
+    $.ajax({
+        type:'POST',
+        url:'/selectoresModuloCalificacionPCL',
+        data: datos_lista_modalidad_calificacion,
+        success:function(data){
+            //console.log(data);
+            let NombremodalidadCalificacionPcl = $('select[name=modalidad_calificacion]').val();
+            let modalidadCalificacionPcl = Object.keys(data);
+            for (let i = 0; i < modalidadCalificacionPcl.length; i++) {
+                if (data[modalidadCalificacionPcl[i]]['Id_Parametro'] != NombremodalidadCalificacionPcl) {                    
+                    $('#modalidad_calificacion').append('<option value="'+data[modalidadCalificacionPcl[i]]['Id_Parametro']+'">'+data[modalidadCalificacionPcl[i]]['Nombre_parametro']+'</option>');
+                }
+            }
+        }
+    });
 
     //Listado de origen firmeza
     let datos_lista_origen_firme = {
@@ -2078,7 +2107,7 @@ $(document).ready(function(){
         //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
         let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
         //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
-        copias = copias.split(',').map(copia => copia.trim());
+        copias = copias ? copias.split(',').map(copia => copia.trim()) : copias;
         //Desactiva el formulario en caso de que la correspodencia este inactiva.
         if($(id).data("estado_correspondencia") != 1){
             $("#btn_guardar_actualizar_correspondencia").remove();
@@ -2274,7 +2303,7 @@ $(document).ready(function(){
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_copia").prop('required', false);
                         }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
+                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && Array.isArray(copias) && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
                             $("#modalCorrespondencia #check_copia").prop('checked', true);
                             $("#modalCorrespondencia #check_copia").prop('disabled', true);
                             $("#modalCorrespondencia #check_principal").prop('required', false);
@@ -2685,6 +2714,7 @@ $(document).ready(function(){
 
         var origen_firme = $('#origen_firme').val();
         var origen_cobertura = $('#origen_cobertura').val();
+        var modalidad_calificacion = $('#modalidad_calificacion').val();
         
         if(origen_firme == 49 && origen_cobertura == 51 || origen_firme == 48 && origen_cobertura == 51 || origen_firme == 49 && origen_cobertura == 50){
             
@@ -2706,6 +2736,7 @@ $(document).ready(function(){
                 'origen_cobertura':cobertura,
                 'decreto_califi':decreto,
                 'banderaGuardarNoDecreto': banderaGuardarNoDecreto,
+                'modalidad_calificacion': modalidad_calificacion
             }
             $.ajax({
                 type:'POST',
@@ -2825,6 +2856,7 @@ $(document).ready(function(){
                 'dominancia': dominancia,
                 'id_afiliado': id_afiliado,
                 'bandera_decreto_guardar_actualizar':bandera_decreto_guardar_actualizar,
+                'modalidad_calificacion': modalidad_calificacion
             }
             $.ajax({
                 type:'POST',
@@ -4128,11 +4160,7 @@ $(document).ready(function(){
                     $('#GuardarComiteInter').prop('disabled', true);
                     $('#div_alerta_comiteInter').removeClass('d-none');
                     $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');                                            
-                    setTimeout(function(){
-                        $('#div_alerta_comiteInter').addClass('d-none');
-                        $('.alerta_comiteInter').empty();   
-                        location.reload();
-                    }, 3000);   
+                    $('#form_correspondencia_pcl').trigger('submit'); 
                 }
             }          
         })
@@ -4197,7 +4225,7 @@ $(document).ready(function(){
         $("input[id^='dx_principal_deficiencia_visual_']").prop('disabled', true);
         // Comite y correspondencia
         $("#GuardarComiteInter").prop('disabled', true);
-        $("#div_correspondecia").removeClass('d-none');
+        //$("#div_correspondecia").removeClass('d-none');
     }
 
     // Validar cual de los oficios esta marcado
@@ -4712,6 +4740,8 @@ $(document).ready(function(){
                     $('#GuardarCorrespondencia').prop('disabled', true);
                     $('#div_alerta_Correspondencia').removeClass('d-none');
                     $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');
+                    $('.alerta_comiteInter').empty();
+                    $('.alerta_comiteInter').append('<strong>' + response.mensaje + '</strong>'); 
                     let Id_Comunicado = response.Id_Comunicado;
                     let Bandera_boton_guardar_oficio = response.Bandera_boton_guardar_oficio;
                     let datos_generar_oficios = {
@@ -5661,6 +5691,10 @@ $(document).ready(function(){
     }
 
     
+    //Valida si hay radicados duplicados
+    setTimeout(function() {
+        radicados_duplicados('listado_comunicados_clpcl');
+    }, 500);
 });
 // Examenes Interconsultas
 $(document).ready(function(){

@@ -107,7 +107,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_radicacion" class="col-form-label">Fecha de radicación <span style="color:red;">(*)</span></label>
-                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" required>
+                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" max="{{date("Y-m-d")}}" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -746,7 +746,19 @@
                                                     <label for="profesional" class="col-form label">Profesional</label>
                                                     <select class="profesional custom-select" name="profesional" id="profesional" disabled></select>
                                                 </div>
-                                            </div> 
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <label for="" class="col-form label">Fecha de vencimiento</label>
+                                                    <input type="date" class="form-control" name="fecha_vencimiento_visual" id="fecha_vencimiento_visual" disabled>
+                                                    <div class="d-none">
+                                                        <input type="text" class="form-control" name="Id_ans" id="Id_ans">
+                                                        <input type="text" class="form-control" name="fecha_vencimiento" id="fecha_vencimiento">
+                                                        <input type="text" class="form-control" name="fecha_alerta_naranja_ans" id="fecha_alerta_naranja_ans">
+                                                        <input type="text" class="form-control" name="fecha_alerta_roja_ans" id="fecha_alerta_roja_ans">
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>  
                                         <div class="row">
                                             <div class="col-sm">
@@ -794,7 +806,7 @@
 <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
 <script src="/plugins/toatsr/build/toastr.min.js"></script>
 <script src="/js/selectores_gestion_inicial.js"></script>
-<script src="/js/funciones_helpers.js"></script>
+<script src="/js/funciones_helpers.js?v=1.0.0"></script>
 <script>
     $(document).ready(function(){
         $('#gestion_inicial_nuevo').submit(function(e){

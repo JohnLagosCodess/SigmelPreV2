@@ -18,6 +18,8 @@ use App\Models\sigmel_informacion_alertas_automaticas_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_numero_orden_eventos;
 
+use App\Models\sigmel_informacion_alertas_ans_eventos;
+
 class BandejaJuntasController extends Controller
 {
     // Bandeja Origen Coordinador
@@ -229,6 +231,13 @@ class BandejaJuntasController extends Controller
                 ])->where(function($query){
                     $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
                 })
+                ->orderByRaw("
+                    CASE 
+                        WHEN Fecha_alerta = 'VENCIDO' THEN 1
+                        WHEN Fecha_alerta = 'PRÓXIMO A VENCER' THEN 2
+                        WHEN Fecha_alerta = 'VIGENTE' THEN 3
+                    END, F_vencimiento ASC
+                ")
                 //->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
                 ->get();
             }else{
@@ -238,6 +247,13 @@ class BandejaJuntasController extends Controller
                 ])->where(function($query){
                     $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
                 })->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
+                ->orderByRaw("
+                    CASE 
+                        WHEN Fecha_alerta = 'VENCIDO' THEN 1
+                        WHEN Fecha_alerta = 'PRÓXIMO A VENCER' THEN 2
+                        WHEN Fecha_alerta = 'VIGENTE' THEN 3
+                    END, F_vencimiento ASC
+                ")
                 ->get();
 
             }
@@ -334,6 +350,13 @@ class BandejaJuntasController extends Controller
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
                     })
                     ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
+                    ->orderByRaw("
+                        CASE 
+                            WHEN Fecha_alerta = 'VENCIDO' THEN 1
+                            WHEN Fecha_alerta = 'PRÓXIMO A VENCER' THEN 2
+                            WHEN Fecha_alerta = 'VIGENTE' THEN 3
+                        END, F_vencimiento ASC
+                    ")
                     ->get();
                 }else{
                     $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
@@ -344,6 +367,13 @@ class BandejaJuntasController extends Controller
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
                     })
                     ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
+                    ->orderByRaw("
+                        CASE 
+                            WHEN Fecha_alerta = 'VENCIDO' THEN 1
+                            WHEN Fecha_alerta = 'PRÓXIMO A VENCER' THEN 2
+                            WHEN Fecha_alerta = 'VIGENTE' THEN 3
+                        END, F_vencimiento ASC
+                    ")
                     ->get();
                 }
                     // ->whereNull('Nombre_proceso_anterior')
@@ -382,6 +412,13 @@ class BandejaJuntasController extends Controller
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
                     })
                     ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
+                    ->orderByRaw("
+                        CASE 
+                            WHEN Fecha_alerta = 'VENCIDO' THEN 1
+                            WHEN Fecha_alerta = 'PRÓXIMO A VENCER' THEN 2
+                            WHEN Fecha_alerta = 'VIGENTE' THEN 3
+                        END, F_vencimiento ASC
+                    ")
                     ->get();
                 
                 }else{
@@ -392,6 +429,13 @@ class BandejaJuntasController extends Controller
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
                     })
                     ->whereBetween(DB::raw('DATE(F_accion)'), [$consultar_f_desde ,$consultar_f_hasta])
+                    ->orderByRaw("
+                        CASE 
+                            WHEN Fecha_alerta = 'VENCIDO' THEN 1
+                            WHEN Fecha_alerta = 'PRÓXIMO A VENCER' THEN 2
+                            WHEN Fecha_alerta = 'VIGENTE' THEN 3
+                        END, F_vencimiento ASC
+                    ")
                     ->get();
                 }
 
@@ -430,6 +474,13 @@ class BandejaJuntasController extends Controller
                     ])->where(function($query){
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
                     })
+                    ->orderByRaw("
+                        CASE 
+                            WHEN Fecha_alerta = 'VENCIDO' THEN 1
+                            WHEN Fecha_alerta = 'PRÓXIMO A VENCER' THEN 2
+                            WHEN Fecha_alerta = 'VIGENTE' THEN 3
+                        END, F_vencimiento ASC
+                    ")
                     ->get();
                 }else{
                     $bandejaJuntasFiltros = cndatos_bandeja_eventos::on('sigmel_gestiones')
@@ -439,6 +490,13 @@ class BandejaJuntasController extends Controller
                     ])->where(function($query){
                         $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
                     })
+                    ->orderByRaw("
+                        CASE 
+                            WHEN Fecha_alerta = 'VENCIDO' THEN 1
+                            WHEN Fecha_alerta = 'PRÓXIMO A VENCER' THEN 2
+                            WHEN Fecha_alerta = 'VIGENTE' THEN 3
+                        END, F_vencimiento ASC
+                    ")
                     ->get();
 
                 }
@@ -504,11 +562,25 @@ class BandejaJuntasController extends Controller
         
     }
 
+    /* función para las alertas de la parametrica */
     public function alertaNaranjasRojasJuntas(Request $request) {
         $alertas = sigmel_informacion_alertas_automaticas_eventos::on('sigmel_gestiones')
         ->where([['Estado_alerta_automatica', '=', 'Ejecucion']])
         ->get();
         return response()->json(['data' => $alertas]);
+    }
+
+    /* Función para consultar si hay un ANS ejecutado dependiendo de su Id de asignacion */
+    public function consultaANSejecutado(Request $request){
+
+        $id_asignacion = $request->id_asignacion;
+
+        $alertas_ans = sigmel_informacion_alertas_ans_eventos::on('sigmel_gestiones')
+        ->where([['Id_Asignacion', $id_asignacion]])
+        ->get();
+
+        $array_alertas_ans = json_decode(json_encode($alertas_ans, true));
+        return response()->json($array_alertas_ans);
     }
 
     public function actualizarBandejaJuntas(Request $request){

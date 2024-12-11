@@ -109,8 +109,9 @@
                 <a href="{{route("busquedaEvento")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>           
             <?php endif ?>
         </div>
-        <div class="col-3" style="text-align: left !important; margin-left: -55px;">
+        <div class="col-6 d-flex" style="text-align: left !important; margin-left: -55px;">
             <a href="javascript:void(0);" data-toggle="modal" data-target="#modalHistorialAcciones" class="btn btn-info" id="cargar_historial_acciones"><i class="fas fa-list"></i> Historial Acciones</a>
+            <button label="Open Modal" data-toggle="modal" data-target="#historial_servicios" class="btn btn-info ml-1"><i class="fas fa-project-diagram mt-1"></i>Historial de servicios</button>
         </div>
     </div>
     {{-- MODAL HISTORIAL DE ACCIONES --}}
@@ -229,7 +230,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_radicacion" class="col-form-label">Fecha de radicación <span style="color:red;">(*)</span></label>
-                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_info_evento[0]->F_radicacion}}" required>
+                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_info_evento[0]->F_radicacion}}" max="{{date("Y-m-d")}}" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -1287,7 +1288,7 @@
                 </x-adminlte-modal>
             </div>
         </div>
-
+        @include('//.modals.historialServicios')
         {{-- MODAL PARA AGREGAR DOCUMENTOS INFORMACION PERICIAL --}}
         <?php $aperturaModal = 'Edicion'; ?>
         {{-- @include('administrador.modalcarguedocumentos') --}}
@@ -1314,6 +1315,7 @@
             document.getElementById('Regreso_Adicion_Dx').submit();
         });
     </script> --}}
+    <script src="/js/funciones_helpers.js"></script>
     <script src="/js/selectores_gestion_edicion.js"></script>  
     <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
 

@@ -219,17 +219,16 @@ $(document).ready(function(){
         // Esta función realiza los controles de cada elemento por fila
         edicion_parametrizacion_origen_atel(id_fila_parametrizacion_editar);
 
-//Si no hay niguna accion selecionada setea los valores de enviar como vacio
-$(`#bd_accion_ejecutar_origen_atel_${id_parametrizacion_calificacion_pcl_editar} `).change(function(){
-    if($(this).val() == 0){
-        console.log('q');
-        $('#bd_enviar_a_origen_atel_'+id_parametrizacion_calificacion_pcl_editar).prop('disabled',true);
-        $('#bd_enviar_a_origen_atel_'+id_parametrizacion_calificacion_pcl_editar).prop('checked',false);
-        $('#bd_bandeja_trabajo_destino_origen_atel_'+id_parametrizacion_calificacion_pcl_editar).empty();
-    }else{
-        $('#bd_enviar_a_origen_atel_'+id_parametrizacion_calificacion_pcl_editar).prop('disabled',false);
-    }
-});
+        //Si no hay niguna accion selecionada setea los valores de enviar como vacio
+        $(`#bd_accion_ejecutar_origen_atel_${id_parametrizacion_calificacion_pcl_editar} `).change(function(){
+            if($(this).val() == 0){
+                $('#bd_enviar_a_origen_atel_'+id_parametrizacion_calificacion_pcl_editar).prop('disabled',true);
+                $('#bd_enviar_a_origen_atel_'+id_parametrizacion_calificacion_pcl_editar).prop('checked',false);
+                $('#bd_bandeja_trabajo_destino_origen_atel_'+id_parametrizacion_calificacion_pcl_editar).empty();
+            }else{
+                $('#bd_enviar_a_origen_atel_'+id_parametrizacion_calificacion_pcl_editar).prop('disabled',false);
+            }
+        });
     });
     
     /* ACTUALIZAR PARAMETRIZACIÓN ORIGEN ATEL */
