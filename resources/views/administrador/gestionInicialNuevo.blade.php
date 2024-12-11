@@ -27,6 +27,7 @@
                 <div class="d-none">
                     <input type="text" id="id_evento_registrado" value="{{ session('id_evento_registrado') }}">
                     <input type="text" id="id_servicio_registrado" value="{{ session('id_servicio_registrado') }}">
+                    <input type="text" id="id_asignacion_registrado" value="{{ session('id_asignacion_registrado') }}">
                 </div>
                 <div id="div_mensaje_carga_docs">
                     <b>¿Desea Cargar los documentos?</b> &nbsp; <button class="btn btn-sm btn-success" id="abrir_modal_doc_mod_nuevo" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos">Si</button> 

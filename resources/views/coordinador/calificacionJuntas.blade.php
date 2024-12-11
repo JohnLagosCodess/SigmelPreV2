@@ -63,8 +63,7 @@
                                                 <input type="hidden" class="form-control" id="Id_servicio" value="{{$array_datos_calificacionJuntas[0]->Id_Servicio}}">
                                                 @if (count($dato_validacion_no_aporta_docs) > 0)
                                                 <input hidden="hidden" type="text" class="form-control" data-id_tupla_no_aporta="{{$dato_validacion_no_aporta_docs[0]->Id_Documento_Solicitado}}" id="validacion_aporta_doc" value="{{$dato_validacion_no_aporta_docs[0]->Aporta_documento}}">
-                                                @endif
-                                                <input type="hidden" class="form-control" id="conteo_listado_documentos_solicitados" value="{{count($listado_documentos_solicitados)}}">
+                                                @endif                                                
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -121,6 +120,7 @@
                                             <div class="form-group">
                                                 <label for="proceso_actual">Proceso actual</label>
                                                 <input type="text" class="form-control" name="proceso_actual" id="proceso_actual" value="{{$array_datos_calificacionJuntas[0]->Nombre_proceso_actual}}" disabled>
+                                                <input type="hidden" class="form-control" id="conteo_listado_documentos_solicitados" value="{{count($listado_documentos_solicitados)}}">                                                
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -901,11 +901,11 @@
                                     <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalGenerarComunicado"><i class="fas fa-file-pdf text-info"></i> <strong>Generar Comunicado</strong></a>
                                 </div>
                             </div>
-                            {{-- <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
+                            <div class="col-3 text-center" <?php if(!empty($arrayinfo_controvertido[0]->Termino_contro_califi) && $arrayinfo_controvertido[0]->Termino_contro_califi=='Fuera de términos'){ ?> style="display:none" <?php } ?>>
                                 <div class="form-group">
                                     <a href="#" class="text-dark text-md" label="Open Modal" data-toggle="modal" data-target="#modalCrearExpediente" id="crearExpediente"><i class="fas fa-archive text-info"></i> <strong>Crear Expediente</strong></a>
                                 </div>
-                            </div> --}}
+                            </div>
                             <div id="Cargando_expediente" class="spinner-overlay" style="display: none;">
                                 <div class="spinner-grow" role="status">
                                     <br><br>
@@ -1971,6 +1971,7 @@
 @section('js')
     <script type="text/javascript" src="/js/calificacionJuntas.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
     <script>
         //funcion para habilitar el historial de acciones

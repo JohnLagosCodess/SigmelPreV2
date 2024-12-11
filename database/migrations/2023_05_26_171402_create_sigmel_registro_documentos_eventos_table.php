@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_registro_documentos_eventos', function (Blueprint $table) {
             $table->increments('Id_Registro_Documento');
+            $table->integer('Id_Asignacion');
             $table->integer('Id_Documento');
             $table->string('ID_evento', 20);
             $table->text('Nombre_documento');

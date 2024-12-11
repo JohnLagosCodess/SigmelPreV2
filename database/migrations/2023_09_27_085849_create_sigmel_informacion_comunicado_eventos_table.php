@@ -52,6 +52,7 @@ return new class extends Migration
             $table->text('Correspondencia')->nullable();
             $table->integer('Otro_destinatario')->default(0);
             $table->text('Id_Destinatarios')->nullable();
+            $table->enum('Expediente_estado', ['Reciente','Antiguo'])->nullable();
             $table->string('Nombre_usuario', 100);
             $table->date('F_registro');
         });

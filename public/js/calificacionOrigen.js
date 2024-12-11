@@ -550,8 +550,10 @@ $(document).ready(function(){
 
         var evento = $("#newId_evento").val();
         var servicio = $("#Id_servicio").val();
+        var asignacion = $("#newId_asignacion").val();        
         $("#id_evento_familia").val(evento);
         $("#id_servicio_familia").val(servicio);
+        $("#id_asignacion_familia").val(asignacion);
     });
 
     /* Envío de información del documento familia */
@@ -670,6 +672,7 @@ $(document).ready(function(){
                 resumable.opts.query.Id_Documento = idDoc;
                 resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val();
                 resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
+                resumable.opts.query.Id_asignacion = $(`#Id_asignacion_${idDoc}`).val();
             });
         }
     }); 

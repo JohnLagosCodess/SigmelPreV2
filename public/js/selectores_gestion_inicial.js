@@ -1657,6 +1657,8 @@ $(document).ready(function(){
         $("input[id^='EventoID_']").val(idobtenido);
         let idservicioobtenido = $("#id_servicio_registrado").val();
         $("input[id^='Id_servicio_']").val(idservicioobtenido);
+        let idasignacionobtenido = $("#id_asignacion_registrado").val();
+        $("input[id^='Id_asignacion_']").val(idasignacionobtenido);
     });
 
     /* 
@@ -1667,6 +1669,7 @@ $(document).ready(function(){
     $(document).on('click', '#cerrar_modal_doc_mod_nuevo, #cerrar_modal_docs_nuevo', function(){
         $("input[id^='EventoID_']").val('');
         $("input[id^='Id_servicio_']").val('');
+        $("input[id^='Id_asignacion_']").val('');
         $('#div_mensaje_carga_docs').addClass('d-none');
         location.reload();
     });
@@ -1699,6 +1702,7 @@ $(document).ready(function(){
                 resumable.opts.query.Id_Documento = idDoc;
                 resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val();
                 resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
+                resumable.opts.query.Id_asignacion = $(`#Id_asignacion_${idDoc}`).val();
             });
         }
     })
@@ -1806,6 +1810,10 @@ $(document).ready(function(){
                             let idservicioobtenido = $("#id_servicio_registrado").val();
                             if (idservicioobtenido) {
                                 $("input[id^='Id_servicio_']").val(idservicioobtenido);
+                            }
+                            let idasignacionobtenido = $("#id_asignacion_registrado").val();
+                            if (idasignacionobtenido) {
+                                $("input[id^='Id_asignacion_']").val(idasignacionobtenido);
                             }
                         }
                         $('.mostrar_fallo').removeClass('d-none');

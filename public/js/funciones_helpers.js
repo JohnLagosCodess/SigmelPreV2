@@ -442,11 +442,18 @@ $(document).ready(function () {
     } 
     
     function NumerosEnteros(input) {
-        var value = $(input).val();      
-        if (!Number.isInteger(Number(value))) {
-          $(input).val("");
+        var value = $(input).val();  
+        // Expresión regular para solo números enteros positivos, sin comas ni puntos
+        var isInteger = /^[0-9]+$/; 
+        if (!isInteger.test(value)) {
+            // Si no es un número entero positivo válido, limpiamos el valor del input
+            $(input).val("");
         }
     }
+
+    $(document).on("input", '[id^="posicionFoleo"], [id^="posicion_expediente_"]', function() {
+        NumerosEnteros(this);
+    });   
     
     // Obtener el botón
     // let mybutton = document.getElementById("id_subir_scroll");
@@ -703,6 +710,20 @@ $(document).ready(function () {
     });
 
     historial_servicios();
+
+    //Mantiene el foco dentro del modal, principalmente para que sea compatible con select2
+    $.fn.modal.Constructor.prototype._enforceFocus = function () {
+        var that = this;
+        $(document).on('focusin.modal', function (e) {
+        if ($(e.target).hasClass('select2-input')) {
+        return true;
+        }
+
+        if (that && that.$element && that.$element[0] !== e.target && !that.$element.has(e.target).length) {
+        that.$element.focus();
+        }
+        });
+    };
 });
 
 /**
