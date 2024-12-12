@@ -4124,7 +4124,8 @@ class AdministradorController extends Controller
         return back()->with([
             'mensaje_confirmacion_nuevo_evento' => 'Evento '.$idEvento.' creado correctamente.',
             'id_servicio_registrado' => $request->servicio,
-            'id_evento_registrado' => $idEvento
+            'id_evento_registrado' => $idEvento,
+            'id_asignacion_registrado' => $Id_Asignacion
         ]);
         // }
         
@@ -4400,7 +4401,7 @@ class AdministradorController extends Controller
         ->limit(1)
         ->get(); */          
 
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento, 0)); 
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, 0, 0)); 
         
         return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
         'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos', 'Id_servicio'));
@@ -5052,7 +5053,7 @@ class AdministradorController extends Controller
         ->limit(1)
         ->get(); */          
 
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento, 0)); 
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, 0, 0)); 
         
         // return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
         // 'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos'))->with('evento_actualizado', 'Evento actualizado Sactifactoriamente');
@@ -5212,6 +5213,7 @@ class AdministradorController extends Controller
 
         $idEvento = $request->EventoID;
         $Id_servicio = $request->Id_servicio;
+        $Id_asignacion = $request->Id_asignacion;
         $id_documento = $request->Id_Documento;
         $nombre_lista_documento = $request->Nombre_documento;
 
@@ -5235,13 +5237,13 @@ class AdministradorController extends Controller
 
                 chmod($path, octdec($mode));
 
-                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$extension;
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion.".".$extension;
 
                 Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
             }
             else {
 
-                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$extension;
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion.".".$extension;
                 Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
             }
             
@@ -5254,9 +5256,10 @@ class AdministradorController extends Controller
             unlink($file->getPathname());
 
             // Registrar la información del documento con relación al ID del evento.
-            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
+            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion;
 
             $nuevoDocumento = [
+                'Id_Asignacion' => $Id_asignacion,
                 'Id_Documento' => $id_documento,
                 'ID_evento' => $idEvento,
                 'Nombre_documento' => $nombrecompletodocumento,
@@ -5277,7 +5280,8 @@ class AdministradorController extends Controller
                     ->where([
                         ["Nombre_documento", "=", $nombrecompletodocumento],
                         // ["Formato_documento", "=", $file->extension()],
-                        ["ID_evento", "=", $idEvento]
+                        ["ID_evento", "=", $idEvento],
+                        ["Id_Asignacion", "=", $Id_asignacion]
                     ])->get();
 
                 $array_consulta_documento_bd = json_decode(json_encode($consulta_documento_bd), true);
@@ -5465,6 +5469,7 @@ class AdministradorController extends Controller
         $Id_servicio = $request->Id_servicio;
         //Homologacion cuando el documento es cargado desde el consultador o desde cualquiera de los otros modulos
         $Id_asignacion = $request->bandera == 'consultador_eventos' ? '' : "_IdAsignacion_" . $request->Id_asignacion;
+        $Id_asignacion = $request->Id_asignacion;
         // Creación de carpeta con el ID EVENTO para insertar los documentos
         $path = public_path('Documentos_Eventos/'.$idEvento);
         $mode = 777;
@@ -5483,7 +5488,7 @@ class AdministradorController extends Controller
                     // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
                     // $nombre_final_documento_en_carpeta = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
 
-                    $nombre_final_documento_en_carpeta = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}{$Id_asignacion}.{$file->extension()}";
+                    $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion.".".$file->extension();
                 }else{
                     $nombre_final_documento_en_carpeta = $request->string_nombre_doc.".".$file->extension();
                 }
@@ -5501,7 +5506,7 @@ class AdministradorController extends Controller
                     // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
                     // $nombre_final_documento_en_carpeta = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
 
-                    $nombre_final_documento_en_carpeta = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}{$Id_asignacion}.{$file->extension()}";
+                    $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion.".".$file->extension();
                 }else{
                     $nombre_final_documento_en_carpeta = $request->string_nombre_doc.".".$file->extension();
                 }
@@ -5537,7 +5542,7 @@ class AdministradorController extends Controller
                 // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
                 // $nombrecompletodocumento = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
 
-                $nombrecompletodocumento = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}{$Id_asignacion}";
+                $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion;
             }else{
                 $nombrecompletodocumento = $request->string_nombre_doc;
             }
@@ -5565,7 +5570,8 @@ class AdministradorController extends Controller
                 ->where([
                     ["Nombre_documento", "=", $nombrecompletodocumento],
                     ["Id_servicio", "=", $Id_servicio],
-                    ["ID_evento", "=", $idEvento]
+                    ["ID_evento", "=", $idEvento],
+                    ["Id_Asignacion", "=", $Id_asignacion]
                 ])->get();
 
             $array_consulta_documento_bd = json_decode(json_encode($consulta_documento_bd), true);
@@ -5824,7 +5830,7 @@ class AdministradorController extends Controller
 
         $idEvento = $request->id_evento_familia;
         $Id_servicio = $request->id_servicio_familia;
-
+        $Id_asignacion = $request->id_asignacion_familia;
         // Creación de carpeta con el ID EVENTO para insertar los documentos
         $path = public_path('Documentos_Eventos/'.$idEvento);
         $mode = 777;
@@ -5837,7 +5843,7 @@ class AdministradorController extends Controller
             if(!empty($request->bandera_nombre_otro_doc)){
                 $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
             }else{
-                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion.".".$file->extension();
             }
     
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
@@ -5847,7 +5853,7 @@ class AdministradorController extends Controller
             if(!empty($request->bandera_nombre_otro_doc)){
                 $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
             }else{
-                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion.".".$file->extension();
             }
     
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
@@ -5857,10 +5863,11 @@ class AdministradorController extends Controller
         if(!empty($request->bandera_nombre_otro_doc)){
             $nombrecompletodocumento = $request->bandera_nombre_otro_doc;
         }else{
-            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
+            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion;
         }
 
         $nuevoDocumento = [
+            'Id_Asignacion' => $Id_asignacion,
             'Id_Documento' => $id_documento,
             'ID_evento' => $idEvento,
             'Nombre_documento' => $nombrecompletodocumento,
@@ -5882,7 +5889,8 @@ class AdministradorController extends Controller
                 ->where([
                     ["Nombre_documento", "=", $nombrecompletodocumento],
                     // ["Formato_documento", "=", $file->extension()],
-                    ["ID_evento", "=", $idEvento]
+                    ["ID_evento", "=", $idEvento],
+                    ["Id_Asignacion", "=", $Id_asignacion]
                 ])->get();
     
             $array_consulta_documento_bd = json_decode(json_encode($consulta_documento_bd), true);
@@ -6140,7 +6148,7 @@ class AdministradorController extends Controller
 
         $id_evento = $request->id_evento;
 
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($id_evento, 0));         
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($id_evento, 0, 0));         
         return response()->json($arraylistado_documentos);
     }
 

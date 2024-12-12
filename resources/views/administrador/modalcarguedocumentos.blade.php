@@ -26,6 +26,7 @@
                                     <input type="text" name="nombre_doc_familia" id="nombre_doc_familia">
                                     <input type="text" name="id_evento_familia" id="id_evento_familia">
                                     <input type="text" name="id_servicio_familia" id="id_servicio_familia">
+                                    <input type="text" name="id_asignacion_familia" id="id_asignacion_familia">
                                 </div>
                                 <div class="input-group">
                                     <input type="file" class="form-control select-doc" name="doc_subir" id="doc_subir" aria-describedby="Carguedocumentos" aria-label="Upload" required>&nbsp;
@@ -129,6 +130,10 @@
                                                 <?php endif?>
                                                 <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">
                                                 <input type="text" name="Id_servicio" id="Id_servicio_{{$documento->Id_Documento}}" value="{{$Id_servicio}}">
+                                                @if (isset($newIdAsignacion))
+                                                    <input  type="text" name="Id_asignacion" id="Id_asignacion_{{$documento->Id_Documento}}" value="{{$newIdAsignacion}}">                                                                                                    
+                                                @endif
+                                                {{-- <input  type="text" name="Id_asignacion" id="Id_asignacion_{{$documento->Id_Documento}}" value="{{$Id_asignacion_juntas}}"> --}}
                                                 <input type="text" name="string_nombre_doc" id="string_nombre_doc_{{$documento->Id_Documento}}" value="<?php if($documento->nombre_Documento <> ""){echo "{$documento->nombre_Documento}";}?>">
                                             </div>
                                             <div class="row">
@@ -334,7 +339,7 @@
                                                     <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
                                                     <input type="text" name="Nombre_documento" id="Nombre_documento_{{$documento->Id_Documento}}" value="{{$documento->Nombre_documento}}">                                                
                                                     <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">
-                                                    <input  type="text" name="Id_servicio" id="Id_servicio_{{$documento->Id_Documento}}">                                       
+                                                    <input  type="text" name="Id_servicio" id="Id_servicio_{{$documento->Id_Documento}}">
                                                     <input  type="text" name="Id_asignacion" id="Id_asignacion_{{$documento->Id_Documento}}">
                                                 </div>
                                                 <div class="row">

@@ -151,14 +151,15 @@ class CalificacionPCLController extends Controller
        ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion], ['Estado', 'Inactivo'], ['Aporta_documento', 'No']])
        ->get();
 
-       $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, $Id_servicio,$newIdAsignacion));
+       $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, $Id_servicio, $newIdAsignacion));
 
        // cantidad de documentos cargados
 
        $cantidad_documentos_cargados = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
        ->where([
            ['ID_evento', $newIdEvento],
-           ['Id_servicio', $Id_servicio]
+           ['Id_servicio', $Id_servicio],
+           ['Id_Asignacion', $newIdAsignacion]
        ])->get();
 
         $arraycampa_documento_solicitado = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
@@ -185,7 +186,7 @@ class CalificacionPCLController extends Controller
         
         return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 
         'arraylistado_documentos', 'cantidad_documentos_cargados', 'dato_validacion_no_aporta_docs', 'SubModulo','consecutivo','arraycampa_documento_solicitado', 
-        'info_comite_inter', 'Id_servicio', 'info_accion_eventos', 'enviar_notificaciones','N_siniestro_evento'));
+        'info_comite_inter', 'Id_servicio', 'newIdAsignacion', 'info_accion_eventos', 'enviar_notificaciones','N_siniestro_evento'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){
@@ -2031,7 +2032,7 @@ class CalificacionPCLController extends Controller
 
         $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
 
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento, $Id_servicio));
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, $Id_servicio, $newIdAsignacion));
     
         $listado_documentos_solicitados = sigmel_informacion_documentos_solicitados_eventos::on('sigmel_gestiones')
         ->select('Id_Documento_Solicitado', 'F_solicitud_documento', 'Nombre_documento', 
@@ -6353,7 +6354,7 @@ class CalificacionPCLController extends Controller
                 ];
         
                 sigmel_informacion_decreto_eventos::on('sigmel_gestiones')
-                ->where('ID_Evento', $id_Evento_decreto)->update($datos_info_decreto_eventos);
+                ->where([['ID_Evento', $id_Evento_decreto], ['Id_Asignacion', $id_Asignacion_decreto]])->update($datos_info_decreto_eventos);
                 sleep(2);
                 sigmel_informacion_pericial_eventos::on('sigmel_gestiones')
                 ->where([

@@ -472,11 +472,18 @@ $(document).ready(function () {
     } 
     
     function NumerosEnteros(input) {
-        var value = $(input).val();      
-        if (!Number.isInteger(Number(value))) {
-          $(input).val("");
+        var value = $(input).val();  
+        // Expresión regular para solo números enteros positivos, sin comas ni puntos
+        var isInteger = /^[0-9]+$/; 
+        if (!isInteger.test(value)) {
+            // Si no es un número entero positivo válido, limpiamos el valor del input
+            $(input).val("");
         }
     }
+
+    $(document).on("input", '[id^="posicionFoleo"], [id^="posicion_expediente_"]', function() {
+        NumerosEnteros(this);
+    });   
     
     // Obtener el botón
     // let mybutton = document.getElementById("id_subir_scroll");
@@ -714,30 +721,6 @@ $(document).ready(function () {
 
 
     });
-});
-
-// Función que permite solamente dos decimales escribir
-function Maximo2Decimales(idinput){
-    $('#'+idinput).on('input', function(){
-        var inputValue = $(this).val();
-        var decimalCount = (inputValue.split('.')[1] || []).length;        
-        if (decimalCount > 2) {
-          $(this).val(parseFloat(inputValue).toFixed(2));
-        }
-    });
-};
-
-// Función que permite solamente un decimal escribir
-function Maximo1Decimal(idinput){
-    $('#'+idinput).on('input', function(){
-        var inputValue = $(this).val();
-        var decimalCount = (inputValue.split('.')[1] || []).length;        
-        if (decimalCount > 1) {
-          $(this).val(parseFloat(inputValue).toFixed(1));
-        }
-    });
-}
-
     //evento cuando se le de click en el boton de eliminar
     $(document).on('click', '.btn_eliminar_radicado', function() {  
         // Deshabilita todo los botones de eliminar menos el clickeado
@@ -771,14 +754,37 @@ function Maximo1Decimal(idinput){
         var that = this;
         $(document).on('focusin.modal', function (e) {
         if ($(e.target).hasClass('select2-input')) {
-            return true;
+           return true;
         }
 
-        if (that.$element[0] !== e.target && !that.$element.has(e.target).length) {
+        if (that && that.$element && that.$element[0] !== e.target && !that.$element.has(e.target).length) {
             that.$element.focus();
+        }
+        });
+    };
+});
+
+// Función que permite solamente dos decimales escribir
+function Maximo2Decimales(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 2) {
+        $(this).val(parseFloat(inputValue).toFixed(2));
         }
     });
 };
+
+// Función que permite solamente un decimal escribir
+function Maximo1Decimal(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 1) {
+        $(this).val(parseFloat(inputValue).toFixed(1));
+        }
+    });
+}
 
 /**
  * Obtiene el historial de servicio para el evento consultado con base a la identificacion del afiliado.

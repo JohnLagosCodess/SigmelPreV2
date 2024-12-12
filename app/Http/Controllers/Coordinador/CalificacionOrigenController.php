@@ -78,7 +78,8 @@ class CalificacionOrigenController extends Controller
         $cantidad_documentos_cargados = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
         ->where([
             ['ID_evento', $newIdEvento],
-            ['Id_servicio', $Id_servicio]
+            ['Id_servicio', $Id_servicio],
+            ['Id_Asignacion', $newIdAsignacion]
         ])->get();
         
         //Consulta Vista a mostrar
@@ -259,7 +260,7 @@ class CalificacionOrigenController extends Controller
         return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos', 'cantidad_documentos_cargados',
         'arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc',
         'dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados',
-        'cali_profe_comite', 'Id_servicio', 'enviar_notificaciones','N_siniestro_evento'));
+        'cali_profe_comite', 'Id_servicio', 'newIdAsignacion', 'enviar_notificaciones','N_siniestro_evento'));
     }
 
     //Guardar informacion del modulo de Origen ATEL

@@ -1,6 +1,10 @@
 $(document).ready(function(){
     
     var idRol = $("#id_rol").val();
+    var Id_evento_expediente = $("#newId_evento").val();
+    var Id_proceso_expediente = $("#Id_proceso").val();
+    var Id_asignacion_expediente = $("#newId_asignacion").val();
+    var Id_servicio_expediente =  $("#Id_servicio").val();
 
     $(".primer_calificador").select2({
         placeholder:"Seleccione una opción",
@@ -100,12 +104,11 @@ $(document).ready(function(){
 
     // Inicializar select de modal crear expediente cuadro o tabla de expediente
 
-    $(".folear_expediente").select2({
-        width: '100%',
-        placeholder: "Seleccione una opción",
-        allowClear:false
-    });
-    
+    // $(".folear_expediente").select2({
+    //     width: '100%',
+    //     placeholder: "Seleccione una opción",
+    //     allowClear:false
+    // });
 
     // llenado de selectores
     let token = $('input[name=_token]').val();
@@ -733,8 +736,10 @@ $(document).ready(function(){
 
         var evento = $("#newId_evento").val();
         var servicio = $("#Id_servicio").val();
+        var asignacion = $("#newId_asignacion").val();        
         $("#id_evento_familia").val(evento);
         $("#id_servicio_familia").val(servicio);
+        $("#id_asignacion_familia").val(asignacion);
     });
 
     /* Envío de información del documento familia */
@@ -855,6 +860,7 @@ $(document).ready(function(){
                 resumable.opts.query.Id_Documento = idDoc;
                 resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val().replace(/ /g, "_");
                 resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
+                resumable.opts.query.Id_asignacion = $(`#Id_asignacion_${idDoc}`).val();
             });
         }
     });
@@ -3128,7 +3134,7 @@ $(document).ready(function(){
                 }
                 if (data.hitorialAgregarComunicado[i].N_radicado != '' && data.hitorialAgregarComunicado[i].Tipo_descarga != 'Manual'){
                     let comunicadoNradico = '<div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center">';
-                    if (!data.hitorialAgregarComunicado[i].Correspondencia && idRol !== '7') {
+                    if (!data.hitorialAgregarComunicado[i].Correspondencia && idRol !== '7' && !data.hitorialAgregarComunicado[i].Asunto.includes('Expediente_chequeo')) {
                         comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalcomunicados_" id="EditarComunicado_'+data.hitorialAgregarComunicado[i].Id_Comunicado+'" title="Editar Comunicado"\
                             data-id_comunicado="'+data.hitorialAgregarComunicado[i].Id_Comunicado+'" data-id_evento="'+data.hitorialAgregarComunicado[i].ID_evento+'"\
                             data-id_asignacion="'+data.hitorialAgregarComunicado[i].Id_Asignacion+'" data-id_proceso="'+data.hitorialAgregarComunicado[i].Id_proceso+'"\
@@ -3185,6 +3191,10 @@ $(document).ready(function(){
                             data-numero_identificacion="'+data.hitorialAgregarComunicado[i].N_identificacion +'" data-nombre_documento="'+data.hitorialAgregarComunicado[i].Nombre_documento + '"\
                             ><i class="fas fa-sync-alt text-info"></i></a>';
                     }
+                    // Accion editar lista de chequeo y Expediente
+                    if(data.hitorialAgregarComunicado[i].Asunto.includes('Expediente_chequeo') && idRol !== '7' && data.hitorialAgregarComunicado[i].Expediente_estado == 'Reciente'){
+                        comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalCrearExpediente" title="Editar expediente" id="editarExpediente"><i style="cursor:pointer" class="fa fa-pen text-info"></i></a>';
+                    }
                     if(idRol !== '7'){
                         comunicadoNradico += `<a href="javascript:void(0);"  class="editar_comunicado_${data.hitorialAgregarComunicado[i].N_radicado}" id="editar_comunicado" data-radicado="${data.hitorialAgregarComunicado[i].N_radicado}" style="display: flex; justify-content: center; ${estado_correspondencia.deshabilitar_edicion}"><i class="fa fa-sm fa-check text-success"></i></a>`;
                     }
@@ -3226,7 +3236,7 @@ $(document).ready(function(){
                             ><i class="fas fa-sync-alt text-info"></i></a>';
                     }
 
-                    //Accion editar lista de chequeo
+                    // Accion editar lista de chequeo
                     if(data.hitorialAgregarComunicado[i].Asunto.includes('Lista_chequeo') && idRol !== '7'){
                         comunicadoNradico += '<a href="javascript:void(0);" class="text-dark" data-toggle="modal" data-target="#modalCrearExpediente" title="Editar expediente" id="editarExpediente"><i style="cursor:pointer" class="fa fa-pen text-info"></i></a>';
                     }
@@ -3313,6 +3323,9 @@ $(document).ready(function(){
                     }
                     else if(row.Tipo_descarga === 'Solicitud_Dictamen_JRCI'){
                         return "Solicitud Dictamen JRCI";
+                    }
+                    else if(row.Tipo_descarga === 'Expediente_completo_JRCI'){
+                        return "Expediente completo JRCI";
                     }
                     else if(row.Tipo_descarga === "Otro_Documento") {
                         return "Otro Documento";
@@ -3960,6 +3973,19 @@ $(document).ready(function(){
             datos_comunicado.afiliado_comunicado_act = "ARL_comunicado";
         }
         if(parseInt(Reemplazado) == 1){
+            var nombre_doc = this.getAttribute('nombre_documento');
+            var idEvento = this.getAttribute('id_evento');
+            var enlaceDescarga = document.createElement('a');
+            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+            enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+            enlaceDescarga.style.display = 'none';
+            document.body.appendChild(enlaceDescarga);
+            enlaceDescarga.click();
+            setTimeout(function() {
+                document.body.removeChild(enlaceDescarga);
+            }, 1000);
+        }
+        else if(TipoDescarga == "Expediente_completo_JRCI"){
             var nombre_doc = this.getAttribute('nombre_documento');
             var idEvento = this.getAttribute('id_evento');
             var enlaceDescarga = document.createElement('a');
@@ -7070,12 +7096,69 @@ $(document).ready(function(){
             deshabilita_habilita = false;
         } else {
             deshabilita_habilita = true;            
+            $(".posicion-foleo").val('');
         }
         // Cambiar el estado de los checkboxes en el tbody lista_documentos_check que no están deshabilitados
         $('#lista_documentos_check input[type="checkbox"]:not(:disabled)').prop('checked', isChecked);
         $(".actualizar_chequeo, .guardar_chequeo").prop('disabled', deshabilita_habilita);
+        $(".posicion-foleo").prop('disabled', deshabilita_habilita);       
 
     });
+
+    // Habilitar o deshabilitar el input posicion del checkbox al marcarlo individualmente según su id doc
+    $(document).on('change', '.check_marcado', function() {
+        // verificar si está marcado y capturar su atributo data del id documento
+        var estacheck = $(this).is(':checked');
+        if (estacheck) {
+            let dataId_doc = $(this).data('id');                        
+            // Iteramos sobre cada input con la clase 'posicion-foleo'
+            $(".posicion-foleo").each(function () {
+                let iddocumento = $(this).data('iddocumento');
+                // validar si son iguales los atributos data
+                if (iddocumento == dataId_doc) {
+                    $(this).prop('disabled', false);                    
+                }                  
+            });
+            // Iteramos sobre los otros check con la clase  check_marcado
+            $(".check_marcado").each(function () {
+                let iddocumento = $(this).data('id');
+                // validar si son iguales los atributos data
+                if (iddocumento == dataId_doc) {
+                    $(this).prop('checked', estacheck);                    
+                }                  
+            });
+        }else {
+            let dataId_doc = $(this).data('id');                        
+            // Iteramos sobre cada input con la clase 'posicion-foleo'
+            $(".posicion-foleo").each(function () {
+                let iddocumento = $(this).data('iddocumento');
+                // validar si son iguales los atributos data
+                if (iddocumento == dataId_doc) {
+                    $(this).prop('disabled', true).val('');                                 
+                }                  
+            });
+            // Iteramos sobre los otros check con la clase  check_marcado
+            $(".check_marcado").each(function () {
+                let iddocumento = $(this).data('id');
+                // validar si son iguales los atributos data
+                if (iddocumento == dataId_doc) {
+                    $(this).prop('checked', estacheck);                    
+                }                  
+            });
+        }
+    });
+
+    // poner el mismo valor para los inputs del mismo data-iddocumento cuando uno de ellos sea manipulado
+    $(document).on('input', '.posicion-foleo', function() {
+        // Obtener el valor del atributo data-iddocumento del input actual
+        var idDocumento_data = $(this).data('iddocumento');
+        
+        // Obtener el valor que se está escribiendo
+        var valorInput_data = $(this).val();
+        
+        // Seleccionar todos los inputs con la misma clase y mismo valor de data-iddocumento
+        $('.posicion-foleo[data-iddocumento="' + idDocumento_data + '"]').val(valorInput_data);
+    });    
 
     // Abrir modal una vez se genere la lista de chequeo
     if (localStorage.getItem("#Generar_lista_chequeo")) {
@@ -7097,10 +7180,595 @@ $(document).ready(function(){
         $(".actualizar_chequeo").removeClass('d-none');
         $("#row_cuadro_expediente").removeClass('d-none');
     }
+    
+    // capturar el focus de la posicion que se va a manipular con su respectivo valor    
+    $(document).on('focus', "input[id^='posicionFoleo_'], input[id^='posicion_expediente_']", function() {
+        var InputvalorPosicion = $(this).val();              
+        var InputdataIdDoc = $(this).data('iddocumento');
+        // Eliminar o cerrar el evento anterior del focus
+        $(document).off('input', "input[id^='posicionFoleo_'], input[id^='posicion_expediente_']");
+        // Detectar el change de la posicion que se va a manipular en la cual se hizo el focus
+        // Capturar su valor
+        $(document).on('change', "input[id^='posicionFoleo_'], input[id^='posicion_expediente_']", function() {            
+            var InputvalorPosicion_manipulado = $(this).val();            
+            var InputdataIdDoc_manipulado = $(this).data('iddocumento');
+            var atributoidPosicion = $(this).attr('id');
+            // console.log(atributoidPosicion);            
+            // si la posicion del focus es igual al valor que se ingresa o manipula se retorna
+            if (InputvalorPosicion == InputvalorPosicion_manipulado) {
+                // console.log('retornando igualdad');                
+                return;
+            } 
+            // Validacion de campos en caso de que sea diferente al valor inicial
+            else {
+                // Validar si viene NaN o es igual o menor a cero se setea la posicion ingresada, se retorna
+                if (isNaN(InputvalorPosicion_manipulado) || InputvalorPosicion_manipulado <= 0) {
+                    $(this).val('');
+                    return;
+                }
+    
+                // variable de la posicion actual y variable para indicar si la alerta se muestra si esta duplicado
+                var PosicionActual = $(this);                
+                var valorDuplicado = false;
+                // Se recorre los inputs y se validad el valor de la posicion de cada input y su id de documento
+                $("input.posicion-foleo, input[id^='posicion_expediente_']").each(function() {                    
+                    var valorPosicion = $(this).val();
+                    var atributoidPosiciones = $(this).attr('id');
+                    var dataIDoc = $(this).data("iddocumento");
+                    // console.log(dataIDoc);                    
+                    if (dataIDoc !== undefined) {
+                        // si el valor de la posicion de los inputs encontrados es igual al valor que se ingreso y
+                        // id del documento es diferete quiere decir que hay una posicon duplicada
+                        if (valorPosicion === InputvalorPosicion_manipulado && dataIDoc !== InputdataIdDoc_manipulado) {                                             
+                            valorDuplicado = true;
+                            return false; // Salir del each si se encuentra duplicado
+                        } 
+                    } else {
+                        if (atributoidPosicion != atributoidPosiciones) {
+                            // console.log(atributoidPosiciones);                        
+                            // si el valor de la posicion de los inputs encontrados es igual al valor que se ingreso y                            
+                            if(valorPosicion === InputvalorPosicion_manipulado){                                              
+                                valorDuplicado = true;
+                                return false; // Salir del each si se encuentra duplicado
+                            }                     
+                        }                         
+                    }                    
+                });
+                // si el valor duplicado es true muestra la alerta y setea el input de la posicion manipualdo
+                if (valorDuplicado) {
+                    // alert("Este valor ya ha sido ingresado. Debe ser único.");
+                    Swal.fire({
+                        title: 'Posición Duplicada',
+                        text: 'Este valor ya ha sido ingresado. Debe ser único.',
+                        icon: 'info',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#17A2B8'                        
+                    });
+                    PosicionActual.val('');                    
+                }
+
+                // Array para almacenar las posiciones de los inputs
+                let posicionesValidar = [];
+                // Recorre los inputs y guarda sus valores en el array posiciones
+                $("input.posicion-foleo, input[id^='posicion_expediente_']").each(function() {
+                    let valorPosicion = parseInt($(this).val(), 10); // Convierte a entero para facilitar la comparación
+                    let dataIDoc = $(this).data("iddocumento");
+                    if (valorPosicion >= 1) { // Asegura que el valor es mayor o igual a 1
+                        if (!posicionesValidar[dataIDoc]) {
+                            posicionesValidar[dataIDoc] = []; // Crea un array para este documento si no existe
+                        }
+                        posicionesValidar[dataIDoc].push(valorPosicion);
+                    }
+                });
+
+                // Array para almacenar todas las posiciones únicas
+                let posicionesUnicas = [];
+
+                // Recorre los grupos por data-iddocumento
+                for (let documento in posicionesValidar) {
+                    // Filtra valores únicos dentro del grupo y los agrega al array de posiciones únicas
+                    posicionesUnicas.push(...new Set(posicionesValidar[documento]));
+                }
+
+                // Ordena los valores de las posiciones en orden ascendente
+                posicionesUnicas.sort((a, b) => a - b);
+
+                // Variable para verificar la consecutividad
+                let esConsecutivoPosicion = true;
+                let valorFaltantePosicion = null;
+                // Verifica que los valores sean consecutivos
+                for (let i = 0; i < posicionesUnicas.length - 1; i++) {
+                    if (posicionesUnicas[i + 1] !== posicionesUnicas[i] + 1) {
+                        esConsecutivoPosicion = false;
+                        valorFaltantePosicion = posicionesUnicas[i] + 1;
+                        break;
+                    }
+                }
+
+                if (esConsecutivoPosicion) {
+                    // console.log("Los valores son consecutivos.");
+                } else {
+                    // console.log("Los valores no son consecutivos.");
+                    if (valorDuplicado) {
+                        setTimeout(() => {
+                            Swal.fire({
+                                title: 'No Consecutivas',
+                                text: 'Los posiciones no son consecutivas, la posición que falta en la secuencia es: ' + valorFaltantePosicion,
+                                icon: 'info',
+                                confirmButtonText: 'Aceptar',
+                                confirmButtonColor: '#17A2B8'                        
+                            });                            
+                        }, 3000);
+                    }else{
+                        Swal.fire({
+                            title: 'No Consecutivas',
+                            text: 'Los posiciones no son consecutivas, la posición que falta en la secuencia es: ' + valorFaltantePosicion,
+                            icon: 'info',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#17A2B8'                        
+                        });
+                        PosicionActual.val('');
+                    }
+                }
+            }
+        });
+    });   
+    
+    //Accion para agregar o actualizar la posicion y foleo del la tabla expedientes
+    $(document).on("click", "a[id^='editar_posicion_foleo_expediente_']",function(){
+        // Remover la variable localStorage en caso de que se de mas click en el icono
+        // localStorage.removeItem("#Generar_lista_expediente");
+        let validarDocumento_exp = true;
+        // Recorrer todos los inputs de id 'posicion_expediente_' y verificar su estado
+        $("select[id^='documento_expediente_']").each(function() {
+            // Solo validar los inputs que no están deshabilitados
+            if (!$(this).is(':disabled') && !$(this).val()) {
+                // Mostrar un error visual
+                $(this).addClass('is-invalid');  
+                // Indicar que el formulario no es válido
+                validarDocumento_exp = false;
+            } else {
+                // Quitar el error si es válido
+                $(this).removeClass('is-invalid');
+            }
+        });
+        // Si hay algún campo inválido, detener el proceso y mostrar mensaje
+        if (!validarDocumento_exp) {
+            Swal.fire({
+                title: 'Campos de Documento',
+                text: 'Por favor, llena todos los campos requeridos en la columna Documento tabla Expediente.',
+                icon: 'info',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#17A2B8'                        
+            });
+            // Evitar continuar si no es válido
+            return false;
+        }
+
+        let validarPosiciones_exp = true;
+        // Recorrer todos los inputs de id 'posicion_expediente_' y verificar su estado
+        $("input[id^='posicion_expediente_']").each(function() {
+            // Solo validar los inputs que no están deshabilitados
+            if (!$(this).is(':disabled') && !$(this).val()) {
+                // Mostrar un error visual
+                $(this).addClass('is-invalid');  
+                // Indicar que el formulario no es válido
+                validarPosiciones_exp = false;
+            } else {
+                // Quitar el error si es válido
+                $(this).removeClass('is-invalid');
+            }
+        });
+        // Si hay algún campo inválido, detener el proceso y mostrar mensaje
+        if (!validarPosiciones_exp) {
+            Swal.fire({
+                title: 'Campos de Posición',
+                text: 'Por favor, llena todos los campos requeridos en la columna Posición tabla Expediente.',
+                icon: 'info',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#17A2B8'                        
+            });
+            // Evitar continuar si no es válido
+            return false;
+        }
+        // construccion de data para envio al controlador
+        let token = $('input[name=_token]').val();
+        let id_expediente = $(this).data('id_expediente');
+        if (id_expediente == 'documento_comunicado_expediente') {
+            let id_contador_expediente = $(this).data('id_contador_expediente');
+            var datos_expediente_posicion_foleo = {
+                '_token': token,
+                'Id_evento_expediente': Id_evento_expediente,
+                'Id_asignacion_expediente': Id_asignacion_expediente,
+                'Id_servicio_expediente': Id_servicio_expediente,
+                'id_expediente': id_expediente,
+                'documento': $("#documento_expediente_" + id_contador_expediente).val(),
+                'posicion': $("#posicion_expediente_" + id_contador_expediente).val(),
+                // 'folear': $("#folear_expediente_" + id_contador_expediente).val()
+            };
+        } else {            
+            var datos_expediente_posicion_foleo = {
+                '_token': token,
+                'id_expediente': id_expediente,
+                'posicion': $("#posicion_expediente_" + id_expediente).val(),
+                // 'folear': $("#folear_expediente_" + id_expediente).val()
+            };
+        }
+        
+        $.ajax({
+            type:'POST',
+            url:'/insertarActualizarPosicionFoleos',
+            data: datos_expediente_posicion_foleo,
+            success:function(expediente_posicion_foleo){
+                // console.log(expediente_posicion_foleo.Fallo_insercion);                
+                if (expediente_posicion_foleo.Fallo_insercion == 'exito insercion') { 
+                    $('#resultado_inseractua_expediente').removeClass('d-none');
+                    $('#resultado_inseractua_expediente').addClass('alert-success');
+                    $("#resultado_inseractua_expediente").append("<strong>" + expediente_posicion_foleo.mensaje + "</strong>");
+                    setTimeout(() => {
+                        $('#resultado_inseractua_expediente').removeClass('alert-success');
+                        $('#resultado_inseractua_expediente').addClass('d-none');  
+                        $('#resultado_inseractua_expediente').empty();
+                        // Crear variable localStorage despues de manipular el icono 
+                        // localStorage.setItem("#Generar_lista_expediente", true);
+                    }, 3000);                   
+                    
+                } else if (expediente_posicion_foleo.Fallo_insercion == 'Fallo insercion'){
+                    $('#resultado_inseractua_expediente').removeClass('d-none');
+                    $('#resultado_inseractua_expediente').addClass('alert-danger');
+                    $("#resultado_inseractua_expediente").append("<strong>" + expediente_posicion_foleo.mensaje + "</strong>");
+                    setTimeout(() => {
+                        $('#resultado_inseractua_expediente').removeClass('alert-danger');
+                        $('#resultado_inseractua_expediente').addClass('d-none');  
+                        $('#resultado_inseractua_expediente').empty();
+                        // Crear variable localStorage despues de manipular el icono 
+                        // localStorage.setItem("#Generar_lista_expediente", true);
+                    }, 3000);
+                }
+                    
+            }
+        });
+    })
+
+    // Descargar documento de lista de chequeo
+    $(document).on('click', 'a[id^="Descarga_listachequeo_"]', function() {
+        var id_doc_expediente_chequeo = $(this).data('id_doc_expediente_chequeo');
+        var nombre_documento_chequeo = $(this).data('nombre_documento_chequeo');
+        var id_evento = $(this).data('id_evento');
+        
+        // Crear un enlace temporal para la descarga
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_documento_chequeo+'/'+id_evento;
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+    
+        // Simular clic en el enlace para iniciar la descarga
+        enlaceDescarga.click();
+    
+        // Eliminar el enlace después de la descarga
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+
+    });
+
+    // Remover filas y elmininar documento de la tabla de expedientes
+    $(document).on('click', "a[id^='btn_remover_comunicado_expediente_']", function(){
+        $("#generar_datos_expediente").prop('disabled', true);
+        $("#generarNuevo_datos_expediente").prop('disabled', true);
+        $("#CrearActualizarExpediente").prop('disabled', true);
+        let token = $("input[name='_token']").val();
+        var datos_fila_quitar_comunicado_expediente = {
+            '_token': token,
+            'fila' : $(this).data("id_fila_quitar"),
+            'Id_evento_expediente': Id_evento_expediente,
+            'Id_asignacion_expediente': Id_asignacion_expediente,
+            'Id_servicio_expediente': Id_servicio_expediente,
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/eliminarComunicadosExpediente',
+            data: datos_fila_quitar_comunicado_expediente,
+            success:function(comunicado_expediente_eliminado){
+                $('#resultado_inseractua_expediente').empty();
+                $('#resultado_inseractua_expediente').removeClass('d-none');
+                $('#resultado_inseractua_expediente').addClass('alert-success');
+                $("#resultado_inseractua_expediente").append("<strong>" + comunicado_expediente_eliminado.mensaje + "</strong>");
+                setTimeout(() => {
+                    $('#resultado_inseractua_expediente').addClass('d-none');
+                    $('#resultado_inseractua_expediente').removeClass('alert-success');
+                    $('#resultado_inseractua_expediente').empty();
+                }, 3000);
+
+                setTimeout(() => {
+                    // Array para almacenar las posiciones de los inputs
+                    let posicionesValidar = [];
+                    // Recorre los inputs y guarda sus valores en el array posiciones
+                    $("input.posicion-foleo, input[id^='posicion_expediente_']").each(function() {
+                        let valorPosicion = parseInt($(this).val(), 10); // Convierte a entero para facilitar la comparación
+                        let dataIDoc = $(this).data("iddocumento");
+                        if (valorPosicion >= 1) { // Asegura que el valor es mayor o igual a 1
+                            if (!posicionesValidar[dataIDoc]) {
+                                posicionesValidar[dataIDoc] = []; // Crea un array para este documento si no existe
+                            }
+                            posicionesValidar[dataIDoc].push(valorPosicion);
+                        }
+                    });               
+                    
+                    // Array para almacenar todas las posiciones únicas
+                    let posicionesUnicas = [];
+        
+                    // Recorre los grupos por data-iddocumento
+                    for (let documento in posicionesValidar) {
+                        // Filtra valores únicos dentro del grupo y los agrega al array de posiciones únicas
+                        posicionesUnicas.push(...new Set(posicionesValidar[documento]));
+                    }
+        
+                    // Ordena los valores de las posiciones en orden ascendente
+                    posicionesUnicas.sort((a, b) => a - b);
+        
+                    // Variable para verificar la consecutividad
+                    let esConsecutivoPosicion = true;
+                    let valorFaltantePosicion = null;
+                    // Verifica que los valores sean consecutivos
+                    for (let i = 0; i < posicionesUnicas.length - 1; i++) {
+                        if (posicionesUnicas[i + 1] !== posicionesUnicas[i] + 1) {
+                            esConsecutivoPosicion = false;
+                            valorFaltantePosicion = posicionesUnicas[i] + 1;
+                            break;
+                        }
+                    }
+        
+                    if (esConsecutivoPosicion) {
+                        // console.log("Los valores son consecutivos.");
+                        $("#generar_datos_expediente").prop('disabled', true);
+                    } else {            
+                        Swal.fire({
+                            title: 'No Consecutivas',
+                            text: 'Los posiciones no son consecutivas, la posición que falta en la secuencia es: ' + valorFaltantePosicion,
+                            icon: 'info',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#17A2B8'                        
+                        });
+                        $("#generar_datos_expediente").prop('disabled', true);                    
+                    }
+                }, 2000);
+            }
+        });
+    });
+
+    // Abrir modal una vez se de click en el boton de Actualizar Tabla Expediente
+    // validando el localStorage Generar_lista_expediente
+    $("#refrescar_expedientes").click(function(){  
+        localStorage.setItem("#Generar_lista_expediente", true);
+        $("#refrescar_expedientes").prop('disabled', true);
+        setTimeout(() => {
+            $("#refrescar_expedientes").prop('disabled', false);            
+            location.reload();            
+        }, 1000);
+    });
+    
+    if (localStorage.getItem("#Generar_lista_expediente")) {            
+        // Simular el clic en la etiqueta a después de recargar la página
+        localStorage.removeItem("#Generar_lista_expediente");
+        document.getElementById("Cargando_expediente").style.display = "flex";
+        document.querySelector("#clicGuardado").click();
+        setTimeout(() => {
+            document.querySelector("#crearExpediente").click();                    
+            document.getElementById("Cargando_expediente").style.display = "none";
+            setTimeout(() => {
+                // Array para almacenar las posiciones de los inputs
+                let posicionesValidar = [];
+                // Recorre los inputs y guarda sus valores en el array posiciones
+                $("input.posicion-foleo, input[id^='posicion_expediente_']").each(function() {
+                    let valorPosicion = parseInt($(this).val(), 10); // Convierte a entero para facilitar la comparación
+                    let dataIDoc = $(this).data("iddocumento");
+                    if (valorPosicion >= 1) { // Asegura que el valor es mayor o igual a 1
+                        if (!posicionesValidar[dataIDoc]) {
+                            posicionesValidar[dataIDoc] = []; // Crea un array para este documento si no existe
+                        }
+                        posicionesValidar[dataIDoc].push(valorPosicion);
+                    }
+                });               
+                
+                // Array para almacenar todas las posiciones únicas
+                let posicionesUnicas = [];
+    
+                // Recorre los grupos por data-iddocumento
+                for (let documento in posicionesValidar) {
+                    // Filtra valores únicos dentro del grupo y los agrega al array de posiciones únicas
+                    posicionesUnicas.push(...new Set(posicionesValidar[documento]));
+                }
+    
+                // Ordena los valores de las posiciones en orden ascendente
+                posicionesUnicas.sort((a, b) => a - b);
+    
+                // Variable para verificar la consecutividad
+                let esConsecutivoPosicion = true;
+                let valorFaltantePosicion = null;
+                // Verifica que los valores sean consecutivos
+                for (let i = 0; i < posicionesUnicas.length - 1; i++) {
+                    if (posicionesUnicas[i + 1] !== posicionesUnicas[i] + 1) {
+                        esConsecutivoPosicion = false;
+                        valorFaltantePosicion = posicionesUnicas[i] + 1;
+                        break;
+                    }
+                }
+    
+                if (esConsecutivoPosicion) {
+                    // console.log("Los valores son consecutivos.");
+                } else {            
+                    Swal.fire({
+                        title: 'No Consecutivas',
+                        text: 'Los posiciones no son consecutivas, la posición que falta en la secuencia es: ' + valorFaltantePosicion,
+                        icon: 'info',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#17A2B8'                        
+                    });
+                    $("#generar_datos_expediente").prop('disabled', true);                    
+                }
+            }, 2000);
+        }, 5000);
+
+    }    
+
+    // Refrescar la pagina y abril modal de comunicado despues de haber actualizado el expdiente o creado uno nuevo    
+    // validando el localStorage actualizar_lista_comunicados
+    $("#refrescar_comunicados").click(function(){  
+        localStorage.setItem("#actualizar_lista_comunicados", true);
+        $("#refrescar_comunicados").prop('disabled', true);
+        setTimeout(() => {
+            $("#refrescar_comunicados").prop('disabled', false);            
+            location.reload();            
+        }, 1000);
+    });
+    
+    if (localStorage.getItem("#actualizar_lista_comunicados")) {            
+        // Simular el clic en la etiqueta a después de recargar la página
+        localStorage.removeItem("#actualizar_lista_comunicados");
+        document.querySelector("#clicGuardado").click();
+    }
+
+    // Generar expendiente
+    $("#generar_datos_expediente, #generarNuevo_datos_expediente").click(function () {
+
+        if ($(this).attr('id') === 'generar_datos_expediente') {
+            $("#generar_datos_expediente").prop('disabled', true);
+            $("#generarNuevo_datos_expediente").prop('disabled', true);
+        } else if ($(this).attr('id') === 'generarNuevo_datos_expediente') {
+            $("#generar_datos_expediente").prop('disabled', true);
+            $("#generarNuevo_datos_expediente").prop('disabled', true);
+            $("#IdExpediente_estado").val('');
+        }
+
+        setTimeout(() => {
+            // Array para almacenar las posiciones de los inputs
+            let posicionesValidar = [];
+            // Recorre los inputs y guarda sus valores en el array posiciones
+            $("input.posicion-foleo, input[id^='posicion_expediente_']").each(function() {
+                let valorPosicion = parseInt($(this).val(), 10); // Convierte a entero para facilitar la comparación
+                let dataIDoc = $(this).data("iddocumento");
+                if (valorPosicion >= 1) { // Asegura que el valor es mayor o igual a 1
+                    if (!posicionesValidar[dataIDoc]) {
+                        posicionesValidar[dataIDoc] = []; // Crea un array para este documento si no existe
+                    }
+                    posicionesValidar[dataIDoc].push(valorPosicion);
+                }
+            });
+                        
+            // Array para almacenar todas las posiciones únicas
+            let posicionesUnicas = [];
+
+            // Recorre los grupos por data-iddocumento
+            for (let documento in posicionesValidar) {
+                // Filtra valores únicos dentro del grupo y los agrega al array de posiciones únicas
+                posicionesUnicas.push(...new Set(posicionesValidar[documento]));
+            }
+
+            // Ordena los valores de las posiciones en orden ascendente
+            posicionesUnicas.sort((a, b) => a - b);
+
+            // Variable para verificar la consecutividad
+            let esConsecutivoPosicion = true;
+            let valorFaltantePosicion = null;
+            // Verifica que los valores sean consecutivos
+            for (let i = 0; i < posicionesUnicas.length - 1; i++) {
+                if (posicionesUnicas[i + 1] !== posicionesUnicas[i] + 1) {
+                    esConsecutivoPosicion = false;
+                    valorFaltantePosicion = posicionesUnicas[i] + 1;
+                    break;
+                }
+            }
+
+            if (esConsecutivoPosicion) {
+                // console.log("Los valores son consecutivos.");
+                let token = $("input[name='_token']").val();
+                var datos_generar_expediente = {
+                    '_token': token,
+                    'Id_evento_expediente': Id_evento_expediente,
+                    'Id_asignacion_expediente': Id_asignacion_expediente,
+                    'Id_servicio_expediente': Id_servicio_expediente,
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/generarDatosExpedientes',
+                    data: datos_generar_expediente,
+                    success:function (respuesta_expediente) {
+                        if (respuesta_expediente.parametro == "errorzip") {
+                           
+                            if (respuesta_expediente.vacio == "zip_vacio") {
+                                Swal.fire({
+                                    title: 'Error Zip',
+                                    text: respuesta_expediente.mensaje,
+                                    icon: 'info',
+                                    confirmButtonText: 'Aceptar',
+                                    confirmButtonColor: '#17A2B8'                        
+                                });                                
+    
+                                // habilitar el botón del zip nuevamente
+                                $("#generar_datos_expediente").prop('disabled', false);
+    
+                            }else{
+                                Swal.fire({
+                                    title: 'Error Zip',
+                                    text: respuesta_expediente.mensaje,
+                                    icon: 'info',
+                                    confirmButtonText: 'Aceptar',
+                                    confirmButtonColor: '#17A2B8'                        
+                                });                                  
+                            }
+            
+                        }else{
+                            // Descarga del Archivo
+                            window.location.href = respuesta_expediente.url;                            
+        
+                            // habilitar el botón del zip nuevamente
+                            
+                            if ($(this).attr('id') === 'generar_datos_expediente') {
+                                $("#generar_datos_expediente").prop('disabled', false);
+                            } else if ($(this).attr('id') === 'generarNuevo_datos_expediente') {
+                                $("#generar_datos_expediente").prop('disabled', true);
+                                $("#generarNuevo_datos_expediente").prop('disabled', true);                                
+                            }
+        
+                            // Eliminar el archivo después de un tiempo de espera (por ejemplo, 10 segundos)
+                            setTimeout(function() {
+                                var datos_eliminar_expedientezip = {
+                                    '_token': token,
+                                    'nom_archivo': respuesta_expediente.nom_archivo
+                                };
+                                
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/eliminarZipExpedientes',
+                                    data: datos_eliminar_expedientezip,
+                                    success: function(response) {
+                                    }
+                                });
+                            }, 10000);
+                            
+                        }
+                    }
+                });
+            } else {            
+                Swal.fire({
+                    title: 'No Consecutivas',
+                    text: 'Los posiciones no son consecutivas, la posición que falta en la secuencia es: ' + valorFaltantePosicion,
+                    icon: 'info',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#17A2B8'                        
+                });
+                $("#generar_datos_expediente").prop('disabled', false);                    
+            }
+        }, 2000);        
+    });
 
     //insertar o eliminar las filas dinamicas del cuadro de expediente
     $(".centrar").css('text-align', 'center');
-    var listado_lista_chequeos = $('#listado_lista_chequeos').DataTable({
+    var listado_lista_expedientes = $('#listado_lista_expedientes').DataTable({
         "responsive": true,
         "info": false,
         "searching": false,
@@ -7114,7 +7782,7 @@ $(document).ready(function(){
         }
     });
 
-    autoAdjustColumns(listado_lista_chequeos);
+    autoAdjustColumns(listado_lista_expedientes);
 
     var contador_expediente = 0;
     $('#btn_agregar_fila_expediente').click(function(){
@@ -7122,37 +7790,74 @@ $(document).ready(function(){
 
         contador_expediente = contador_expediente + 1;
         var nueva_fila_expediente = [
-            '<div id="nombre_documento_expediente_'+contador_expediente+'" name="nombre_documento_expediente"></div>',            
-            '<input type="number" class="form-control" id="posicion_expediente_'+contador_expediente+'" name="posicion_expediente" required />',
-            '<select id="folear_expediente_'+contador_expediente+'" class="custom-select folear_expediente_'+contador_expediente+'" name="folear_expediente_"><option></option></select>',
-            '<div id="nombre_documento_expediente_'+contador_expediente+'" name="nombre_documento_expediente"></div>',            
+            '<select id="documento_expediente_'+contador_expediente+'" class="custom-select documento_expediente_'+contador_expediente+'" name="documento_expediente_"><option></option></select>',
+            '<input type="text" class="form-control" id="posicion_expediente_'+contador_expediente+'" name="posicion_expediente" required />',
+            // '<select id="folear_expediente_'+contador_expediente+'" class="custom-select folear_expediente_'+contador_expediente+'" name="folear_expediente_"><option value="No">No</option><option value="Si">Si</option></select>',            
+            '<div style="text-align:center;"><a href="javascript:void(0);" class="editar_posicion_foleo_expediente_'+contador_expediente+'" id="editar_posicion_foleo_expediente_'+contador_expediente+'" data-id_expediente = "documento_comunicado_expediente" data-id_contador_expediente = "'+contador_expediente+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>',
             '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_expediente" class="text-info" data-fila="fila_'+contador_expediente+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
             'fila_'+contador_expediente
         ];
 
-        var agregar_fila_expediente = listado_lista_chequeos.row.add(nueva_fila_expediente).draw().node();
+        var agregar_fila_expediente = listado_lista_expedientes.row.add(nueva_fila_expediente).draw().node();
         $(agregar_fila_expediente).addClass('fila_'+contador_expediente);
         $(agregar_fila_expediente).attr("id", 'fila_'+contador_expediente);
 
-        // Esta función realiza los controles de cada elemento por fila (está dentro del archivo calificacionpcl.js)
-        funciones_elementos_fila_diagnosticos(contador_expediente);       
+        // Esta función realiza los controles de cada elemento por fila
+        funciones_elementos_fila_expedientes(contador_expediente, Id_evento_expediente, Id_proceso_expediente, Id_asignacion_expediente);
         
     });
 
     $(document).on('click', '#btn_remover_fila_expediente', function(){
         var expedientes_filas = $(this).data("fila");
-        listado_lista_chequeos.row("."+expedientes_filas).remove().draw();
+        listado_lista_expedientes.row("."+expedientes_filas).remove().draw();
     });
 
-    $(document).on('click', "a[id^='btn_remover_expediente']", function(){
-        var expedientes_filas = $(this).data("expediente_fila");
-        listado_lista_chequeos.row("."+expedientes_filas).remove().draw();
+    $(document).on('click', "a[id^='btn_remover_comunicado_expediente_']", function(){
+        var expedientes_filas = $(this).data("clase_fila");
+        listado_lista_expedientes.row("."+expedientes_filas).remove().draw();
     });
     //Validacion duplicado documentos
     setTimeout(function() {
         radicados_duplicados('listado_agregar_comunicados');
     }, 500);
 
+    // Función para añadir los controles de cada elemento de cada fila en la tabla de expediente
+    function funciones_elementos_fila_expedientes(num_consecutivo, Id_evento_expediente, Id_proceso_expediente, Id_asignacion_expediente) {
+        // Inicializacion de select 2
+        // $("#folear_expediente_"+num_consecutivo).select2({
+        //     width: '100%',
+        //     placeholder: "Seleccione",
+        //     allowClear: false
+        // });
+
+        $("#documento_expediente_"+num_consecutivo).select2({
+            width: '100%',
+            placeholder: "Seleccione",
+            allowClear: false
+        });
+        
+        //Carga de datos en los selectores
+
+        let token = $("input[name='_token']").val();
+        let datos_Comunicados_expediente = {
+            '_token': token,
+            'parametro' : "listado_Comunicados_expediente",
+            'Id_evento_expediente' : Id_evento_expediente,
+            'Id_proceso_expediente' : Id_proceso_expediente,
+            'Id_asignacion_expediente' : Id_asignacion_expediente,
+        };
+        $.ajax({
+            type:'POST',
+            url:'/selectoresJuntas',
+            data: datos_Comunicados_expediente,
+            success:function(comunicado_expediente){
+                let claves = Object.keys(comunicado_expediente);
+                for (let i = 0; i < claves.length; i++) {
+                    $("#documento_expediente_"+num_consecutivo).append('<option value="'+comunicado_expediente[claves[i]]["Nombre_documento"]+'">'+comunicado_expediente[claves[i]]["Nombre_documento"]+'</option>');
+                }
+            }
+        });
+    }
 });
 /**
  * Obtiene la información del afiliado seleccionado y la muestra en un elemento de destino.
@@ -7209,17 +7914,17 @@ function funciones_elementos_fila(num_consecutivo) {
 }
 
 // Habilita los botones de acciones de acuerdo si hay algo chequeado o no.
-function verificarCheckboxes() {
+function verificarCheckboxes() {    
     let hayCheckboxMarcado = false;    
     // Iterar sobre cada checkbox
-    $("#lista_documentos_check :checkbox").each(function() {
+    $("#lista_documentos_check :checkbox").each(function() {       
         if ($(this).is(':checked')  &&  $(this).data('nombre') !== 'Lista de chequeo') {
             hayCheckboxMarcado = true;
             return false; // Salir del bucle una vez que se encuentre al menos uno marcado
         }
     });
     // Habilitar o deshabilitar los botones según la variable hayCheckboxMarcado
-    $(".actualizar_chequeo, .guardar_chequeo").prop('disabled', !hayCheckboxMarcado);    
+    $(".actualizar_chequeo, .guardar_chequeo").prop('disabled', !hayCheckboxMarcado);
 }
 
 /**
@@ -7237,6 +7942,18 @@ function crear_Expediente(data) {
 
     // Abrimos el modal de crear expediente, si data no esta definimo mostramos la alerta
     $("#crearExpediente, #editarExpediente").on('click', function() {
+
+        //Mostrar alerta si se debe actualizar la lista de chequeo
+        var validarChequeo = $('#Alerta_chequeo');
+        if (validarChequeo.length > 0) {
+            Swal.fire({
+                title: 'Actualizar Lista de chequeo',
+                text: 'Se agregaron o se eliminarion documentos a la Lista de chequeo',
+                icon: 'info',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#17A2B8'                        
+            });
+        }
  
         if ($.isEmptyObject(data)) {
             $("#form_crear_ExpedientesJuntas, #info_expediente").addClass('d-none');
@@ -7366,27 +8083,28 @@ function get_documentos_para_check() {
                             posicion = '<input class="form-control" type="number" id="posicionFoleo" disabled>';
                         }
 
-                    } else if (item.status_doc === "Cargado") {
+                    } else if (item.status_doc === "Cargado") {                        
                         status_doc = `<strong class="text-success">${item.status_doc}</strong>`;
-                        checkbox = `<input class="scales" type="checkbox" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}'>`;
+                        checkbox = `<input class="scales check_marcado" type="checkbox" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' data-idregistrodoc='${item.id_Registro_Documento}' data-nombrearchivo='${item.archivo}'>`;
                         if (Actualizar_chequeo.length > 0) {                            
-                            posicion = `<input class="form-control" type="number" id="posicionFoleo" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' disabled>`;
+                            posicion = `<input class="form-control posicion-foleo" type="number" id="posicionFoleo_${item.id_Registro_Documento}" data-idDocumento='${item.Id_Documento}' data-nombre='${item.doc_nombre}' data-idRegistroDoc='${item.id_Registro_Documento}' data-nombreArchivo='${item.archivo}' disabled>`;
                         }
                         
                         if(item.check == 'Si'){
-                            checkbox = `<input class="scales" type="checkbox" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' checked>`;
+                            checkbox = `<input class="scales check_marcado" type="checkbox" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' data-idregistrodoc='${item.id_Registro_Documento}' data-nombrearchivo='${item.archivo}' checked>`;
                             // columna de posicion para agregar en el tbody
-                            if (Actualizar_chequeo.length > 0) {
-                                posicion = `<input class="form-control posicion-foleo" type="number" id="posicionFoleo" data-idDocumento='${item.Id_Documento}' data-nombre='${item.doc_nombre}' data-idRegistroDoc='${item.id_Registro_Documento}'>`;
-                            }                                                     
+                            if (Actualizar_chequeo.length > 0) {                                
+                                posicion = `<input class="form-control posicion-foleo" type="number" id="posicionFoleo_${item.id_Registro_Documento}" data-idDocumento='${item.Id_Documento}' data-nombre='${item.doc_nombre}' data-idRegistroDoc='${item.id_Registro_Documento}' data-nombreArchivo='${item.archivo}'>`; 
+                            }
+                            // console.log(posicion);                                                                                 
                         }
 
                         if(item.doc_nombre ==  'Lista de chequeo'){
                             checkbox = `<input class="scales" type="checkbox" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' checked disabled>`;
                             // columna de posicion para agregar en el tbody
                             if (Actualizar_chequeo.length > 0) {
-                                posicion = `<input class="form-control" type="number" id="posicionFoleo" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' disabled>`;
-                            }
+                                posicion = `<input class="form-control posicion-lista_chequeo" type="number" id="posicionFoleo" data-id='${item.Id_Documento}' data-nombre='${item.doc_nombre}' disabled>`;
+                            }                            
                         }
                     }
 
@@ -7399,16 +8117,6 @@ function get_documentos_para_check() {
                             <td>${posicion}</td>
                         </tr>`;
                         $("#lista_documentos_check").append(html_documentos);
-                        
-                        // Aplicar el required solo a los elementos que no están deshabilitados
-                        // y ya se encuentran en el dom
-                        // if (Actualizar_chequeo.length > 0) {
-                        //     $(".posicion-foleo").each(function() {
-                        //         if (!$(this).is(':disabled')) {
-                        //             $(this).attr("required", "required");
-                        //         }
-                        //     });
-                        // }
 
                     }else {
                         let html_documentos = `<tr>
@@ -7421,7 +8129,7 @@ function get_documentos_para_check() {
                     }
 
 
-                }
+                }                
             });
 
             // Iterar sobre los comunicados
@@ -7447,7 +8155,62 @@ function get_documentos_para_check() {
                     $("#lista_documentos_check").append(html_comunicado);
                 }
 
+            });   
+            
+            // llenamos los valores de los inputs de posicion 
+            // Consultar el valor de la posicion en la tabla de expedientes
+            let datos_expediente = {
+                '_token': $("input[name='_token']").val(),
+                'parametro': "posicion_expediente",
+                'Id_evento': $('#newId_evento').val(),
+                'Id_servicio': $("#Id_servicio").val(),
+                'Id_asignacion' : $('#newId_asignacion').val(),
+            }                                        
+            $.ajax({
+                type: 'POST',
+                url: '/selectoresJuntas',
+                data: datos_expediente,
+                success: function (posicion_expe) {                                                                                                                                          
+                    // Iteramos sobre cada input con la clase 'posicion-foleo' para asignar valores
+                    $(".posicion-foleo").each(function () {
+                        let iddocumento = $(this).data('iddocumento');
+                        // Buscamos la posición correspondiente en la respuesta del AJAX que sea igual al Id_Documento
+                        let posicionEncontrada = posicion_expe.find(item => item.Id_Documento == iddocumento);                        
+                        // Si encontramos la posición, la asignamos al input su valor consultado
+                        if (posicionEncontrada) {
+                            $(this).val(posicionEncontrada.Posicion);
+                        }
+                    }); 
+                    // Identificamos cuales son los inputs que quedaron con un valor
+                    $(".posicion-foleo").each(function () {
+                        // Verificamos si el input tiene un valor
+                        if ($(this).val()) {
+                            // Capturamos el valor del atributo 'data-iddocumento'
+                            var idDocumento = $(this).data('iddocumento');
+                            $(this).prop('disabled', false);  
+                            // Iteramos sobre los otros check con la clase  check_marcado
+                            $(".check_marcado").each(function () {
+                                // capturamos su id doc 
+                                var id_doc = $(this).data('id');
+                                let estacheck = true;
+                                // validamos si son iguales para dejarlos checkeados
+                                if (idDocumento == id_doc) {
+                                    $(this).prop('checked', estacheck);                                                        
+                                }                          
+                            });
+                            
+                        }
+                    });
+                }
             });
+
+            // Asignar valor del input de la poisicion del documento lista de chequo del expediente
+            // una vez que el elemento está en el DOM al input que esta disabled de la lista de chequeo
+            var posicion_expediente_15 = $('.posicion-expediente_15');
+            if (posicion_expediente_15.length > 0) {
+                var posicion_doc_15 = posicion_expediente_15.val();                                                                            
+                $('.posicion-lista_chequeo').val(posicion_doc_15);
+            }
 
             // Disparar evento de cambio después de actualizar la tabla
             $("#lista_documentos_check").trigger('change');
@@ -7485,8 +8248,16 @@ function procesarListaChequeo(accion){
     
         // Si hay algún campo inválido, detener el proceso y mostrar mensaje
         if (!validarPosiciones) {
-            alert("Por favor, llena todos los campos requeridos en la columna Posición.");
-            return false;  // Evitar continuar si no es válido
+            // alert("Por favor, llena todos los campos requeridos en la columna Posición.");
+            Swal.fire({
+                title: 'Campos de Posición',
+                text: 'Por favor, llena todos los campos requeridos en la columna Posición tabla Lista de chequeo.',
+                icon: 'info',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor: '#17A2B8'                        
+            });
+            // Evitar continuar si no es válido
+            return false;  
         }
         // console.log("Procesando lista de chequeo con acción: " + accion);
     }
@@ -7515,6 +8286,9 @@ function procesarListaChequeo(accion){
                 'id_doc' : $(this).data('id'),
                 'statusDoc' :  'Cargado',
                 'nombreDoc' : $(this).data('nombre'),
+                'idRegisDoc' : $(this).data('idregistrodoc'),
+                'nombreArchi' : $(this).data('nombrearchivo'),
+
             };
 
             /*if($(this).data('idcomunicado')){
@@ -7524,6 +8298,8 @@ function procesarListaChequeo(accion){
             datos.push(lista_chequeo);
         }
     });
+
+    // console.log(datos);
 
     if (accion == 'Actualizar') {
         
@@ -7535,17 +8311,19 @@ function procesarListaChequeo(accion){
             if (inputPosicion.length > 0) {
                 // Obtener el valor del input y su data (no lo trae de manera correcta debido a que la consulta solo a apunto a los nombre de los documento de homologación)
                 let valorPosicion = inputPosicion.val();  
-                let id_registroDoc = inputPosicion.attr('data-idRegistroDoc');                                             
+                // let id_registroDoc = inputPosicion.attr('data-idRegistroDoc');
+                // let nombrearchivo =  inputPosicion.attr('data-nombreArchivo');
                 // Asignar el valor capturado a una nueva propiedad en el objeto del array
                 documento.posicion = valorPosicion;
-                documento.id_registro_docu = id_registroDoc;
+                // documento.id_registro_docu = id_registroDoc;
+                // documento.nombre_archivo = nombrearchivo;
             }
         });
     
         // console.log(datos);
     }
     
-    // Ahora, el array `documentos` tendrá los valores actualizados de los inputs
+    // Ahora, el array `datos` tendrá los valores actualizados de los inputs
     registrarChequeo['lista_chequeo'] = datos;
     // console.log(registrarChequeo);
 

@@ -733,6 +733,16 @@ Route::post('/historialAccionesEventosJun', [CalificacionJuntasController::class
 /** Creacion de expediente y lista de chequeo */
 //Accion: Generar lista chequeo
 Route::post('/registrarListaChequeo', [CalificacionJuntasController::class, 'generarListaChequeo']);
+// Accion: Insertar y acutalizar posicion y foleo del expediente
+Route::post('/insertarActualizarPosicionFoleos', [CalificacionJuntasController::class, 'insertarActualizarPosicionFole']);
+// Accion: Eliminar comunicado del expediente
+Route::post('/eliminarComunicadosExpediente', [CalificacionJuntasController::class, 'eliminarComunicadoExpediente']);
+// Accion: Generar expediente
+Route::post('/generarDatosExpedientes', [CalificacionJuntasController::class, 'generarDatosExpediente']);
+// Acción: Eliminaar zip de Expedientes
+Route::post('/eliminarZipExpedientes', [CalificacionJuntasController::class, 'eliminarZipExpediente']);
+// Prueba de carga y union de pdfs
+Route::post('/UnificarExpedientesPdfs', [CalificacionJuntasController::class, 'UnificarExpedientePdfs'])->name('unirpdf');
 
 //18/11/2023
 // Vista: Módulo Controversia Juntas
