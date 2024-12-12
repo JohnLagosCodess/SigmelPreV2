@@ -2958,6 +2958,14 @@ class CalificacionJuntasController extends Controller
 
             sleep(2);
 
+            //Validacion para el estado de notificacion general segun la proforma
+
+            if ($request->tipo_descarga == 'Oficio_Juntas_JRCI' || $request->tipo_descarga == 'Remision_Expediente_JRCI') {
+                $Estado_general_noti = 355;
+            }else{
+                $Estado_general_noti = 359;
+            }
+
             $datos_info_registrarComunicadoPcl=[
                 'ID_evento' => $Id_evento,
                 'Id_Asignacion' => $Id_asignacion,
@@ -2991,6 +2999,7 @@ class CalificacionJuntasController extends Controller
                 'Modulo_creacion' => $request->modulo_creacion,
                 'Otro_destinatario' => $otro_destinatario_jrci,
                 'N_siniestro' => $request->N_siniestro,
+                'Estado_Notificacion' => $Estado_general_noti,
                 'Id_Destinatarios' => $ids_destinatarios,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
@@ -7371,7 +7380,7 @@ class CalificacionJuntasController extends Controller
            // se asigna numero de radicado
            $radicado = $this->disponible($request->radicado2,$Evento_expediente)->getRadicado('juntas',$Evento_expediente);
            //Se asignan los IDs de destinatario por cada posible destinatario
-           $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();        
+           $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario(true);        
            $datos_info_registrarComunicadoPcl=[
                'ID_evento' => $Evento_expediente,
                'Id_Asignacion' => $IdAsignacion_expediente,
