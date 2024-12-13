@@ -356,7 +356,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-4 d-none">
                                                 <div class="form-group">
                                                     <label for="">Fecha de cierre</label>
                                                     <input type="date" class="form-control" name="fecha_cierre" id="fecha_cierre" max="{{now()->format('Y-m-d')}}" min="1900-01-01" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_cierre)){echo $array_datos_calificacionPcl[0]->F_cierre;}?>">

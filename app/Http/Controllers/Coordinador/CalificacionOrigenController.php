@@ -289,6 +289,7 @@ class CalificacionOrigenController extends Controller
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $Id_servicio = $request->Id_servicio;
+        $fecha_calificacion = $request->fecha_calificacion;
 
         $Accion_realizar = $request->accion;
 
@@ -304,10 +305,15 @@ class CalificacionOrigenController extends Controller
             }
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }
+        //VALIDACIONES PBS068
+        if($Accion_realizar == 139 || $Accion_realizar == 144 || $Accion_realizar == 145 || $Accion_realizar == 146){
+            $Fecha_calificacion = $date_time;
+        }else{
+            $Fecha_calificacion = $fecha_calificacion && $fecha_calificacion != 'Sin Calificación' ? $fecha_calificacion : null;
+        }
 
-        // Fecha de asignación para DTO 
-        //if ($Accion_realizar == 2 || $Accion_realizar == 101) {
-        if ($Accion_realizar == 223) {
+        // Fecha de asignación para DTO PBS068 ACCIÓN 124
+        if ($Accion_realizar == 124) {
             $Fecha_asignacion_dto = $date_time;
         }else{
             if ($request->fecha_asignacion_dto == "0000-00-00 00:00:00" || $request->fecha_asignacion_dto == "Sin Fecha de Asignación para DTO") {
@@ -672,6 +678,7 @@ class CalificacionOrigenController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
+                'F_calificacion' => $Fecha_calificacion,
                 // 'F_registro' => $date,
             ];
 
@@ -1385,6 +1392,7 @@ class CalificacionOrigenController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
+                'F_calificacion' => $Fecha_calificacion,
                 // 'F_registro' => $date,
             ];
 

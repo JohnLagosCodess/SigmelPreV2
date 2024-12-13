@@ -562,8 +562,25 @@ class CalificacionPCLController extends Controller
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $Id_servicio = $request->Id_servicio;
+        $fecha_asignacion_calificacion = $request->fecha_asignacion_calificacion;
+        $fecha_calificacion = $request->fecha_calificacion;
 
         $Accion_realizar = $request->accion;
+
+        //VALIDACIONES PBS068
+        if($Accion_realizar == 124 || $Accion_realizar == 125 || $Accion_realizar == 126 || $Accion_realizar == 127){
+            $Fecha_asignacion_calificacion = $date_time;
+        }
+        else{
+            $Fecha_asignacion_calificacion = $fecha_asignacion_calificacion;
+        }
+
+        if($Accion_realizar == 139 || $Accion_realizar == 173 || $Accion_realizar == 149  || $Accion_realizar == 150 
+        || $Accion_realizar == 151 || $Accion_realizar == 144 || $Accion_realizar == 145 || $Accion_realizar == 146){
+            $Fecha_calificacion = $date_time;
+        }else{
+            $Fecha_calificacion = $fecha_calificacion && $fecha_calificacion != 'Sin Calificación' ? $fecha_calificacion : null;
+        }
 
         //if ($Accion_realizar == 52 || $Accion_realizar == 98 || $Accion_realizar == 99) {
         if ($Accion_realizar == 224) {
@@ -932,6 +949,8 @@ class CalificacionPCLController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
+                'F_asignacion_calificacion' => $Fecha_asignacion_calificacion,
+                'F_calificacion' => $Fecha_calificacion,
                 // 'F_registro' => $date,
             ];
 
@@ -1644,6 +1663,8 @@ class CalificacionPCLController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
+                'F_asignacion_calificacion' => $Fecha_asignacion_calificacion,
+                'F_calificacion' => $Fecha_calificacion,
                 // 'F_registro' => $date,
             ];
 

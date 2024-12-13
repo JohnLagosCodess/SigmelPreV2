@@ -883,6 +883,8 @@ $(document).ready(function(){
         formData.append('profesional', $('#profesional').val());
         formData.append('causal_devolucion_comite', $('#causal_devolucion_comite').val());
         formData.append('fecha_cierre', $('#fecha_cierre').val());
+        formData.append('fecha_asignacion_calificacion',$('#fecha_asignacion_calificacion').val()),
+        formData.append('fecha_calificacion',$('#fecha_calificacion').val()),
         formData.append('fecha_vencimiento_actual', $('#fecha_vencimiento_actual').val());
         formData.append('descripcion_accion', $('#descripcion_accion').val());
         formData.append('tiempo_gestion', $('#tiempo_gestion').val());
