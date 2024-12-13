@@ -109,6 +109,7 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
 
         // // Verificar las fechas
         // Log::info('Valores para insert: ', [
+        //     'Numero guia' => $row['n_guia'],
         //     'Fecha envio' => $row['f_envio'],               
         //     'Fecha notificacion' => $row['f_notificacion'],               
         // ]);
@@ -120,6 +121,12 @@ class CargueNotificaciones implements ToModel, WithHeadingRow
         // Case 4: Si guia y fecha de notificacion traen registros estado 360 (Notificado)
 
         switch (true) {
+            case (!$row['n_guia'] && $row['n_guia'] == '' && $row['f_notificacion']):
+                $Id_Estado_corresp = 362;                                    
+            break;
+            case (!$row['n_guia'] && $row['n_guia'] == 0 && $row['f_notificacion']):
+                $Id_Estado_corresp = 360;                                    
+            break;
             case (!$row['n_guia'] && !$row['f_notificacion']):
                 $Id_Estado_corresp = 362;
             break;

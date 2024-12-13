@@ -250,6 +250,8 @@ Route::get('/Sigmel/Consulta', [ConsultaController::class, 'show'])->name('Index
 Route::get('/Sigmel/RolAdministrador/GestionInicialNuevo', [AdministradorController::class, 'mostrarVistaGestionInicialNuevo'])->name('gestionInicialNuevo');
 // Acción: Rellenar los selectores del formulario acorde al parametro indicado
 Route::post('/cargarselectores', [AdministradorController::class, 'cargueListadoSelectores']);
+// Acción: Calcular fecha de vencimiento acorde al ANS configurado
+Route::post('/calculoFechaVencimiento', [AdministradorController::class, 'calculoFechaVencimiento']);
 // Acción: Verficar que la columna Modulo_nuevo de la tabla sigmel_informacion_parametrizaciones_clientes este en si para permitir ejecutar la paramétrica
 Route::post('/validacionParametricaEnSi', [AdministradorController::class, 'validacionParametricaEnSi']);
 
@@ -312,6 +314,8 @@ Route::post('/filtrosBandejaPCL', [CoordinadorController::class, 'filtroBandejaP
 Route::post('/alertasNaranjasRojasPCL', [CoordinadorController::class, 'alertaNaranjasRojasPCL']);
 // Accion: Actualizar el profesional y redireccionar el servicio
 Route::post('/actualizarProfesionalServicio', [CoordinadorController::class, 'actualizarBandejaPCL']);
+// Acción: Consultar si hay un ANS ejecutado PCL
+Route::post('/consultaANSejecutadoPcl', [CoordinadorController::class, 'consultaANSejecutado']);
 // Acción: Reemplazar Documentos
 Route::post('/reemplazarDocumento', [CoordinadorController::class, 'reemplazarDocumento']);
 // Acción: Obtener información comunicado
@@ -597,6 +601,8 @@ Route::post('/filtrosBandejaOrigen', [BandejaOrigenController::class, 'filtrosBa
 Route::post('/alertasNaranjasRojasOrigen', [BandejaOrigenController::class, 'alertaNaranjasRojasOrigen']);
 // Accion: Actualizar el profesional y redireccionar el servicio
 Route::post('/actualizarProfesionalServicioOrigen', [BandejaOrigenController::class, 'actualizarBandejaOrigen']);
+// Acción: Consultar si hay un ANS ejecutado ORIGEN
+Route::post('/consultaANSejecutadoOrigen', [BandejaOrigenController::class, 'consultaANSejecutado']);
 
 // 14/09/2023
 // Vista: Módulo Calificación Origen Coordinador
@@ -668,6 +674,9 @@ Route::post('/selectoresBandejaNotifi', [BandejaNotifiController::class, 'cargue
 Route::post('/informacionBandejaNotifi', [BandejaNotifiController::class, 'infomacionEnventosNotifiacion']);
 // Accion: Capturar data sin filtros
 Route::post('/sinfiltrosBandejaNotifi', [BandejaNotifiController::class, 'sinFiltroBandejaNotifi']);
+// Acción: Consultar si hay un ANS ejecutado NOTIFICACIONES
+Route::post('/consultaANSejecutadoNotifi', [BandejaNotifiController::class, 'consultaANSejecutado']);
+
 // Accion: Capturar data según los filtros
 Route::post('/filtrosBandejaNotifi', [BandejaNotifiController::class, 'filtrosBandejaNotifi']);
 Route::post('/proceso_notificaciones', [BandejaNotifiController::class, 'proceso_notificaciones']);
@@ -695,6 +704,8 @@ Route::post('/filtrosBandejaJuntas', [BandejaJuntasController::class, 'filtrosBa
 Route::post('/alertasNaranjasRojasJuntas', [BandejaJuntasController::class, 'alertaNaranjasRojasJuntas']);
 // Accion: Actualizar el profesional y redireccionar el servicio
 Route::post('/actualizarProfesionalServicioJuntas', [BandejaJuntasController::class, 'actualizarBandejaJuntas']);
+// Acción: Consultar si hay un ANS ejecutado JUNTAS
+Route::post('/consultaANSejecutadoJuntas', [BandejaJuntasController::class, 'consultaANSejecutado']);
 //17/10/2023
 // Vista: Módulo Calificación Juntas Coordinador
 Route::get('/calificacionJuntas', [CalificacionJuntasController::class, 'mostrarVistaCalificacionJuntas'])->name('calificacionJuntas');
@@ -731,6 +742,16 @@ Route::post('/historialAccionesEventosJun', [CalificacionJuntasController::class
 /** Creacion de expediente y lista de chequeo */
 //Accion: Generar lista chequeo
 Route::post('/registrarListaChequeo', [CalificacionJuntasController::class, 'generarListaChequeo']);
+// Accion: Insertar y acutalizar posicion y foleo del expediente
+Route::post('/insertarActualizarPosicionFoleos', [CalificacionJuntasController::class, 'insertarActualizarPosicionFole']);
+// Accion: Eliminar comunicado del expediente
+Route::post('/eliminarComunicadosExpediente', [CalificacionJuntasController::class, 'eliminarComunicadoExpediente']);
+// Accion: Generar expediente
+Route::post('/generarDatosExpedientes', [CalificacionJuntasController::class, 'generarDatosExpediente']);
+// Acción: Eliminaar zip de Expedientes
+Route::post('/eliminarZipExpedientes', [CalificacionJuntasController::class, 'eliminarZipExpediente']);
+// Prueba de carga y union de pdfs
+Route::post('/UnificarExpedientesPdfs', [CalificacionJuntasController::class, 'UnificarExpedientePdfs'])->name('unirpdf');
 
 //18/11/2023
 // Vista: Módulo Controversia Juntas
@@ -814,6 +835,10 @@ Route::post('/eliminarAnsCliente', [AdministradorController::class, 'eliminarAns
 Route::post('/eliminar_evento', [AdministradorController::class, 'eliminar_comunicado']);
 // Acción: Actualizar información del cliente.
 Route::post('/ActualizarCliente', [AdministradorController::class, 'actualizar_cliente']);
+// Acción: Guardar los ANS del cliente
+Route::post('/EnvioANSCliente', [AdministradorController::class, 'guardar_ans_cliente']);
+// Acción: Actualizar ANS
+Route::post('/ActualizarANSCliente', [AdministradorController::class, 'actualizar_ans']);
 
 // Acción: Eliminar fila dinámica en tabla de firmas cliente modal edicion cliente
 Route::post('/eliminarFirmaCliente', [AdministradorController::class, 'eliminarFirmaCliente']);

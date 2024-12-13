@@ -521,8 +521,10 @@ $(document).ready(function(){
 
         var evento = $("#newId_evento").val();
         var servicio = $("#Id_servicio").val();
+        var asignacion = $("#newId_asignacion").val();        
         $("#id_evento_familia").val(evento);
         $("#id_servicio_familia").val(servicio);
+        $("#id_asignacion_familia").val(asignacion);        
     });
 
     /* Envío de información del documento familia */
@@ -642,6 +644,7 @@ $(document).ready(function(){
                 resumable.opts.query.Id_Documento = idDoc;
                 resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val().replace(/ /g, "_");
                 resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
+                resumable.opts.query.Id_asignacion = $(`#Id_asignacion_${idDoc}`).val();
             });
         }
     });
@@ -868,8 +871,9 @@ $(document).ready(function(){
         formData.append('newId_asignacion', $('#newId_asignacion').val());
         formData.append('Id_proceso', $('#Id_proceso').val());
         formData.append('Id_servicio', $("#Id_servicio").val());
-        formData.append('modalidad_calificacion', $('#modalidad_calificacion').val());
-        formData.append('fecha_devolucion', $('#fecha_devolucion').val());   
+        formData.append('modalidad_calificacion', $('#modalidad_calificacion').val());   
+        formData.append('fecha_devolucion', $('#fecha_devolucion').val());
+        formData.append('fecha_radicacion_actual', $('#fecha_radicacion').val());
         formData.append('fuente_informacion', $('#fuente_informacion').val());
         formData.append('nueva_fecha_radicacion', $('#nueva_fecha_radicacion').val());
         formData.append('accion', $('#accion').val());
@@ -879,7 +883,9 @@ $(document).ready(function(){
         formData.append('profesional', $('#profesional').val());
         formData.append('causal_devolucion_comite', $('#causal_devolucion_comite').val());
         formData.append('fecha_cierre', $('#fecha_cierre').val());
+        formData.append('fecha_vencimiento_actual', $('#fecha_vencimiento_actual').val());
         formData.append('descripcion_accion', $('#descripcion_accion').val());
+        formData.append('tiempo_gestion', $('#tiempo_gestion').val());
         formData.append('banderaguardar',$('#bandera_accion_guardar_actualizar').val());        
 
         $.ajax({

@@ -76,7 +76,8 @@ class EliminarEventos extends BaseServicio{
             "sigmel_auditorias_informacion_laboral_eventos",
             "sigmel_auditorias_informacion_pericial_eventos",
             "sigmel_auditorias_pronunciamiento_eventos",
-            "sigmel_auditorias_registro_documentos_eventos"
+            "sigmel_auditorias_registro_documentos_eventos",
+            "sigmel_auditorias_informacion_decretos_eventos",
         )
     ];
     

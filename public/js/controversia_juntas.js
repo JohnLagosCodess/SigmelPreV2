@@ -2398,11 +2398,7 @@ $(document).ready(function(){
                 if (response.parametro == 'registro_revision_jrci') {
                     $('.alerta_revision_jrci').removeClass('d-none');
                     $('.alerta_revision_jrci').append('<strong>'+response.mensaje+'</strong>');
-                    setTimeout(function(){
-                        $('.alerta_revision_jrci').addClass('d-none');
-                        $('.alerta_revision_jrci').empty();
-                        location.reload();
-                    }, 3000);
+                    $('#form_correspondencia_juntas').trigger('submit');
                 }
             }
         })
@@ -3248,9 +3244,7 @@ $(document).ready(function(){
             var existeOtroOficio = arrayComunicadosCorrespondencia.some(function(comunicado) {
                 return comunicado.Tipo_descarga !== 'Manual';
             });
-            if(!existeOtroOficio){
-                $("#div_correspondencia").removeClass('d-none');
-            }
+
         }else{
             $("#div_correspondencia").removeClass('d-none');
         }
@@ -3742,7 +3736,10 @@ $(document).ready(function(){
                 if (response.parametro == 'insertar_correspondencia') {
                     $('#GuardarCorrespondencia').prop('disabled', true);
                     $('#div_alerta_Correspondencia').removeClass('d-none');
-                    $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');                                            
+                    $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');      
+                    $('.alerta_revision_jrci').removeClass('d-none');
+                    $('.alerta_revision_jrci').empty();
+                    $('.alerta_revision_jrci').append('<strong>'+response.mensaje+'</strong>');                                      
                     setTimeout(function(){
                         $('#div_alerta_Correspondencia').addClass('d-none');
                         $('.alerta_Correspondencia').empty();   

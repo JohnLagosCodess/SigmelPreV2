@@ -16,11 +16,15 @@
         "laravel/tinker": "^2.8",
         "laravelcollective/html": "^6.4",
         "maatwebsite/excel": "^3.1",
-        "meilisearch/meilisearch-php": "^1.10",
+        "mikehaertl/php-pdftk": "^0.13.1",
+        "mpdf/mpdf": "^8.2",
         "phpoffice/phpspreadsheet": "^1.28",
         "phpoffice/phpword": "^1.2",
         "pion/laravel-chunk-upload": "^1.5",
-        "simplesoftwareio/simple-qrcode": "^4.2"
+        "setasign/fpdf": "^1.8",
+        "setasign/fpdi": "^2.6",
+        "simplesoftwareio/simple-qrcode": "^4.2",
+        "tecnickcom/tcpdf": "^6.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

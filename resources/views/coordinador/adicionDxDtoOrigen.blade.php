@@ -938,15 +938,15 @@
                                                                         data-id_proce_checkbox_dx_principal_cie10_visual="{{$diagnosticos_adicionales->Id_proceso}}" <?php if($diagnosticos_adicionales->Principal == "Si"):?> checked <?php endif?> style="transform: scale(1.2) !important;">
                                                                     </td>
                                                                     <td>
-                                                                        <?php if($diagnosticos_adicionales->F_adicion_CIE10 == date("Y-m-d")):?>
-                                                                            <?php if($Id_asignacion_actual == $diagnosticos_adicionales->Id_Asignacion): ?>
+                                                                        {{-- <?php if($diagnosticos_adicionales->F_adicion_CIE10 == date("Y-m-d")):?> --}}
+                                                                            {{-- <?php if($Id_asignacion_actual == $diagnosticos_adicionales->Id_Asignacion): ?> --}}
                                                                                 <div class="centrar"><a href="javascript:void(0);" id="btn_remover_diagnosticos_moticalifi{{$diagnosticos_adicionales->Id_Diagnosticos_motcali}}" data-id_fila_quitar="{{$diagnosticos_adicionales->Id_Diagnosticos_motcali}}" data-clase_fila="fila_diagnosticos_{{$diagnosticos_adicionales->Id_Diagnosticos_motcali}}" class="text-info"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>
-                                                                            <?php else: ?>
-                                                                                <div class="centrar">-</div>
-                                                                            <?php endif ?>
-                                                                        <?php else: ?>
-                                                                            <div class="centrar">-</div>
-                                                                        <?php endif?>
+                                                                            {{-- <?php else: ?> --}}
+                                                                                {{-- <div class="centrar">-</div> --}}
+                                                                            {{-- <?php endif ?> --}}
+                                                                        {{-- <?php else: ?> --}}
+                                                                            {{-- <div class="centrar">-</div> --}}
+                                                                        {{-- <?php endif?> --}}
                                                                     </td>
                                                                 </tr> 
                                                                 @endforeach
@@ -1119,6 +1119,12 @@
                                                 <input type="date" class="form-control" name="f_visado_comite" id="f_visado_comite" value="{{now()->format('Y-m-d')}}"  disabled>                                                
                                             @endif
                                         </div>
+                                    </div>
+                                    <div class="col-2 form-group align-self-end">
+                                        <div class="custom-control custom-checkbox">                                                
+                                            <input type="checkbox" class="custom-control-input" name="oficio_origen" value="Si" id="oficio_origen" {{isset($array_comite_interdisciplinario[0]->Visar) ? 'checked' : ''}} required>                                                
+                                            <label for="oficio_origen" class="custom-control-label">Oficio origen<span style="color: red;">(*)</label>
+                                        </div>
                                     </div>                                    
                                     <div class="col-2">
                                         <div class="form-group" style="padding-top: 31px;">                                             
@@ -1137,8 +1143,8 @@
                     </div>
                 <?php endif ?>
                 <!--  Correspondencia -->
-                @if(!empty($array_comite_interdisciplinario[0]->Visar) && $array_comite_interdisciplinario[0]->Visar == "Si")
-                    <div class="card-info <?php if(!empty($array_comite_interdisciplinario[0]->Asunto)):?> d-none <?php endif?>" id="div_correspondecia">
+
+                <div class="card-info d-none" id="div_correspondecia">
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Correspondencia</h5>
                         </div>
@@ -1150,18 +1156,6 @@
                         <form id="form_correspondencia_adx" action="POST">                            
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-3">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_comite_interdisciplinario[0]->Oficio_Origen) && $array_comite_interdisciplinario[0]->Oficio_Origen == 'Si')
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si" checked>
-                                                @else
-                                                    <input class="custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si">                                                    
-                                                @endif
-                                                <label for="oficio_origen" class="custom-control-label">Oficio Origen</label>
-                                            </div>
-                                        </div>
-                                    </div> 
                                     {{-- <div class="col-3">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
@@ -1542,8 +1536,8 @@
                                 </div> 
                             </div>
                         </form>
-                    </div>
-                @endif
+                </div>
+
             <!-- Comunicados - Dictamen y Oficio remisorio -->                    
             <div class="card-info" id="div_comunicado_dictamen_oficioremisorio">
                 <div class="card-header text-center" style="border: 1.5px solid black;">

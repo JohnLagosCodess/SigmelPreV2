@@ -23,10 +23,6 @@ $(document).ready(function(){
         allowClear:false
     });
 
-    $(".nombre_calificador").select2({
-        placeholder:"Seleccione una opción",
-        allowClear:false
-    });
 
     $(".tipo_pronunciamiento").select2({
         placeholder:"Seleccione una opción",
@@ -91,7 +87,7 @@ $(document).ready(function(){
 
     var info_pronuncia = $('#info_pronuncia').val();
     // Si la pronuncia tiene como decisión Silencio, no genera proforma y deja visible el cuadro de correspondencia.
-    if(info_pronuncia){
+    if(info_pronuncia  && $("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?'){
         var info_pronunciamiento = JSON.parse(info_pronuncia)[0];
         if(info_pronunciamiento.Decision == 'Silencio'){
             $("#div_pronu_califi").removeClass('d-none');
@@ -103,6 +99,9 @@ $(document).ready(function(){
             $("#div_pronu_califi").addClass('d-none');
             $("#div_doc_pronu").addClass('d-none');
         }     
+    }else{
+        $('#asun_correspondencia, #susten_correspondencia, #div_doc_pronu').addClass('d-none');
+        $('#asunto_cali').prop('required', false);
     }
     // Listado Nombre Entidad    
     $('#primer_calificador').change( function(){
@@ -129,6 +128,11 @@ $(document).ready(function(){
                         $('#nombre_calificador').append('<option value="'+data[nombrecalifi[i]]["Id_Entidad"]+'">'+data[nombrecalifi[i]]["Nombre_entidad"]+'</option>');
                     }
                 }
+
+                $(".nombre_calificador").select2({
+                    placeholder:"Seleccione una opción",
+                    allowClear:false
+                });
             }
         });
     });
@@ -881,13 +885,15 @@ $(document).ready(function(){
     });
 
     $("#editar_correspondencia").click(function(e){
-        var info_pronunciamiento = JSON.parse(info_pronuncia)[0];
-        var decision = info_pronunciamiento.Decision;
-        $("input[name='decision_pr'][value='" + decision + "']").prop("checked", true);
-        $("#ActualizarPronuncia").removeClass('d-none');
-        $("#div_pronu_califi").removeClass('d-none');
-        $("#div_doc_pronu").removeClass('d-none');
-        $("#correspondencia-item").removeClass('d-none');  
+        if($("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?'){
+            var info_pronunciamiento = JSON.parse(info_pronuncia)[0];
+            var decision = info_pronunciamiento.Decision;
+            $("input[name='decision_pr'][value='" + decision + "']").prop("checked", true);
+            $("#ActualizarPronuncia").removeClass('d-none');
+            $("#div_pronu_califi").removeClass('d-none');
+            $("#div_doc_pronu").removeClass('d-none');
+            $("#correspondencia-item").removeClass('d-none'); 
+        } 
     });
     /* VALIDACIÓN MOSTRAR CUAL JUNTA REGIONAL */
     
@@ -980,7 +986,7 @@ $(document).ready(function(){
     $("[name='decision_pr']").on("change", function(){
     var opc_seleccionada = $(this).val();
 
-        if (opc_seleccionada == 'Acuerdo') {
+        if (opc_seleccionada == 'Acuerdo' && $("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?') {
             $('#asunto_cali').val('CONCEPTO MÉDICO DE DICTAMEN PÉRDIDA DE CAPACIDAD LABORAL');
             var texto_insertar = "";
             $('#sustenta_cali').summernote('code', texto_insertar);
@@ -1002,7 +1008,7 @@ $(document).ready(function(){
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', true);
 
-        }else if (opc_seleccionada == 'Desacuerdo') {
+        }else if (opc_seleccionada == 'Desacuerdo' && $("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?') {
             $('#asunto_cali').val('RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN FRENTE A DICTAMEN N°');
             var texto_insertar = "<p>Respetados Señores, </p>"+
             "<p><strong>HUGO IGNACIO GÓMEZ DAZA</strong>, identificado como aparece al pie de mi firma, actuando en nombre y representación de <strong>SEGUROS DE VIDA "+ 
@@ -1040,8 +1046,7 @@ $(document).ready(function(){
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
-        }
-        else{
+        }else if($("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?'){
             $('#asunto_cali').val('');
             var texto_insertar = "";
             $('#sustenta_cali').summernote('code', texto_insertar);
@@ -1139,52 +1144,51 @@ $(document).ready(function(){
         formData.append('datos_finales_diagnosticos_moticalifi', JSON.stringify(datos_finales_diagnosticos_moticalifi));
         //const arrayData = JSON.parse(formData.get('datos_finales_diagnosticos_moticalifi'));
         formData.append('token', $('input[name=_token]').val());
-        formData.append('Id_EventoPronuncia', $('#Id_Evento_pronuncia').val());
-        formData.append('Id_ProcesoPronuncia', $('#Id_Proceso_pronuncia').val());
-        formData.append('Id_Asignacion_Pronuncia', $('#Asignacion_Pronuncia').val());
-        formData.append('primer_calificador', $('#primer_calificador').val());
-        formData.append('nombre_calificador', $('#nombre_calificador').val());
-        formData.append('otro_calificador', $('#otro_calificador').val());
-        formData.append('nit_calificador', $('#nit_calificador').val());
-        formData.append('nit_calificador', $('#nit_calificador').val());
-        formData.append('dir_calificador', $('#dir_calificador').val());
-        formData.append('mail_calificador', $('#mail_calificador').val());
-        formData.append('telefono_calificador', $('#telefono_calificador').val());
-        formData.append('depar_calificador', $('#depar_calificador').val());
-        formData.append('ciudad_calificador', $('#ciudad_calificador').val());
-        formData.append('tipo_pronunciamiento', $('#tipo_pronunciamiento').val());
-        formData.append('tipo_evento', $('#tipo_evento').val());
-        formData.append('tipo_origen', $('#tipo_origen').val());
-        formData.append('fecha_evento', $('#fecha_evento').val());
-        formData.append('dictamen_calificador', $('#dictamen_calificador').val());
-        formData.append('fecha_calificador', $('#fecha_calificador').val());
-        formData.append('n_siniestro', $('#n_siniestro').val());
-        formData.append('fecha_estruturacion', $('#fecha_estruturacion').val());
-        formData.append('porcentaje_pcl', $('#porcentaje_pcl').val());
-        formData.append('rango_pcl', $('#rango_pcl').val());
-        formData.append('decision_pr', $("[id^='di_']").filter(":checked").val());
-        formData.append('asunto_cali', $('#asunto_cali').val());
-        formData.append('sustenta_cali', sustenta_cali);
-        formData.append('destinatario_principal', $('#destinatario_principal').filter(":checked").val());
-        formData.append('tipo_entidad', $("#tipo_entidad").val());
-        formData.append('nombre_entidad', $("#nombre_entidad").val());
-        formData.append('copia_afiliado', $('#copia_afiliado').filter(":checked").val());
-        formData.append('copia_empleador', $('#copia_empleador').filter(":checked").val());
-        formData.append('copia_eps', $('#copia_eps').filter(":checked").val());
-        formData.append('copia_afp', $('#copia_afp').filter(":checked").val());
-        formData.append('copia_arl', $('#copia_arl').filter(":checked").val());
-        formData.append('junta_regional', $('#junta_regional').filter(":checked").val());
-        formData.append('junta_nacional', $('#junta_nacional').filter(":checked").val());
-        formData.append('junta_regional_cual', $('#junta_regional_cual').val());
-        formData.append('n_anexos', $('#n_anexos').val());
-        formData.append('elaboro', $('#elaboro').val());
-        formData.append('reviso', $('#reviso').val());
-        formData.append('ciudad_correspon', $('#ciudad_correspon').val());
-        formData.append('fecha_correspon', $('#fecha_correspon').val());
-        formData.append('n_radicado', $('#n_radicado').val());
-        formData.append('firmar', $('#firmar').filter(":checked").val());
-        formData.append('nombre_afiliado', $('#nombre_afiliado').val());
-        formData.append('identificacion', $('#identificacion').val());
+        formData.append('Id_EventoPronuncia', $('#Id_Evento_pronuncia').val() || '');
+        formData.append('Id_ProcesoPronuncia', $('#Id_Proceso_pronuncia').val() || '');
+        formData.append('Id_Asignacion_Pronuncia', $('#Asignacion_Pronuncia').val() || '');
+        formData.append('primer_calificador', $('#primer_calificador').val() || '');
+        formData.append('nombre_calificador', $('#nombre_calificador').val() || '');
+        formData.append('otro_calificador', $('#otro_calificador').val() || '');
+        formData.append('nit_calificador', $('#nit_calificador').val() || '');
+        formData.append('dir_calificador', $('#dir_calificador').val() || '');
+        formData.append('mail_calificador', $('#mail_calificador').val() || '');
+        formData.append('telefono_calificador', $('#telefono_calificador').val() || '');
+        formData.append('depar_calificador', $('#depar_calificador').val() || '');
+        formData.append('ciudad_calificador', $('#ciudad_calificador').val() || '');
+        formData.append('tipo_pronunciamiento', $('#tipo_pronunciamiento').val() || '');
+        formData.append('tipo_evento', $('#tipo_evento').val() || '');
+        formData.append('tipo_origen', $('#tipo_origen').val() || '');
+        formData.append('fecha_evento', $('#fecha_evento').val() || '');
+        formData.append('dictamen_calificador', $('#dictamen_calificador').val() || '');
+        formData.append('fecha_calificador', $('#fecha_calificador').val() || '');
+        formData.append('n_siniestro', $('#n_siniestro').val() || '');
+        formData.append('fecha_estruturacion', $('#fecha_estruturacion').val() || '');
+        formData.append('porcentaje_pcl', $('#porcentaje_pcl').val() || '');
+        formData.append('rango_pcl', $('#rango_pcl').val() || '');
+        formData.append('decision_pr', $("[id^='di_']").filter(":checked").val() || '');
+        formData.append('asunto_cali', $('#asunto_cali').val() || '');
+        formData.append('sustenta_cali', sustenta_cali || '');
+        formData.append('destinatario_principal', $('#destinatario_principal').filter(":checked").val() || '');
+        formData.append('tipo_entidad', $("#tipo_entidad").val() || '');
+        formData.append('nombre_entidad', $("#nombre_entidad").val() || '');
+        formData.append('copia_afiliado', $('#copia_afiliado').filter(":checked").val() || '');
+        formData.append('copia_empleador', $('#copia_empleador').filter(":checked").val() || '');
+        formData.append('copia_eps', $('#copia_eps').filter(":checked").val() || '');
+        formData.append('copia_afp', $('#copia_afp').filter(":checked").val() || '');
+        formData.append('copia_arl', $('#copia_arl').filter(":checked").val() || '');
+        formData.append('junta_regional', $('#junta_regional').filter(":checked").val() || '');
+        formData.append('junta_nacional', $('#junta_nacional').filter(":checked").val() || '');
+        formData.append('junta_regional_cual', $('#junta_regional_cual').val() || '');
+        formData.append('n_anexos', $('#n_anexos').val() || '');
+        formData.append('elaboro', $('#elaboro').val() || '');
+        formData.append('reviso', $('#reviso').val() || '');
+        formData.append('ciudad_correspon', $('#ciudad_correspon').val() || '');
+        formData.append('fecha_correspon', $('#fecha_correspon').val() || '');
+        formData.append('n_radicado', $('#n_radicado').val() || '');
+        formData.append('firmar', $('#firmar').filter(":checked").val() || '');
+        formData.append('nombre_afiliado', $('#nombre_afiliado').val() || '');
+        formData.append('identificacion', $('#identificacion').val() || '');        
         formData.append('DocPronuncia', $('#DocPronuncia')[0].files[0]);
         formData.append('bandera_pronuncia_guardar_actualizar', $('#bandera_pronuncia_guardar_actualizar').val());
         if($('#bandera_pronuncia_guardar_actualizar').val() == 'Actualizar'){
@@ -1335,6 +1339,27 @@ $(document).ready(function(){
                         document.querySelector('#ActualizarPronuncia').disabled=false;
                         location.reload();
                     }, 3000);
+                }else{
+                    if (response.parametro == 'agregar_pronunciamiento') {
+                        $('#div_alerta_pronuncia').removeClass('d-none');
+                        $('.alerta_pronucia').append('<strong>'+response.mensaje+'</strong>');                                            
+                        setTimeout(function(){
+                        document.querySelector('#GuardarPronuncia').disabled=false;
+                            $('#div_alerta_pronuncia').addClass('d-none');
+                            $('.alerta_pronucia').empty();   
+                            location.reload();
+                        }, 1500);   
+                    }else if(response.parametro == 'update_pronunciamiento'){
+                        $('#div_alerta_pronuncia').removeClass('d-none');
+                        $('.alerta_pronucia').append('<strong>'+response.mensaje+'</strong>');                                           
+                        setTimeout(function(){
+                        document.querySelector('#ActualizarPronuncia').disabled=false;
+                            $('#div_alerta_pronuncia').addClass('d-none');
+                            $('.alerta_pronucia').empty();
+                            document.querySelector('#ActualizarPronuncia').disabled=false;
+                            location.reload();
+                        }, 1500);
+                    }
                 }
             }
         })
@@ -1935,26 +1960,36 @@ $(document).ready(function(){
 
     /* Si se selecciona la opción Otro Cual Inserta un campo*/
     $(document).on('change', "#primer_calificador", function() {
-        console.log($(this).find('option:selected').text());
-    
+        $("#content_entidad").addClass('d-none');
+
         if ($(this).find('option:selected').text() === 'Otro/¿Cual?') {
-            $('#nombre_calificador').addClass('d-none');
-            $('#nombre_calificador').next(".select2-container").hide();
-            $('#nombre_calificador').prop('required', false);
+            $('#nombre_calificador, #asun_correspondencia, #susten_correspondencia, #div_doc_pronu').addClass('d-none');
+            $("#div_pronu_califi, #ActualizarPronuncia").removeClass("d-none");
+
+            $('#nombre_calificador, #asunto_cali').prop('required', false);
             $("#nit_calificador, #dir_calificador, #mail_calificador, #telefono_calificador, #depar_calificador, #ciudad_calificador").removeAttr('readonly');
 
             if ($('#otro_calificador').length === 0) {
                 let input = '<input type="text" class="form-control" name="otro_calificador" id="otro_calificador" placeholder="Escriba el nombre del calificador." required>';
                 $('#nombre_calificador').after(input);
             }
+            
+            setTimeout(() => {
+                $('#nombre_calificador').next(".select2-container").hide();
+                $("#content_entidad").removeClass('d-none');
+            }, 250);
+        
+            
         } else {
             $("#otro_calificador").remove(); // Elimina el input si se selecciona otra opción
-
+            $("#content_entidad").removeClass('d-none');
             //Muestra nuevamente el selector
-            $('#nombre_calificador').removeClass('d-none');
+            $('#nombre_calificador, #asun_correspondencia, #susten_correspondencia, #div_doc_pronu').removeClass('d-none');
             $('#nombre_calificador').next(".select2-container").show();
-            $('#nombre_calificador').prop('required', true);
+            $('#nombre_calificador,  #asunto_cali').prop('required', true);
+            $("#nit_calificador, #dir_calificador, #mail_calificador, #telefono_calificador, #depar_calificador, #ciudad_calificador").attr('readonly',true);
         }
+
     });
     
 });

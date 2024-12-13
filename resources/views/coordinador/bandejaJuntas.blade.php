@@ -109,14 +109,15 @@
                                         <th>ID evento</th>
                                         <th>Fecha de evento</th>
                                         <th>Fecha de radicación</th>
-                                        <th>Tiempo de gestión</th>
+                                        <th>Fecha de vencimiento</th>
+                                        <th>Fecha alerta</th>
+                                        <th>Tiempo de gestión (Días)</th>
                                         <th>Dias transcurridos desde el evento</th>
                                         <th>Empresa actual</th>
                                         <th>Proceso</th>
                                         <th>Proceso que envia</th>
                                         <th>Fecha asignación al proceso</th>
                                         <th>Asignado por</th>
-                                        <th>Fecha alerta</th>
                                         <th>Estado alerta</th>
                                         <th>Enfermedad heredada</th>
                                         <th>Parte que controvierte primera calificación</th>

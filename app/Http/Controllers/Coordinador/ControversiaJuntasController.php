@@ -157,7 +157,8 @@ class ControversiaJuntasController extends Controller
         $cantidad_documentos_cargados = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
         ->where([
             ['ID_evento', $Id_evento_juntas],
-            ['Id_servicio', $Id_servicio]
+            ['Id_servicio', $Id_servicio],
+            ['Id_Asignacion', $Id_asignacion_juntas]
         ])->get();
         
         $array_comite_interdisciplinario = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_comite_interdisciplinario_eventos as sicie')
@@ -250,8 +251,7 @@ class ControversiaJuntasController extends Controller
         'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
-        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado','N_siniestro_evento',
-        'cantidad_documentos_cargados','arraylistado_documentos'));
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado','N_siniestro_evento', 'cantidad_documentos_cargados'));
     
     }
 

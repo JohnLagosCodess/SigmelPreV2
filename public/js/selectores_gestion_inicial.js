@@ -1069,6 +1069,29 @@ $(document).ready(function(){
                 }
             }
         });
+
+        // Cálculo de la fecha de vencimiento y fechas de alerta naranja y roja acorde al ANS
+        let datos_calculo_f_vencimiento = {
+            '_token':token,
+            'fecha_radicacion': $("#fecha_radicacion").val(),
+            'Id_servicio': $("#servicio").val(),
+            'Id_accion': $(this).val(),
+        };
+        
+        $.ajax({
+            type:'POST',
+            url:'/calculoFechaVencimiento',
+            data: datos_calculo_f_vencimiento,
+            success:function (data) {
+                // Seteamos los campos: Fecha de vencimiento y a parte seteamos los campos de Id_ans, fecha de alerta naranja y fecha de alerta roja los cuales están ocultos. Incluimos la fecha de vencimiento visual la cual esta será la que se guarde en la bd
+                $("#fecha_vencimiento_visual").val(data.fecha_vencimiento_visual);
+                $("#fecha_vencimiento").val(data.fecha_vencimiento);
+                $("#fecha_alerta_naranja_ans").val(data.fecha_alerta_naranja_ans);
+                $("#fecha_alerta_roja_ans").val(data.fecha_alerta_roja_ans);
+                $("#Id_ans").val(data.Id_ans);
+            }
+        });
+        
     });
 
     /* VALIDACIÓN OPCIONES OTRO */
@@ -1657,6 +1680,8 @@ $(document).ready(function(){
         $("input[id^='EventoID_']").val(idobtenido);
         let idservicioobtenido = $("#id_servicio_registrado").val();
         $("input[id^='Id_servicio_']").val(idservicioobtenido);
+        let idasignacionobtenido = $("#id_asignacion_registrado").val();
+        $("input[id^='Id_asignacion_']").val(idasignacionobtenido);
     });
 
     /* 
@@ -1667,6 +1692,7 @@ $(document).ready(function(){
     $(document).on('click', '#cerrar_modal_doc_mod_nuevo, #cerrar_modal_docs_nuevo', function(){
         $("input[id^='EventoID_']").val('');
         $("input[id^='Id_servicio_']").val('');
+        $("input[id^='Id_asignacion_']").val('');
         $('#div_mensaje_carga_docs').addClass('d-none');
         location.reload();
     });
@@ -1699,6 +1725,7 @@ $(document).ready(function(){
                 resumable.opts.query.Id_Documento = idDoc;
                 resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val().replace(/ /g, "_");
                 resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
+                resumable.opts.query.Id_asignacion = $(`#Id_asignacion_${idDoc}`).val();
             });
         }
     })
@@ -1806,6 +1833,10 @@ $(document).ready(function(){
                             let idservicioobtenido = $("#id_servicio_registrado").val();
                             if (idservicioobtenido) {
                                 $("input[id^='Id_servicio_']").val(idservicioobtenido);
+                            }
+                            let idasignacionobtenido = $("#id_asignacion_registrado").val();
+                            if (idasignacionobtenido) {
+                                $("input[id^='Id_asignacion_']").val(idasignacionobtenido);
                             }
                         }
                         $('.mostrar_fallo').removeClass('d-none');

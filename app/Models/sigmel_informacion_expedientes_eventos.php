@@ -14,7 +14,8 @@ class sigmel_informacion_expedientes_eventos extends Model
     protected $primaryKey= 'Id_expedientes';
 
     protected $fillable = [
-
+        'Id_Registro_Documento',
+        'Id_Asignacion',
         'Id_Documento',
         'ID_evento',
         'Nombre_documento',

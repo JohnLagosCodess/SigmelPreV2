@@ -27,6 +27,7 @@
                 <div class="d-none">
                     <input type="text" id="id_evento_registrado" value="{{ session('id_evento_registrado') }}">
                     <input type="text" id="id_servicio_registrado" value="{{ session('id_servicio_registrado') }}">
+                    <input type="text" id="id_asignacion_registrado" value="{{ session('id_asignacion_registrado') }}">
                 </div>
                 <div id="div_mensaje_carga_docs">
                     <b>¿Desea Cargar los documentos?</b> &nbsp; <button class="btn btn-sm btn-success" id="abrir_modal_doc_mod_nuevo" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos">Si</button> 
@@ -749,7 +750,19 @@
                                                     <label for="profesional" class="col-form label">Profesional</label>
                                                     <select class="profesional custom-select" name="profesional" id="profesional" disabled></select>
                                                 </div>
-                                            </div> 
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <label for="" class="col-form label">Fecha de vencimiento</label>
+                                                    <input type="date" class="form-control" name="fecha_vencimiento_visual" id="fecha_vencimiento_visual" disabled>
+                                                    <div class="d-none">
+                                                        <input type="text" class="form-control" name="Id_ans" id="Id_ans">
+                                                        <input type="text" class="form-control" name="fecha_vencimiento" id="fecha_vencimiento">
+                                                        <input type="text" class="form-control" name="fecha_alerta_naranja_ans" id="fecha_alerta_naranja_ans">
+                                                        <input type="text" class="form-control" name="fecha_alerta_roja_ans" id="fecha_alerta_roja_ans">
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>  
                                         <div class="row">
                                             <div class="col-sm">

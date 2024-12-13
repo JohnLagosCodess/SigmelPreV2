@@ -73,6 +73,10 @@ use App\Models\sigmel_informacion_diagnosticos_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use Pion\Laravel\ChunkUpload\Handler\HandlerFactory;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
+
+/* Procedimiento para calculo fecha vencimiento */
+use App\Models\sigmel_informacion_alertas_ans_eventos;
+
 /* Manejo de archivos */
 use ZipArchive;
 
@@ -1165,25 +1169,128 @@ class AdministradorController extends Controller
             return response()->json($informacion_servicios_contratados_cliente);
         }
 
+        // listado de servicios seleccionados de la tabla de servicios contratados modulo edicion clientes
+        if($parametro == "servicios_ans"){
+            $array_servicios_seleccionados = sigmel_lista_procesos_servicios::on('sigmel_gestiones')
+            ->select('Id_Servicio', 'Nombre_servicio')
+            ->where('Estado', 'activo')
+            ->whereIn('Id_Servicio', $request->servicios_seleccionados)
+            ->get();
+
+            $info_servicios_seleccionados = json_decode(json_encode($array_servicios_seleccionados, true));
+            return response()->json($info_servicios_seleccionados);
+        }
+
+        // Listado acciones activas dependiendo de la paramétrica de un servicio. del módulo de acciones
+        if($parametro == "listado_acciones_ans"){
+            // $listado_acciones_ans = sigmel_informacion_acciones::on('sigmel_gestiones')
+            // ->select('Id_Accion', 'Accion')
+            // ->where([
+            //     ['Status_accion', '=', 'Activo']
+            // ])
+            // ->get();
+
+            $listado_acciones_ans = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_parametrizaciones_clientes as sipc')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as siac', 'sipc.Accion_ejecutar', '=', 'siac.Id_Accion')
+            ->select('siac.Id_Accion', 'siac.Accion')
+            ->where([
+                ['sipc.Servicio_asociado', '=', $request->id_servicio_seleccionado],
+                ['sipc.Status_parametrico', '=', 'Activo']
+            ])
+            ->whereNotNull('siac.Id_Accion')
+            ->groupBy('sipc.Accion_ejecutar')
+            ->orderBy('sipc.Accion_ejecutar', 'ASC')
+            ->get();
+                
+            $info_listado_acciones_ans = json_decode(json_encode($listado_acciones_ans, true));
+            return response()->json(($info_listado_acciones_ans));
+        }
+
+        // Listado de unidades ans
+        if($parametro == "lista_unidades_ans"){
+            $listado_unidades_ans = sigmel_lista_parametros::on('sigmel_gestiones')
+                ->select('Id_Parametro', 'Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Unidad ANS'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
+            $info_lista_unidades_ans = json_decode(json_encode($listado_unidades_ans, true));
+            return response()->json($info_lista_unidades_ans);
+        }
+        
+        // Listado de estados ans
+        if($parametro == "lista_estados_ans"){
+            $listado_unidades_ans = sigmel_lista_parametros::on('sigmel_gestiones')
+                ->select('Id_Parametro', 'Nombre_parametro')
+                ->where([
+                    ['Tipo_lista', '=', 'Estado ANS'],
+                    ['Estado', '=', 'activo']
+                ])
+                ->get();
+
+            $info_lista_unidades_ans = json_decode(json_encode($listado_unidades_ans, true));
+            return response()->json($info_lista_unidades_ans);
+        }
+
         if ($parametro == "listado_ans_cliente") {
             $array_ans_cliente = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_ans_clientes as siac')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'siac.Unidad', '=', 'slp.Id_Parametro') 
+            ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps', 'siac.Servicio', '=', 'slps.Id_Servicio') 
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'siac.Unidad', '=', 'slp.Id_Parametro')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as siacc', 'siac.Accion', '=', 'siacc.Id_Accion')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'siac.Estado', '=', 'slp2.Id_Parametro')
             ->select(
                 'siac.Id_ans',
                 'siac.Id_cliente',
                 'siac.Nombre',
-                'siac.Descripcion',
+                'siac.Servicio',
+                'slps.Nombre_servicio',
+                'siacc.Id_Accion',
+                'siacc.Accion',
                 'siac.Valor',
                 'siac.Unidad',
                 'slp.Nombre_parametro as Nombre_unidad',
-                DB::raw("CONCAT('<div class=\"centrar\"><a href=\"javascript:void(0);\" id=\"btn_remover_fila_ans_', siac.Id_ans, '\" data-id_fila_quitar=\"', siac.Id_ans, '\" data-clase_fila=\"fila_ans_', siac.Id_ans, '\" class=\"text-info\"><i class=\"fas fa-minus-circle\" style=\"font-size:24px;\"></i></a></div>') as string_html")
+                'siac.Porcentaje_Alerta_Naranja as Alerta_Naranja',
+                'siac.Porcentaje_Alerta_Roja as Alerta_Roja',
+                'slp2.Nombre_parametro as Estado',
+                // DB::raw("CONCAT('<div class=\"centrar\"><a href=\"javascript:void(0);\" id=\"btn_remover_fila_ans_', siac.Id_ans, '\" data-id_fila_quitar=\"', siac.Id_ans, '\" data-clase_fila=\"fila_ans_', siac.Id_ans, '\" class=\"text-info\"><i class=\"fas fa-minus-circle\" style=\"font-size:24px;\"></i></a></div>') as string_html")
+                DB::raw("CONCAT('<div style=\"text-align:center;\"><a href=\"javascript:void(0);\" id=\"btn_editar_fila_ans_', siac.Id_ans, '\" data-id_ans=\"', siac.Id_ans, '\" class=\"text-info\"><i class=\"fa fa-sm fa-pen text-primary\"></i></a>  <a href=\"javascript:void(0);\" class=\"d-none\" id=\"bd_guardar_fila_ans_', siac.Id_ans, '\" data-id_ans=\"', siac.Id_ans, '\"><i class=\"fa fa-sm fa-check text-success\"></i></a></div>') as string_html")
             )->where([
                 ['siac.Id_cliente', '=', $request->id_cliente_editar],
-                ['siac.Estado', '=', 'Activo']
+                ['siac.Estado', '=', 366]
             ])->groupBy('siac.Id_ans')->get();
-
+            
             $informacion_ans_cliente = json_decode(json_encode($array_ans_cliente), true);
             return response()->json($informacion_ans_cliente);
+        }
+
+        if ($parametro == 'edicion_ans'){
+            $array_ans_edicion = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_ans_clientes as siac')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_procesos_servicios as slps', 'siac.Servicio', '=', 'slps.Id_Servicio') 
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'siac.Unidad', '=', 'slp.Id_Parametro')
+            ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as siacc', 'siac.Accion', '=', 'siacc.Id_Accion')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp2', 'siac.Estado', '=', 'slp2.Id_Parametro')
+            ->select(
+                'siac.Id_ans',
+                'siac.Nombre',
+                'siac.Servicio',
+                'slps.Nombre_servicio',
+                'siacc.Id_Accion',
+                'siacc.Accion',
+                'siac.Valor',
+                'siac.Unidad',
+                'slp.Nombre_parametro as Nombre_unidad',
+                'siac.Porcentaje_Alerta_Naranja',
+                'siac.Porcentaje_Alerta_Roja',
+                'siac.Estado as Id_estado',
+                'slp2.Nombre_parametro as Estado',
+            )->where([
+                ['siac.Id_ans', '=', $request->id_ans_seleccionado],
+            ])->groupBy('siac.Id_ans')->get();
+            
+            $informacion_ans_edicion = json_decode(json_encode($array_ans_edicion), true);
+            return response()->json($informacion_ans_edicion);
         }
 
         if($parametro == "firmas_cliente"){
@@ -1568,41 +1675,39 @@ class AdministradorController extends Controller
             sleep(2);
 
             /* PASO N° 4: INSERTAR LOS DATOS DE LOS ANS EN LA TABLA sigmel_informacion_ans_clientes */
-            if(!empty($request->ANS)){
-                if(count($request->ANS) > 0){
-                    $array_ans = $request->ANS;
+            // if(!empty($request->ANS)){
+            //     if(count($request->ANS) > 0){
+            //         $array_ans = $request->ANS;
 
-                    // Iteración para extraer los datos de la tabla y adicionar el id cliente, fecha registro y quien lo hizo
-                    $array_datos_organizados_ans = [];
+            //         // Iteración para extraer los datos de la tabla y adicionar el id cliente, fecha registro y quien lo hizo
+            //         $array_datos_organizados_ans = [];
 
-                    foreach ($array_ans as $subarray_datos) {
-                        array_unshift($subarray_datos, $id_cliente_actualizar);
+            //         foreach ($array_ans as $subarray_datos) {
+            //             array_unshift($subarray_datos, $id_cliente_actualizar);
     
-                        $subarray_datos[] = $nombre_usuario;
-                        $subarray_datos[] = $date;
+            //             $subarray_datos[] = $nombre_usuario;
+            //             $subarray_datos[] = $date;
     
-                        array_push($array_datos_organizados_ans, $subarray_datos);
-                    };
+            //             array_push($array_datos_organizados_ans, $subarray_datos);
+            //         };
                     
-                    // Creación de array con los campos de la tabla: sigmel_informacion_servicios_contratados
-                    $array_tabla_ans = ['Id_cliente', 'Nombre', 'Descripcion', 'Valor', 'Unidad', 'Nombre_usuario', 'F_registro'];
+            //         // Creación de array con los campos de la tabla: sigmel_informacion_servicios_contratados
+            //         $array_tabla_ans = ['Id_cliente', 'Nombre', 'Descripcion', 'Valor', 'Unidad', 'Nombre_usuario', 'F_registro'];
 
-                    // Combinación de los campos de la tabla con los datos
-                    $array_datos_con_keys_ans = [];
-                    foreach ($array_datos_organizados_ans as $subarray_datos_organizados_ans) {
-                        array_push($array_datos_con_keys_ans, array_combine($array_tabla_ans, $subarray_datos_organizados_ans));
-                    };
+            //         // Combinación de los campos de la tabla con los datos
+            //         $array_datos_con_keys_ans = [];
+            //         foreach ($array_datos_organizados_ans as $subarray_datos_organizados_ans) {
+            //             array_push($array_datos_con_keys_ans, array_combine($array_tabla_ans, $subarray_datos_organizados_ans));
+            //         };
 
-                    // Inserción de la información
-                    foreach ($array_datos_con_keys_ans as $insertar_ans) {
-                        sigmel_informacion_ans_clientes::on('sigmel_gestiones')->insert($insertar_ans);
-                    }
+            //         // Inserción de la información
+            //         foreach ($array_datos_con_keys_ans as $insertar_ans) {
+            //             sigmel_informacion_ans_clientes::on('sigmel_gestiones')->insert($insertar_ans);
+            //         }
 
-                }
-            };
+            //     }
+            // };
             // sleep(1);
-
-            
         }
 
         $mensaje_mostrar = "Información de cliente actualizada satisfactoriamente";
@@ -1614,6 +1719,171 @@ class AdministradorController extends Controller
 
         return json_decode(json_encode($mensajes, true));
 
+    }
+
+    public function guardar_ans_cliente(Request $request){
+
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+        
+        // Captura del id del cliente al cual se le guardará sus 
+        $Id_cliente = $request->Id_cliente;
+
+        // Evaluamos que el array de datos del o los ANS no venga vacío
+        if (count($request->array_datos_fila_ans) > 0) {
+            $array_datos_fila_ans = $request->array_datos_fila_ans;
+
+            // Extraemos solamente los valores del array
+            $array_datos_organizados_ans = [];
+            for ($i=0; $i < count($array_datos_fila_ans); $i++) {
+                // if (strpos($array_datos_fila_ans[$i]["nombre"], 'estado_ans') === 0) {
+
+                //     if ($array_datos_fila_ans[$i]["valor"] == 365) {
+                //         $array_datos_fila_ans[$i]["valor"] = "Activo";
+                //     }else{
+                //         $array_datos_fila_ans[$i]["valor"] = "Inactivo";
+                //     }
+                // }
+                array_push($array_datos_organizados_ans, $array_datos_fila_ans[$i]["valor"]);
+            }
+
+            // Agregamos el id del cliente
+            array_unshift($array_datos_organizados_ans, $Id_cliente);
+
+            $array_datos_organizados_ans[] = $nombre_usuario;
+            $array_datos_organizados_ans[] = $date;
+
+            // echo "<pre>";
+            // print_r($array_datos_organizados_ans);
+            // echo "</pre>";
+
+            // Creación de array con los campos de la tabla: sigmel_informacion_ans_clientes
+            $array_tabla_ans = [
+                'Id_cliente',
+                'Nombre',
+                'Servicio',
+                'Accion',
+                'Valor',
+                'Unidad',
+                'Porcentaje_Alerta_Naranja',
+                'Porcentaje_Alerta_Roja',
+                'Estado',
+                'Nombre_usuario',
+                'F_registro'
+            ];
+
+            // Combinación de los campos de la tabla con los datos
+            $array_datos_con_keys_ans = [];
+            array_push($array_datos_con_keys_ans, array_combine($array_tabla_ans, $array_datos_organizados_ans));
+
+            // Inserción de la información
+            foreach ($array_datos_con_keys_ans as $insertar_ans) {
+                sigmel_informacion_ans_clientes::on('sigmel_gestiones')->insert($insertar_ans);
+            }
+
+            $enviar_mensaje = 'ANS guardado satisfactoriamente.';
+            $mensajes = array(
+                "parametro" => 'agrego_ans',
+                "mensaje" => $enviar_mensaje
+            ); 
+
+        } else {
+
+            $enviar_mensaje = 'No se pudo guardar el ANS, revise la configuración e intentelo nuevamente.';
+            $mensajes = array(
+                "parametro" => 'no_agrego_ans',
+                "mensaje" => $enviar_mensaje
+            ); 
+        }
+
+        return json_decode(json_encode($mensajes, true));
+        
+    }
+
+    public function actualizar_ans(Request $request){
+
+        if(!Auth::check()){
+            return redirect('/');
+        }
+        
+        $time = time();
+        $date = date("Y-m-d", $time);
+        $nombre_usuario = Auth::user()->name;
+
+        // Captura del id ans y id cliente
+        $Id_ans = $request->Id_ans;
+        $Id_cliente = $request->Id_cliente;
+
+        // Evaluamos que el array de datos del o los ANS no venga vacío
+        if (count($request->array_datos_fila_ans) > 0) {
+            $array_datos_fila_ans = $request->array_datos_fila_ans;
+
+            // Extraemos solamente los valores del array
+            $array_datos_organizados_ans = [];
+            for ($i=0; $i < count($array_datos_fila_ans); $i++) {
+            
+                array_push($array_datos_organizados_ans, $array_datos_fila_ans[$i]["valor"]);
+            }
+
+            // Agregamos el id del cliente
+            array_unshift($array_datos_organizados_ans, $Id_cliente);
+
+            $array_datos_organizados_ans[] = $nombre_usuario;
+            $array_datos_organizados_ans[] = $date;
+
+            // echo "<pre>";
+            // print_r($array_datos_organizados_ans);
+            // echo "</pre>";
+
+            // Creación de array con los campos de la tabla: sigmel_informacion_ans_clientes
+            $array_tabla_ans = [
+                'Id_cliente',
+                'Nombre',
+                'Servicio',
+                'Accion',
+                'Valor',
+                'Unidad',
+                'Porcentaje_Alerta_Naranja',
+                'Porcentaje_Alerta_Roja',
+                'Estado',
+                'Nombre_usuario',
+                'F_registro'
+            ];
+
+            // Combinación de los campos de la tabla con los datos
+            $array_datos_con_keys_ans = [];
+            array_push($array_datos_con_keys_ans, array_combine($array_tabla_ans, $array_datos_organizados_ans));
+
+            // Inserción de la información
+            foreach ($array_datos_con_keys_ans as $actualizar_ans) {
+                sigmel_informacion_ans_clientes::on('sigmel_gestiones')
+                ->where([
+                    ['Id_ans', $Id_ans]
+                ])->update($actualizar_ans);
+            }
+
+            $enviar_mensaje = 'ANS actualizado satisfactoriamente.';
+            $mensajes = array(
+                "parametro" => 'actualizo_ans',
+                "mensaje" => $enviar_mensaje
+            ); 
+
+        } else {
+
+            $enviar_mensaje = 'No se pudo actualizar el ANS, revise la configuración e intentelo nuevamente.';
+            $mensajes = array(
+                "parametro" => 'no_actualizo_ans',
+                "mensaje" => $enviar_mensaje
+            ); 
+        }
+
+        return json_decode(json_encode($mensajes, true));
+        
     }
 
     /* VISTA FRONTEND BANDEJA GESTIÓN INICIAL */
@@ -3021,20 +3291,6 @@ class AdministradorController extends Controller
             return response()->json($info_lista_municpios_cliente);
         }
 
-        /* LISTA UNIDADES ANS PARA TABLA ANS */
-        if($parametro == "lista_unidades_ans"){
-            $listado_unidades_ans = sigmel_lista_parametros::on('sigmel_gestiones')
-                ->select('Id_Parametro', 'Nombre_parametro')
-                ->where([
-                    ['Tipo_lista', '=', 'Unidad ANS'],
-                    ['Estado', '=', 'activo']
-                ])
-                ->get();
-
-            $info_lista_unidades_ans = json_decode(json_encode($listado_unidades_ans, true));
-            return response()->json($info_lista_unidades_ans);
-        }
-
         //Lista estados notificacion
         if($parametro == "EstadosNotificaion"){
             $datos_status_notificacion = sigmel_lista_parametros::on('sigmel_gestiones')
@@ -3049,6 +3305,76 @@ class AdministradorController extends Controller
             return response()->json($datos_status_notificacion);
         }
         
+    }
+
+    public function calculoFechaVencimiento(Request $request){
+        if(!Auth::check()){
+            return redirect('/');
+        }
+
+        $time = time();
+
+        // Capturamos el id del servicio y acción y fecha de radicación
+        $Id_servicio = $request->Id_servicio; 
+        $Id_accion = $request->Id_accion;
+        $fecha_radicacion = $request->fecha_radicacion;
+
+        /*  Consultamos si el servicio y acción tiene un ANS configurado y en caso de ser así
+            extraemos el valor de ans, el porcentaje de alerta naranja, el porcentaje de alerta roja, id de ans, su parte entera y su parte decimal.
+            El ans debe estar activo (parametro 365)
+        */
+
+        $array_tiene_ans = sigmel_informacion_ans_clientes::on('sigmel_gestiones')
+        ->select('Valor', 'Porcentaje_Alerta_Naranja', 'Porcentaje_Alerta_Roja', 'Id_ans')
+        ->where([
+            ['Servicio', $Id_servicio],
+            ['Accion', $Id_accion],
+            ['Estado', '=', 366]
+        ])
+        ->get();
+
+        if (count($array_tiene_ans) > 0) {
+
+            $valor_ans = $array_tiene_ans[0]->Valor;
+            $parte_entera_ans = floor($valor_ans);
+            $parte_decimal_ans = $valor_ans - $parte_entera_ans;
+
+            // echo "valor ANS: {$valor_ans} <br>";
+            // echo "parte entera: {$parte_entera_ans} <br>";
+            // echo "parte decimal: {$parte_decimal_ans} <br>";
+
+            /*  Enviamos la fecha de radicacion, la parte entera y parte decimal del ans a un 
+                procedimiento almacenado para realizar el calculo de la fecha de vencimiento 
+            */
+            $array_fecha_vencimiento = DB::select('CALL psrFechaVencimientoEventos(?,?,?)', array($fecha_radicacion, $parte_entera_ans, $parte_decimal_ans));
+            
+            $fecha_vencimiento = $array_fecha_vencimiento[0]->fecha_vencimiento;
+            // echo $fecha_vencimiento;
+
+            /*  Enviamos la fecha de radicacion, el porcentaje de alerta naranja, 
+                el porcentaje de alerta roja, el valor del ans a un procedimiento almacenado
+                para calcular el tiempo de alertas naranja y roja y obtener así las fechas de
+                alertas naranja y roja
+            */
+
+            $porcentaje_alerta_naranja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Naranja;
+            $porcentaje_alerta_roja_ans = $array_tiene_ans[0]->Porcentaje_Alerta_Roja;
+
+            $array_datos_alertas_ans = DB::select('CALL psrFechasAlertaAnsEventos(?,?,?,?)', array($fecha_radicacion, $valor_ans, $porcentaje_alerta_naranja_ans, $porcentaje_alerta_roja_ans));
+
+
+            $array_informacion = [
+                'Id_ans' => $array_tiene_ans[0]->Id_ans,
+                'fecha_vencimiento_visual' => date("Y-m-d", strtotime($fecha_vencimiento)),
+                'fecha_vencimiento' => $fecha_vencimiento,
+                'fecha_alerta_naranja_ans' => $array_datos_alertas_ans[0]->fecha_alerta_naranja_ans,
+                'fecha_alerta_roja_ans' => $array_datos_alertas_ans[0]->fecha_alerta_roja_ans
+            ];
+
+            return response()->json($array_informacion);
+
+        }
+
     }
     
     public function validacionParametricaEnSi(Request $request){
@@ -3681,6 +4007,13 @@ class AdministradorController extends Controller
             $asignacion_profesional = null;                    
         }
 
+        // si hay ans se guarda la fecha de vencimiento, en caso de que no, manda un null
+        if ($request->fecha_vencimiento != "") {
+            $fecha_vencimiento = $request->fecha_vencimiento;
+        } else {
+            $fecha_vencimiento = null;
+        }
+
         $datos_info_asignacion_evento =[
             'ID_evento' => $Id_evento,
             'Id_proceso' => $request->proceso,
@@ -3691,6 +4024,7 @@ class AdministradorController extends Controller
             'Id_Estado_evento' => $Id_Estado_evento,
             'F_accion' => $date,
             'F_radicacion' => $request->fecha_radicacion,
+            'Fecha_vencimiento' => $fecha_vencimiento,
             'N_de_orden' => $N_orden_evento,
             'Id_proceso_anterior' => $request->proceso,
             'Id_servicio_anterior' => $request->servicio,
@@ -3705,6 +4039,22 @@ class AdministradorController extends Controller
 
         // Inserción de datos en la tabla sigmel_informacion_asignacion_eventos
         $Id_Asignacion = sigmel_informacion_asignacion_eventos::on('sigmel_gestiones')->insertGetId($datos_info_asignacion_evento);
+
+        // Inserción en la tabla sigmel_informacion_alertas_ans_eventos para el tema de las alertas solo cuando existan datos
+        if ($request->fecha_vencimiento != "") {
+            sleep(2);
+            $datos_info_alertas_ans = [
+                'ID_evento' => $Id_evento,
+                'Id_Asignacion' => $Id_Asignacion,
+                'Id_ans' => $request->Id_ans,
+                'Fecha_alerta_naranja' => $request->fecha_alerta_naranja_ans,
+                'Fecha_alerta_roja' => $request->fecha_alerta_roja_ans,
+                'Nombre_usuario' => $nombre_usuario,
+                'F_registro'  => $date
+            ];
+    
+            sigmel_informacion_alertas_ans_eventos::on('sigmel_gestiones')->insert($datos_info_alertas_ans);
+        }
 
         // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
         sleep(2);
@@ -3774,7 +4124,8 @@ class AdministradorController extends Controller
         return back()->with([
             'mensaje_confirmacion_nuevo_evento' => 'Evento '.$idEvento.' creado correctamente.',
             'id_servicio_registrado' => $request->servicio,
-            'id_evento_registrado' => $idEvento
+            'id_evento_registrado' => $idEvento,
+            'id_asignacion_registrado' => $Id_Asignacion
         ]);
         // }
         
@@ -4051,7 +4402,7 @@ class AdministradorController extends Controller
         ->limit(1)
         ->get(); */          
 
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, 0,$newIdAsignacion)); 
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, 0, 0)); 
         
         return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
         'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos', 'Id_servicio'));
@@ -4703,7 +5054,7 @@ class AdministradorController extends Controller
         ->limit(1)
         ->get(); */          
 
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento, 0)); 
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, 0, 0)); 
         
         // return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
         // 'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos'))->with('evento_actualizado', 'Evento actualizado Sactifactoriamente');
@@ -4863,6 +5214,7 @@ class AdministradorController extends Controller
 
         $idEvento = $request->EventoID;
         $Id_servicio = $request->Id_servicio;
+        $Id_asignacion = $request->Id_asignacion;
         $id_documento = $request->Id_Documento;
         $nombre_lista_documento = $request->Nombre_documento;
 
@@ -4886,13 +5238,13 @@ class AdministradorController extends Controller
 
                 chmod($path, octdec($mode));
 
-                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$extension;
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion.".".$extension;
 
                 Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
             }
             else {
 
-                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$extension;
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion.".".$extension;
                 Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
             }
             
@@ -4905,9 +5257,10 @@ class AdministradorController extends Controller
             unlink($file->getPathname());
 
             // Registrar la información del documento con relación al ID del evento.
-            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
+            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion;
 
             $nuevoDocumento = [
+                'Id_Asignacion' => $Id_asignacion,
                 'Id_Documento' => $id_documento,
                 'ID_evento' => $idEvento,
                 'Nombre_documento' => $nombrecompletodocumento,
@@ -4928,7 +5281,8 @@ class AdministradorController extends Controller
                     ->where([
                         ["Nombre_documento", "=", $nombrecompletodocumento],
                         // ["Formato_documento", "=", $file->extension()],
-                        ["ID_evento", "=", $idEvento]
+                        ["ID_evento", "=", $idEvento],
+                        ["Id_Asignacion", "=", $Id_asignacion]
                     ])->get();
 
                 $array_consulta_documento_bd = json_decode(json_encode($consulta_documento_bd), true);
@@ -5114,6 +5468,8 @@ class AdministradorController extends Controller
         
         $idEvento = $request->EventoID;
         $Id_servicio = $request->Id_servicio;
+        //Homologacion cuando el documento es cargado desde el consultador o desde cualquiera de los otros modulos
+        $Id_asignacion = $request->bandera == 'consultador_eventos' ? '' : "_IdAsignacion_" . $request->Id_asignacion;
         $Id_asignacion = $request->Id_asignacion;
         // Creación de carpeta con el ID EVENTO para insertar los documentos
         $path = public_path('Documentos_Eventos/'.$idEvento);
@@ -5159,6 +5515,24 @@ class AdministradorController extends Controller
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
         }
 
+        //Almacena los documentos cuando viene desde el consultador
+        if($request->bandera == 'consultador_eventos'){
+            
+            $ubicacion_origen = public_path('Documentos_Eventos/'.$idEvento);
+            $ubicacion_destino = public_path('Documentos_Eventos/Temp/' .$idEvento);
+
+            //Mueve el documento a la carpeta temporal
+            $nombre_temp = "{$nombre_lista_documento}_IdEvento_{$idEvento}_IdServicio_{$Id_servicio}_idDoc_{$id_documento}.{$file->extension()}";
+            $this->mover_archivo($ubicacion_origen,$ubicacion_destino,$nombre_final_documento_en_carpeta,$nombre_temp);
+
+            $mensajes = [
+                "parametro" => 'exito',
+                "mensaje" => 'Documento cargado satisfactoriamente.'
+            ];
+
+            return response()->json($mensajes);
+        }
+        
         // Registrar la información del documento con relación al ID del evento.
         if(!empty($request->bandera_nombre_otro_doc)){
             $nombrecompletodocumento = $request->bandera_nombre_otro_doc;
@@ -5197,7 +5571,8 @@ class AdministradorController extends Controller
                 ->where([
                     ["Nombre_documento", "=", $nombrecompletodocumento],
                     ["Id_servicio", "=", $Id_servicio],
-                    ["ID_evento", "=", $idEvento]
+                    ["ID_evento", "=", $idEvento],
+                    ["Id_Asignacion", "=", $Id_asignacion]
                 ])->get();
 
             $array_consulta_documento_bd = json_decode(json_encode($consulta_documento_bd), true);
@@ -5267,266 +5642,81 @@ class AdministradorController extends Controller
 
     }
 
-    public function cargaListadoDocumentosInicialNuevo_backup(Request $request){
-        $time = time();
-        $date = date("Y-m-d", $time);
-        $nombre_usuario = Auth::user()->name;
+    /**
+     * Saca los documentos de un evento dentro de la carpeta temporal para el evento correspondiente en funcion del servicio
+     * @param String $IdEvento Evento que se esta procesando
+     * @param Int $Id_Asignacion
+     * @param Int $servicio Id del servicio que se vaa crear
+     */
+    public static function mover_archivoTEMP(string $IdEvento,int $Id_Asignacion,int $servicio){
+       $pathTmp =  public_path('Documentos_Eventos/Temp/' .$IdEvento);
+       $ruta_documentos = public_path('Documentos_Eventos/' .$IdEvento);
+       if (File::exists($pathTmp)) {  
+            // Obtiene todos los archivos en la carpeta
+            $archivos = File::files($pathTmp);
 
-        /* Validación N° 1: TAMAÑO DEL ARCHIVO */
-        $reglas_validacion_tamano_documento = array(
-            'listadodocumento' => 'max:10000000000000000'
-        );
+            foreach ($archivos as $archivo) {
+                // Obtiene el nombre del archivo y su extensión
+                $nombreArchivo = pathinfo($archivo->getFilename(), PATHINFO_FILENAME);
+                $extension = $archivo->getExtension();
+                $pathorigen = "{$pathTmp}/{$nombreArchivo}.{$extension}";
 
-        $ejecutar_validador_tamano_documento = Validator::make($request->all(), $reglas_validacion_tamano_documento);
-        if ($ejecutar_validador_tamano_documento->fails()) {
-
-            $mensajes = array(
-                "parametro" => 'fallo',
-                "mensaje" => 'El tamaño máximo permitido para cargar este documento es de 50 Megas.'
-            );
-
-            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                $mensajes["otro"] = $request->bandera_otro_documento;
-            }
-            
-            return json_decode(json_encode($mensajes, true));
-        }
-
-        /* Validación N° 2: Cuando el documento que se intenta cargar son de los que no son obligatorios y aún así se manda vacío el dato */
-        if($request->file('listadodocumento') == ""){
-
-            // echo "estoy vacio no subo gonorreas";
-            $mensajes = array(
-                "parametro" => 'fallo',
-                "mensaje" => 'Debe cargar este documento para poder guardarlo.'
-            );
-
-            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                $mensajes["otro"] = $request->bandera_otro_documento;
-            }
-
-            return json_decode(json_encode($mensajes, true));
-        }
-
-        /* Validación N° 3: EL ID DEL EVENTO DEBE ESTAR ESCRITO */
-        if($request->EventoID == ""){
-            $mensajes = array(
-                "parametro" => 'fallo',
-                "mensaje" => 'Debe diligenciar primero el formulario para poder cargar este documento.'
-            );
-
-            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                $mensajes["otro"] = $request->bandera_otro_documento;
-            }
-
-            return json_decode(json_encode($mensajes, true));
-        }
-        
-        /* Validación N° 4: TIPO DE DOCUMENTO */
-        $reglas_validacion_tipo_documento = array(
-            'listadodocumento' => 'mimes:pdf,xls,xlsx,doc,docx,jpeg,png,zip'
-        );
-
-        $ejecutar_validador_tipo_documento = Validator::make($request->all(), $reglas_validacion_tipo_documento);
-
-        if ($ejecutar_validador_tipo_documento->fails()) {
-            $mensajes = array(
-                "parametro" => 'fallo',
-                "mensaje" => 'El tipo de documento debe ser de alguna de estas extensiones: pdf, xls, xlsx, doc, docx, jpeg, png, zip.'
-            );
-
-            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                $mensajes["otro"] = $request->bandera_otro_documento;
-            }
-
-            return json_decode(json_encode($mensajes, true));
-        }
-
-        /* Validación N° 5: EL ID DEL SERVICIO DEBE ESTAR ESCRITO */
-        if($request->Id_servicio == ""){
-            $mensajes = array(
-                "parametro" => 'fallo',
-                "mensaje" => 'Debe seleccionar un servicio para poder cargar este documento.'
-            );
-
-            // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-            if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                $mensajes["otro"] = $request->bandera_otro_documento;
-            }
-
-            return json_decode(json_encode($mensajes, true));
-        }
-
-        /* Si las validaciones son exitosas, Se procede a subir el documento */
-
-        // Captura de variables del formulario.
-        $file = $request->file('listadodocumento');
-        $id_documento = $request->Id_Documento;
-        
-        // Evaluamos si han enviado el OTRO DOCUMENTO para que así pueda reemplazar el nombre original por el nombre que indico en el formulario
-        if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-            $nombre_lista_documento = str_replace(' ', '_', str_replace('/', '_', $request->nombre_otro_documento));
-            $nombre_lista_documento = "Otro_Documento_".$nombre_lista_documento;
-        } else {
-            $nombre_lista_documento = str_replace(' ', '_', str_replace('/', '_', $request->Nombre_documento));
-        }
-        
-        $idEvento = $request->EventoID;
-        $Id_servicio = $request->Id_servicio;
-
-        // Creación de carpeta con el ID EVENTO para insertar los documentos
-        $path = public_path('Documentos_Eventos/'.$idEvento);
-        $mode = 777;
-        
-        if (!File::exists($path)) {
-            File::makeDirectory($path, 0777, true, true);
-
-            chmod($path, octdec($mode));
-
-            if(!empty($request->bandera_nombre_otro_doc)){
-                $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
-            }else{
+                //extraer el idDocdel nombre y lo quita del idDoc
+                if (preg_match('/_idDoc_(\d+)/', $nombreArchivo, $matches)) {
+                    $id_documento = $matches[1]; 
                 
-                if ($request->string_nombre_doc == "") {
-                    // $nombre_con_extension = $file->getClientOriginalName();
-                    // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
-                    // $nombre_final_documento_en_carpeta = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
-
-                    $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
-                }else{
-                    $nombre_final_documento_en_carpeta = $request->string_nombre_doc.".".$file->extension();
+                    $nombreArchivo = str_replace("_idDoc_{$id_documento}", '', $nombreArchivo);
                 }
-            }
-            Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
 
-        }else {
+                $nuevo_nombre = "{$nombreArchivo}_IdAsignacion_{$Id_Asignacion}";
 
-            if(!empty($request->bandera_nombre_otro_doc)){
-                $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
-            }else{
-                
-                if ($request->string_nombre_doc == "") {
-                    // $nombre_con_extension = $file->getClientOriginalName();
-                    // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
-                    // $nombre_final_documento_en_carpeta = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
+                $destino = "{$ruta_documentos}/{$nuevo_nombre}.{$extension}";
 
-                    $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
-                }else{
-                    $nombre_final_documento_en_carpeta = $request->string_nombre_doc.".".$file->extension();
+                // saca los documentos de la carpeta temporal
+                File::move($pathorigen,$destino);
+
+                //Si no tiene un id para el documento no lo registra en la tabla
+                if(!isset($id_documento)){
+                    return;
                 }
-            }
-            Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
-        }
 
-        // Registrar la información del documento con relación al ID del evento.
-        if(!empty($request->bandera_nombre_otro_doc)){
-            $nombrecompletodocumento = $request->bandera_nombre_otro_doc;
-        }else{
-            
-            if ($request->string_nombre_doc == "") {
-                // $nombre_con_extension = $file->getClientOriginalName();
-                // $nombre_archivo_sin_extension = pathinfo($nombre_con_extension, PATHINFO_FILENAME);
-                // $nombrecompletodocumento = $nombre_archivo_sin_extension."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
-
-                $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
-            }else{
-                $nombrecompletodocumento = $request->string_nombre_doc;
+                $info_documento = [
+                    'Id_Asignacion' => $Id_Asignacion,
+                    'Id_Documento' => $id_documento,
+                    'ID_evento' => $IdEvento,
+                    'Nombre_documento' => $nuevo_nombre,
+                    'Formato_documento' => $extension,
+                    'Id_servicio' => $servicio,
+                    'Estado' => 'activo',
+                    'F_cargue_documento' => date('Y-m-d',time()),
+                    'Nombre_usuario' => Auth::user()->name,
+                    'F_registro' => date('Y-m-d',time()),
+                    ];
+                
+                sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($info_documento);
             }
         }
+    }
 
-        $nuevoDocumento = [
-            'Id_Documento' => $id_documento,
-            'ID_evento' => $idEvento,
-            'Nombre_documento' => $nombrecompletodocumento,
-            'Formato_documento' => $file->extension(),
-            'Id_servicio' => $Id_servicio,
-            'Estado' => 'activo',
-            'F_cargue_documento' => $date,
-            'Descripcion' => $request->descripcion_documento,
-            'Nombre_usuario' => $nombre_usuario,
-            'F_registro' => $date
-        ];  
-
-        if (count($nuevoDocumento) > 0) {
-
-            // Consultamos si el documento ya se encuentra dentro de la tabla para no cargarlo nuevamente (se reemplaza por el nuevo).
-            $consulta_documento_bd = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
-                ->select( "Id_Registro_Documento", "Nombre_documento", "Formato_documento")
-                ->where([
-                    ["Nombre_documento", "=", $nombrecompletodocumento],
-                    ["Id_servicio", "=", $Id_servicio],
-                    ["ID_evento", "=", $idEvento]
-                ])->get();
-
-            $array_consulta_documento_bd = json_decode(json_encode($consulta_documento_bd), true);
-            
-            if(!empty($array_consulta_documento_bd)){
-                $Id_Registro_Documento_en_bd = $array_consulta_documento_bd[0]['Id_Registro_Documento'];
-                $Nombre_documento_en_bd = $array_consulta_documento_bd[0]['Nombre_documento'];
-
-                // $Formato_documento_en_bd = $array_consulta_documento_bd[0]['Formato_documento'];
-                // && $Formato_documento_en_bd == $file->extension()
-                
-                if ($Nombre_documento_en_bd == $nombrecompletodocumento) {
-                    $actualizar_documento = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
-                        ->where('Id_Registro_Documento', $Id_Registro_Documento_en_bd)->firstOrFail();
-    
-                    $actualizar_documento->fill($nuevoDocumento);
-                    $actualizar_documento->save();
-    
-                    $mensajes = array(
-                        "parametro" => 'exito',
-                        "mensaje" => 'Documento cargado satisfactoriamente.'
-                    );
-                    return json_decode(json_encode($mensajes, true));
-    
-                } 
-
-            }
-            else {
-                sigmel_registro_documentos_eventos::on('sigmel_gestiones')->insert($nuevoDocumento);
-    
-                $mensajes = array(
-                    "parametro" => 'exito',
-                    "mensaje" => 'Documento cargado satisfactoriamente.'
-                );
-    
-                // Retornamos el valor de la bandera del OTRO DOCUMENTO para validaciones visuales.
-                if (!empty($request->bandera_otro_documento) && $request->bandera_otro_documento <> 0) {
-                    $mensajes["otro"] = $request->bandera_otro_documento;
-                }
-                
-                // SE VALIDA SI TODOS LOS DOCUMENTOS OBLIGATORIOS HAN SIDO CARGADOS PARA PROCEDER A HABILITAR EL BOTÓN QUE CREARÁ EL EVENTO
-                $id_docs_obligatorios = sigmel_lista_documentos::on('sigmel_gestiones')
-                        ->select('Id_Documento')
-                        ->where([
-                            ["Requerido", "=", "Si"],
-                            ["Estado", "=", "activo"]
-                        ])->get();
-        
-                $array_id_docs_obligatorios = json_decode(json_encode($id_docs_obligatorios), true);
-                $cantidad_id_docs_obligatorios = count($array_id_docs_obligatorios);
-        
-                $cantidad_id_docs_subidos = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
-                ->where([
-                    ['ID_evento', '=', $request->EventoID]
-                ])
-                ->whereIn('Id_Documento', $array_id_docs_obligatorios)->count();
-                
-                if ($cantidad_id_docs_obligatorios == $cantidad_id_docs_subidos) {
-                    $mensajes["todos_obligatorios"] = "Si";
-                }
-    
-                return json_decode(json_encode($mensajes, true));
-                
-            }
-
+    /**
+     * Mueve un documento en especifico a otra ubbicacion
+     * @param String $ubicacion Ubicacioon fisica del archivo
+     * @param String $destino Nueva ubicacion fisica del archivo
+     * @param String $nombre_origen Nombre del documento origen
+     * @param String $nombre_destino Nombre que tendra el doc en la nueva ubicacion
+     * @param Int $mode Permisos que asignaran para la nueva ubicacion del archivo
+     */
+    public function mover_archivo(string $ubicacion,string $destino, string $nombre_origen, string $nombre_destino, int $mode = 777){
+        if (!File::exists($destino)) {
+            File::makeDirectory($destino, 0777, true, true);
+            chmod($destino, octdec($mode));
         }
 
+        $ubicacion .= "/" . $nombre_origen;
+
+        $destino .= "/{$nombre_destino}";
+
+        rename($ubicacion,$destino);
     }
 
     // Función para cargar documentos familia (es decir los complementarios)
@@ -5641,7 +5831,7 @@ class AdministradorController extends Controller
 
         $idEvento = $request->id_evento_familia;
         $Id_servicio = $request->id_servicio_familia;
-
+        $Id_asignacion = $request->id_asignacion_familia;
         // Creación de carpeta con el ID EVENTO para insertar los documentos
         $path = public_path('Documentos_Eventos/'.$idEvento);
         $mode = 777;
@@ -5654,7 +5844,7 @@ class AdministradorController extends Controller
             if(!empty($request->bandera_nombre_otro_doc)){
                 $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
             }else{
-                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion.".".$file->extension();
             }
     
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
@@ -5664,7 +5854,7 @@ class AdministradorController extends Controller
             if(!empty($request->bandera_nombre_otro_doc)){
                 $nombre_final_documento_en_carpeta = $request->bandera_nombre_otro_doc.".".$file->extension();
             }else{
-                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio.".".$file->extension();
+                $nombre_final_documento_en_carpeta = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion.".".$file->extension();
             }
     
             Storage::putFileAs($idEvento, $file, $nombre_final_documento_en_carpeta);
@@ -5674,10 +5864,11 @@ class AdministradorController extends Controller
         if(!empty($request->bandera_nombre_otro_doc)){
             $nombrecompletodocumento = $request->bandera_nombre_otro_doc;
         }else{
-            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio;
+            $nombrecompletodocumento = $nombre_lista_documento."_IdEvento_".$idEvento."_IdServicio_".$Id_servicio."_IdAsignacion_".$Id_asignacion;
         }
 
         $nuevoDocumento = [
+            'Id_Asignacion' => $Id_asignacion,
             'Id_Documento' => $id_documento,
             'ID_evento' => $idEvento,
             'Nombre_documento' => $nombrecompletodocumento,
@@ -5699,7 +5890,8 @@ class AdministradorController extends Controller
                 ->where([
                     ["Nombre_documento", "=", $nombrecompletodocumento],
                     // ["Formato_documento", "=", $file->extension()],
-                    ["ID_evento", "=", $idEvento]
+                    ["ID_evento", "=", $idEvento],
+                    ["Id_Asignacion", "=", $Id_asignacion]
                 ])->get();
     
             $array_consulta_documento_bd = json_decode(json_encode($consulta_documento_bd), true);
@@ -5957,7 +6149,7 @@ class AdministradorController extends Controller
 
         $id_evento = $request->id_evento;
 
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($id_evento, 0));         
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($id_evento, 0, 0));         
         return response()->json($arraylistado_documentos);
     }
 
