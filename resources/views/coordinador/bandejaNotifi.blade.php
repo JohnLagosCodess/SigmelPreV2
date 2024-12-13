@@ -113,7 +113,6 @@
                                 <thead>
                                     <tr class="bg-info">
                                         <th class="detallenotifi">Detalle</th>
-                                        <th>Cliente</th>
                                         <th>Nombre de afiliado</th>
                                         <th>N° identificación</th>
                                         <th>Servicio</th>
