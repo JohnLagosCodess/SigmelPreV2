@@ -1217,6 +1217,20 @@ $(document).ready(function(){
             var desicion_proforma = 'proforma_desacuerdo';            
         }
         var N_siniestro = $('#n_siniestro').val();
+        if(arrayDatosDiagnosticos.length == 0 && datos_finales_diagnosticos_moticalifi.length == 0){
+            $('.alerta_roja_guardado').append('<strong>Debe registrar por lo menos un Diagnóstico para poder guardar o actualizar el Pronunciamiento</strong>').removeClass('d-none')
+            setTimeout(function(){
+                $('.alerta_roja_guardado').addClass('d-none');
+                $('.alerta_roja_guardado').empty();
+                if (GuardarPronuncia.length > 0) {
+                    document.querySelector('#GuardarPronuncia').disabled=false;            
+                }
+                if (ActualizarPronuncia.length > 0) {
+                    document.querySelector('#ActualizarPronuncia').disabled=false;
+                }
+            }, 1500);
+            return;
+        }
         $.ajax({
             type:'POST',
             url:'/guardarInfoServiPronuncia',
@@ -1497,6 +1511,7 @@ $(document).ready(function(){
                         $('#resultado_insercion_cie10').addClass('d-none');
                         $('#resultado_insercion_cie10').removeClass('alert-success');
                         $('#resultado_insercion_cie10').empty();
+                        location.reload();
                     }, 3000);
                 }
                 if (response.total_registros == 0) {
@@ -1875,6 +1890,7 @@ $(document).ready(function(){
             'estado_notificacion': $('#modalCorrespondencia #state_notificacion').val(),
             'tipo_correspondencia': tipo_correspondencia,
             'id_correspondencia': $('#modalCorrespondencia #id_correspondencia').val(),
+            'id_destinatario':$("#modalCorrespondencia #id_destinatario").val(),
             'accion': $('#btn_guardar_actualizar_correspondencia').val()
         };
         $.ajax({    

@@ -12,16 +12,30 @@ use Illuminate\Support\Facades\File;
 use App\Models\sigmel_lista_procesos_servicios;
 use App\Models\cndatos_bandeja_eventos;
 use App\Models\cndatos_eventos;
+use App\Models\sigmel_grupos_trabajos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_historial_acciones_eventos;
 
 use App\Models\sigmel_informacion_acciones;
+use App\Models\sigmel_informacion_agudeza_auditiva_eventos;
+use App\Models\sigmel_informacion_agudeza_visual_eventos;
+use App\Models\sigmel_informacion_agudeza_visualre_eventos;
 use App\Models\sigmel_informacion_alertas_automaticas_eventos;
+use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_informacion_parametrizaciones_clientes;
 use App\Models\sigmel_informacion_comunicado_eventos;
+use App\Models\sigmel_informacion_controversia_juntas_eventos;
 use App\Models\sigmel_informacion_correspondencia_eventos;
+use App\Models\sigmel_informacion_deficiencias_alteraciones_eventos;
+use App\Models\sigmel_informacion_diagnosticos_eventos;
+use App\Models\sigmel_informacion_examenes_interconsultas_eventos;
+use App\Models\sigmel_informacion_laboralmente_activo_eventos;
+use App\Models\sigmel_informacion_libro2_libro3_eventos;
+use App\Models\sigmel_informacion_pronunciamiento_eventos;
+use App\Models\sigmel_informacion_rol_ocupacional_eventos;
 use App\Models\sigmel_numero_orden_eventos;
+use App\Models\sigmel_usuarios_grupos_trabajos;
 use App\Models\User;
 use Illuminate\Support\Arr;
 
@@ -1717,7 +1731,6 @@ class CoordinadorController extends Controller
             ->get();
         return response()->json($registros_correspondencias);
     }
-
     public function guardarInformacionCorrespondencia(Request $request){
         if (!Auth::check()) {
             return redirect('/');
@@ -1834,5 +1847,374 @@ class CoordinadorController extends Controller
             );
             return json_decode(json_encode($mensajes, true));
         }
+    }
+    public function getInformacionCalPCL(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $id_evento = $request->id_evento;
+        $id_asignacion = $request->id_asignacion;
+        $id_proceso = $request->id_proceso;
+        $tipo_decreto = $request->tipo_decreto;
+        $tipo_servicio = $request->tipo_servicio;
+        //VALIDACIONES GLOBALES 
+        if($tipo_servicio == 'Recalificación'){
+            //Examenes o Interconsultas del servicio
+            $examenes_interconsulta = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado_Recalificacion','Activo']])
+                ->get();
+            if($examenes_interconsulta->isEmpty()){
+                return [false,'Debe registrar por lo menos un Examen o interconsulta para poder guardar la calificación de Pérdida de capacidad laboral'];
+            }
+            //Diagnosticos motivos de calificación
+            $diagnosticos_motivos_calificacion = sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado_Recalificacion','Activo']])
+                ->get();
+            if($diagnosticos_motivos_calificacion->isEmpty()){
+                return [false,'Debe registrar por lo menos un Diagnóstico para poder guardar la calificación de Pérdida de capacidad laboral'];
+            }
+        }
+        else if($tipo_servicio == 'Cal_Tecnica'){
+            //Examenes o Interconsultas del servicio
+            $examenes_interconsulta = sigmel_informacion_examenes_interconsultas_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado','Activo']])
+                ->get();
+            if($examenes_interconsulta->isEmpty()){
+                return [false,'Debe registrar por lo menos un Examen o interconsulta para poder guardar la calificación de Pérdida de capacidad laboral'];
+            }
+            //Diagnosticos motivos de calificación
+            $diagnosticos_motivos_calificacion = sigmel_informacion_diagnosticos_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado','Activo']])
+                ->get();
+            if($diagnosticos_motivos_calificacion->isEmpty()){
+                return [false,'Debe registrar por lo menos un Diagnóstico para poder guardar la calificación de Pérdida de capacidad laboral'];
+            }
+        }
+        //VALIDACIONES POR TIPO DE DECRETO Y TIPO DE SERVICIO
+            //DECRETO MUCI - 1507 de 2014 - RECALIFICACIÓN
+            if($tipo_decreto == 1 && $tipo_servicio == 'Recalificación'){ 
+                //Validación 2.1
+                    //Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores
+                    $deficiencias_alteraciones = sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado_Recalificacion','Activo']])
+                        ->get();
+                    //Tabla 9.3 Deficiencia por Alteraciones del Sistema Auditivo
+                    $deficiencias_auditivas = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado_Recalificacion','Activo']])
+                        ->get();
+                    //Tabla 11.3 Deficiencias por Alteraciones del Sistema Visual
+                    $deficiencias_visuales = sigmel_informacion_agudeza_visualre_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento_re',$id_evento],['Id_Asignacion_re',$id_asignacion],['Id_proceso_re',$id_proceso],['Estado_Recalificacion','Activo']])
+                        ->get();
+                    if($deficiencias_alteraciones->isEmpty() && $deficiencias_auditivas->isEmpty() && $deficiencias_visuales->isEmpty()){
+                        return [false,'Debe registrar por lo menos una Deficiencia para poder guardar la calificación de Pérdida de capacidad laboral'];
+                    }
+                //Validación 2.2
+                    $laboralmente_activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento',$id_evento],['Id_proceso',$id_proceso],['Estado_Recalificacion','Activo']])
+                        ->get();
+                    $rol_ocupacional = sigmel_informacion_rol_ocupacional_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento',$id_evento],['Id_proceso',$id_proceso],['Estado_Recalificacion','Activo']])
+                        ->get();
+                    if($laboralmente_activo->isEmpty() && $rol_ocupacional->isEmpty()){
+                        return [false,'Debe aplicar un rol correspondiente al Título II  para poder guardar la calificación de Pérdida de capacidad laboral'];
+                    }
+            }
+            //DECRETO MUCI - 1507 de 2014 - CALIFICACIÓN TECNICA
+            else if($tipo_decreto == 1 && $tipo_servicio == 'Cal_Tecnica'){
+                //Validación 2.1
+                    //Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores
+                    $deficiencias_alteraciones = sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado','Activo']])
+                        ->get();
+                    //Tabla 9.3 Deficiencia por Alteraciones del Sistema Auditivo
+                    $deficiencias_auditivas = sigmel_informacion_agudeza_auditiva_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado','Activo']])
+                        ->get();
+                    //Tabla 11.3 Deficiencias por Alteraciones del Sistema Visual
+                    $deficiencias_visuales = sigmel_informacion_agudeza_visual_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso]])
+                        ->get();
+                    if($deficiencias_alteraciones->isEmpty() && $deficiencias_auditivas->isEmpty() && $deficiencias_visuales->isEmpty()){
+                        return [false,'Debe registrar por lo menos una Deficiencia para poder guardar la calificación de Pérdida de capacidad laboral'];
+                    }
+                //Validación 2.2
+                    $laboralmente_activo = sigmel_informacion_laboralmente_activo_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento',$id_evento],['Id_proceso',$id_proceso],['Estado','Activo']])
+                        ->get();
+                    $rol_ocupacional = sigmel_informacion_rol_ocupacional_eventos::on('sigmel_gestiones')
+                        ->where([['ID_evento',$id_evento],['Id_proceso',$id_proceso],['Estado','Activo']])
+                        ->get();
+                    if($laboralmente_activo->isEmpty() && $rol_ocupacional->isEmpty()){
+                        return [false,'Debe aplicar un rol correspondiente al Título II  para poder guardar la calificación de Pérdida de capacidad laboral'];
+                    }
+            }
+            //DECRETO MUCI - 1507 de 2014 (Cero) - RECALIFICACIÓN
+            if($tipo_decreto == 2 && $tipo_servicio == 'Recalificación'){ //
+                //Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores
+                $deficiencias_alteraciones = sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                    ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado_Recalificacion','Activo']])
+                    ->get();
+                if($deficiencias_alteraciones->isEmpty()){
+                    return [false,'Debe registrar por lo menos una Deficiencia para poder guardar la calificación de Pérdida de capacidad laboral'];
+                }
+            }
+            //DECRETO MUCI - 1507 de 2014 (Cero) - CALIFICACIÓN TECNICA
+            else if($tipo_decreto == 2 && $tipo_servicio == 'Cal_Tecnica'){
+                //Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores
+                $deficiencias_alteraciones = sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                    ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado','Activo']])
+                    ->get();
+                if($deficiencias_alteraciones->isEmpty()){
+                    return [false,'Debe registrar por lo menos una Deficiencia para poder guardar la calificación de Pérdida de capacidad laboral'];
+                }
+            }
+            //DECRETO MUCI  917 de 1999 - RECALIFICACIÓN
+            if($tipo_decreto == 3 && $tipo_servicio == 'Recalificación'){ 
+                //Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores
+                $deficiencias_alteraciones = sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                    ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado_Recalificacion','Activo']])
+                    ->get();
+                if($deficiencias_alteraciones->isEmpty()){
+                    return [false,'Debe registrar por lo menos una Deficiencia para poder guardar la calificación de Pérdida de capacidad laboral'];
+                }
+                //Libro II y Libro III
+                $libros = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
+                    ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado_Recalificacion','Activo']])
+                    ->get();
+                if($libros->isEmpty()){
+                    return [false,'Debe registrar por lo menos una Deficiencia para poder guardar la calificación de Pérdida de capacidad laboral'];
+                }
+            }
+            //DECRETO MUCI  917 de 1999 - CALIFICACIÓN TECNICA
+            else if($tipo_decreto == 3 && $tipo_servicio == 'Cal_Tecnica'){
+                //Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores
+                $deficiencias_alteraciones = sigmel_informacion_deficiencias_alteraciones_eventos::on('sigmel_gestiones')
+                    ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado','Activo']])
+                    ->get();
+                if($deficiencias_alteraciones->isEmpty()){
+                    return [false,'Debe registrar por lo menos una Deficiencia para poder guardar la calificación de Pérdida de capacidad laboral'];
+                }
+                //Libro II y Libro III
+                $libros = sigmel_informacion_libro2_libro3_eventos::on('sigmel_gestiones')
+                    ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso],['Estado','Activo']])
+                    ->get();
+                if($libros->isEmpty()){
+                    return [false,'Debe registrar por lo menos una Deficiencia para poder guardar la calificación de Pérdida de capacidad laboral'];
+                }
+            }
+        return [true,'Validaciones pasadas con exito'];
+    }
+    public function validarGuardadoSubmodulo(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $id_evento = $request->id_evento;
+        $id_asignacion = $request->id_asignacion;
+        $id_proceso = $request->id_proceso;
+        $id_servicio = $request->id_servicio;
+        if($id_servicio == 3 || $id_servicio == 9){
+            $validarGuardadoSubmodulo = sigmel_informacion_pronunciamiento_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso]])
+                ->get();
+            if($validarGuardadoSubmodulo->isEmpty()){
+                return [false,'No guardado'];
+            }
+            return [true,'Guardado'];
+        }
+        else if($id_servicio == 12 || $id_servicio == 13){
+            $validarGuardadoSubmodulo = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso]])
+                ->get();
+            if($validarGuardadoSubmodulo->isEmpty()){
+                return [false,'No guardado'];
+            }
+            return [true,'Guardado'];
+        }
+        return [true,'No validado'];
+    }
+    public function validarVisadoSubmodulo(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $id_evento = $request->id_evento;
+        $id_asignacion = $request->id_asignacion;
+        $id_proceso = $request->id_proceso;
+        $id_servicio = $request->id_servicio;
+        $validarVisado = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion],['Id_proceso',$id_proceso]])
+            ->get();
+        if($validarVisado->isEmpty()){
+            return [false,'Sin visado'];
+        }
+        return [true,'Visado'];
+    }
+    /*
+        Se usa para buscar el ultimo usuario que ejecuto una acción de asignación (124, 125, 126, 127 Y 139) y es para poder auto-seleccionarlo 
+        en la parte de profesional del modulo principal, Esta función cubre las validaciones 1,2 y a su vez es la encargada de dar respuesta.
+        Automatizaciones requeridas en el PBS068
+    */
+    public function capturarUltimoEjecutorDeAccion(Request $request){
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $user = Auth::user();
+        $id_evento = $request->id_evento;
+        $id_asignacion = $request->id_asignacion;
+        $id_proceso = $request->id_proceso;
+        $id_servicio = $request->id_servicio;
+        $id_cliente = $request->id_cliente;
+        //Id acción devolución ejecutada, si llega 131 significa que estan ejecutando DEVOLUCIÓN DE ASIGNACIÓN y si llega 140 estan ejecutando DEVOLVER CALIFICACIÓN
+        $id_accion_devolucion = $request->id_accion_devolucion;
+
+        if($id_accion_devolucion == 131){
+            //Validaciones de acción
+            if($id_servicio == 1 || $id_servicio == 2 || $id_servicio == 3 || $id_servicio === 8 || $id_servicio === 9){
+                //Validamos que la acción este activa en el modulo de acciones
+                $is_action_active = sigmel_informacion_acciones::on('sigmel_gestiones')
+                    ->where([['Id_Accion',124],['Status_accion','Activo']])
+                    ->get();
+                if($is_action_active->isNotEmpty()){
+                    /*
+                        Validamos que las acciones (La de asignación y devolución) esten parametrizadas para poder continuar 
+                    */
+                    $accion_relacionada = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+                        ->where([['Id_cliente',$id_cliente],['Id_proceso',$id_proceso],['Servicio_asociado',$id_servicio],['Accion_ejecutar',124],['Status_parametrico','Activo']])
+                        ->get();
+                    $accion_devolución = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+                        ->where([['Id_cliente',$id_cliente],['Id_proceso',$id_proceso],['Servicio_asociado',$id_servicio],['Accion_ejecutar',131],['Status_parametrico','Activo']])
+                        ->get();
+                        
+                    if($accion_relacionada->isNotEmpty() && $accion_devolución->isNotEmpty() && $accion_devolución[0]->Equipo_trabajo){
+                        //Capturamos el ultimo historial de acciones en el que se haya ejecutado la acción requerida
+                        $usuario_ejecuto_accion = sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
+                            ->where([['Id_Asignacion',$id_asignacion],['ID_evento',$id_evento],['Id_proceso',$id_proceso],['Id_servicio',$id_servicio],['Id_accion',124]])
+                            ->orderBy('F_accion', 'desc')
+                            ->first();
+                        $response = $this->validarUsuarioyEquipo($usuario_ejecuto_accion,$accion_devolución);
+                        if($response[0]){
+                            return $response;
+                        }
+                    }
+                }
+            }
+            else if($id_servicio == 12 || $id_servicio == 13){
+                //Validamos que la acción este activa en el modulo de acciones
+                $is_action_active = sigmel_informacion_acciones::on('sigmel_gestiones')
+                    ->where([['Id_Accion',155],['Status_accion','Activo']])
+                    ->get();
+                if($is_action_active->isNotEmpty()){
+                    /*
+                        Validamos que las acciones (La de asignación y devolución) esten parametrizadas para poder continuar 
+                    */
+                    $accion_relacionada = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+                        ->where([['Id_cliente',$id_cliente],['Id_proceso',$id_proceso],['Servicio_asociado',$id_servicio],['Accion_ejecutar',155],['Status_parametrico','Activo']])
+                        ->get();
+                    $accion_devolución = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+                        ->where([['Id_cliente',$id_cliente],['Id_proceso',$id_proceso],['Servicio_asociado',$id_servicio],['Accion_ejecutar',131],['Status_parametrico','Activo']])
+                        ->get();
+                        
+                    if($accion_relacionada->isNotEmpty() && $accion_devolución->isNotEmpty() && $accion_devolución[0]->Equipo_trabajo){
+                        //Capturamos el ultimo historial de acciones en el que se haya ejecutado la acción requerida
+                        $usuario_ejecuto_accion = sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
+                            ->where([['Id_Asignacion',$id_asignacion],['ID_evento',$id_evento],['Id_proceso',$id_proceso],['Id_servicio',$id_servicio],['Id_accion',155]])
+                            ->orderBy('F_accion', 'desc')
+                            ->first();
+                        $response = $this->validarUsuarioyEquipo($usuario_ejecuto_accion,$accion_devolución);
+                        if($response[0]){
+                            return $response;
+                        }
+                    }
+                }
+            }
+            else if($id_servicio == 6 || $id_servicio == 7){
+                /*
+                    Capturamos el ultimo historial de acciones en el que se haya ejecutado alguna de las acciones requeridas y traemos la más reciente y en base a esa se hacen las
+                    demás validaciones
+                */
+                $usuario_ejecuto_accion = sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
+                    ->where([['Id_Asignacion',$id_asignacion],['ID_evento',$id_evento],['Id_proceso',$id_proceso],['Id_servicio',$id_servicio]])
+                    ->whereIn('Id_accion',[125,126,127])
+                    ->orderBy('F_accion', 'desc')
+                    ->first();
+                if($usuario_ejecuto_accion && $usuario_ejecuto_accion->Nombre_usuario){
+                    //Validamos que la acción este activa en el modulo de acciones
+                    $is_action_active = sigmel_informacion_acciones::on('sigmel_gestiones')
+                        ->where([['Id_Accion',$usuario_ejecuto_accion->Id_accion],['Status_accion','Activo']])
+                        ->get();
+                    if($is_action_active->isNotEmpty()){
+                        /*
+                            Validamos que las acciones (La de asignación y devolución) esten parametrizadas para poder continuar 
+                        */
+                        $accion_relacionada = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+                        ->where([['Id_cliente',$id_cliente],['Id_proceso',$id_proceso],['Servicio_asociado',$id_servicio],['Accion_ejecutar',$usuario_ejecuto_accion->Id_accion],['Status_parametrico','Activo']])
+                        ->get();
+                        $accion_devolución = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+                            ->where([['Id_cliente',$id_cliente],['Id_proceso',$id_proceso],['Servicio_asociado',$id_servicio],['Accion_ejecutar',131],['Status_parametrico','Activo']])
+                            ->get();
+                        if($accion_relacionada->isNotEmpty() && $accion_devolución->isNotEmpty() && $accion_devolución[0]->Equipo_trabajo){
+                            $response = $this->validarUsuarioyEquipo($usuario_ejecuto_accion,$accion_devolución);
+                            if($response[0]){
+                                return $response;
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+        else if($id_accion_devolucion == 140){
+            if($id_servicio == 1 || $id_servicio == 2 || $id_servicio == 6 || $id_servicio === 7 || $id_servicio === 8){
+                //Validamos que la acción este activa en el modulo de acciones
+                $is_action_active = sigmel_informacion_acciones::on('sigmel_gestiones')
+                    ->where([['Id_Accion',139],['Status_accion','Activo']])
+                    ->get();
+                if($is_action_active->isNotEmpty()){
+                    /*
+                        Validamos que las acciones (La de asignación y devolución) esten parametrizadas para poder continuar 
+                    */
+                    $accion_relacionada = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+                    ->where([['Id_cliente',$id_cliente],['Id_proceso',$id_proceso],['Servicio_asociado',$id_servicio],['Accion_ejecutar',139],['Status_parametrico','Activo']])
+                    ->get();
+                    $accion_devolución = sigmel_informacion_parametrizaciones_clientes::on('sigmel_gestiones')
+                        ->where([['Id_cliente',$id_cliente],['Id_proceso',$id_proceso],['Servicio_asociado',$id_servicio],['Accion_ejecutar',140],['Status_parametrico','Activo']])
+                        ->get();
+                    if($accion_relacionada->isNotEmpty() && $accion_devolución->isNotEmpty() && $accion_devolución[0]->Equipo_trabajo){
+                        //Capturamos el ultimo historial de acciones en el que se haya ejecutado la acción requerida
+                        $usuario_ejecuto_accion = sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
+                            ->where([['Id_Asignacion',$id_asignacion],['ID_evento',$id_evento],['Id_proceso',$id_proceso],['Id_servicio',$id_servicio],['Id_accion',139]])
+                            ->orderBy('F_accion', 'desc')
+                            ->first();
+                        $response = $this->validarUsuarioyEquipo($usuario_ejecuto_accion,$accion_devolución);
+                        if($response[0]){
+                            return $response;
+                        }
+                    }
+                }
+            }
+        }
+        return [false,'No cumple con las validaciones'];
+    }
+    /* 
+        Ya que la validación de si un usuario pertenece a un equipo es necesaria en todas las validaciones anteriores de la función capturarUltimoEjecutorDeAccion 
+        se crea esta función para no repetir codigo y tener un codigo más legible, Esta función se encarga de la tercera validación del item 1 del PBBS068
+    */
+    private function validarUsuarioyEquipo($usuario_ejecuto_accion,$accion_devolución){
+        if($usuario_ejecuto_accion && $usuario_ejecuto_accion->Nombre_usuario){
+            //Si tenemos el nombre de usuario de quien ejecuto por ultima vez la acción relacionada PBS068, lo buscamos en la tabla de usuarios
+            $informacion_usuario = DB::table('users')
+                ->where('name',$usuario_ejecuto_accion->Nombre_usuario)
+                ->get();
+            //Si el usuario fue encontrado procedemos a validar si pertenece al equipo de trabajo, al cual esta asociado la acción de DEVOLVER ASIGNACIÓN
+            if($informacion_usuario->isNotEmpty()){
+                $info_grupo = sigmel_usuarios_grupos_trabajos::on('sigmel_gestiones')
+                    ->where([['id_equipo_trabajo',$accion_devolución[0]->Equipo_trabajo],['id_usuarios_asignados',$informacion_usuario[0]->id]])
+                    ->get();
+                if($info_grupo->isNotEmpty()){
+                    return [true,$informacion_usuario];
+                }
+            }
+        }
+        return [false];
     }
 }

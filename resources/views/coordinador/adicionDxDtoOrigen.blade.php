@@ -423,10 +423,11 @@
                                                     <label for="fecha_evento">Fecha del evento</label>
                                                     <input type="hidden" id="bd_fecha_evento" value="">
                                                     <?php if(!empty($info_adicion_dx[0]->Fecha_evento)):?>
-                                                        <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" value="<?php echo $info_adicion_dx[0]->Fecha_evento;?>" required>
+                                                        <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php echo $info_adicion_dx[0]->Fecha_evento;?>" required>
                                                     <?php else: ?>
-                                                        <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>" required>
+                                                        <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>" required>
                                                     <?php endif ?>
+                                                    <span class="d-none" id="fecha_evento_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -502,10 +503,11 @@
                                                 <div class="form-group">
                                                     <label for="fecha_fallecimiento">Fecha de fallecimiento</label>
                                                     <?php if(!empty($info_adicion_dx[0]->Fecha_fallecimiento)):?>
-                                                        <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" value="<?php echo $info_adicion_dx[0]->Fecha_fallecimiento;?>">
+                                                        <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php echo $info_adicion_dx[0]->Fecha_fallecimiento;?>">
                                                     <?php else: ?>
-                                                        <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)){echo $datos_bd_DTO_ATEL[0]->Fecha_fallecimiento;}?>" >
+                                                        <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)){echo $datos_bd_DTO_ATEL[0]->Fecha_fallecimiento;}?>" >
                                                     <?php endif ?>
+                                                    <span class="d-none" id="fecha_fallecimiento_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1824,7 +1826,7 @@
 
             contador_examen = contador_examen + 1;
             var nueva_fila_examen = [
-                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}" required/>',
+                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}" min="1900-01-01" required/><span class="d-none" id="fecha_examen_fila_'+contador_examen+'_alerta" style="color: red; font-style: italic;"></span>',
                 '<input type="text" class="form-control" id="nombre_examen_fila_'+contador_examen+'" name="nombre_examen"/>',
                 '<textarea id="descripcion_resultado_fila_'+contador_examen+'" class="form-control" name="descripcion_resultado" cols="90" rows="4"></textarea>',
                 '<div class="centrar"><a href="javascript:void(0);" id="btn_remover_examen_fila" class="text-info" data-fila="fila_'+contador_examen+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
@@ -1834,9 +1836,11 @@
             var agregar_examen_fila = listado_examenes_interconsultas.row.add(nueva_fila_examen).draw().node();
             $(agregar_examen_fila).addClass('fila_'+contador_examen);
             $(agregar_examen_fila).attr("id", 'fila_'+contador_examen);
+            // Llamar a la función para añadir la validación al nuevo campo de tipo fecha
+            agregarValidacionFecha(`#fecha_examen_fila_${contador_examen}`);
 
         });
-        
+
         $(document).on('click', '#btn_remover_examen_fila', function(){
             var nombre_exame_fila = $(this).data("fila");
             listado_examenes_interconsultas.row("."+nombre_exame_fila).remove().draw();
@@ -2036,6 +2040,37 @@
 
         }, 500);
 
+    </script>
+    {{-- Validación general para todos los campos de tipo fecha --}}
+    <script>
+        let today = new Date().toISOString().split("T")[0];
+
+        // Seleccionar todos los inputs de tipo date
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+
+        // Agregar evento de escucha a cada input de tipo date que haya
+        dateInputs.forEach(input => {
+            //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
+            input.addEventListener('change', function() {
+                //Validamos que la fecha sea mayor a la fecha de 1900-01-01
+                if(this.value < '1900-01-01'){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#GuardarAdicionDx').addClass('d-none');
+                    $('#ActualizarAdicionDx').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea mayor a la fecha actual
+                if(this.value > today){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#GuardarAdicionDx').addClass('d-none');
+                    $('#ActualizarAdicionDx').addClass('d-none');
+                    return;
+                }
+                $('#GuardarAdicionDx').removeClass('d-none');
+                $('#ActualizarAdicionDx').removeClass('d-none');
+                return $(`#${this.id}_alerta`).text('').addClass("d-none");
+            });
+        });
     </script>
     <script type="text/javascript" src="/js/adicion_dx_dto.js"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>

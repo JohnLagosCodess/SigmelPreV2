@@ -101,6 +101,7 @@
                                                 <div class="form-group">
                                                     <label for="fecha_evento" class="col-form-label">Fecha de evento <!-- <span style="color:red;">(*)</span> --></label>
                                                     <input type="date" class="fecha_evento form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}">
+                                                    <span class="d-none" id="fecha_evento_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -211,6 +212,7 @@
                                                     <div class="form-group">
                                                         <label for="fecha_nacimiento" class="col-form-label">Fecha de nacimiento <span style="color:red;">(*)</span></label>
                                                         <input type="date" class="fecha_nacimiento form-control" name="fecha_nacimiento" id="fecha_nacimiento" max="{{date("Y-m-d")}}" required>
+                                                        <span class="d-none" id="fecha_nacimiento_alerta" style="color: red; font-style: italic;"></span>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm">
@@ -578,6 +580,7 @@
                                                 <div class="form-group">
                                                     <label for="fecha_ingreso" class="col-form-label">Fecha de ingreso</label>
                                                     <input type="date" class="fecha_ingreso form-control" name="fecha_ingreso" id="fecha_ingreso" max="{{date("Y-m-d")}}">
+                                                    <span class="d-none" id="fecha_ingreso_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -610,6 +613,7 @@
                                                 <div class="form-group">
                                                     <label for="fecha_retiro" class="col-form-label">Fecha de retiro</label>
                                                     <input type="date" class="fecha_retiro form-control" name="fecha_retiro" id="fecha_retiro">
+                                                    <span class="d-none" id="fecha_retiro_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>
                                             <div class="col-sm">
@@ -956,6 +960,33 @@
         $("#fecha_ingreso").on("change", function() {
             var fechaEvento = $(this).val();
             $("#fecha_retiro").val('').attr("min", fechaEvento);
+        });
+    });
+</script>
+{{-- Validación general para todos los campos de tipo fecha --}}
+<script>
+    let today = new Date().toISOString().split("T")[0];
+
+    // Seleccionar todos los inputs de tipo date
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+
+    // Agregar evento de escucha a cada input de tipo date que haya
+    dateInputs.forEach(input => {
+        //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
+        input.addEventListener('change', function() {
+            //Validamos que la fecha sea mayor a la fecha de 1900-01-01
+            if(this.value < '1900-01-01'){
+                $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                $('#Edicion_editar').addClass('d-none');
+                return;
+            }
+            //Validamos que la fecha no sea mayor a la fecha actual
+            if(this.value > today){
+                $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                $('#Edicion_editar').addClass('d-none');
+                return;
+            }
+            return $(`#${this.id}_alerta`).text('').addClass("d-none");
         });
     });
 </script>

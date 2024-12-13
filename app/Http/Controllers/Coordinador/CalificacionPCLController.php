@@ -114,6 +114,22 @@ class CalificacionPCLController extends Controller
             $Id_servicio = $request->Id_servicio_pcl;     
         }
         $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
+        //PBS068 Solicitan que los campos donde esta guardado el nombre del usuario (ejecuto, creo, edito, etc) traiga el tipo de colaborador
+        if(!empty($array_datos_calificacionPcl)){
+            if (!empty($array_datos_calificacionPcl[0]->Nombre_profesional)) {
+                $info_usuario = $this->globalService->InformacionCamposUsuarioAsignacionEventos($newIdAsignacion,'Nombre_profesional');
+                if(!empty($info_usuario) && !empty($info_usuario[0]->tipo_colaborador)){
+                    $array_datos_calificacionPcl[0]->Nombre_profesional .= ' '.$info_usuario[0]->tipo_colaborador;
+                }
+            }
+            // Concatenar el tipo de profesional al Asignado_por, si ambos existen
+            if (!empty($array_datos_calificacionPcl[0]->Asignado_por)) {
+                $info_usuario = $this->globalService->InformacionCamposUsuarioAsignacionEventos($newIdAsignacion,'Nombre_usuario');
+                if(!empty($info_usuario) && !empty($info_usuario[0]->tipo_colaborador)){
+                    $array_datos_calificacionPcl[0]->Asignado_por .= ' '.$info_usuario[0]->tipo_colaborador;
+                }
+            }
+        }
         $Nro_ident_afiliado = $array_datos_calificacionPcl[0]->Nro_identificacion;
         $array_datos_destinatarios = cndatos_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$newIdEvento],['Nro_identificacion',$Nro_ident_afiliado]])
@@ -146,7 +162,7 @@ class CalificacionPCLController extends Controller
        ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion], ['Estado', 'Inactivo'], ['Aporta_documento', 'No']])
        ->get();
 
-       $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento, $Id_servicio));
+       $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, $Id_servicio,$newIdAsignacion));
 
        // cantidad de documentos cargados
 
@@ -163,8 +179,10 @@ class CalificacionPCLController extends Controller
         ])
         ->get();    
         
-        $info_comite_inter = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion]])->get();
+        $info_comite_inter = $this->globalService->ComiteInterdisciplinarioModulosPrincipales($newIdEvento,$newIdAsignacion);
+        if(!empty($info_comite_inter) && !empty($info_comite_inter[0]->Profesional_comite) && !empty($info_comite_inter[0]->tipo_colaborador)){
+            $info_comite_inter[0]->Profesional_comite .= ' '.$info_comite_inter[0]->tipo_colaborador;
+        }
 
         $info_accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
         ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion]])->get();

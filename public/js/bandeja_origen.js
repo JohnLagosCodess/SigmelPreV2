@@ -692,12 +692,12 @@ function renderizarRegistros(data, inicio, fin, bandejaOrigenTable) {
 
             var datos = [
                 data[a].actualizarproser + data[a].moduloOrigen,
-                data[a].Nombre_Cliente,
                 data[a].Nombre_afiliado,
                 data[a].Nro_identificacion,
                 data[a].Nombre_servicio,
                 data[a].Nombre_estado,
                 data[a].Accion,
+                data[a].F_accion,
                 data[a].Nombre_profesional,
                 data[a].Nombre_evento,
                 data[a].ID_evento,
@@ -719,7 +719,7 @@ function renderizarRegistros(data, inicio, fin, bandejaOrigenTable) {
                 data[a].F_recepcion_documento,
                 data[a].Fecha_asignacion_dto,
                 data[a].Fecha_devolucion_comite,
-                data[a].F_accion
+                data[a].Nombre_Cliente
             ];
 
             let rowNode = bandejaOrigenTable.row.add(datos).draw(false).node();

@@ -693,12 +693,12 @@ function renderizarRegistros(data, inicio, fin, bandejaJuntasTable) {
 
             var datos = [
                 data[a].actualizarproser+data[a].moduloJuntas,
-                data[a].Nombre_Cliente,
                 data[a].Nombre_afiliado,
                 data[a].Nro_identificacion,
                 data[a].Nombre_servicio,
                 data[a].Nombre_estado,
                 data[a].Accion,
+                data[a].F_accion,
                 data[a].Nombre_profesional,
                 data[a].Nombre_evento,
                 data[a].ID_evento,
@@ -727,7 +727,7 @@ function renderizarRegistros(data, inicio, fin, bandejaJuntasTable) {
                 data[a].Termino_controversia_propia_Jrci,
                 data[a].Parte_controversia_ante_Jrci,
                 data[a].Tipo_controversia_por_otra_Jrci,
-                data[a].F_accion,
+                data[a].Nombre_Cliente,
             ];
 
             let rowNode = bandejaJuntasTable.row.add(datos).draw(false).node();

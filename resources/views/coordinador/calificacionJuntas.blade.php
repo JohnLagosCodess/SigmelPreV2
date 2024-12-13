@@ -36,7 +36,7 @@
     </div>
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
-            <h4>Módulo Juntas - Evento: {{$array_datos_calificacionJuntas[0]->ID_evento}}</h4>
+            <h4>Módulo Juntas - Evento: <u><a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer;">{{$array_datos_calificacionJuntas[0]->ID_evento}}</a></u> - Afiliado: {{$array_datos_calificacionJuntas[0]->Nombre_afiliado}} {{$array_datos_calificacionJuntas[0]->Nombre_tipo_documento}} {{$array_datos_calificacionJuntas[0]->Nro_identificacion}} - {{$array_datos_calificacionJuntas[0]->Tipo_afiliado}}</h4>
             <input type="hidden" id="action_actualizar_comunicado" value="{{ route('DescargarProformasJuntas') }}">
             <input type="hidden" id="action_actualizar_comunicado_otro" value="{{ route('descargarPdf') }}">
             <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
@@ -46,8 +46,8 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-12" id="filaprincipal">
-                        <div id="aumentarColAfiliado"> 
-                            <div class="card-info">
+                        <div id="aumentarColAfiliado d-none"> 
+                            <div class="card-info d-none">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
                                     <h5>Información del afiliado</h5>
                                 </div>
@@ -119,99 +119,28 @@
                                     <div class="row">
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="proceso_actual">Proceso actual</label>
-                                                <input type="text" class="form-control" name="proceso_actual" id="proceso_actual" value="{{$array_datos_calificacionJuntas[0]->Nombre_proceso_actual}}" disabled>
+                                                <a href="javascript:void(0);" style="font-size: 1.05rem !important;" class="text-dark text-md" id="cargue_docs" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
                                             </div>
                                         </div>
                                         <div class="col-4">
-                                                <div class="form-group">
-                                                    <label for="servicio">Servicio</label><br>
-                                                    <a onclick="document.getElementById('botonFormulario2').click();" id="llevar_servicio" style="cursor:pointer;" id="servicio_Juntas"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionJuntas[0]->Nombre_servicio}}</strong></a>
-                                                    <input type="hidden" class="form-control" name="servicio" id="servicio" value="{{$array_datos_calificacionJuntas[0]->Nombre_servicio}}">
-                                                </div>
+                                            <div class="form-group">
+                                                <?php if(!$arraycampa_documento_solicitado->isEmpty()):?>                                                
+                                                <a href="#" id="clicGuardado" style="font-size: 1.05rem !important;" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" data-target="#modalControversiaSeguimiento"><i class="fas fa-book-open text-info"></i> <strong>Gestión de controversia - Seguimiento</strong> <i class="fas fa-bell text-info icono"></i></a>
+                                                <?php else:?>
+                                                <a href="#" id="clicGuardado" style="font-size: 1.05rem !important;" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" data-target="#modalControversiaSeguimiento"><i class="fas fa-book-open text-info"></i> <strong>Gestión de controversia - Seguimiento</strong></a>
+                                                <?php endif?>    
+                                            </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="proceso_envia">Proceso que envía</label>
-                                                <input type="text" class="form-control" name="proceso_envia" id="proceso_envia" value="{{$array_datos_calificacionJuntas[0]->Nombre_proceso_anterior}}" disabled>
+                                                <a onclick="document.getElementById('botonFormulario2').click();" id="llevar_servicio" style="cursor:pointer;font-size: 1.05rem !important;" id="servicio_Juntas"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionJuntas[0]->Nombre_servicio}}</strong></a>
+                                                <input type="hidden" class="form-control" name="servicio" id="servicio" value="{{$array_datos_calificacionJuntas[0]->Nombre_servicio}}">
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="fecha_radicacion">Fecha de radicación</label>
                                                 <input type="date" class="form-control" name="fecha_radicacion" id="fecha_radicacion" value="{{$array_datos_calificacionJuntas[0]->F_radicacion}}" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="fecha_asignacion">Fecha asignación al proceso</label>
-                                                <input type="date" class="form-control" name="fecha_asignacion" id="fecha_asignacion" value="{{$array_datos_calificacionJuntas[0]->F_registro_asignacion}}" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="estado">Estado</label>
-                                                <input type="text" class="form-control" name="estado" id="estado" value="{{$array_datos_calificacionJuntas[0]->Nombre_estado}}" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="dias_trascurrido">Dias transcurridos desde el evento<br><br></label>
-                                                <input type="text" class="form-control" name="dias_trascurrido" id="dias_trascurrido" value="{{$array_datos_calificacionJuntas[0]->Dias_transcurridos_desde_el_evento}}" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="asignado_por">Asignado por<br><br></label>
-                                                <input type="text" class="form-control" name="asignado_por" id="asignado_por" value="{{$array_datos_calificacionJuntas[0]->Asignado_por}}" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="fecha_asignacion_juntas">Fecha de asignación para pronunciamiento de Juntas</label>
-                                                <input type="text" class="form-control" name="fecha_asignacion_juntas" id="fecha_asignacion_juntas" value="{{$array_datos_calificacionJuntas[0]->F_asignacion_pronu_juntas}}" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="fecha_dictamen_jrci">Fecha de notificación dictamen (JRCI)</label>
-                                                <input type="text" class="form-control" name="fecha_dictamen_jrci" id="fecha_dictamen_jrci" value="{{$array_datos_calificacionJuntas[0]->F_dictamen_jrci_emitido}}" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="profesional_pronunciamiento">Profesional pronunciamiento</label>
-                                                <input type="text" class="form-control" name="profesional_pronunciamiento" id="profesional_pronunciamiento" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Nombre_calificador)){echo $array_datos_calificacionJuntas[0]->Nombre_calificador;}else{ echo 'Sin Pronunciamiento';} ?>" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="tipo_profesional_pronunciamiento">Tipo Profesional pronunciamiento</label>
-                                                <input type="text" class="form-control" name="tipo_profesional_pronunciamiento" id="tipo_profesional_pronunciamiento" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Tipo_Profesional_calificador)){echo $array_datos_calificacionJuntas[0]->Tipo_Profesional_calificador;}else{ echo 'Sin Pronunciamiento';} ?>" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="fecha_ejecutoria_jrci">Fecha Acta Ejecutoria emitida por JRCI</label>
-                                                <input type="text" class="form-control" name="fecha_ejecutoria_jrci" id="fecha_ejecutoria_jrci" value="{{$array_datos_calificacionJuntas[0]->F_acta_ejecutoria_emitida_jrci}}" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="fecha_notificacion_jrci">Fecha notificación de recurso ante JRCI</label>
-                                                <input type="text" class="form-control" name="fecha_notificacion_jrci" id="fecha_notificacion_jrci" value="{{$array_datos_calificacionJuntas[0]->F_notificacion_recurso_jrci}}" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="fecha_notificacion_jnci">Fecha de notificación dictamen (JNCI)</label>
-                                                <input type="text" class="form-control" name="fecha_notificacion_jnci" id="fecha_notificacion_jnci" value="{{$array_datos_calificacionJuntas[0]->F_noti_ante_jnci}}" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-4">
-                                            <div class="form-group">
-                                                <label for="tiempo_gestion">Tiempo de gestión</label>
-                                                <input type="text" class="form-control" name="tiempo_gestion" id="tiempo_gestion" value="{{$array_datos_calificacionJuntas[0]->Tiempo_de_gestion}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -223,30 +152,120 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="fuente_info_juntas">Fuente de Información</label>
+                                                <label for="estado">Estado</label>
+                                                <input type="text" class="form-control" name="estado" id="estado" value="{{$array_datos_calificacionJuntas[0]->Nombre_estado}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="fecha_asignacion">Fecha asignación al proceso</label>
+                                                <input type="date" class="form-control" name="fecha_asignacion" id="fecha_asignacion" value="{{$array_datos_calificacionJuntas[0]->F_registro_asignacion}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="asignado_por">Asignado por</label>
+                                                <input type="text" class="form-control" name="asignado_por" id="asignado_por" value="{{$array_datos_calificacionJuntas[0]->Asignado_por_TC}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="fecha_remision_expediente">Fecha de remisión expediente</label>
+                                                <input type="text" class="form-control" name="fecha_remision_expediente" id="fecha_remision_expediente" max="{{now()->format('Y-m-d H:i:s');}}" value="<?php if(!empty($array_datos_calificacionJuntas[0]->F_remision_expediente)){echo $array_datos_calificacionJuntas[0]->F_remision_expediente;}?>" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="profesional_remision_expediente">Profesional remisión expediente</label>
+                                                <input type="text" class="form-control" name="profesional_remision_expediente" id="profesional_remision_expediente" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Profesional_remision_expediente)){echo $array_datos_calificacionJuntas[0]->Profesional_remision_expediente_TC;}?>" disabled>
+                                                <input type="hidden" class="form-control" name="id_profesional_remision_expediente" id="id_profesional_remision_expediente" value="{{$array_datos_calificacionJuntas[0]->Id_profesional_remision_expediente}}">
+                                                <input type="hidden" class="form-control" name="profesional_remision_expediente_sin_tipo_colaborador" id="profesional_remision_expediente_sin_tipo_colaborador" value="{{$array_datos_calificacionJuntas[0]->Profesional_remision_expediente}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="fecha_asignacion_juntas">Fecha de asignación para pronunciamiento de Juntas</label>
+                                                <input type="text" class="form-control" name="fecha_asignacion_juntas" id="fecha_asignacion_juntas" value="{{$array_datos_calificacionJuntas[0]->F_asignacion_pronu_juntas}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="profesional_pronunciamiento">Profesional pronunciamiento</label>
+                                                <input type="text" class="form-control" name="profesional_pronunciamiento" id="profesional_pronunciamiento" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Profesional_pronunciamiento)){echo $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento_TC;}?>" disabled>
+                                                <input type="hidden" class="form-control" name="id_profesional_pronunciamiento" id="id_profesional_pronunciamiento" value="{{$array_datos_calificacionJuntas[0]->Id_profesional_pronunciamiento}}">
+                                                <input type="hidden" class="form-control" name="profesional_pronunciamiento_sin_tipo_colaborador" id="profesional_pronunciamiento_sin_tipo_colaborador" value="{{$array_datos_calificacionJuntas[0]->Profesional_pronunciamiento}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="fecha_pronunciamiento">Fecha de pronunciamiento</label>
+                                                <input type="text" class="form-control" name="fecha_pronunciamiento" id="fecha_pronunciamiento" max="{{now()->format('Y-m-d H:i:s');}}" value="<?php if(!empty($array_datos_calificacionJuntas[0]->F_pronunciamiento)){echo $array_datos_calificacionJuntas[0]->F_pronunciamiento;}?>" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="tiempo_gestion">Tiempo de gestión</label>
+                                                <input type="text" class="form-control" name="tiempo_gestion" id="tiempo_gestion" value="{{$array_datos_calificacionJuntas[0]->Tiempo_de_gestion}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="form-group">
+                                                <label for="fuente_info_juntas">Fuente de Información<span style="color:red;">(*)</span></label>
                                                 <select class="fuente_informacion custom-select" name="fuente_info_juntas" id="fuente_info_juntas">
                                                     @if (!empty($array_datos_calificacionJuntas[0]->Fuente_informacion))
-                                                    <option value="{{$array_datos_calificacionJuntas[0]->Fuente_informacion}}" selected>{{$array_datos_calificacionJuntas[0]->Nombre_Fuente_informacion}}</option>
+                                                        <option value="{{$array_datos_calificacionJuntas[0]->Fuente_informacion}}" selected>{{$array_datos_calificacionJuntas[0]->Nombre_Fuente_informacion}}</option>
                                                     @else
                                                         <option value="">Seleccione una opción</option>
                                                     @endif
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4 d-none">
                                             <div class="form-group">
-                                                <label for="modalidad_documentos">Documentos adjuntos</label><br>
-                                                <a href="javascript:void(0);" class="text-dark text-md" id="cargue_docs" label="Open Modal" data-toggle="modal" data-target="#modalListaDocumentos"><i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>
+                                                <label for="proceso_actual">Proceso actual</label>
+                                                <input type="text" class="form-control" name="proceso_actual" id="proceso_actual" value="{{$array_datos_calificacionJuntas[0]->Nombre_proceso_actual}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 d-none">
+                                            <div class="form-group">
+                                                <label for="proceso_envia">Proceso que envía</label>
+                                                <input type="text" class="form-control" name="proceso_envia" id="proceso_envia" value="{{$array_datos_calificacionJuntas[0]->Nombre_proceso_anterior}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <br>
-                                                <?php if(!$arraycampa_documento_solicitado->isEmpty()):?>                                                
-                                                    <a href="#" id="clicGuardado" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" data-target="#modalControversiaSeguimiento"><i class="fas fa-book-open text-info"></i> <strong>Gestión de controversia - Seguimiento</strong> <i class="fas fa-bell text-info icono"></i></a>
-                                                <?php else:?>
-                                                    <a href="#" id="clicGuardado" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" data-target="#modalControversiaSeguimiento"><i class="fas fa-book-open text-info"></i> <strong>Gestión de controversia - Seguimiento</strong></a>
-                                                <?php endif?>    
+                                                <label for="dias_trascurrido">Dias transcurridos desde el evento</label>
+                                                <input type="text" class="form-control" name="dias_trascurrido" id="dias_trascurrido" value="{{$array_datos_calificacionJuntas[0]->Dias_transcurridos_desde_el_evento}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 d-none">
+                                            <div class="form-group">
+                                                <label for="fecha_dictamen_jrci">Fecha de notificación dictamen (JRCI)</label>
+                                                <input type="text" class="form-control" name="fecha_dictamen_jrci" id="fecha_dictamen_jrci" value="{{$array_datos_calificacionJuntas[0]->F_dictamen_jrci_emitido}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 d-none">
+                                            <div class="form-group">
+                                                <label for="tipo_profesional_pronunciamiento">Tipo Profesional pronunciamiento</label>
+                                                <input type="text" class="form-control" name="tipo_profesional_pronunciamiento" id="tipo_profesional_pronunciamiento" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Tipo_Profesional_calificador)){echo $array_datos_calificacionJuntas[0]->Tipo_Profesional_calificador;}else{ echo 'Sin Pronunciamiento';} ?>" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 d-none">
+                                            <div class="form-group">
+                                                <label for="fecha_ejecutoria_jrci">Fecha Acta Ejecutoria emitida por JRCI</label>
+                                                <input type="text" class="form-control" name="fecha_ejecutoria_jrci" id="fecha_ejecutoria_jrci" value="{{$array_datos_calificacionJuntas[0]->F_acta_ejecutoria_emitida_jrci}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 d-none">
+                                            <div class="form-group">
+                                                <label for="fecha_notificacion_jrci">Fecha notificación de recurso ante JRCI</label>
+                                                <input type="text" class="form-control" name="fecha_notificacion_jrci" id="fecha_notificacion_jrci" value="{{$array_datos_calificacionJuntas[0]->F_notificacion_recurso_jrci}}" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 d-none">
+                                            <div class="form-group">
+                                                <label for="fecha_notificacion_jnci">Fecha de notificación dictamen (JNCI)</label>
+                                                <input type="text" class="form-control" name="fecha_notificacion_jnci" id="fecha_notificacion_jnci" value="{{$array_datos_calificacionJuntas[0]->F_noti_ante_jnci}}" disabled>
                                             </div>
                                         </div>
                                     </div>
@@ -317,13 +336,13 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            {{-- <div class="col-4">
                                                 <div class="form-group">
                                                     <label for="">Fecha de cierre</label>
                                                     <input type="date" class="form-control" name="fecha_cierre" id="fecha_cierre" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($array_datos_calificacionJuntas[0]->F_cierre)){echo $array_datos_calificacionJuntas[0]->F_cierre;}?>">
                                                     <span class="d-none" id="fecha_cierre_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <label for="cargue_documentos">Cargue Documento Historial:</label>                                                
@@ -549,7 +568,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_dictamen_controvertido">Fecha dictámen controvertido</label>
-                                                <input type="date" class="form-control" name="f_dictamen_controvertido" id="f_dictamen_controvertido" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->F_dictamen_controvertido;} ?>">
+                                                <input type="date" class="form-control" name="f_dictamen_controvertido" id="f_dictamen_controvertido" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php if(!empty($arrayinfo_controvertido[0]->F_dictamen_controvertido)) { echo $arrayinfo_controvertido[0]->F_dictamen_controvertido;} ?>">
+                                                <span class="d-none" id="f_dictamen_controvertido_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -561,7 +581,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_notifi_afiliado">Fecha notificación al afiliado</span></label>
-                                                <input type="date" class="form-control" name="f_notifi_afiliado" id="f_notifi_afiliado" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>">
+                                                <input type="date" class="form-control" name="f_notifi_afiliado" id="f_notifi_afiliado" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php if(!empty($arrayinfo_controvertido[0]->F_notifi_afiliado)) { echo $arrayinfo_controvertido[0]->F_notifi_afiliado;} ?>">
+                                                <span class="d-none" id="f_notifi_afiliado_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -623,7 +644,7 @@
                                         <div class="col-2">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input" type="checkbox" id="contro_origen" name="contro_origen" value="Origen" @if (!empty($arrayinfo_controvertido[0]->Contro_origen) && $arrayinfo_controvertido[0]->Contro_origen=='Origen') checked @endif >
+                                                    <input class="custom-control-input" type="checkbox" id="contro_origen" name="contro_origen" value="Origen" @if (!empty($arrayinfo_controvertido[0]->Contro_origen) && $arrayinfo_controvertido[0]->Contro_origen=='Origen') checked @endif>
                                                     <label for="contro_origen" class="custom-control-label">Origen</label>                 
                                                 </div>
                                             </div>
@@ -631,7 +652,7 @@
                                         <div class="col-2">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input" type="checkbox" id="contro_pcl" name="contro_pcl" value="% PCL" @if (!empty($arrayinfo_controvertido[0]->Contro_pcl) && $arrayinfo_controvertido[0]->Contro_pcl=='% PCL') checked @endif>
+                                                    <input class="custom-control-input" type="checkbox" id="contro_pcl" name="contro_pcl" value="% PCL" @if (!empty($arrayinfo_controvertido[0]->Contro_pcl) && $arrayinfo_controvertido[0]->Contro_pcl=='% PCL') checked @endif @if(!empty($array_datos_calificacionJuntas[0]->Id_Servicio) && $array_datos_calificacionJuntas[0]->Id_Servicio == 12) disabled @endif>
                                                     <label for="contro_pcl" class="custom-control-label">%PCL</label>                 
                                                 </div>
                                             </div>
@@ -647,7 +668,7 @@
                                         <div class="col-2">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input" type="checkbox" id="contro_f_estructura" name="contro_f_estructura" value="Fecha estructuración" @if (!empty($arrayinfo_controvertido[0]->Contro_f_estructura) && $arrayinfo_controvertido[0]->Contro_f_estructura=='Fecha estructuración') checked @endif>
+                                                    <input class="custom-control-input" type="checkbox" id="contro_f_estructura" name="contro_f_estructura" value="Fecha estructuración" @if (!empty($arrayinfo_controvertido[0]->Contro_f_estructura) && $arrayinfo_controvertido[0]->Contro_f_estructura=='Fecha estructuración') checked @endif @if(!empty($array_datos_calificacionJuntas[0]->Id_Servicio) && $array_datos_calificacionJuntas[0]->Id_Servicio == 12) disabled @endif>
                                                     <label for="contro_f_estructura" class="custom-control-label">Fecha estructuración</label>                 
                                                 </div>
                                             </div>
@@ -655,7 +676,7 @@
                                         <div class="col-3">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input" type="checkbox" id="contro_m_califi" name="contro_m_califi" value="Manual de calificación" @if (!empty($arrayinfo_controvertido[0]->Contro_m_califi) && $arrayinfo_controvertido[0]->Contro_m_califi=='Manual de calificación') checked @endif>
+                                                    <input class="custom-control-input" type="checkbox" id="contro_m_califi" name="contro_m_califi" value="Manual de calificación" @if (!empty($arrayinfo_controvertido[0]->Contro_m_califi) && $arrayinfo_controvertido[0]->Contro_m_califi=='Manual de calificación') checked @endif @if(!empty($array_datos_calificacionJuntas[0]->Id_Servicio) && $array_datos_calificacionJuntas[0]->Id_Servicio == 12) disabled @endif>
                                                     <label for="contro_m_califi" class="custom-control-label">Manual de calificación</label>                 
                                                 </div>
                                             </div>
@@ -663,19 +684,22 @@
                                         <div class="col-4">
                                             <div class="form-group mt-4">
                                                 <label for="f_contro_primer_califi">Fecha de controversia primera calificación</label>
-                                                <input type="date" class="form-control" name="f_contro_primer_califi" id="f_contro_primer_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_primer_califi)) { echo $arrayinfo_controvertido[0]->F_contro_primer_califi;} ?>" >
+                                                <input type="date" class="form-control" name="f_contro_primer_califi" id="f_contro_primer_califi" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_primer_califi)) { echo $arrayinfo_controvertido[0]->F_contro_primer_califi;} ?>" >
+                                                <span class="d-none" id="f_contro_primer_califi_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_contro_radi_califi">Fecha de radicación controversia primera calificación</label>
-                                                <input type="date" class="form-control" name="f_contro_radi_califi" id="f_contro_radi_califi" max="{{now()->format('Y-m-d')}}" value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>">
+                                                <input type="date" class="form-control" name="f_contro_radi_califi" id="f_contro_radi_califi" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php if(!empty($arrayinfo_controvertido[0]->F_contro_radi_califi)) { echo $arrayinfo_controvertido[0]->F_contro_radi_califi;} ?>">
+                                                <span class="d-none" id="f_contro_radi_califi_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group m-4">
                                                 <label for="fecha_plazo_contro">Fecha plazo para Controversia</label>
-                                                <input type="date" name="fecha_plazo_contro" id="fecha_plazo_contro" class="form-control" max="{{now()->format('Y-m-d')}}" value="<?php echo $arrayinfo_controvertido[0]->F_plazo_controversia ?? '' ?>" readonly>
+                                                <input type="date" name="fecha_plazo_contro" id="fecha_plazo_contro" class="form-control" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php echo $arrayinfo_controvertido[0]->F_plazo_controversia ?? '' ?>" readonly>
+                                                <span class="d-none" id="fecha_plazo_contro_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -699,13 +723,15 @@
                                         <div class="col-4 mt-4">
                                             <div class="form-group">
                                                 <label for="f_envio_jrci">Fecha de envío a JRCI</label>
-                                                <input type="date" class="form-control" name="f_envio_jrci" id="f_envio_jrci" max="{{now()->format('Y-m-d')}}" value="<?php echo $arrayinfo_controvertido[0]->F_envio_jrci ?? '' ?>">
+                                                <input type="date" class="form-control" name="f_envio_jrci" id="f_envio_jrci" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php echo $arrayinfo_controvertido[0]->F_envio_jrci ?? '' ?>">
+                                                <span class="d-none" id="f_envio_jrci_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4 mt-4">
                                             <div class="form-group">
                                                 <label for="f_envio_jnci">Fecha de envío a JNCI</label>
-                                                <input type="date" class="form-control" name="f_envio_jnci" id="f_envio_jnci" max="{{now()->format('Y-m-d')}}" value="<?php echo $arrayinfo_controvertido[0]->F_envio_jnci ?? '' ?>">
+                                                <input type="date" class="form-control" name="f_envio_jnci" id="f_envio_jnci" max="{{now()->format('Y-m-d')}}" min='1900-01-01' value="<?php echo $arrayinfo_controvertido[0]->F_envio_jnci ?? '' ?>">
+                                                <span class="d-none" id="f_envio_jnci_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-12">
@@ -752,7 +778,8 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_solicitud_pago">Fecha solicitud de pago</label>
-                                                <input type="date" class="form-control" name="f_solicitud_pago" id="f_solicitud_pago" max="{{now()->format('Y-m-d')}}" >
+                                                <input type="date" class="form-control" name="f_solicitud_pago" id="f_solicitud_pago" max="{{now()->format('Y-m-d')}}" min='1900-01-01'>
+                                                <span class="d-none" id="f_solicitud_pago_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -778,13 +805,15 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_pago_honorarios">Fecha pago de honorarios<span style="color: red;">(*)</span></label>
-                                                <input type="date" class="form-control" name="f_pago_honorarios" id="f_pago_honorarios" max="{{now()->format('Y-m-d')}}" required>
+                                                <input type="date" class="form-control" name="f_pago_honorarios" id="f_pago_honorarios" max="{{now()->format('Y-m-d')}}" min='1900-01-01' required>
+                                                <span class="d-none" id="f_pago_honorarios_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="f_pago_radicacion">Fecha de radicación pago</label>
-                                                <input type="date" class="form-control" name="f_pago_radicacion" id="f_pago_radicacion" max="{{now()->format('Y-m-d')}}">
+                                                <input type="date" class="form-control" name="f_pago_radicacion" id="f_pago_radicacion" max="{{now()->format('Y-m-d')}}" min='1900-01-01'>
+                                                <span class="d-none" id="f_pago_radicacion_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -1970,6 +1999,7 @@
     @include('//.modals.confirmacionAccion')
     @include('//.modals.historialServicios')
     @include('//.modals.alertaRadicado')
+    @include('//.coordinador.modalAlerta')
 @stop
 @section('js')
     <script type="text/javascript" src="/js/calificacionJuntas.js"></script>
@@ -2153,7 +2183,6 @@
         dateInputs.forEach(input => {
             //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
             input.addEventListener('change', function() {
-                console.log('This is value of input type date ', this.value);
                 //Validamos que la fecha sea mayor a la fecha de 1900-01-01
                 if(this.value < '1900-01-01'){
                     $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
@@ -2166,6 +2195,7 @@
                     $('#Edicion').addClass('d-none');
                     return;
                 }
+                $('#Edicion').removeClass('d-none');
                 return $(`#${this.id}_alerta`).text('').addClass("d-none");
             });
         });

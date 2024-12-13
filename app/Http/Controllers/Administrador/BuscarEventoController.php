@@ -18,9 +18,16 @@ use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_informacion_historial_accion_eventos;
 use App\Models\sigmel_informacion_pronunciamiento_eventos;
 use App\Models\sigmel_registro_documentos_eventos;
+use App\Services\GlobalService;
 
 class BuscarEventoController extends Controller
 {
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
     /* TODO LO REFERENTE AL FORMULARIO DE BUSCAR UN EVENTO*/
     // Busqueda Evaluado y evento
     public function mostrarVistaBuscarEvento(){
@@ -28,12 +35,13 @@ class BuscarEventoController extends Controller
             return redirect('/');
         }
         $user = Auth::user();
-
+        $info_cliente = $this->globalService->infoCliente();
+        // dd($info_cliente);
         // $session = app('session');
         // $session->put('num_ident', "");
         // $session->put('num_id_evento', "");
 
-        return view('administrador.busquedaEvento', compact('user'));
+        return view('administrador.busquedaEvento', compact('user','info_cliente'));
     }
 
 

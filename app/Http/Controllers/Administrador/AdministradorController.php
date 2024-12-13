@@ -3965,6 +3965,7 @@ class AdministradorController extends Controller
         $newIdEvento = $request->newIdEvento;
         $parametro = $request->parametro;
         $Id_servicio = $request->newIdservicio;
+        $newIdAsignacion = $request->newIdAsignacion;
 
         $array_datos_info_evento =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as sie')
         ->leftJoin('sigmel_gestiones.sigmel_clientes as slc', 'sie.Cliente', '=', 'slc.Id_Cliente')
@@ -4050,7 +4051,7 @@ class AdministradorController extends Controller
         ->limit(1)
         ->get(); */          
 
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento, 0)); 
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, 0,$newIdAsignacion)); 
         
         return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
         'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos', 'Id_servicio'));

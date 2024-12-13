@@ -64,10 +64,25 @@ class CalificacionOrigenController extends Controller
         } else {
             $Id_servicio = $request->newIdServicio;
         }
-
         $array_datos_calificacionOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($newIdAsignacion));
+        //PBS068 Solicitan que los campos donde esta guardado el nombre del usuario (ejecuto, creo, edito, etc) traiga el tipo de colaborador
+        if(!empty($array_datos_calificacionOrigen)){
+            if (!empty($array_datos_calificacionOrigen[0]->Nombre_profesional)) {
+                $info_usuario = $this->globalService->InformacionCamposUsuarioAsignacionEventos($newIdAsignacion,'Nombre_profesional');
+                if(!empty($info_usuario) && !empty($info_usuario[0]->tipo_colaborador)){
+                    $array_datos_calificacionOrigen[0]->Nombre_profesional .= ' '.$info_usuario[0]->tipo_colaborador;
+                }
+            }
+            // Concatenar el tipo de profesional al Asignado_por, si ambos existen
+            if (!empty($array_datos_calificacionOrigen[0]->Asignado_por)) {
+                $info_usuario = $this->globalService->InformacionCamposUsuarioAsignacionEventos($newIdAsignacion,'Nombre_usuario');
+                if(!empty($info_usuario) && !empty($info_usuario[0]->tipo_colaborador)){
+                    $array_datos_calificacionOrigen[0]->Asignado_por .= ' '.$info_usuario[0]->tipo_colaborador;
+                }
+            }
+        }
         //Trae Documetos Generales del evento
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento,$Id_servicio));
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento,$Id_servicio,$newIdAsignacion));
 
         // cantidad de documentos cargados
 
@@ -234,15 +249,12 @@ class CalificacionOrigenController extends Controller
         ])
        ->get();
 
-        //Consulta comite interdisciplinario del evento
-       $cali_profe_comite = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
-       ->select('Profesional_comite','F_visado_comite')
-       ->where([
-           ['ID_evento',$newIdEvento],
-           ['Id_Asignacion',$newIdAsignacion],
-           ['Id_proceso','1']
-        ])
-       ->get();
+        //Consulta comite interdisciplinario del evento con nombre de usuario y tipo de colaborador concatenados
+       $cali_profe_comite = $this->globalService->ComiteInterdisciplinarioModulosPrincipales($newIdEvento,$newIdAsignacion);
+       if(!empty($cali_profe_comite) && !empty($cali_profe_comite[0]->Profesional_comite) && !empty($cali_profe_comite[0]->tipo_colaborador)){
+        $cali_profe_comite[0]->Profesional_comite .= ' '.$cali_profe_comite[0]->tipo_colaborador;
+       }
+
 
        //Traer el N_siniestro del evento
        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')

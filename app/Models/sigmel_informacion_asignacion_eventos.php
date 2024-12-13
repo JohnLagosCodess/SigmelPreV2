@@ -42,6 +42,12 @@ class sigmel_informacion_asignacion_eventos extends Model
         'F_detencion_tiempo_gestion',
         'Fuente_info_juntas',
         'Notificacion',
+        'F_remision_expediente',
+        'Id_profesional_remision_expediente',
+        'Profesional_remision_expediente',
+        'Id_profesional_pronunciamiento',
+        'Profesional_pronunciamiento',
+        'F_pronunciamiento',
         'Nombre_usuario',
         'F_registro'
     ];

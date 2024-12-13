@@ -173,7 +173,7 @@
                                                         <div class="form-group">
                                                             <label for="f_envio">Fecha de envio</label>
                                                             <input class="form-control" type="date"  name="f_envio" id="f_envio" max="{{ date('Y-m-d') }}" min="1900-01-01">
-                                                            <span class="d-none" id="alerta_fecha_envio" style="color: red; font-style: italic;">La fecha ingresada no debe ser superior a la fecha de Notificación</span>
+                                                            <span class="d-none" id="alerta_fecha_envio" style="color: red; font-style: italic;"></span>
                                                         </div>
                                                     </div>
 
@@ -181,6 +181,7 @@
                                                         <div class="form-group">
                                                             <label for="f_notificacion">Fecha de notificacion</label>
                                                             <input class="form-control" type="date" name="f_notificacion" id="f_notificacion" max="{{ date('Y-m-d') }}" min="1900-01-01">
+                                                            <span class="d-none" id="f_notificacion_alerta" style="color: red; font-style: italic;"></span>
                                                         </div>
                                                     </div>
 
@@ -227,6 +228,7 @@
     {{-- Validación en los campos de fecha, en el cual la fecha de envio no debe ser mayor a la fecha de notificación, y ninguna de esas dos fechas pueden ser mayores a la fecha actual --}}
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            let today = new Date().toISOString().split("T")[0];
             // Obtener referencias a los campos de fecha
             const fechaEnvio = document.getElementById('f_envio');
             const fechaNotificacion = document.getElementById('f_notificacion');
@@ -239,21 +241,64 @@
                 const notificacionValue = fechaNotificacion.value ? fechaNotificacion.value : null;
                 // Validar que la fecha de envío no sea mayor a la fecha de notificación
                 if (notificacionValue && envioValue > notificacionValue) {
-                    $("#alerta_fecha_envio").removeClass('d-none')
+                    $("#alerta_fecha_envio").text('La fecha ingresada no debe ser superior a la fecha de Notificación').removeClass('d-none')
                     fechaEnvio.value = ''; // Limpiar el campo
                 }
+                else if(envioValue < '1900-01-01'){
+                    $(`#alerta_fecha_envio`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#btn_guardar_actualizar_correspondencia').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea mayor a la fecha actual
+                else if(envioValue > today){
+                    $(`#alerta_fecha_envio`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#btn_guardar_actualizar_correspondencia').addClass('d-none');
+                    return;
+                }
                 else{
-                    $("#alerta_fecha_envio").addClass('d-none')
+                    $("#alerta_fecha_envio").text('').addClass('d-none')
+                    $('#btn_guardar_actualizar_correspondencia').removeClass('d-none');
                 }
             });
             //Fecha de notificación
             fechaNotificacion.addEventListener('change', function () {
+                //Notificación de las fechas
+                const notificacionValue = fechaNotificacion.value ? fechaNotificacion.value : null;
+                
                 if(fechaEnvio.value && fechaNotificacion.value && fechaEnvio.value > fechaNotificacion.value){
-                        $("#alerta_fecha_envio").removeClass('d-none');
+                        $("#alerta_fecha_envio").text('La fecha ingresada no debe ser superior a la fecha de Notificación').removeClass('d-none');
                         fechaEnvio.value = ''; // Limpiar el campo
                 }else{
                     $("#alerta_fecha_envio").addClass('d-none')
                 }
+                //Validaciones generales para el input de fecha de notificación
+                //Validamos que la fecha no sea menor a 1900-01-01
+                if(notificacionValue < '1900-01-01'){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#btn_guardar_actualizar_correspondencia').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea mayor a la fecha actual
+                if(notificacionValue > today){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#btn_guardar_actualizar_correspondencia').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea menor a 1900-01-01
+                if(fechaEnvio.value && fechaEnvio.value < '1900-01-01'){
+                    $(`#alerta_fecha_envio`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#btn_guardar_actualizar_correspondencia').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea mayor a la fecha actual
+                if(fechaEnvio.value && fechaEnvio.value > today){
+                    $(`#alerta_fecha_envio`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#btn_guardar_actualizar_correspondencia').addClass('d-none');
+                    return;
+                }
+                $("#alerta_fecha_envio").text('').addClass('d-none')
+                $(`#${this.id}_alerta`).text('').addClass("d-none");
+                return $('#btn_guardar_actualizar_correspondencia').removeClass('d-none');
             });
         });
     </script>

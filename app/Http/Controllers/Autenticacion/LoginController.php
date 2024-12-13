@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Autenticacion;
 
 use App\Http\Controllers\Controller;
+use App\Services\GlobalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -11,6 +12,13 @@ use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
+
     public function show(){
         // Si el usuario no ha iniciado, no podrá ingresar al sistema
         return view('autenticacion.login');
@@ -22,11 +30,13 @@ class LoginController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
+
+        $info_cliente = $this->globalService->infoCliente();
  
         // SI LA VALIDACIÓN SE CUMPLE SE PROCEDE A INICIAR SESIÓN
         if (Auth::attempt($credentials)) {
             Auth::logoutOtherDevices($request->password);
-            return redirect()->route('RolPrincipal');
+            return redirect()->route('RolPrincipal')->with('info_cliente', $info_cliente);
         }
   
         // DE LO CONTRARIO NO SE MANDA AL LOGIN

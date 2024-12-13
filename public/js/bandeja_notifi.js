@@ -582,7 +582,7 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
                         ],
                         //Limitar columnas para el reporte
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
+                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
                         }
                     }
                 ]
@@ -593,12 +593,14 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
             "order": [[5, 'desc']],
             "columns": [
                 {"data": "moduloNotifi"},
-                { "data": "Nombre_Cliente" },
                 { "data": "Nombre_afiliado" },
                 { "data": "Nro_identificacion" },
                 { "data": "Nombre_servicio" },
+                { "data": "N_de_orden" },
+                { "data": "Estado_general_notifi" },
                 { "data": "Nombre_estado" },
                 { "data": "Accion" },
+                { "data": "F_accion" },
                 { "data": "Nombre_profesional" },
                 { "data": "Nombre_evento" },
                 { "data": "ID_evento" },
@@ -637,12 +639,10 @@ function capturar_informacion_bandejaNotifi(response,estilos) {
                 { "data": "F_alerta" },
                 { "data": "Fecha_alerta" },
                 { "data": "F_asigna_notifi" },
-                { "data": "N_de_orden" },
                 { "data": "N_radicado_notifi" },
-                { "data": "Asunto_notifi" },
-                { "data": "F_envio_notifi" },
-                { "data": "Estado_general_notifi" },
-                { "data": "F_accion" },
+                // { "data": "Asunto_notifi" },
+                // { "data": "F_envio_notifi" },
+                { "data": "Nombre_Cliente" },
             ],
             drawCallback: function (settings) {
                 var api = this.api();
