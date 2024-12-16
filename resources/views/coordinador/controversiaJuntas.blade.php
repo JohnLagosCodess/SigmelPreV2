@@ -441,12 +441,12 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <br>
-                                                <label for="origen_jrci_emitido">Origen (JRCI)</label>
+                                                <label for="origen_jrci_emitido">Origen (JRCI) <span style="color: red;">(*)</span></label>
                                                 <select class="custom-select origen_jrci_emitido" name="origen_jrci_emitido" id="origen_jrci_emitido" style="width: 100%;">
                                                     @if (!empty($arrayinfo_controvertido[0]->Origen_jrci_emitido))
-                                                            <option value="{{$arrayinfo_controvertido[0]->Origen_jrci_emitido}}" selected>{{$arrayinfo_controvertido[0]->OrigenEmitidoJrci}}</option>
+                                                            <option value="{{$arrayinfo_controvertido[0]->Origen_jrci_emitido}}" selected required>{{$arrayinfo_controvertido[0]->OrigenEmitidoJrci}}</option>
                                                     @else
-                                                        <option value="">Seleccione una opción</option>
+                                                        <option value="" required>Seleccione una opción</option>
                                                     @endif
                                                 </select>
                                             </div>
@@ -527,16 +527,16 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <br>
-                                                <label for="f_noti_dictamen_jrci">Fecha de notificación  dictamen (JRCI)</label>
-                                                <input type="date" class="form-control" name="f_noti_dictamen_jrci" id="f_noti_dictamen_jrci" max="{{now()->format('Y-m-d')}}" min="1900-01-01" value="<?php if(!empty($arrayinfo_controvertido[0]->F_noti_dictamen_jrci)) { echo $arrayinfo_controvertido[0]->F_noti_dictamen_jrci;} ?>">
+                                                <label for="f_noti_dictamen_jrci">Fecha de notificación  dictamen (JRCI) <span style="color: red;">(*)</span></label>
+                                                <input type="date" class="form-control" name="f_noti_dictamen_jrci" id="f_noti_dictamen_jrci" max="{{now()->format('Y-m-d')}}" min="1900-01-01" required value="<?php if(!empty($arrayinfo_controvertido[0]->F_noti_dictamen_jrci)) { echo $arrayinfo_controvertido[0]->F_noti_dictamen_jrci;} ?>">
                                                 <span class="d-none" id="f_noti_dictamen_jrci_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <br>
-                                                <label for="f_radica_dictamen_jrci">Fecha de Radicado entrada Dictamen (JRCI)</label>
-                                                <input type="date" class="form-control" name="f_radica_dictamen_jrci" id="f_radica_dictamen_jrci" max="{{now()->format('Y-m-d')}}" min="1900-01-01" value="<?php if(!empty($arrayinfo_controvertido[0]->F_radica_dictamen_jrci)) { echo $arrayinfo_controvertido[0]->F_radica_dictamen_jrci;} ?>">
+                                                <label for="f_radica_dictamen_jrci">Fecha de Radicado entrada Dictamen (JRCI) <span style="color: red;">(*)</span></label>
+                                                <input type="date" class="form-control" name="f_radica_dictamen_jrci" id="f_radica_dictamen_jrci" max="{{now()->format('Y-m-d')}}" min="1900-01-01" required value="<?php if(!empty($arrayinfo_controvertido[0]->F_radica_dictamen_jrci)) { echo $arrayinfo_controvertido[0]->F_radica_dictamen_jrci;} ?>">
                                                 <span class="d-none" id="f_radica_dictamen_jrci_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
@@ -550,6 +550,9 @@
 
                                     </div>
                                     <div class="row">
+                                        <div class="col-12">
+                                            <div class="alerta_roja_emitido_jrci alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
+                                        </div>
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <input type="submit" id="guardar_datos_emitido_jrci" class="btn btn-info" value="Guardar">
@@ -930,12 +933,12 @@
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label for="origen_reposicion_jrci">Origen (Reposición JRCI)</label>
+                                                <label for="origen_reposicion_jrci">Origen (Reposición JRCI) <span style="color: red;">(*)</span></label>
                                                 <select class="custom-select origen_reposicion_jrci" name="origen_reposicion_jrci" id="origen_reposicion_jrci" style="width: 100%;">
                                                     @if (!empty($arrayinfo_controvertido[0]->Origen_reposicion_jrci))
-                                                            <option value="{{$arrayinfo_controvertido[0]->Origen_reposicion_jrci}}" selected>{{$arrayinfo_controvertido[0]->Nombre_origenRepoJrci}}</option>
+                                                            <option value="{{$arrayinfo_controvertido[0]->Origen_reposicion_jrci}}" selected required>{{$arrayinfo_controvertido[0]->Nombre_origenRepoJrci}}</option>
                                                     @else
-                                                        <option value="">Seleccione una opción</option>
+                                                        <option value="" required>Seleccione una opción</option>
                                                     @endif
                                                 </select>
                                             </div>
@@ -1027,6 +1030,9 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <div class="col-12">
+                                            <div class="alerta_datos_reposicion_jrci alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
+                                        </div>
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <input type="submit" id="guardar_datos_reposicion_jrci" class="btn btn-info" value="Guardar">
@@ -1318,7 +1324,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <br>
-                                                <label for="origen_jnci_emitido">Origen (JNCI)</label>
+                                                <label for="origen_jnci_emitido">Origen (JNCI) <span style="color: red;">(*)</span></label>
                                                 <select class="custom-select origen_jnci_emitido" name="origen_jnci_emitido" id="origen_jnci_emitido" style="width: 100%;">
                                                     @if (!empty($arrayinfo_controvertido[0]->Origen_jnci_emitido))
                                                             <option value="{{$arrayinfo_controvertido[0]->Origen_jnci_emitido}}" selected>{{$arrayinfo_controvertido[0]->NombreOrigen}}</option>
@@ -1333,11 +1339,11 @@
                                             <div class="form-group">
                                                 <br>
                                                 <label for="manual_de_califi_jnci_emitido">Manual de calificación (JNCI) <span style="color: red;">(*)</span></label>
-                                                <select class="custom-select manual_de_califi_jnci_emitido" name="manual_de_califi_jnci_emitido" id="manual_de_califi_jnci_emitido" style="width: 100%;">
+                                                <select class="custom-select manual_de_califi_jnci_emitido" name="manual_de_califi_jnci_emitido" id="manual_de_califi_jnci_emitido" style="width: 100%;" required>
                                                     @if (!empty($arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido))
-                                                            <option value="{{$arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido}}" selected>{{$arrayinfo_controvertido[0]->Nombre_decretoJnci}}</option>
+                                                            <option value="{{$arrayinfo_controvertido[0]->Manual_de_califi_jnci_emitido}}" selected required>{{$arrayinfo_controvertido[0]->Nombre_decretoJnci}}</option>
                                                     @else
-                                                        <option value="">Seleccione una opción</option>
+                                                        <option value="" required>Seleccione una opción</option>
                                                     @endif
                                                 </select>
                                             </div>
@@ -1441,6 +1447,9 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <div class="col-12">
+                                            <div class="alerta_roja_emitido_jnci alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
+                                        </div>
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <input type="submit" id="guardar_datos_emitido_jnci" class="btn btn-info" value="Guardar">
@@ -2097,10 +2106,12 @@
                                                 <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Por favor, adjunta un documento antes de cargar. 
                                             </div>
                                             <div class="alerta_externa_comunicado alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                            
                                             <div style="display: flex; flex-direction:row; justify-content:flex-end; gap:2px;"> <!-- Alinea el contenido a la derecha -->
-                                                <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx"/>
+                                                <input style="width:40%" type="file" class="form-control select-doc" name="cargue_comunicados" id="cargue_comunicados" aria-describedby="Carguecomunicados" aria-label="Upload" accept=".pdf, .doc, .docx" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci)){ ?> <?php }else{ ?>disabled<?php } ?>/>
                                                 <button class="btn btn-sm btn-info" id="cargarComunicado">Cargar</button>
                                             </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -2161,6 +2172,9 @@
     <script type="text/javascript">
         //Diagnosticos CIE10 que vienen desde la base de datos
         let arrayDatosDiagnostico = @json($array_datos_diagnostico_motcalifi_contro);
+        let arrayDatosEmitidoJrci = @json($array_datos_diagnostico_motcalifi_emitido_jrci);
+        let arrayDatosReposiDictJrci = @json($array_datos_diagnostico_reposi_dictamen_jrci);
+        let arrayDatosEmitidoJnci = @json($array_datos_diagnostico_motcalifi_emitido_jnci);
         
         document.getElementById('botonEnvioVista').addEventListener('click', function(event) {
             event.preventDefault();

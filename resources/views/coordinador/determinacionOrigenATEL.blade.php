@@ -953,6 +953,9 @@
                     <i class="fas fa-chevron-up"></i>
                 </a>                 
                 <div class="row">
+                    <div class="col-12">
+                        <div class="alerta_roja_dto_dict alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
+                    </div>
                     <div class="col-6">
                         <div class="form-group">
                             @if (empty($datos_bd_DTO_ATEL[0]->ID_evento))
@@ -1761,6 +1764,10 @@
             var nombre_exame_fila = $(this).data("clase_fila");
             listado_examenes_interconsultas.row("."+nombre_exame_fila).remove().draw();
         });
+        // Lista de documentos solicitados
+        let lista_documentos_solicitados = @json($array_datos_examenes_interconsultas);
+        // Lista de diagnosticos agregados
+        let lista_diagnosticos_cie10 = @json($array_datos_diagnostico_motcalifi);
 
         //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE DIAGNOSTCO CIE10
         $(".centrar").css('text-align', 'center');

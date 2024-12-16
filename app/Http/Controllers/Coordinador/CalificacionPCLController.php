@@ -119,6 +119,22 @@ class CalificacionPCLController extends Controller
             $Id_servicio = $request->Id_servicio_pcl;     
         }
         $array_datos_calificacionPcl = DB::select('CALL psrcalificacionpcl(?)', array($newIdAsignacion));
+        //PBS068 Solicitan que los campos donde esta guardado el nombre del usuario (ejecuto, creo, edito, etc) traiga el tipo de colaborador
+        if(!empty($array_datos_calificacionPcl)){
+            if (!empty($array_datos_calificacionPcl[0]->Nombre_profesional)) {
+                $info_usuario = $this->globalService->InformacionCamposUsuarioAsignacionEventos($newIdAsignacion,'Nombre_profesional');
+                if(!empty($info_usuario) && !empty($info_usuario[0]->tipo_colaborador)){
+                    $array_datos_calificacionPcl[0]->Nombre_profesional .= ' '.$info_usuario[0]->tipo_colaborador;
+                }
+            }
+            // Concatenar el tipo de profesional al Asignado_por, si ambos existen
+            if (!empty($array_datos_calificacionPcl[0]->Asignado_por)) {
+                $info_usuario = $this->globalService->InformacionCamposUsuarioAsignacionEventos($newIdAsignacion,'Nombre_usuario');
+                if(!empty($info_usuario) && !empty($info_usuario[0]->tipo_colaborador)){
+                    $array_datos_calificacionPcl[0]->Asignado_por .= ' '.$info_usuario[0]->tipo_colaborador;
+                }
+            }
+        }
         $Nro_ident_afiliado = $array_datos_calificacionPcl[0]->Nro_identificacion;
         $array_datos_destinatarios = cndatos_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$newIdEvento],['Nro_identificacion',$Nro_ident_afiliado]])
@@ -169,8 +185,10 @@ class CalificacionPCLController extends Controller
         ])
         ->get();    
         
-        $info_comite_inter = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion]])->get();
+        $info_comite_inter = $this->globalService->ComiteInterdisciplinarioModulosPrincipales($newIdEvento,$newIdAsignacion);
+        if(!empty($info_comite_inter) && !empty($info_comite_inter[0]->Profesional_comite) && !empty($info_comite_inter[0]->tipo_colaborador)){
+            $info_comite_inter[0]->Profesional_comite .= ' '.$info_comite_inter[0]->tipo_colaborador;
+        }
 
         $info_accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
         ->where([['ID_evento', $newIdEvento],['Id_Asignacion', $newIdAsignacion]])->get();
@@ -544,8 +562,25 @@ class CalificacionPCLController extends Controller
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $Id_servicio = $request->Id_servicio;
+        $fecha_asignacion_calificacion = $request->fecha_asignacion_calificacion;
+        $fecha_calificacion = $request->fecha_calificacion;
 
         $Accion_realizar = $request->accion;
+
+        //VALIDACIONES PBS068
+        if($Accion_realizar == 124 || $Accion_realizar == 125 || $Accion_realizar == 126 || $Accion_realizar == 127){
+            $Fecha_asignacion_calificacion = $date_time;
+        }
+        else{
+            $Fecha_asignacion_calificacion = $fecha_asignacion_calificacion;
+        }
+
+        if($Accion_realizar == 139 || $Accion_realizar == 173 || $Accion_realizar == 149  || $Accion_realizar == 150 
+        || $Accion_realizar == 151 || $Accion_realizar == 144 || $Accion_realizar == 145 || $Accion_realizar == 146){
+            $Fecha_calificacion = $date_time;
+        }else{
+            $Fecha_calificacion = $fecha_calificacion && $fecha_calificacion != 'Sin Calificación' ? $fecha_calificacion : null;
+        }
 
         //if ($Accion_realizar == 52 || $Accion_realizar == 98 || $Accion_realizar == 99) {
         if ($Accion_realizar == 224) {
@@ -914,6 +949,8 @@ class CalificacionPCLController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
+                'F_asignacion_calificacion' => $Fecha_asignacion_calificacion,
+                'F_calificacion' => $Fecha_calificacion,
                 // 'F_registro' => $date,
             ];
 
@@ -1626,6 +1663,8 @@ class CalificacionPCLController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
+                'F_asignacion_calificacion' => $Fecha_asignacion_calificacion,
+                'F_calificacion' => $Fecha_calificacion,
                 // 'F_registro' => $date,
             ];
 

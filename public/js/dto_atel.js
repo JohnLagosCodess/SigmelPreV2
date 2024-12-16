@@ -1679,6 +1679,7 @@ $(document).ready(function(){
             'estado_notificacion': $('#modalCorrespondencia #state_notificacion').val(),
             'tipo_correspondencia': tipo_correspondencia,
             'id_correspondencia': $('#modalCorrespondencia #id_correspondencia').val(),
+            'id_destinatario':$("#modalCorrespondencia #id_destinatario").val(),
             'accion': $('#btn_guardar_actualizar_correspondencia').val()
         };
         $.ajax({    
@@ -2142,8 +2143,21 @@ $(document).ready(function(){
             }
 
         }
-
-
+        console.log('listaDocsSolicitados ',lista_documentos_solicitados,'lista_diagnosticos_cie10 ',lista_diagnosticos_cie10,' datos_finales_examenes_interconsultas ',datos_finales_examenes_interconsultas,' datos_finales_motivo_calificacion ',datos_finales_motivo_calificacion)
+        if((lista_documentos_solicitados.length == 0 && datos_finales_examenes_interconsultas.length == 0) || (lista_diagnosticos_cie10.length == 0 && datos_finales_motivo_calificacion.length == 0)){
+            $('.alerta_roja_dto_dict').append('<strong>Debe registrar por lo menos un Documento o interconsulta y un Diagnóstico para poder guardar la calificación de Origen</strong>').removeClass('d-none')
+            setTimeout(function(){
+                $('.alerta_roja_dto_dict').addClass('d-none');
+                $('.alerta_roja_dto_dict').empty();
+                if (GuardarDTOATEL.length > 0) {
+                    document.querySelector('#GuardarDTOATEL').disabled=false;            
+                }
+                if (EditarDTOATEL.length > 0) {
+                    document.querySelector('#EditarDTOATEL').disabled=false;
+                }
+            }, 2000);
+            return;
+        }
         $.ajax({
             type:'POST',
             url:'/GuardaroActualizarInfoDTOTAEL',
@@ -2306,6 +2320,7 @@ $(document).ready(function(){
                         $('#resultado_insercion_examen').addClass('d-none');
                         $('#resultado_insercion_examen').removeClass('alert-success');
                         $('#resultado_insercion_examen').empty();
+                        location.reload();
                     }, 3000);
                 }
                 if (response.total_registros == 0) {
@@ -2347,6 +2362,7 @@ $(document).ready(function(){
                         $('#resultado_insercion_cie10').addClass('d-none');
                         $('#resultado_insercion_cie10').removeClass('alert-success');
                         $('#resultado_insercion_cie10').empty();
+                        location.reload();
                     }, 3000);
                 }
                 if (response.total_registros == 0) {

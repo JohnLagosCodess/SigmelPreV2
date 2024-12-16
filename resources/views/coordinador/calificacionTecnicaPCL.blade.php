@@ -7119,6 +7119,9 @@
                                 @endif
                                 <div class="row">
                                     <div class="col-12">
+                                        <div id="alerta_falta_guardado" class="alerta_roja_datos_examenes alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
+                                    </div>
+                                    <div class="col-12">
                                         <div class="form-group">                                             
                                             @if (!empty($array_dictamen_pericial[0]->F_estructuracion) && $array_dictamen_pericial[0]->F_estructuracion !== '0000-00-00')
                                                 <input type="submit" id="GuardrDictamenPericial" name="GuardrDictamenPericial" class="btn btn-info" value="Actualizar">                                                                                                                                                

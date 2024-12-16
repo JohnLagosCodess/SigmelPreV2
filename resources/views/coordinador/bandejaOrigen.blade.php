@@ -98,12 +98,12 @@
                                 <thead>
                                     <tr class="bg-info">
                                         <th class="detalleorigen">Detalle  </th>
-                                        <th>Cliente</th>
                                         <th>Nombre de afiliado</th>
                                         <th>N° identificación</th>
                                         <th>Servicio</th>
                                         <th>Estado</th>
                                         <th>Acción</th>
+                                        <th>Fecha acción</th>
                                         <th>Profesional actual</th>
                                         <th>Tipo de evento</th>
                                         <th>ID evento</th>
@@ -126,7 +126,7 @@
                                         <th>Fecha recepción documentos</th>
                                         <th>Fecha asignación para DTO</th>
                                         <th>Fecha devolución comité</th>
-                                        <th>Fecha acción</th>
+                                        <th>Cliente</th>
                                     </tr>
                                 </thead>
                                 <tbody id="body_listado_casos_origen">                                

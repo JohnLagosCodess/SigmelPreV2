@@ -630,6 +630,9 @@
                                         <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para guardar la información es necesario dar clic en el botón guardar o actualizar (dependiendo del caso).
                                     </div>
                                 </div>
+                                <div class="col-12">
+                                    <div class="alerta_roja_guardado alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
+                                </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         @if (!empty($info_pronuncia[0]->ID_evento))
@@ -893,6 +896,8 @@
             // Realizar las acciones que quieres al hacer clic en el botón
             document.getElementById('formularioLlevarEdicionEvento').submit();
         });
+        //Diagnosticos CIE10
+        let arrayDatosDiagnosticos = @json($array_datos_diagnostico_motcalifi);
         $(document).ready(function(){
             //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE DIAGNOSTCO CIE10
             $(".centrar").css('text-align', 'center');

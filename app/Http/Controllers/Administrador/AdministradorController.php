@@ -4316,6 +4316,7 @@ class AdministradorController extends Controller
         $newIdEvento = $request->newIdEvento;
         $parametro = $request->parametro;
         $Id_servicio = $request->newIdservicio;
+        $newIdAsignacion = $request->newIdAsignacion;
 
         $array_datos_info_evento =DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as sie')
         ->leftJoin('sigmel_gestiones.sigmel_clientes as slc', 'sie.Cliente', '=', 'slc.Id_Cliente')

@@ -1270,7 +1270,7 @@
                                     <div class="form-group">
                                         <label for="fecha_retiro_registrar" class="col-form-label">Fecha de retiro</label>
                                         <input type="date" class="fecha_retiro_registrar form-control" name="fecha_retiro_registrar" id="fecha_retiro_registrar" max="{{date("Y-m-d")}}">
-                                        <span class="d-none" id="fecha_retiro_alerta" style="color: red; font-style: italic;"></span>
+                                        <span class="d-none" id="fecha_retiro_registrar_alerta" style="color: red; font-style: italic;"></span>
                                     </div>
                                 </div>
                                 <div class="col-12">

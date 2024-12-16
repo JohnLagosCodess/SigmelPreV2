@@ -113,12 +113,14 @@
                                 <thead>
                                     <tr class="bg-info">
                                         <th class="detallenotifi">Detalle</th>
-                                        <th>Cliente</th>
                                         <th>Nombre de afiliado</th>
                                         <th>N° identificación</th>
                                         <th>Servicio</th>
+                                        <th>N° de orden</th>
+                                        <th>Estado general de la Notificacion</th>
                                         <th>Estado</th>
                                         <th>Acción</th>
+                                        <th>Fecha acción</th>
                                         <th>Profesional actual</th>
                                         <th>Tipo de evento</th>
                                         <th>ID evento</th>
@@ -135,12 +137,10 @@
                                         <th>Asignado por</th>
                                         <th>Estado alerta</th>
                                         <th>Fecha de asignación para notificación</th>
-                                        <th>N° de orden</th>
                                         <th>N° Radicado</th>
-                                        <th>Asunto</th>
-                                        <th>Fecha de envio</th>
-                                        <th>Estado general de la Notificacion</th>
-                                        <th>Fecha acción</th>
+                                        {{-- <th>Asunto</th>
+                                        <th>Fecha de envio</th> --}}
+                                        <th>Cliente</th>
                                     </tr>
                                 </thead>
                                 <tbody id="body_listado_casos_notifi">                                

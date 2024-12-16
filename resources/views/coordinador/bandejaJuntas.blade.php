@@ -98,12 +98,12 @@
                                 <thead>
                                     <tr class="bg-info">
                                         <th class="detallejuntas">Detalle  </th>
-                                        <th>Cliente</th>
                                         <th>Nombre de afiliado</th>
                                         <th>N° identificación</th>
                                         <th>Servicio</th>
                                         <th>Estado</th>
                                         <th>Acción</th>
+                                        <th>Fecha acción</th> 
                                         <th>Profesional actual</th>
                                         <th>Tipo de evento</th>
                                         <th>ID evento</th>
@@ -133,7 +133,7 @@
                                         <th>Término de controversia propia ante JRCI</th>
                                         <th>Parte que presenta controversia ante JRCI</th>
                                         <th>Tipo de controversia presentada por otra parte ante JRCI</th>
-                                        <th>Fecha acción</th> 
+                                        <th>Cliente</th>
                                     </tr>
                                 </thead>
                                 <tbody id="body_listado_casos_juntas">                                

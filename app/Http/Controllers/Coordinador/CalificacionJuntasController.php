@@ -91,6 +91,28 @@ class CalificacionJuntasController extends Controller
         }
 
         $array_datos_calificacionJuntas = DB::select('CALL psrcalificacionJuntas(?)', array($newIdAsignacion));
+        //PBS068 Solicitan que los campos donde esta guardado el nombre del usuario (ejecuto, creo, edito, etc) traiga el tipo de colaborador
+        if(!empty($array_datos_calificacionJuntas)){
+            //Se crean llaves con TC al final debido a que son a las que se les agrega el Tipo de colaborador
+            if (!empty($array_datos_calificacionJuntas[0]->Asignado_por)) {
+                $info_usuario = $this->globalService->InformacionCamposUsuarioAsignacionEventos($newIdAsignacion,'Nombre_usuario');
+                if(!empty($info_usuario) && !empty($info_usuario[0]->tipo_colaborador)){
+                    $array_datos_calificacionJuntas[0]->Asignado_por_TC = $array_datos_calificacionJuntas[0]->Asignado_por.' '.$info_usuario[0]->tipo_colaborador;
+                }
+            }
+            if (!empty($array_datos_calificacionJuntas[0]->Profesional_pronunciamiento)) {
+                $info_usuario = $this->globalService->InformacionCamposUsuarioAsignacionEventos($newIdAsignacion,'Nombre_usuario');
+                if(!empty($info_usuario) && !empty($info_usuario[0]->tipo_colaborador)){
+                    $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento_TC = $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento.' '.$info_usuario[0]->tipo_colaborador;
+                }
+            }
+            if (!empty($array_datos_calificacionJuntas[0]->Profesional_remision_expediente)) {
+                $info_usuario = $this->globalService->InformacionCamposUsuarioAsignacionEventos($newIdAsignacion,'Nombre_usuario');
+                if(!empty($info_usuario) && !empty($info_usuario[0]->tipo_colaborador)){
+                    $array_datos_calificacionJuntas[0]->Profesional_remision_expediente_TC = $array_datos_calificacionJuntas[0]->Profesional_remision_expediente.' '.$info_usuario[0]->tipo_colaborador;
+                }
+            }
+        }
         //Trae Documetos Generales del evento
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, $Id_servicio, $newIdAsignacion));
 
@@ -767,6 +789,25 @@ class CalificacionJuntasController extends Controller
         $Id_proceso = $request->Id_proceso;
         $Id_servicio = $request->Id_servicio;
         $Accion_realizar = $request->accion;
+        
+        //Fecha de remisión expediente y Fecha de pronunciamiento PBS068
+        $F_remision_expediente = $request->fecha_remision_expediente;
+        $Profesional_remision_expediente = $request->profesional_remision_expediente;
+        $Id_profesional_remision_expediente = $request->id_profesional_remision_expediente;
+        $F_pronunciamiento = $request->fecha_pronunciamiento;
+        $Id_profesional_pronunciamiento = $request->id_profesional_pronunciamiento;
+        $Profesional_pronunciamiento = $request->profesional_pronunciamiento;
+        if($Accion_realizar == 130 || $Accion_realizar == 162 || $Accion_realizar == 163 || $Accion_realizar == 164){
+            $F_remision_expediente = $date_time;
+            $Id_profesional_remision_expediente = $user->id;
+            $Profesional_remision_expediente = $nombre_usuario;
+        }
+        if($Accion_realizar == 144 || $Accion_realizar == 145 || $Accion_realizar == 146 || $Accion_realizar == 148){
+            $F_pronunciamiento = $date_time;
+            $Id_profesional_pronunciamiento = $user->id;
+            $Profesional_pronunciamiento = $nombre_usuario;
+        }
+
 
         // F de asignación para pronunciamiento de Juntas
         if ($Accion_realizar == 155 ) {
@@ -882,7 +923,7 @@ class CalificacionJuntasController extends Controller
                 'Estado_Facturacion' => $request->estado_facturacion,
                 'Causal_devolucion_comite' => 'N/A',
                 'Descripcion_accion' => $request->descripcion_accion,
-                'F_cierre' => $request->fecha_cierre,
+                // 'F_cierre' => $request->fecha_cierre,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
                 'Fuente_informacion' => $request->fuente_info_juntas,
@@ -904,7 +945,7 @@ class CalificacionJuntasController extends Controller
                 'Aud_Estado_Facturacion' => $request->estado_facturacion,
                 'Aud_Causal_devolucion_comite' => 'N/A',
                 'Aud_Descripcion_accion' => $request->descripcion_accion,
-                'Aud_F_cierre' => $request->fecha_cierre,
+                // 'Aud_F_cierre' => $request->fecha_cierre,
                 'Aud_Nombre_usuario' => $nombre_usuario,
 				'Aud_F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
                 'Aud_Fuente_informacion' => $request->fuente_info_juntas,
@@ -1125,7 +1166,13 @@ class CalificacionJuntasController extends Controller
                 'Tiempo_gestion' => $request->tiempo_gestion,
                 'Fecha_vencimiento' => $fecha_vencimiento,
                 'N_de_orden' => $N_orden_evento,     
-                'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No', 
+                'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
+                'F_remision_expediente' => $F_remision_expediente,
+                'Id_profesional_remision_expediente' => $Id_profesional_remision_expediente,
+                'Profesional_remision_expediente' => $Profesional_remision_expediente,
+                'Id_profesional_pronunciamiento' => $Id_profesional_pronunciamiento,
+                'Profesional_pronunciamiento' => $Profesional_pronunciamiento,
+                'F_pronunciamiento' => $F_pronunciamiento,
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
@@ -1550,7 +1597,7 @@ class CalificacionJuntasController extends Controller
                 'Estado_Facturacion' => $request->estado_facturacion,
                 'Causal_devolucion_comite' => 'N/A',
                 'Descripcion_accion' => $request->descripcion_accion,
-                'F_cierre' => $request->fecha_cierre,
+                // 'F_cierre' => $request->fecha_cierre,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
                 'Fuente_informacion' => $request->fuente_info_juntas,
@@ -1573,7 +1620,7 @@ class CalificacionJuntasController extends Controller
                 'Aud_Estado_Facturacion' => $request->estado_facturacion,
                 'Aud_Causal_devolucion_comite' => 'N/A',
                 'Aud_Descripcion_accion' => $request->descripcion_accion,
-                'Aud_F_cierre' => $request->fecha_cierre,
+                // 'Aud_F_cierre' => $request->fecha_cierre,
                 'Aud_Nombre_usuario' => $nombre_usuario,
 				'Aud_F_asignacion_pronu_juntas' => $F_asignacion_pronu_juntas,
                 'Aud_Fuente_informacion' => $request->fuente_info_juntas,
@@ -1832,7 +1879,13 @@ class CalificacionJuntasController extends Controller
                 'Tiempo_gestion' => $request->tiempo_gestion,
                 'Fecha_vencimiento' => $fecha_vencimiento,
                 'N_de_orden' => $N_orden_evento,     
-                'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',              
+                'Notificacion' => isset($estado_acorde_a_parametrica[0]->enviarA) ? $estado_acorde_a_parametrica[0]->enviarA : 'No',
+                'F_remision_expediente' => $F_remision_expediente,
+                'Id_profesional_remision_expediente' => $Id_profesional_remision_expediente,
+                'Profesional_remision_expediente' => $Profesional_remision_expediente,
+                'Id_profesional_pronunciamiento' => $Id_profesional_pronunciamiento,
+                'Profesional_pronunciamiento' => $Profesional_pronunciamiento,
+                'F_pronunciamiento' => $F_pronunciamiento,              
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
