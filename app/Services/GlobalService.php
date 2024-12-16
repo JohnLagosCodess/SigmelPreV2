@@ -513,6 +513,7 @@ class GlobalService
         ->leftJoin('sigmel_sys.users as u','siae.'.$campo_a_consultar,'=','u.name')
         ->select('siae.Nombre_profesional','u.id','u.name','u.tipo_colaborador')
         ->where([['Id_Asignacion', '=', $id_asignacion]])
+        ->whereNotNull('u.id')
         ->get();
     }
     /**

@@ -164,7 +164,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="asignado_por">Asignado por</label>
-                                                <input type="text" class="form-control" name="asignado_por" id="asignado_por" value="{{$array_datos_calificacionJuntas[0]->Asignado_por_TC}}" disabled>
+                                                <input type="text" class="form-control" name="asignado_por" id="asignado_por" value="{{$array_datos_calificacionJuntas[0]->Asignado_por_TC ?? $array_datos_calificacionJuntas[0]->Asignado_por}}" disabled>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -176,7 +176,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="profesional_remision_expediente">Profesional remisión expediente</label>
-                                                <input type="text" class="form-control" name="profesional_remision_expediente" id="profesional_remision_expediente" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Profesional_remision_expediente)){echo $array_datos_calificacionJuntas[0]->Profesional_remision_expediente_TC;}?>" disabled>
+                                                <input type="text" class="form-control" name="profesional_remision_expediente" id="profesional_remision_expediente" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Profesional_remision_expediente)){echo $array_datos_calificacionJuntas[0]->Profesional_remision_expediente_TC ? $array_datos_calificacionJuntas[0]->Profesional_remision_expediente_TC  : $array_datos_calificacionJuntas[0]->Profesional_remision_expediente;}?>" disabled>
                                                 <input type="hidden" class="form-control" name="id_profesional_remision_expediente" id="id_profesional_remision_expediente" value="{{$array_datos_calificacionJuntas[0]->Id_profesional_remision_expediente}}">
                                                 <input type="hidden" class="form-control" name="profesional_remision_expediente_sin_tipo_colaborador" id="profesional_remision_expediente_sin_tipo_colaborador" value="{{$array_datos_calificacionJuntas[0]->Profesional_remision_expediente}}">
                                             </div>
@@ -190,7 +190,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="profesional_pronunciamiento">Profesional pronunciamiento</label>
-                                                <input type="text" class="form-control" name="profesional_pronunciamiento" id="profesional_pronunciamiento" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Profesional_pronunciamiento)){echo $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento_TC;}?>" disabled>
+                                                <input type="text" class="form-control" name="profesional_pronunciamiento" id="profesional_pronunciamiento" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Profesional_pronunciamiento)){echo $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento_TC ? $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento_TC : $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento}?>" disabled>
                                                 <input type="hidden" class="form-control" name="id_profesional_pronunciamiento" id="id_profesional_pronunciamiento" value="{{$array_datos_calificacionJuntas[0]->Id_profesional_pronunciamiento}}">
                                                 <input type="hidden" class="form-control" name="profesional_pronunciamiento_sin_tipo_colaborador" id="profesional_pronunciamiento_sin_tipo_colaborador" value="{{$array_datos_calificacionJuntas[0]->Profesional_pronunciamiento}}">
                                             </div>
