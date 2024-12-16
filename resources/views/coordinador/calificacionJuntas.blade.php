@@ -190,7 +190,7 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <label for="profesional_pronunciamiento">Profesional pronunciamiento</label>
-                                                <input type="text" class="form-control" name="profesional_pronunciamiento" id="profesional_pronunciamiento" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Profesional_pronunciamiento)){echo $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento_TC ? $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento_TC : $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento}?>" disabled>
+                                                <input type="text" class="form-control" name="profesional_pronunciamiento" id="profesional_pronunciamiento" value="<?php if(!empty($array_datos_calificacionJuntas[0]->Profesional_pronunciamiento)){echo $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento_TC ? $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento_TC : $array_datos_calificacionJuntas[0]->Profesional_pronunciamiento;}?>" disabled>
                                                 <input type="hidden" class="form-control" name="id_profesional_pronunciamiento" id="id_profesional_pronunciamiento" value="{{$array_datos_calificacionJuntas[0]->Id_profesional_pronunciamiento}}">
                                                 <input type="hidden" class="form-control" name="profesional_pronunciamiento_sin_tipo_colaborador" id="profesional_pronunciamiento_sin_tipo_colaborador" value="{{$array_datos_calificacionJuntas[0]->Profesional_pronunciamiento}}">
                                             </div>
