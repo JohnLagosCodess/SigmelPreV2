@@ -431,6 +431,7 @@ class CalificacionOrigenController extends Controller
                 'F_devolucion_comite' => $Fecha_devolucion_comite,
                 'Descripcion_accion' => $request->descripcion_accion,
                 'F_cierre' => $request->fecha_cierre,
+                'F_calificacion_servicio' => $Fecha_calificacion,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_asignacion_dto' => $Fecha_asignacion_dto,
                 'F_registro' => $date,
@@ -454,6 +455,7 @@ class CalificacionOrigenController extends Controller
                 'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
                 'Aud_Descripcion_accion' => $request->descripcion_accion,
                 'Aud_F_cierre' => $request->fecha_cierre,
+                'Aud_F_calificacion_servicio' => $Fecha_calificacion,
                 'Aud_Nombre_usuario' => $nombre_usuario,
 				'Aud_F_asignacion_dto' => $Fecha_asignacion_dto,
                 'Aud_F_registro' => $date,
@@ -678,7 +680,6 @@ class CalificacionOrigenController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
-                'F_calificacion' => $Fecha_calificacion,
                 // 'F_registro' => $date,
             ];
 
@@ -1105,6 +1106,7 @@ class CalificacionOrigenController extends Controller
                 'Estado_Facturacion' => $request->estado_facturacion,
                 'Causal_devolucion_comite' => $Causal_devolucion_comite,
                 'F_devolucion_comite' => $Fecha_devolucion_comite,
+                'F_calificacion_servicio' => $Fecha_calificacion,
                 'Descripcion_accion' => $request->descripcion_accion,
                 'F_cierre' => $request->fecha_cierre,
                 'Nombre_usuario' => $nombre_usuario,
@@ -1131,6 +1133,7 @@ class CalificacionOrigenController extends Controller
                 'Aud_Descripcion_accion' => $request->descripcion_accion,
                 'Aud_F_cierre' => $request->fecha_cierre,
                 'Aud_fuente_informacion' => $request->fuente_informacion,
+                'Aud_F_calificacion_servicio' => $Fecha_calificacion,
                 'Aud_Nombre_usuario' => $nombre_usuario,
 				'Aud_F_asignacion_dto' => $Fecha_asignacion_dto,
                 'Aud_F_registro' => $date,
@@ -1392,7 +1395,6 @@ class CalificacionOrigenController extends Controller
                 'Nombre_usuario' => $nombre_usuario,
                 'Detener_tiempo_gestion' => $Detener_tiempo_gestion,
                 'F_detencion_tiempo_gestion' => $F_detencion_tiempo_gestion,
-                'F_calificacion' => $Fecha_calificacion,
                 // 'F_registro' => $date,
             ];
 
