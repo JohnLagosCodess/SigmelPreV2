@@ -1903,12 +1903,12 @@ $(document).ready(function(){
             }
         });
         if(arrayDatosDiagnostico.length == 0 && datos_finales_motivo_calificacion.length == 0 || $("#origen_controversia").val() == ''){
+            $('.alerta_diagnosticos').append('<strong>Información incompleta. Por favor valide nuevamente</strong>').removeClass('d-none')
             setTimeout(function(){
-                $('.alerta_diagnosticos').append('<strong>Información incompleta. Por favor valide nuevamente</strong>').removeClass('d-none');
-                $('#guardar_datos_controvertido_j').prop('disabled',true);
-            }, 3000);
-            $('#guardar_datos_controvertido_j').prop('disabled',false);
-            return $('.alerta_diagnosticos').addClass('d-none')
+                $('.alerta_diagnosticos').addClass('d-none');
+                $('.alerta_diagnosticos').empty();
+            }, 1500);
+            return;
         }
         var datos_controvertido_juntas = {
             '_token': token,
