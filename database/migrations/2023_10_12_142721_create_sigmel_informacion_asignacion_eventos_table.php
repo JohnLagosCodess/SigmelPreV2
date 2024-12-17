@@ -41,6 +41,12 @@ return new class extends Migration
             $table->date('F_detencion_tiempo_gestion')->nullable();
             $table->text('Fuente_info_juntas')->nullable();
             $table->enum('Notificacion', ['Si','No'])->default('No')->nullable();
+            $table->dateTime('F_remision_expediente')->nullable();
+            $table->integer('Id_profesional_remision_expediente')->nullable();
+            $table->text('Profesional_remision_expediente')->nullable();
+            $table->integer('Id_profesional_pronunciamiento')->nullable();
+            $table->text('Profesional_pronunciamiento')->nullable();
+            $table->dateTime('F_pronunciamiento')->nullable();
             $table->text('Nombre_usuario');
             $table->date('F_registro');
         });

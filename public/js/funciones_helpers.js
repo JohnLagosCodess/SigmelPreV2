@@ -646,9 +646,8 @@ $(document).ready(function () {
         allowClear:false
     });
 
-    $(document).on('click',"#Edicion",function(e){
+    $(document).on('click',"#Edicion", async function(e){
         e.preventDefault();
-
         /**
          * Datos que se incluiran en la modal
          */
@@ -658,16 +657,64 @@ $(document).ready(function () {
         let profecional_asignado = $("#profesional option:selected").text();
         let id_profecional_asignado = $("#profesional option:selected").val();
         let servicio = $("#servicio").val();
-
         //Limpiamos los campos de la modal
         $("#c_accion_ejecutar, #c_f_accion, #c_e_facturacion, #c_profesional, #c_servicio, #alerta_accion").empty();
-
+        // VALIDACIÓN DEL GUARDADO DEL SUBMODULO ANTES DE EJECUTAR CIERTAS ACCIONES - PBS 068
+        if($("#accion").val() && ($("#accion").val() == 144 || $("#accion").val() == 145 || $("#accion").val() == 146)){
+            let id_evento = $("#Id_evento").val();
+            let id_asignacion = $("#Id_asignacion").val();
+            let id_proceso = $("#Id_procesos").val();
+            let id_servicio = $('#Id_servicio').val();
+            let is_save = await consultaGuardadoSubmodulo(id_evento,id_asignacion,id_proceso,id_servicio);
+            if(!is_save){
+                $('#modalAlerta').modal('show');
+                $('#mensaje_alerta').text('Recuerde que antes de ejecutar ésta acción debe gestionar y guardar el Pronunciamiento. Por favor valide nuevamente');
+                setTimeout(() => {
+                    $('#modalAlerta').modal('hide');
+                    $('#mensaje_alerta').text('');
+                }, 4000);
+                $("#alerta_accion").removeClass('d-none');
+                $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong>Recuerde que antes de ejecutar ésta acción debe gestionar y guardar el Pronunciamiento. Por favor valide nuevamente");
+                $("#c_ejecutar_accion").prop('disabled',true);
+                return;
+            }
+        }
+        // VALIDACIÓN DEL VISADO DEL SUBMODULO ANTES DE EJECUTAR CIERTAS ACCIONES - PBS068
+        if($("#accion").val() && ($("#accion").val() == 141 || $("#accion").val() == 142 || $("#accion").val() == 143 || $("#accion").val() == 175 
+        || $("#accion").val() == 176 || $("#accion").val() == 152 || $("#accion").val() == 153 || $("#accion").val() == 154)){
+            let id_evento = $("#Id_evento").val();
+            let id_asignacion = $("#Id_asignacion").val();
+            let id_proceso = $("#Id_procesos").val();
+            let id_servicio = $('#Id_servicio').val();
+            let is_save = await consultaVisadoSubmodulo(id_evento,id_asignacion,id_proceso,id_servicio);
+            if(!is_save){
+                $('#modalAlerta').modal('show');
+                $('#mensaje_alerta').text('Recuerde que antes de aprobar la calificación debe realizar el visado de la misma. Por favor valide nuevamente');
+                setTimeout(() => {
+                    $('#modalAlerta').modal('hide');
+                    $('#mensaje_alerta').text('');
+                }, 4000);
+                $("#alerta_accion").removeClass('d-none');
+                $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong>Recuerde que antes de aprobar la calificación debe realizar el visado de la misma. Por favor valide nuevamente");
+                $("#c_ejecutar_accion").prop('disabled',true);
+                return;
+            }
+        }
+        //Si en controversia no han seleccionado una fuente de información PBS068
+        if(servicio.startsWith('Controversia')){
+            if($("#fuente_info_juntas").val() == ''){
+                $("#alerta_accion").removeClass('d-none');
+                $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong> Por favor seleccione una fuente de información");
+                $("#c_ejecutar_accion").prop('disabled',true);
+                return;
+            }
+        }
         /**
          * De no haber una accion y/o profesional seleccionado no se habilitara el boton de ejecucion
          */
         if(accion_ejecutar == "" || id_profecional_asignado == ""){
            $("#alerta_accion").removeClass('d-none');
-           $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong> No se puede ejecutar la accion debio a que no ha seleccionado una accion y/o profesional");
+           $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong> No se puede ejecutar la accion debido a que no ha seleccionado una accion y/o profesional");
            $("#c_ejecutar_accion").prop('disabled',true);
            profecional_asignado = "";
         }else{
@@ -708,7 +755,7 @@ $(document).ready(function () {
                     setTimeout(() => {
                         $("#alerta_accion_ejecutando").addClass('d-none');
                         location.reload();
-                    }, 1500);
+                    }, 7000);
 
                 } else {
                     $("#alerta_accion").removeClass('d-none');
@@ -971,6 +1018,54 @@ function Validarfecha(IdSelector,operador = '>',fecha = null,info = 'La fecha no
 
 }
 /**
+ * Función para agregar la validación a los inputs de tipo fecha actualmente se esta usando en los que se generan dinamicamente
+ * @param {string} input Id del input tipo date al cual se le quieren agregar las validaciones generales de fecha.
+ * @param {string} hideButton Id del boton que se quiere ocultar para evitar acciones de guardado o demás en caso de que el input este con error.
+*/
+function agregarValidacionFecha(input,hideButton = null) {
+    let today = new Date().toISOString().split("T")[0];
+    
+    $(input).on('change', function() {
+        // Validación de fecha mínima
+        if (this.value < '1900-01-01') {
+            $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+            if(hideButton != null){
+                $(`#${hideButton}`).addClass("d-none");
+            }
+            return;
+        }
+        // Validación de fecha máxima (hoy)
+        if (this.value > today) {
+            $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+            if(hideButton != null){
+                $(`#${hideButton}`).addClass("d-none");
+            }
+            return;
+        }
+        // Limpiar mensaje de error si la fecha es válida
+        if(hideButton != null){
+            $(`#${hideButton}`).removeClass("d-none");
+        }
+        $(`#${this.id}_alerta`).text('').addClass("d-none");
+    });
+}
+ /*
+ * Funcion para esconder boton, hasta que la tabla no tenga un registro
+ * @returns void
+ */
+function EsconderBotonGuardado(id_boton, id_tabla, id_alerta) {
+    let tbody = document.querySelector(`#${id_tabla} tbody`);
+    let table = document.getElementById(`${id_tabla}`);
+    console.log(tbody.children)
+    // let rowCount = tabla.rows({ filter: 'applied' }).nodes().toArray().filter(row => !$(row).hasClass('dataTables_empty')).length
+    if (tbody && tbody.children.length > 0) {
+        $(`#${id_boton}`).removeClass('d-none');
+    } else {
+        $(`#${id_boton}`).addClass('d-none'); // Oculta el botón si no hay filas
+        $(`.${id_alerta}`).removeClass('d-none');
+    }
+}
+/**
  * Funcion para descargar los documentos generales
  * @returns void
  */
@@ -1137,7 +1232,94 @@ function retornarIdDestinatario(ids_destinatario, destinatario){
         else{
             return null;
         }
-}
+    }
+    /*
+        Consulta si el submodulo fue guardado para poder permitir el guardado de alguna de las siguientes acciones 
+        144, 145 o 146
+    */
+    function consultaGuardadoSubmodulo(id_evento, id_asignacion, id_proceso, id_servicio){
+        return new Promise((resolve, reject) => {
+            data = {
+                '_token': $('input[name=_token]').val(),
+                'id_evento': id_evento,
+                'id_asignacion': id_asignacion,
+                'id_proceso': id_proceso,
+                'id_servicio': id_servicio,
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/validarGuardadoSubmodulo',
+                data: data,
+                beforeSend: function(){
+                    $('#c_ejecutar_accion').addClass("descarga-deshabilitada");
+                },
+                success: function(response) {
+                    if(response){
+                        resolve(response[0]);
+                    }
+                },
+                complete: function(){
+                    $('#c_ejecutar_accion').removeClass("descarga-deshabilitada");
+                }
+            });
+        })
+    }
+    /*
+        Consulta si el submodulo fue visado para poder permitir el guardado de alguna de las siguientes acciones 
+        141, 142, 143, 175, 176, 152, 153, 154
+    */
+    function consultaVisadoSubmodulo(id_evento, id_asignacion, id_proceso, id_servicio){
+        return new Promise((resolve, reject) => {
+            data = {
+                '_token': $('input[name=_token]').val(),
+                'id_evento': id_evento,
+                'id_asignacion': id_asignacion,
+                'id_proceso': id_proceso,
+                'id_servicio': id_servicio,
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/validarVisadoSubmodulo',
+                data: data,
+                beforeSend: function(){
+                    $('#c_ejecutar_accion').addClass("descarga-deshabilitada");
+                },
+                success: function(response) {
+                    if(response){
+                        resolve(response[0]);
+                    }
+                },
+                complete: function(){
+                    $('#c_ejecutar_accion').removeClass("descarga-deshabilitada");
+                }
+            });
+        })
+    }
+    /*
+        Cuando seleccionen la acción de ejecutar acción de DEVOLVER ASIGNACIÓN, se haran las validaciones solicitadas
+        en el PBS068 y si todo sale correcto se retornara la información del usuario, si no, se retornara null;  
+    */
+    function consultaUltimoUsuarioEjecutarAccion(data_ult_usuario){
+        return new Promise((resolve, reject) => { 
+            $.ajax({
+                type:'POST',
+                url:'/capturarUsuarioUltAccion',
+                data: data_ult_usuario,
+                beforeSend: function () {
+                    showLoading();
+                },
+                success:function (data) {
+                    if(data){
+                        resolve(data);
+                    }
+                    resolve(null);
+                },
+                complete: function () {
+                    hideLoading();
+                }
+            });
+        })
+    }
 
 /**
  * 

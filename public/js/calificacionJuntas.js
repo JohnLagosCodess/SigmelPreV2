@@ -399,7 +399,7 @@ $(document).ready(function(){
         });
     }
 
-    $("#accion").change(function(){
+    $("#accion").change(async function(){
         let datos_ejecutar_parametrica_mod_principal = {
             '_token': token,
             'parametro': "validarSiModPrincipal",
@@ -442,7 +442,7 @@ $(document).ready(function(){
             'nro_evento': $('#id_evento').val()
         }
     
-        $.ajax({
+        await $.ajax({
             type:'POST',
             url:'/selectoresJuntas',
             data: datos_lista_profesional,
@@ -483,6 +483,33 @@ $(document).ready(function(){
                 $('#enviar').append(`<option value="${data.bd_destino}" selected>${data.Nombre_proceso}</option>`);
             }
         });
+        //RECORDATORIO ACTUALIZACION FECHA DE RADICACIÓN PBS068
+        if(($("#Id_servicio").val() == 12 || $("#Id_servicio").val() == 13) && ($(this).val() == 155 || $(this).val() == 162 || $(this).val() == 163 || $(this).val() == 164
+            || $(this).val() == 168 || $(this).val() == 169 || $(this).val() == 174)){
+            $('#modalAlerta').modal('show');
+            $('#mensaje_alerta').text('Recuerde actualizar la fecha de radicación en el campo Nueva fecha de radicación. Si ya la actualizó o no lo requiere por favor omita éste mensaje.');
+            setTimeout(() => {
+                $('#modalAlerta').modal('hide');
+                $('#mensaje_alerta').text('');
+            }, 4000);
+        }
+        //Capturar el ultimo que ejecuto la acción de asignación, cuando seleccionen la acción de devolver asignación PBS068
+        if($(this).val() == 131){
+            data_ult_usuario = {
+                '_token':token,
+                'id_proceso' : $('#Id_proceso').val(),
+                'id_cliente' : $("#cliente").data('id'),
+                'id_servicio': $("#Id_servicio").val(),
+                'id_evento': $("#newId_evento").val(),
+                'id_asignacion':$('#newId_asignacion').val(),
+            };
+            let ultimoUsuario = await consultaUltimoUsuarioEjecutarAccion(data_ult_usuario);
+            if(ultimoUsuario[0] && Array.isArray(ultimoUsuario[1])){
+                let info_user = ultimoUsuario[1][0];
+                $('#profesional option[value="'+info_user['id']+'"]').prop('selected', true);
+                $('#profesional').val(info_user['id']).trigger('change');
+            }
+        }
     });
 
     //Mostrar Historial de acciones
@@ -680,8 +707,13 @@ $(document).ready(function(){
         formData.append('fecha_cierre', $('#fecha_cierre').val());
         formData.append('fecha_vencimiento_actual', $('#fecha_vencimiento_actual').val());
         formData.append('tiempo_gestion', $('#tiempo_gestion').val());
+        formData.append('fecha_remision_expediente',$('#fecha_remision_expediente').val());
+        formData.append('fecha_pronunciamiento',$('#fecha_pronunciamiento').val());
+        formData.append('profesional_remision_expediente',$('#profesional_remision_expediente_sin_tipo_colaborador').val());
+        formData.append('profesional_pronunciamiento',$('#profesional_pronunciamiento_sin_tipo_colaborador').val());
+        formData.append('id_profesional_remision_expediente',$('#id_profesional_remision_expediente').val());
+        formData.append('id_profesional_pronunciamiento',$('#id_profesional_pronunciamiento').val());
         formData.append('banderaguardar', $('#bandera_accion_guardar_actualizar').val());
-
         $.ajax({
             type:'POST',
             url:'/registrarCalificacionJuntas',
@@ -3745,6 +3777,7 @@ $(document).ready(function(){
             'estado_notificacion': $('#modalCorrespondencia #state_notificacion').val(),
             'tipo_correspondencia': tipo_correspondencia,
             'id_correspondencia': $('#modalCorrespondencia #id_correspondencia').val(),
+            'id_destinatario':$("#modalCorrespondencia #id_destinatario").val(),
             'accion': $('#btn_guardar_actualizar_correspondencia').val()
         };
         $.ajax({    
