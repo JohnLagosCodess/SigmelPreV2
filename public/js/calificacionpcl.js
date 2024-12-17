@@ -460,6 +460,7 @@ $(document).ready(function(){
         '_token': token,
         'evento': $("#newId_evento").val(),
         'servicio': $("#Id_servicio").val(),
+        'asignacion': $("#newId_asignacion").val(),
         'parametro':"lista_tipos_docs",
     };
 
