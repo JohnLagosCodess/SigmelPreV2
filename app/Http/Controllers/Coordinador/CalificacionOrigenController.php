@@ -2002,6 +2002,7 @@ class CalificacionOrigenController extends Controller
             ->where([
                 ['srde.ID_evento', $request->evento],
                 ['srde.Id_servicio', $request->servicio],
+                ['srde.Id_Asignacion', $request->asignacion],
                 ['sld.Estado', 'activo']
             ])
             ->groupBy('sld.Nro_documento')
