@@ -3317,10 +3317,24 @@ $(document).ready(function(){
         }
     }
 
-    //Valida si hay radicados duplicados
+    //Espera un poco a que cargue lo demas
     setTimeout(function() {
         radicados_duplicados('listado_comunicados_dto');
+        //Alerta informativa cuando se selecciona el tipo de evento
+        $("#tipo_evento").on("change",function(){
+            procesar_alertas_gestion(null,null,"dto","informativo");
+        });
+        
+        $("#GuardarDTOATEL, #EditarDTOATEL").focus(function() {
+            procesar_alertas_gestion("#GuardarDTOATEL, #EditarDTOATEL","#form_DTO_ATEL","dto","alerta");
+        });
+
+        $("#GuardarComiteInter").focus(function() {
+            procesar_alertas_gestion("#GuardarComiteInter", "#form_comite_interdisciplinario","visar_dto","alerta");
+        });
     }, 500);    
+
+
 });
 
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/

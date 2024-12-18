@@ -354,10 +354,10 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             @if (empty($array_info_decreto_evento[0]->ID_Evento))
-                                                <input type="submit" id="GuardarDecreto" name="GuardarDecreto" class="btn btn-info" value="Guardar">                                                
+                                                <input type="button" id="GuardarDecreto" name="GuardarDecreto" class="btn btn-info" value="Guardar">                                                
                                                 <input hidden="hidden" type="text" id="bandera_decreto_guardar_actualizar" value="Guardar">
                                             @else
-                                                <input type="submit" id="ActualizarDecreto" name="ActualizarDecreto" class="btn btn-info" value="Actualizar">
+                                                <input type="button" id="ActualizarDecreto" name="ActualizarDecreto" class="btn btn-info" value="Actualizar">
                                                 <input hidden="hidden" type="text" id="bandera_decreto_guardar_actualizar" value="Actualizar">
                                             @endif
                                         </div>
@@ -376,10 +376,10 @@
                                 <div class="col-12">
                                     <div class="form-group">
                                         @if (empty($datos_demos[0]->ID_Evento))                                            
-                                            <input type="submit" id="GuardarNoDecreto" name="GuardarNoDecreto" class="btn btn-info" value="Guardar">
+                                            <input type="button" id="GuardarNoDecreto" name="GuardarNoDecreto" class="btn btn-info" value="Guardar">
                                             <input hidden="hidden" type="text" name="banderaGuardarNoDecreto" id="banderaGuardarNoDecreto" value="Guardar">
                                         @else
-                                            <input type="submit" id="ActualizarNoDecreto" name="ActualizarNoDecreto" class="btn btn-info" value="Actualizar">
+                                            <input type="button" id="ActualizarNoDecreto" name="ActualizarNoDecreto" class="btn btn-info" value="Actualizar">
                                             <input hidden="hidden" type="text" name="banderaGuardarNoDecreto" id="banderaGuardarNoDecreto" value="Actualizar">
                                         @endif
                                     </div>
@@ -7124,10 +7124,10 @@
                                     <div class="col-12">
                                         <div class="form-group">                                             
                                             @if (!empty($array_dictamen_pericial[0]->F_estructuracion) && $array_dictamen_pericial[0]->F_estructuracion !== '0000-00-00')
-                                                <input type="submit" id="GuardrDictamenPericial" name="GuardrDictamenPericial" class="btn btn-info" value="Actualizar">                                                                                                                                                
+                                                <input type="button" id="GuardrDictamenPericial" name="GuardrDictamenPericial" class="btn btn-info" value="Actualizar">                                                                                                                                                
                                                 <input hidden="hidden" type="text" id="bandera_dictamen_pericial" value="Actualizar">                                                                                           
                                             @else
-                                                <input type="submit" id="GuardrDictamenPericial" name="GuardrDictamenPericial" class="btn btn-info" value="Guardar">                                                                                                
+                                                <input type="button" id="GuardrDictamenPericial" name="GuardrDictamenPericial" class="btn btn-info" value="Guardar">                                                                                                
                                                 <input hidden="hidden" type="text" id="bandera_dictamen_pericial" value="Guardar">                                                                                           
                                             @endif
                                         </div>
@@ -7164,7 +7164,7 @@
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">                                                
                                                 @if(!empty($array_comite_interdisciplinario[0]->Visar))
-                                                    <input type="checkbox" class="custom-control-input" name="visar" id="visar" value="Si" checked disabled>                                                
+                                                    <input type="checkbox" class="custom-control-input" name="visar" id="visar" value="Si" checked disabled required>                                                
                                                 @else
                                                     <input type="checkbox" class="custom-control-input" name="visar" id="visar" value="Si" required>                                                
                                                 @endif
@@ -7206,7 +7206,7 @@
                                     </div>  
                                     <div class="col-2">
                                         <div class="form-group" style="padding-top: 31px;">                                             
-                                            <input type="submit" id="GuardarComiteInter" name="GuardarComiteInter" class="btn btn-info" value="Guardar">                                                
+                                            <input type="button" id="GuardarComiteInter" name="GuardarComiteInter" class="btn btn-info" value="Guardar">                                                
                                             <input hidden="hidden" type="text" id="bandera_comiteInter" value="Guardar">                                                                                           
                                         </div>
                                     </div>
@@ -8119,6 +8119,7 @@
     </x-adminlte-modal>
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.coordinador.modalCorrespondencia')
+    @include('modals.alertasGestion')
  @stop
  
 

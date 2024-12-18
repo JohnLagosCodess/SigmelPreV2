@@ -5150,7 +5150,12 @@ $(document).ready(function(){
     //Valida si hay radicados duplicados
     setTimeout(function() {
         radicados_duplicados('tabla_comunicados_juntas');
+
+        $("#guardar_datos_revision_jrci").focus(function() {
+            procesar_alertas_gestion("#guardar_datos_revision_jrci", "#form_guardarRevisionjrci","juntas","alerta");
+        });
     }, 500);
+
 });
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/
 /*Para Diagnosticos Controvertido*/

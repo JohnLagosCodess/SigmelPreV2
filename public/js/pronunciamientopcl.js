@@ -1956,6 +1956,9 @@ $(document).ready(function(){
     //Valida si hay radicados duplicados
     setTimeout(function() {
         radicados_duplicados('listado_comunicados_clpcl');
+        $("#GuardarPronuncia, #ActualizarPronuncia").focus(function() {
+            procesar_alertas_gestion("#GuardarPronuncia, #ActualizarPronuncia", "#form_CaliPronuncia","pronunciamiento_pcl","alerta");
+        });
     }, 500);
 
     /* Si se selecciona la opción Otro Cual Inserta un campo*/
@@ -1991,7 +1994,7 @@ $(document).ready(function(){
         }
 
     });
-    
+
 });
 
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/

@@ -50,6 +50,7 @@
                 
                 {{-- campos creados para extraer algunos datos de la proforma  --}}
                 <input type="hidden" class="form-control" id="id_servicio" value="{{$array_datos_controversiaJuntas[0]->Id_Servicio}}">
+                <input type="hidden" class="form-control" id="newIdservicio" value="{{$array_datos_controversiaJuntas[0]->Id_Servicio}}">
                 <input type="hidden" id="id_cliente"  value="<?php if(!empty($array_datos_controversiaJuntas[0]->Id_cliente)){echo $array_datos_controversiaJuntas[0]->Id_cliente;}?>">
                 <input type="hidden" id="tipo_documento" value="<?php if(!empty($array_datos_controversiaJuntas[0]->Nombre_tipo_documento)){echo $array_datos_controversiaJuntas[0]->Nombre_tipo_documento;}?>">
                 <input type="hidden" id="id_Jrci_califi_invalidez" value="<?php if(!empty($arrayinfo_controvertido[0]->Jrci_califi_invalidez)){echo $arrayinfo_controvertido[0]->Jrci_califi_invalidez;}?>">
@@ -644,10 +645,10 @@
                                         <div @if(empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci) && empty($arrayinfo_controvertido[0]->N_dictamen_jrci_emitido) && empty($arrayinfo_controvertido[0]->F_dictamen_jrci_emitido)) class="col-12" @else class="col-6" @endif>
                                             <div class="form-group">
                                                 @if (!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci) && !empty($arrayinfo_controvertido[0]->N_dictamen_jrci_emitido) && !empty($arrayinfo_controvertido[0]->F_dictamen_jrci_emitido))
-                                                    <input type="submit" id="guardar_datos_revision_jrci" class="btn btn-info" value="Guardar">
+                                                    <input type="button" id="guardar_datos_revision_jrci" class="btn btn-info" value="Guardar">
                                                     <input type="hidden" id="bandera_porfesional_pronunciamiento" value="Actualizar">                                                                                                        
                                                 @elseif(empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci) && !empty($arrayinfo_controvertido[0]->N_dictamen_jrci_emitido) && !empty($arrayinfo_controvertido[0]->F_dictamen_jrci_emitido))
-                                                    <input type="submit" id="guardar_datos_revision_jrci" class="btn btn-info" {{empty($arrayinfo_controvertido[0]->JrciNombre) ? 'disabled' : ''}} value="Guardar">
+                                                    <input type="button" id="guardar_datos_revision_jrci" class="btn btn-info" {{empty($arrayinfo_controvertido[0]->JrciNombre) ? 'disabled' : ''}} value="Guardar">
                                                     <input type="hidden" id="bandera_porfesional_pronunciamiento" value="Guardar">    
                                                 @else
                                                     <div class="alert alert-danger" role="alert">
@@ -2139,6 +2140,7 @@
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.coordinador.modalCorrespondencia')
     @include('//.modals.alertaRadicado')
+    @include('//.modals.alertasGestion')
 
 @stop
 @section('js')

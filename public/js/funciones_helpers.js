@@ -768,6 +768,29 @@ $(document).ready(function () {
 
 
     });
+
+    // Función que permite solamente dos decimales escribir
+    function Maximo2Decimales(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 2) {
+          $(this).val(parseFloat(inputValue).toFixed(2));
+        }
+        });
+    };
+
+    // Función que permite solamente un decimal escribir
+    function Maximo1Decimal(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 1) {
+          $(this).val(parseFloat(inputValue).toFixed(1));
+        }
+    });
+    }
+
     //evento cuando se le de click en el boton de eliminar
     $(document).on('click', '.btn_eliminar_radicado', function() {  
         // Deshabilita todo los botones de eliminar menos el clickeado
@@ -804,13 +827,296 @@ $(document).ready(function () {
            return true;
         }
 
-        if (that && that.$element && that.$element[0] !== e.target && !that.$element.has(e.target).length) {
+        if (that && that.$element && that && that.$element && that.$element[0] !== e.target && !that.$element.has(e.target).length){
             that.$element.focus();
         }
         });
     };
 });
 
+/**
+ * Procesa una alerta y la muestra para un proceso correspondiente, homologando la acccion del boton sobre el formulario al cual esta enlazado.
+ * @param {string} id_boton selector del boton donde se estara escuchando el evento. 
+ * @param {string} id_form selector del formulario al cual se delegará el evento submit
+ * @param {int} proceso id del proceso para el cual se esta procesando la alerta 
+ * @param {string} tipo_alerta El tipo de la alerta que se estara mostrando. alerta -> muestra una modal interactiva con botones de accion, otro - Muestra solo una modal informativa.
+ */
+function procesar_alertas_gestion(id_boton, id_form, proceso, tipo_alerta = "alerta") {
+    let timet_out = "";
+
+    //Remueve el footer slot, por alguna razon en algunos casos se agrega el footer slot y en otros no
+    $("#alertas_gestion").find(".modal-footer").remove();
+
+    let id_servicio = $("#newIdservicio").val();
+
+    /**
+     * Obtiene el nombre del servicio en funcion del id indicado
+     * @param {int} id_servicio 
+     * @returns
+     */
+    let nombre_servicio = (id_servicio) => {
+            let servicios = {
+                1: "Determinación del origen ATEL",
+                6: "Calificación Técnica", 
+                7: "Recalificacion", 
+                8: "Revisión pensión",
+                9: "Pronunciamiento PCL",
+                3: "Pronunciamiento Origen",
+                13: "Controversia PCL",
+                12: "Controversia Origen"
+            };
+        return servicios[id_servicio] || "";
+    }
+
+    /**
+     * Obtiene la alerta correspondiente al proceso indicado
+     * @param {string} proceso 
+     * @returns 
+     */
+    let data_alerta = (proceso) => {
+        let subtitulo = $("#nombre_afiliado").val() + " " + $("#tipo_documento").find(":selected").text() + " " + $("#nro_identificacion").val();
+
+        let match = {
+            creacion_evento: {
+                titulo: "¡Usted está registrando la información del afiliado!",
+                subtitulo: subtitulo.trim() == "Seleccione" ? "" : subtitulo.toUpperCase(),
+                subtitulo2: "Al cual se le ejecutará el siguiente movimiento:",
+                cuerpo: {
+                    Fecha_radicacion: $("#fecha_radicacion").val(),
+                    Proceso: $("#proceso").find(":selected").text(),
+                    Servicio: $("#servicio").find(":selected").text(),
+                    Accion: $("#accion").find(":selected").text(),
+                    Fecha_alerta: $("#fecha_alerta").val(),
+                    Profesional_asignado: $("#profesional").find(":selected").text() == "Seleccione" ? "" : $("#profesional").find(":selected").text(),
+                    Fecha_vencimiento: $("#fecha_vencimiento_visual").val()
+                },
+                alerta_gestion: "<span>Asignacion <b><u>No</u></b> guardada. !Valide nuevamente!</span>"
+            },
+            consultador_evento: {
+                titulo: "Está a punto de realizar el siguiente movimiento:",
+                cuerpo: {
+                    Fecha_radicacion: $("#fecha_radicacion_nuevo_proceso").val() || "",
+                    Proceso: $("[name^='selector_nuevo_proceso']").find(":selected").text() || "",
+                    Servicio: $("[name^='selector_nuevo_servicio']").find(":selected").text() || "",
+                    Accion: $("[name^='nueva_accion_nuevo_proceso']").find(":selected").text() || "",
+                    Fecha_alerta: $("#nueva_fecha_alerta_nuevo_proceso").val() || "",
+                    Profesional_asignado: $("[name^='nuevo_profesional_nuevo_proceso']").find(":selected").text() || "",
+                    Fecha_vencimiento: $("#fecha_visual_vencimiento_nuevo_proceso_").val() || ""
+                },
+                alerta_gestion: "<span>Movimiento <b><u>No</u></b> guardada. !Valide nuevamente!</span>"
+            },
+            dto: {
+                titulo: "Está a punto de emitir la siguiente calificación:",
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#tipo_evento").find(":selected").text() || "",
+                    Origen: $("#origen_dto_atel").find(":selected").text() || "",
+                },
+                alerta_gestion: "<span>Calificacion <b><u>No</u></b> guardada. !Valide nuevamente!</span>",
+            },
+            visar_dto: {
+                titulo: "Está a punto de visar la siguiente calificación:",
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#tipo_evento").find(":selected").text() || "",
+                    Origen: $("#origen_dto_atel").find(":selected").text() || "",
+                },
+                alerta_gestion: "<span>Visado <b><u>No</u></b> guardada. !Valide nuevamente!</span>",
+                footer: "<span class='text-danger text-center h6 mt-2'><b>Nota:</b>  Recuerde que, posterior al visado, no podrá realizar ajustes a la calificación<span>"
+            },
+            calificacion_tec:{
+                subtitulo: `Se iniciará la <b>${nombre_servicio(id_servicio)}</b> con el decreto <b>${$("#decreto_califi").find(":selected").text()}</b>; posterior a su confirmación, el sistema <b>NO</b> le permitirá modificar el decreto de calificación.`,
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Decreto: $("#decreto_califi").find(":selected").text(),
+                },
+                alerta_gestion: "<span>No se realizo el guardado. !Valide nuevamente!</span>",
+            },
+            calificacion_tec_pericial:{
+                subtitulo: `Esta a punto de emitir la siguiente calificación:`,
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#tipo_evento").find(":selected").text() || "",
+                    Origen:  $("#tipo_origen").find(":selected").text(),
+                    $pPCL: $("#porcentaje_pcl").val() + "%",
+                    Decreto: $("#decreto_califi").find(":selected").text(),
+                },
+                alerta_gestion: "<span>Calificacion <b><u>No</u></b> guardada. !Valide nuevamente!</span>",
+            },
+            calificacion_tec_visar:{
+                subtitulo: `Esta a punto de visar la siguiente calificación:`,
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#tipo_evento").find(":selected").text(),
+                    Origen: $("#tipo_origen").find(":selected").text(),
+                    $pPCL: $("#porcentaje_pcl").val() + "%",
+                    Decreto: $("#decreto_califi").find(":selected").text(),
+                },
+                alerta_gestion: "<span>No se realizo el guardado. !Valide nuevamente!</span>",
+                footer: "<span class='text-danger text-center h6 mt-2'><b>Nota:</b>  Recuerde que, posterior al visado, no podrá realizar ajustes a la calificación<span>"
+            },
+            pronunciamiento_pcl:{
+                subtitulo: `Está a punto de emitir el siguiete pronunciamiento:`,
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#tipo_evento").find(":selected").text(),
+                    Origen: $("#tipo_origen").find(":selected").text(),
+                    $iPCL: $("#porcentaje_pcl").val() + "%",
+                    pronunciamiento_ante_la_calificación: $("[name^='decision_pr']:checked").val(),
+                },
+                alerta_gestion: "<span>Pronunciamiento <b>No</b> guardado. !Valide nuevamente!</span>",
+            },
+            pronunciamiento_origen:{
+                subtitulo: `Está a punto de emitir el siguiete pronunciamiento:`,
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#tipo_evento").find(":selected").text(),
+                    Origen: $("#tipo_origen").find(":selected").text(),
+                    pronunciamiento_ante_la_calificación: $("[name^='decision_pr']:checked").val(),
+                },
+                alerta_gestion: "<span>Pronunciamiento <b>No</b> guardado. !Valide nuevamente!</span>",
+            },
+            juntas:{
+                subtitulo: `Está a punto de emitir el siguiente pronunciamiento ante la JRCI:`,
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#Tipo_evento_juntas").val(),
+                    Origen_JRCI: $("#origen_jrci_emitido").find(":selected").text(),
+                    $iPCL_JRCI:  $("#porcentaje_pcl_jrci_emitido").val() || "",
+                    pronunciamiento_ante_Dictamen_de_JRCI: $("[name^='decision_dictamen_jrci']:checked").val(),
+                },
+                alerta_gestion: "<span>Pronunciamiento <b>No</b> guardado. !Valide nuevamente!</span>",
+            }
+        }
+
+        return match[proceso] || null;
+    }
+
+    /**
+     * Dibuja la alerta dentro del modal
+     * @param {string} titulo 
+     * @param {string} subtitulo 
+     * @param {string} subtitulo2 
+     * @param {string} cuerpoHTML 
+     * @param {string} footer 
+     */
+    const mostrarAlerta = (titulo, subtitulo, subtitulo2, cuerpoHTML,footer) => {
+        const $alerta = $("#contenido_header_gestion");
+        $alerta.find("#titulo").html(titulo);
+        $alerta.find("#subtitulo").html(subtitulo);
+        $alerta.find("#subtitulo2").html(subtitulo2);
+
+        $("#content_footer").html(footer);
+        $("#cuerpo_gestion").empty().append(cuerpoHTML);
+        $("#alerta_gestion").addClass("d-none");
+        $("#contenido_header_gestion, #info_footer, #ejecutar_gestion").removeClass('d-none');
+        $("#alertas_gestion").show();
+    };
+
+    /**
+     * Dibuja el cuerpo de la alerta dentro de la modal
+     * @param {Array} cuerpo
+     * @returns 
+     */
+    const generarCuerpoHTML = (cuerpo) => {
+        return Object.entries(cuerpo)
+            .map(([key, value]) => {
+                const columna1 = transformar_caracteres(key);
+                return `
+                    <div class="col-5"><span class="h6"><b>${columna1}:</b></span></div>
+                    <div class="col-7"><span class="h6">${value}</span></div>
+                `;
+            })
+            .join('');
+    };
+
+    const ocultarAlerta = () => {
+        $("#alertas_gestion").hide();
+        $("#alerta_gestion").addClass("d-none");
+    };
+
+    /**
+     * Dependiento del tipo de alerta mostrara los botones interaccion para homologar el evento submit, sino mostrara solo una alerta
+     */
+    if (tipo_alerta == "alerta") {
+        $(id_boton).click(function () {
+            clearTimeout(timet_out);
+            const datos = data_alerta(proceso);
+            const cuerpoHTML = generarCuerpoHTML(datos.cuerpo);
+            $("#cerrar_modal").remove();
+            $("#no_ejecutar_gestion").removeClass("d-none");
+            mostrarAlerta(datos.titulo, datos.subtitulo, datos.subtitulo2, cuerpoHTML,datos.footer);
+
+            $("#ejecutar_gestion").off('click').on('click', function () {
+                const $form = $(id_form);
+                if ($form[0].checkValidity()) {
+                    $form.trigger("submit");
+                } else {
+                    $form[0].reportValidity();
+                }
+                ocultarAlerta();
+            });
+        });
+    }else {
+        //Actualmente solo para dto
+        $("#alertas_gestion").show();
+        $("#contenido_header_gestion, #info_footer, #ejecutar_gestion").addClass('d-none');
+        $("#no_ejecutar_gestion").addClass("d-none");
+        $("#cerrar_modal").remove();
+        $("#no_ejecutar_gestion").after('<button class="btn btn-danger d-none" id="cerrar_modal" data-dismiss="modal">Cerrar</button>');
+        $("#cerrar_modal").removeClass("d-none");
+        $("#cuerpo_gestion").empty().html(`
+        <span>
+            El formulario a gestionar dependerá de la selección registrada en el campo Tipo de evento.
+            Adicionalmente, esta información actualizará el campo de Tipo de Evento del formulario 
+            <u><b>Edición de Evento</b></u>
+        </span>
+    `);
+
+        timet_out = setTimeout(ocultarAlerta, 6000);
+    }
+
+    $("#no_ejecutar_gestion").click(function () {
+        const alertaHTML = data_alerta(proceso).alerta_gestion;
+        $("#alerta_gestion").removeClass("d-none").html(alertaHTML);
+        timet_out =  setTimeout(ocultarAlerta, 3000);
+    });
+
+    $("#cerrar_modal").click(function(){clearTimeout(timet_out); ocultarAlerta()});
+    
+}
+
+/**
+ * Transforma un string de acuerdo al patron que este definido dentro del string
+ * _ : lo remplaza por espacios en blanco
+ * $p : transforma el string en una pregunta
+ * $i : agrega el signo % de acuerdo a la coincidencia del patron
+ * 
+ * @param {string} target 
+ * @returns 
+ */
+function transformar_caracteres(target) {
+    let remplazar = {
+        "_": (string) => string.replace(/_/g, ' '),  //Transforma los espacios bajo en guiones
+        "$p": (string) => string.includes("$p") ? "¿" + string.replace("$p","") + "?" : string, // si el string tiene la letra $p lo convertira en una pregunta ¿..?
+        "$i": (string) => string.replace("$i", '%') // si el string tiene la letra $i lo convertira en un $
+    };
+
+    if (typeof target === "string") {
+        let string_transformado = target;
+
+        for (let key in remplazar) {
+            if (remplazar.hasOwnProperty(key)) {
+                // Ejecutamos la función correspondiente a cada clave
+                string_transformado = remplazar[key](string_transformado);
+            }
+        }
+
+        return string_transformado;
+    }
+
+    return undefined;
+}
 // Función que permite solamente dos decimales escribir
 function Maximo2Decimales(idinput){
     $('#'+idinput).on('input', function(){
