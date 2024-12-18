@@ -14,6 +14,7 @@ class sigmel_registro_documentos_eventos extends Model
     protected $primaryKey = 'Id_Registro_Documento';
 
     protected $fillable = [
+    'Id_Asignacion',
     'Id_Documento',
     'ID_evento',
     'Nombre_documento',

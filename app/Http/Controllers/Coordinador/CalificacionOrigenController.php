@@ -68,17 +68,33 @@ class CalificacionOrigenController extends Controller
         } else {
             $Id_servicio = $request->newIdServicio;
         }
-
         $array_datos_calificacionOrigen = DB::select('CALL psrcalificacionOrigen(?)', array($newIdAsignacion));
+        //PBS068 Solicitan que los campos donde esta guardado el nombre del usuario (ejecuto, creo, edito, etc) traiga el tipo de colaborador
+        if(!empty($array_datos_calificacionOrigen)){
+            if (!empty($array_datos_calificacionOrigen[0]->Nombre_profesional)) {
+                $info_usuario = $this->globalService->InformacionCamposUsuarioAsignacionEventos($newIdAsignacion,'Nombre_profesional');
+                if(!empty($info_usuario) && !empty($info_usuario[0]->tipo_colaborador)){
+                    $array_datos_calificacionOrigen[0]->Nombre_profesional .= ' '.$info_usuario[0]->tipo_colaborador;
+                }
+            }
+            // Concatenar el tipo de profesional al Asignado_por, si ambos existen
+            if (!empty($array_datos_calificacionOrigen[0]->Asignado_por)) {
+                $info_usuario = $this->globalService->InformacionCamposUsuarioAsignacionEventos($newIdAsignacion,'Nombre_usuario');
+                if(!empty($info_usuario) && !empty($info_usuario[0]->tipo_colaborador)){
+                    $array_datos_calificacionOrigen[0]->Asignado_por .= ' '.$info_usuario[0]->tipo_colaborador;
+                }
+            }
+        }
         //Trae Documetos Generales del evento
-        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?)',array($newIdEvento,$Id_servicio));
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento,$Id_servicio,$newIdAsignacion));
 
         // cantidad de documentos cargados
 
         $cantidad_documentos_cargados = sigmel_registro_documentos_eventos::on('sigmel_gestiones')
         ->where([
             ['ID_evento', $newIdEvento],
-            ['Id_servicio', $Id_servicio]
+            ['Id_servicio', $Id_servicio],
+            ['Id_Asignacion', $newIdAsignacion]
         ])->get();
         
         //Consulta Vista a mostrar
@@ -238,15 +254,12 @@ class CalificacionOrigenController extends Controller
         ])
        ->get();
 
-        //Consulta comite interdisciplinario del evento
-       $cali_profe_comite = sigmel_informacion_comite_interdisciplinario_eventos::on('sigmel_gestiones')
-       ->select('Profesional_comite','F_visado_comite')
-       ->where([
-           ['ID_evento',$newIdEvento],
-           ['Id_Asignacion',$newIdAsignacion],
-           ['Id_proceso','1']
-        ])
-       ->get();
+        //Consulta comite interdisciplinario del evento con nombre de usuario y tipo de colaborador concatenados
+       $cali_profe_comite = $this->globalService->ComiteInterdisciplinarioModulosPrincipales($newIdEvento,$newIdAsignacion);
+       if(!empty($cali_profe_comite) && !empty($cali_profe_comite[0]->Profesional_comite) && !empty($cali_profe_comite[0]->tipo_colaborador)){
+        $cali_profe_comite[0]->Profesional_comite .= ' '.$cali_profe_comite[0]->tipo_colaborador;
+       }
+
 
        //Traer el N_siniestro del evento
        $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
@@ -259,7 +272,7 @@ class CalificacionOrigenController extends Controller
         return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos', 'cantidad_documentos_cargados',
         'arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc',
         'dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados',
-        'cali_profe_comite', 'Id_servicio', 'enviar_notificaciones','N_siniestro_evento'));
+        'cali_profe_comite', 'Id_servicio', 'newIdAsignacion', 'enviar_notificaciones','N_siniestro_evento'));
     }
 
     //Guardar informacion del modulo de Origen ATEL
@@ -276,6 +289,7 @@ class CalificacionOrigenController extends Controller
         $newIdEvento = $request->newId_evento;
         $Id_proceso = $request->Id_proceso;
         $Id_servicio = $request->Id_servicio;
+        $fecha_calificacion = $request->fecha_calificacion;
 
         $Accion_realizar = $request->accion;
 
@@ -291,10 +305,15 @@ class CalificacionOrigenController extends Controller
             }
             $Causal_devolucion_comite =$request->causal_devolucion_comite;
         }
+        //VALIDACIONES PBS068
+        if($Accion_realizar == 139 || $Accion_realizar == 144 || $Accion_realizar == 145 || $Accion_realizar == 146){
+            $Fecha_calificacion = $date_time;
+        }else{
+            $Fecha_calificacion = $fecha_calificacion && $fecha_calificacion != 'Sin Calificación' ? $fecha_calificacion : null;
+        }
 
-        // Fecha de asignación para DTO 
-        //if ($Accion_realizar == 2 || $Accion_realizar == 101) {
-        if ($Accion_realizar == 223) {
+        // Fecha de asignación para DTO PBS068 ACCIÓN 124
+        if ($Accion_realizar == 124) {
             $Fecha_asignacion_dto = $date_time;
         }else{
             if ($request->fecha_asignacion_dto == "0000-00-00 00:00:00" || $request->fecha_asignacion_dto == "Sin Fecha de Asignación para DTO") {
@@ -412,6 +431,7 @@ class CalificacionOrigenController extends Controller
                 'F_devolucion_comite' => $Fecha_devolucion_comite,
                 'Descripcion_accion' => $request->descripcion_accion,
                 'F_cierre' => $request->fecha_cierre,
+                'F_calificacion_servicio' => $Fecha_calificacion,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_asignacion_dto' => $Fecha_asignacion_dto,
                 'F_registro' => $date,
@@ -435,6 +455,7 @@ class CalificacionOrigenController extends Controller
                 'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
                 'Aud_Descripcion_accion' => $request->descripcion_accion,
                 'Aud_F_cierre' => $request->fecha_cierre,
+                'Aud_F_calificacion_servicio' => $Fecha_calificacion,
                 'Aud_Nombre_usuario' => $nombre_usuario,
 				'Aud_F_asignacion_dto' => $Fecha_asignacion_dto,
                 'Aud_F_registro' => $date,
@@ -1085,6 +1106,7 @@ class CalificacionOrigenController extends Controller
                 'Estado_Facturacion' => $request->estado_facturacion,
                 'Causal_devolucion_comite' => $Causal_devolucion_comite,
                 'F_devolucion_comite' => $Fecha_devolucion_comite,
+                'F_calificacion_servicio' => $Fecha_calificacion,
                 'Descripcion_accion' => $request->descripcion_accion,
                 'F_cierre' => $request->fecha_cierre,
                 'Nombre_usuario' => $nombre_usuario,
@@ -1111,6 +1133,7 @@ class CalificacionOrigenController extends Controller
                 'Aud_Descripcion_accion' => $request->descripcion_accion,
                 'Aud_F_cierre' => $request->fecha_cierre,
                 'Aud_fuente_informacion' => $request->fuente_informacion,
+                'Aud_F_calificacion_servicio' => $Fecha_calificacion,
                 'Aud_Nombre_usuario' => $nombre_usuario,
 				'Aud_F_asignacion_dto' => $Fecha_asignacion_dto,
                 'Aud_F_registro' => $date,
@@ -1979,6 +2002,7 @@ class CalificacionOrigenController extends Controller
             ->where([
                 ['srde.ID_evento', $request->evento],
                 ['srde.Id_servicio', $request->servicio],
+                ['srde.Id_Asignacion', $request->asignacion],
                 ['sld.Estado', 'activo']
             ])
             ->groupBy('sld.Nro_documento')

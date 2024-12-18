@@ -428,7 +428,7 @@ $(document).ready(function(){
         });
     }
 
-    $("#accion").change(function(){
+    $("#accion").change(async function(){
         
         
         let datos_ejecutar_parametrica_mod_principal = {
@@ -472,7 +472,7 @@ $(document).ready(function(){
             'Id_accion': $(this).val(),
         }
 
-        $.ajax({
+        await $.ajax({
             type:'POST',
             url:'/cargarselectores',
             data: datos_lista_profesional,
@@ -514,13 +514,47 @@ $(document).ready(function(){
             }
         });
 
+       //RECORDATORIO ACTUALIZACION FECHA DE RADICACIÓN PBS068
+        if($("#Id_servicio").val() == 1 && ($(this).val() == 168 || $(this).val() == 169)){
+            $('#modalAlerta').modal('show');
+            $('#mensaje_alerta').text('Recuerde actualizar la fecha de radicación en el campo Nueva fecha de radicación. Si ya la actualizó o no lo requiere por favor omita éste mensaje.');
+            setTimeout(() => {
+                $('#modalAlerta').modal('hide');
+                $('#mensaje_alerta').text('');
+            }, 4000);
+        }
+        else if($("#Id_servicio").val() == 3 && ($(this).val() == 166 || $(this).val() == 174 || $(this).val() == 168 || $(this).val() == 169)){
+            $('#modalAlerta').modal('show');
+            $('#mensaje_alerta').text('Recuerde actualizar la fecha de radicación en el campo Nueva fecha de radicación. Si ya la actualizó o no lo requiere por favor omita éste mensaje.');
+            setTimeout(() => {
+                $('#modalAlerta').modal('hide');
+                $('#mensaje_alerta').text('');
+            }, 4000);
+        }
+        //Capturar el ultimo que ejecuto la acción de asignación, cuando seleccionen la acción de devolver asignación PBS068
+        if($(this).val() == 131 || $(this).val() == 140){
+            data_ult_usuario = {
+                '_token':token,
+                'id_proceso' : $('#Id_proceso').val(),
+                'id_cliente' : $("#cliente").data('id'),
+                'id_servicio': $("#Id_servicio").val(),
+                'id_evento': $("#newId_evento").val(),
+                'id_asignacion':$('#newId_asignacion').val(),
+                'id_accion_devolucion': $(this).val()
+            };
+            let ultimoUsuario = await consultaUltimoUsuarioEjecutarAccion(data_ult_usuario);
+            if(ultimoUsuario[0] && Array.isArray(ultimoUsuario[1])){
+                let info_user = ultimoUsuario[1][0];
+                $('#profesional option[value="'+info_user['id']+'"]').prop('selected', true);
+                $('#profesional').val(info_user['id']).trigger('change');
+            }
+        }
         /* 
             Seteo fecha de de de cierre dependiendo de las siguientes acciones:
             REPORTAR NO PROCEDE CALIFICACIÓN: id 173
             REPORTAR NO RECALIFICACIÓN: id 149
             NO RATIFICAR PENSIÓN - NOTIFICAR FORMATO E: id 154
         */
-
         if($(this).val() == 173 || $(this).val() == 149 || $(this).val() == 154) {
             var fecha_con_hora = $("#fecha_accion").val();
             var fecha_sin_hora = fecha_con_hora.substring(0, 10);
@@ -533,6 +567,7 @@ $(document).ready(function(){
         '_token': token,
         'evento': $("#newId_evento").val(),
         'servicio': $("#Id_servicio").val(),
+        'asignacion': $("#newId_asignacion").val(),
         'parametro':"lista_tipos_docs",
     };
     $.ajax({
@@ -556,8 +591,10 @@ $(document).ready(function(){
 
         var evento = $("#newId_evento").val();
         var servicio = $("#Id_servicio").val();
+        var asignacion = $("#newId_asignacion").val();        
         $("#id_evento_familia").val(evento);
         $("#id_servicio_familia").val(servicio);
+        $("#id_asignacion_familia").val(asignacion);
     });
 
     /* Envío de información del documento familia */
@@ -677,6 +714,7 @@ $(document).ready(function(){
                 resumable.opts.query.Id_Documento = idDoc;
                 resumable.opts.query.Nombre_documento = $(`#Nombre_documento_${idDoc}`).val().replace(/ /g, "_");
                 resumable.opts.query.Id_servicio = $(`#Id_servicio_${idDoc}`).val();
+                resumable.opts.query.Id_asignacion = $(`#Id_asignacion_${idDoc}`).val();
             });
         }
     }); 
@@ -3014,6 +3052,7 @@ $(document).ready(function(){
             'estado_notificacion': $('#modalCorrespondencia #state_notificacion').val(),
             'tipo_correspondencia': tipo_correspondencia,
             'id_correspondencia': $('#modalCorrespondencia #id_correspondencia').val(),
+            'id_destinatario':$("#modalCorrespondencia #id_destinatario").val(),
             'accion': $('#btn_guardar_actualizar_correspondencia').val()
         };
         $.ajax({    

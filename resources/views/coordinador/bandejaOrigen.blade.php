@@ -33,13 +33,15 @@
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     <label for="f_desde" class="col-form-label">Fecha Desde</label>
-                                    <input type="date" class="f_desde form-control" name="consultar_f_desde" id="consultar_f_desde">
+                                    <input type="date" class="f_desde form-control" name="consultar_f_desde" id="consultar_f_desde" max="{{date("Y-m-d")}}" min='1900-01-01'>
+                                    <span class="d-none" id="consultar_f_desde_alerta" style="color: red; font-style: italic;"></span>
                                 </div>
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     <label for="f_hasta" class="col-form-label">Hasta</label>
-                                    <input type="date" class="f_hasta form-control" name="consultar_f_hasta" id="consultar_f_hasta">
+                                    <input type="date" class="f_hasta form-control" name="consultar_f_hasta" id="consultar_f_hasta" max="{{date("Y-m-d")}}" min='1900-01-01'>
+                                    <span class="d-none" id="consultar_f_hasta_alerta" style="color: red; font-style: italic;"></span>
                                 </div>
                             </div>
                             <div class="col-sm-3">
@@ -96,12 +98,12 @@
                                 <thead>
                                     <tr class="bg-info">
                                         <th class="detalleorigen">Detalle  </th>
-                                        <th>Cliente</th>
                                         <th>Nombre de afiliado</th>
                                         <th>N° identificación</th>
                                         <th>Servicio</th>
                                         <th>Estado</th>
                                         <th>Acción</th>
+                                        <th>Fecha acción</th>
                                         <th>Profesional actual</th>
                                         <th>Tipo de evento</th>
                                         <th>ID evento</th>
@@ -124,7 +126,7 @@
                                         <th>Fecha recepción documentos</th>
                                         <th>Fecha asignación para DTO</th>
                                         <th>Fecha devolución comité</th>
-                                        <th>Fecha acción</th>
+                                        <th>Cliente</th>
                                     </tr>
                                 </thead>
                                 <tbody id="body_listado_casos_origen">                                
@@ -207,7 +209,34 @@
 
     <script src="/js/bandeja_origen.js"></script>
     <script src="/js/funciones_helpers.js"></script>
-    
+    {{-- Validación general para todos los campos de tipo fecha --}}
+    <script>
+        let today = new Date().toISOString().split("T")[0];
+
+        // Seleccionar todos los inputs de tipo date
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+
+        // Agregar evento de escucha a cada input de tipo date que haya
+        dateInputs.forEach(input => {
+            //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
+            input.addEventListener('change', function() {
+                //Validamos que la fecha sea mayor a la fecha de 1900-01-01
+                if(this.value < '1900-01-01'){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#btn_filtro_bandeja').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea mayor a la fecha actual
+                if(this.value > today){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#btn_filtro_bandeja').addClass('d-none');
+                    return;
+                }
+                $('#btn_filtro_bandeja').removeClass('d-none');
+                return $(`#${this.id}_alerta`).text('').addClass("d-none");
+            });
+        });
+    </script>
     <script>
         function ocultarBotonFiltrar(){
             $('#btn_filtro_bandeja').addClass('d-none');

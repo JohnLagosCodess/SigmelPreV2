@@ -61,7 +61,6 @@ Route::post('/rolesiniciales', [RolesController::class, 'listadoRoles']);
 // Cambio de rol
 Route::post('/Sigmel',[RolesController::class, 'cambioDeRol'])->name('Sigmel');
 
-
 // 24/04/2023 - CRUD DE USUARIOS.
 // Vista: formulario para crear usuarios
 Route::get('/Sigmel/usuarios/nuevoUsuario', [IngenieriaController::class, 'mostrarVistaNuevoUsuario'])->name('NuevoUsuario');
@@ -327,6 +326,16 @@ Route::post('/getInformacionCorrespondencia', [CoordinadorController::class, 'ge
 Route::post('/guardarInformacionCorrespondencia', [CoordinadorController::class, 'guardarInformacionCorrespondencia']);
 // Acción: Consultar la información de correspondencia en base a un id de destinatario
 Route::post('/getInfoCorrespByIdDest', [CoordinadorController::class, 'getInformacionPorIdDestinatario']);
+// Acción: Consultar información de la calificación tecnica o la nueva calificación
+Route::post('/getInfoCalPCL', [CoordinadorController::class, 'getInformacionCalPCL']);
+// Acción: Consultar guardado del submodulo de un servicio especifico
+Route::post('/validarGuardadoSubmodulo', [CoordinadorController::class, 'validarGuardadoSubmodulo']);
+// Acción: Consultar visado del submodulo de un servicio especifico
+Route::post('/validarVisadoSubmodulo', [CoordinadorController::class, 'validarVisadoSubmodulo']);
+// Acción: Capturar la ultima persona en ejecutar una acción de asignación.
+Route::post('/capturarUsuarioUltAccion', [CoordinadorController::class, 'capturarUltimoEjecutorDeAccion']);
+
+
 
 // 14/07/2023
 // Vista: Módulo Calificación PCL Coordinador
@@ -733,6 +742,16 @@ Route::post('/historialAccionesEventosJun', [CalificacionJuntasController::class
 /** Creacion de expediente y lista de chequeo */
 //Accion: Generar lista chequeo
 Route::post('/registrarListaChequeo', [CalificacionJuntasController::class, 'generarListaChequeo']);
+// Accion: Insertar y acutalizar posicion y foleo del expediente
+Route::post('/insertarActualizarPosicionFoleos', [CalificacionJuntasController::class, 'insertarActualizarPosicionFole']);
+// Accion: Eliminar comunicado del expediente
+Route::post('/eliminarComunicadosExpediente', [CalificacionJuntasController::class, 'eliminarComunicadoExpediente']);
+// Accion: Generar expediente
+Route::post('/generarDatosExpedientes', [CalificacionJuntasController::class, 'generarDatosExpediente']);
+// Acción: Eliminaar zip de Expedientes
+Route::post('/eliminarZipExpedientes', [CalificacionJuntasController::class, 'eliminarZipExpediente']);
+// Prueba de carga y union de pdfs
+Route::post('/UnificarExpedientesPdfs', [CalificacionJuntasController::class, 'UnificarExpedientePdfs'])->name('unirpdf');
 
 //18/11/2023
 // Vista: Módulo Controversia Juntas
