@@ -769,6 +769,69 @@ $(document).ready(function () {
 
     });
 
+    // Función que permite solamente dos decimales escribir
+    function Maximo2Decimales(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 2) {
+          $(this).val(parseFloat(inputValue).toFixed(2));
+        }
+        });
+    };
+
+    // Función que permite solamente un decimal escribir
+    function Maximo1Decimal(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 1) {
+          $(this).val(parseFloat(inputValue).toFixed(1));
+        }
+    });
+    }
+
+    //evento cuando se le de click en el boton de eliminar
+    $(document).on('click', '.btn_eliminar_radicado', function() {  
+        // Deshabilita todo los botones de eliminar menos el clickeado
+        $('.btn_eliminar_radicado').css({
+            'color': '#ff4f4f',
+            'pointer-events': 'none', //deshabilita el click
+            'opacity': '0.5'
+        });
+
+        //Habilita el boton seleccionado
+        $(this).css({
+            'color': 'red', 
+            'pointer-events': 'auto',
+            'opacity': '1'
+        });
+
+        //Habilita nuevamente el boton tras finalizar el proceso.
+        let resultado = eliminar_evento($(this).data('id_comunicado'));
+        if(resultado == 'ok'){
+            $('.btn_eliminar_radicado').css({
+                'color': 'red',
+                'pointer-events': 'auto', //habilita el click
+                'opacity': '1'
+            });
+        }
+    });
+    historial_servicios();
+
+    //Mantiene el foco dentro del modal, principalmente para que sea compatible con select2
+    $.fn.modal.Constructor.prototype._enforceFocus = function () {
+        var that = this;
+        $(document).on('focusin.modal', function (e) {
+        if ($(e.target).hasClass('select2-input')) {
+           return true;
+        }
+
+        if (that && that.$element && that && that.$element && that.$element[0] !== e.target && !that.$element.has(e.target).length){
+            that.$element.focus();
+        }
+        });
+    };
 });
 
 /**
@@ -1054,72 +1117,6 @@ function transformar_caracteres(target) {
 
     return undefined;
 }
-
-// Función que permite solamente dos decimales escribir
-function Maximo2Decimales(idinput){
-    $('#'+idinput).on('input', function(){
-        var inputValue = $(this).val();
-        var decimalCount = (inputValue.split('.')[1] || []).length;        
-        if (decimalCount > 2) {
-          $(this).val(parseFloat(inputValue).toFixed(2));
-        }
-    });
-};
-
-// Función que permite solamente un decimal escribir
-function Maximo1Decimal(idinput){
-    $('#'+idinput).on('input', function(){
-        var inputValue = $(this).val();
-        var decimalCount = (inputValue.split('.')[1] || []).length;        
-        if (decimalCount > 1) {
-          $(this).val(parseFloat(inputValue).toFixed(1));
-        }
-    });
-}
-
-    //evento cuando se le de click en el boton de eliminar
-    $(document).on('click', '.btn_eliminar_radicado', function() {  
-        // Deshabilita todo los botones de eliminar menos el clickeado
-        $('.btn_eliminar_radicado').css({
-            'color': '#ff4f4f',
-            'pointer-events': 'none', //deshabilita el click
-            'opacity': '0.5'
-        });
-
-        //Habilita el boton seleccionado
-        $(this).css({
-            'color': 'red', 
-            'pointer-events': 'auto',
-            'opacity': '1'
-        });
-
-        //Habilita nuevamente el boton tras finalizar el proceso.
-        let resultado = eliminar_evento($(this).data('id_comunicado'));
-        if(resultado == 'ok'){
-            $('.btn_eliminar_radicado').css({
-                'color': 'red',
-                'pointer-events': 'auto', //habilita el click
-                'opacity': '1'
-            });
-        }
-    });
-    historial_servicios();
-
-    //Mantiene el foco dentro del modal, principalmente para que sea compatible con select2
-    $.fn.modal.Constructor.prototype._enforceFocus = function () {
-        var that = this;
-        $(document).on('focusin.modal', function (e) {
-        if ($(e.target).hasClass('select2-input')) {
-           return true;
-        }
-
-        if (that && that.$element && that && that.$element && that.$element[0] !== e.target && !that.$element.has(e.target).length){
-            that.$element.focus();
-        }
-        });
-    };
-});
-
 // Función que permite solamente dos decimales escribir
 function Maximo2Decimales(idinput){
     $('#'+idinput).on('input', function(){
