@@ -631,10 +631,10 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         @if (!empty($info_pronuncia[0]->ID_evento))
-                                            <input type="submit" id="ActualizarPronuncia" name="ActualizarPronuncia" class="btn btn-info" value="Actualizar">
+                                            <input type="button" id="ActualizarPronuncia" name="ActualizarPronuncia" class="btn btn-info" value="Actualizar">
                                             <input hidden="hidden" type="text" id="bandera_pronuncia_guardar_actualizar" value="Actualizar">
                                         @else
-                                            <input type="submit" id="GuardarPronuncia" name="GuardarPronuncia" class="btn btn-info" value="Guardar">                                                
+                                            <input type="button" id="GuardarPronuncia" name="GuardarPronuncia" class="btn btn-info" value="Guardar">                                                
                                             <input hidden="hidden" type="text" id="bandera_pronuncia_guardar_actualizar" value="Guardar">
                                         @endif
                                     </div>
@@ -879,6 +879,7 @@
    @include('//.coordinador.modalReemplazarArchivos')
    @include('//.coordinador.modalCorrespondencia')
    @include('//.modals.alertaRadicado')
+   @include('//.modals.alertasGestion')
 @stop
 @section('js')
     <script type="text/javascript">

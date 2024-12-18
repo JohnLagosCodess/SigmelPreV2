@@ -167,6 +167,7 @@
             {{-- MODAL PARA AGREGAR DOCUMENTOS INFORMACION PERICIAL --}}
             <?php $aperturaModal = 'Edicion_Busqueda'; ?>
             @include('administrador.modalcarguedocumentos')
+            @include('modals.alertasGestion')
         
         </div>
         
@@ -186,5 +187,6 @@
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.templates.min.js"></script>
     
+    <script src="/js/funciones_helpers.js?v=1.0.0"></script>
     <script src="/js/consultar_eventos.js"></script>
 @stop

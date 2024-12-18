@@ -2080,4 +2080,7 @@ $(document).ready(function(){
       $(this).val(firstLetter + restOfWord);
     });
 
+    $("#btn_guardar_evento").focus(function() {
+        procesar_alertas_gestion("#btn_guardar_evento", "#gestion_inicial_nuevo","creacion_evento","alerta");
+    });
 });

@@ -5694,6 +5694,25 @@ $(document).ready(function(){
     //Valida si hay radicados duplicados
     setTimeout(function() {
         radicados_duplicados('listado_comunicados_clpcl');
+
+        //Accion fundamentos de la calificacion
+        $("#GuardarDecreto").focus(function() {
+            let listen_id = "#GuardarDecreto, #GuardarNoDecreto, #ActualizarNoDecreto";
+            procesar_alertas_gestion(listen_id, "#form_RecaliDecreto","calificacion_tec","alerta");
+        });
+
+        
+        if($("#GuardrDictamenPericial").val() != 'Actualizar'){
+            //Accion dictamen pericial
+            $("#GuardrDictamenPericial").focus(function() {
+                procesar_alertas_gestion("#GuardrDictamenPericial", "#form_dictamen_pericial","calificacion_tec_pericial","alerta");
+            });
+        }
+
+        //Accion de visar
+        $("#GuardarComiteInter").focus(function() {
+            procesar_alertas_gestion("#GuardarComiteInter", "#form_comite_interdisciplinario","calificacion_tec_visar","alerta");
+        });
     }, 500);
 });
 // Examenes Interconsultas

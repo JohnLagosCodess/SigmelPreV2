@@ -2026,6 +2026,9 @@ $(document).ready(function(){
     //Valida si hay radicados duplicados
     setTimeout(function() {
         radicados_duplicados('listado_comunicado_pronu_origen');
+        $("#ActualizarPronuncia, #GuardarPronuncia").focus(function() {
+            procesar_alertas_gestion("#ActualizarPronuncia, #GuardarPronuncia", "#form_CaliPronuncia","pronunciamiento_origen","alerta");
+        });
     }, 500);
 
     /* Si se selecciona la opción Otro Cual Inserta un campo*/
@@ -2061,6 +2064,7 @@ $(document).ready(function(){
         }
 
     });
+
 
 });
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/
