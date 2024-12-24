@@ -41,7 +41,7 @@
     {{-- @else --}}
         <div class="card-info" style="border: 1px solid black;">
             <div class="card-header text-center">
-                <h4>Juntas Controversia - Evento: {{$array_datos_controversiaJuntas[0]->ID_evento}}</h4>
+                <h4>Juntas Controversia - Evento: <u><a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer;">{{$array_datos_controversiaJuntas[0]->ID_evento}}</a></u> Afiliado: {{$array_datos_controversiaJuntas[0]->Nombre_afiliado}} {{$array_datos_controversiaJuntas[0]->Nombre_tipo_documento}} {{$array_datos_controversiaJuntas[0]->Nro_identificacion}} - {{$array_datos_controversiaJuntas[0]->Tipo_afiliado}}</h4>
                 <h5 style="font-style: italic;"><?php echo $array_datos_controversiaJuntas[0]->Nombre_servicio;?></h5>
                 <input type="hidden" name="NombreUsuario" id="NombreUsuario" value="{{$user->name}}">
                 <input type="hidden" class="form-control" name="newId_evento" id="newId_evento" value="{{$array_datos_controversiaJuntas[0]->ID_evento}}">
@@ -60,7 +60,7 @@
                 <div class="row">
                     <div class="col-12">
                         <!-- Informacion Afiliado-->
-                        <div class="card-info" id="div_info_afiliado">
+                        <div class="card-info d-none" id="div_info_afiliado">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Información del afiliado</h5>
                             </div>
@@ -2134,6 +2134,15 @@
         <input hidden="hidden" type="text" name="Id_Servicio" id="Id_Servicio" value="{{$array_datos_controversiaJuntas[0]->Id_Servicio}}">
         <button type="submit" id="botonEnvioVista" style="display:none !important;"></button>
     </form>
+    <form action="{{route('gestionInicialEdicion')}}" id="formularioLlevarEdicionEvento" method="POST">
+        @csrf
+        <input type="hidden" name="bandera_buscador_adicion_dx" id="bandera_buscador_adicion_dx" value="desdeadiciondx">
+        <input hidden="hidden" type="text" name="newIdEvento" id="newIdEvento" value="{{$array_datos_controversiaJuntas[0]->ID_evento}}">
+        <input hidden="hidden" type="text" name="newIdAsignacion" id="newIdAsignacion" value="{{$array_datos_controversiaJuntas[0]->Id_Asignacion}}">
+        <input hidden="hidden" type="text" name="newIdproceso" id="newIdproceso" value="{{$array_datos_controversiaJuntas[0]->Id_proceso}}>
+        <input hidden="hidden" type="text" name="newIdservicio" id="newIdservicio" value="{{$array_datos_controversiaJuntas[0]->Id_Servicio}}">
+        <button type="submit" id="botonVerEdicionEvento" style="display:none !important;"></button>
+   </form>
     <?php $aperturaModal = 'Edicion'; ?>
     @include('//.administrador.modalcarguedocumentos')
     @include('//.administrador.modalProgressbar')

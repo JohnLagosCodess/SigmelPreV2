@@ -30,7 +30,7 @@
             </div>
         </div>
     </div>
-    <?php if($bandera_hay_dto === "no_hay_dto_atel"):?>
+    @if($bandera_hay_dto === "no_hay_dto_atel")
         <div class="row">
             <div class="col-12">
                 <div class="alert alert-info" role="alert">
@@ -39,10 +39,10 @@
                 </div>
             </div>
         </div>
-    <?php else:?>
+    @else
         <div class="card-info" style="border: 1px solid black;">
             <div class="card-header text-center">
-                <h4>Origen ATEL - Evento: {{$array_datos_calificacion_origen[0]->ID_evento}}</h4>
+                <h4>Origen ATEL - Evento: <u><a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer;">{{$array_datos_calificacion_origen[0]->ID_evento}}</a></u> Afiliado: {{$array_datos_calificacion_origen[0]->Nombre_afiliado}} {{$array_datos_calificacion_origen[0]->Nombre_tipo_documento}} {{$array_datos_calificacion_origen[0]->Nro_identificacion}} - {{$array_datos_calificacion_origen[0]->Tipo_afiliado}}</h4>
                 <h5 style="font-style: italic;">Adición DX</h5>
                 <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
                 <input type="hidden" name="NombreUsuario" id="NombreUsuario" value="{{$user->name}}">
@@ -60,7 +60,7 @@
 
             </div>
         {{-- </div> --}}
-        <?php if($bandera_tipo_evento === "tipo_evento_incorrecto"):?>
+        @if($bandera_tipo_evento === "tipo_evento_incorrecto")
             <div class="row mt-2">
                 <div class="col-12">
                     <div class="alert alert-info" role="alert">
@@ -69,7 +69,7 @@
                     </div>
                 </div>
             </div>
-        <?php else:?>
+        @else
             <form method="POST" id="form_Adicion_Dx">
                 <div class="card-body">
                     <div class="row">
@@ -86,33 +86,33 @@
                                                 <label for="activo">Activo <span style="color:red;">(*)</span></label>
                                                 <select class="custom-select es_activo" name="es_activo" id="es_activo" required>
                                                     <option value=""></option>
-                                                    <?php if(!empty($info_adicion_dx[0]->Activo)):?>
-                                                        <?php if(!empty($info_adicion_dx[0]->Activo)):?>
-                                                            <?php if($info_adicion_dx[0]->Activo == "Si"):?>
+                                                    @if(!empty($info_adicion_dx[0]->Activo))
+                                                        @if(!empty($info_adicion_dx[0]->Activo))
+                                                            @if($info_adicion_dx[0]->Activo == "Si")
                                                                 <option value="Si" selected>Si</option>
                                                                 <option value="No">No</option>
-                                                            <?php else:?>
+                                                            @else
                                                                 <option value="Si">Si</option>
                                                                 <option value="No" selected>No</option>
-                                                            <?php endif?>
-                                                        <?php else:?>
+                                                            @endif
+                                                        @else
                                                             <option value="Si">Si</option>
                                                             <option value="No">No</option>
-                                                        <?php endif?>
-                                                    <?php else:?>
-                                                        <?php if(!empty($datos_bd_DTO_ATEL[0]->Activo)):?>
-                                                            <?php if($datos_bd_DTO_ATEL[0]->Activo == "Si"):?>
+                                                        @endif
+                                                    @else
+                                                        @if(!empty($datos_bd_DTO_ATEL[0]->Activo))
+                                                            @if($datos_bd_DTO_ATEL[0]->Activo == "Si")
                                                                 <option value="Si" selected>Si</option>
                                                                 <option value="No">No</option>
-                                                            <?php else:?>
+                                                            @else
                                                                 <option value="Si">Si</option>
                                                                 <option value="No" selected>No</option>
-                                                            <?php endif?>
-                                                        <?php else:?>
+                                                            @endif
+                                                        @else
                                                             <option value="Si">Si</option>
                                                             <option value="No">No</option>
-                                                        <?php endif?>
-                                                    <?php endif?>
+                                                        @endif
+                                                    @endif
                                                 </select>
                                             </div>
                                         </div>
@@ -129,7 +129,7 @@
                             </div>
                             <div id="mostrar_ocultar_formularios">
                                 {{-- Información del afiliado --}}
-                                <div class="card-info">
+                                <div class="card-info d-none">
                                     <div class="card-header text-center" style="border: 1.5px solid black;">
                                         <h5>Información del afiliado</h5>
                                     </div>
@@ -186,7 +186,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row d-none">
                                             <div class="col-6">
                                                 <div class="form-group">
                                                     <label for="nombre_apoderado">Nombre apoderado</label>
@@ -1753,8 +1753,8 @@
             </div>  
             </div>
         </div>
-        <?php endif?>
-    <?php endif?>
+        @endif
+    @endif
 
     {{-- Retornar al modulo de calificacionOrigen --}}
     <form action="{{route('calificacionOrigen')}}" id="formularioEnvio" method="POST">            

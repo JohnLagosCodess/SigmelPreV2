@@ -31,7 +31,7 @@
     </div>
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
-            <h4>Calificación Origen ATEL - Evento: {{$array_datos_pronunciamientoOrigen[0]->ID_evento}}</h4>
+            <h4>Calificación Origen ATEL - Evento: <u><a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer;">{{$array_datos_pronunciamientoOrigen[0]->ID_evento}}</a></u> Afiliado: {{$array_datos_pronunciamientoOrigen[0]->Nombre_afiliado}} {{$array_datos_pronunciamientoOrigen[0]->Nombre_tipo_documento}} {{$array_datos_pronunciamientoOrigen[0]->Nro_identificacion}} - {{$array_datos_pronunciamientoOrigen[0]->Tipo_afiliado}}</h4>
             <h5 style="font-style: italic;">Pronunciamiento</h5>
             <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
         </div>
@@ -41,7 +41,7 @@
                     <form id="form_CaliPronuncia" method="POST" enctype="multipart/form-data">
                         @csrf
                         <!-- Informacion Afiliado-->
-                        <div class="card-info" id="div_info_afi">
+                        <div class="card-info d-none" id="div_info_afi">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Información del afiliado</h5>
                             </div>
