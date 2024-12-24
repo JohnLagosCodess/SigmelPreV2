@@ -32,7 +32,7 @@
     </div>
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
-            <h4>Origen ATEL - Evento: {{$array_datos_calificacion_origen[0]->ID_evento}}</h4>
+            <h4>Origen ATEL - Evento: <u><a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer;">{{$array_datos_calificacion_origen[0]->ID_evento}}</a></u> Afiliado: {{$array_datos_calificacion_origen[0]->Nombre_afiliado}} {{$array_datos_calificacion_origen[0]->Nombre_tipo_documento}} {{$array_datos_calificacion_origen[0]->Nro_identificacion}} - {{$array_datos_calificacion_origen[0]->Tipo_afiliado}}</h4>
             <h5 style="font-style: italic;">Determinación de Origen (DTO)</h5>
             <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
             <input type="hidden" name="NombreUsuario" id="NombreUsuario" value="{{$user->name}}">
@@ -83,7 +83,7 @@
                         {{-- FORMULARIO ACCIDENTE, ENFERMEDAD, INCIDENTE, SIN COBERTURA --}}
                         <div id="mostrar_ocultar_formularios" class="d-none1">
                             {{-- Información del afiliado --}}
-                            <div class="card-info">
+                            <div class="card-info d-none">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
                                     <h5>Información del afiliado</h5>
                                 </div>
@@ -141,7 +141,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row d-none">
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <label for="nombre_apoderado">Nombre apoderado</label>

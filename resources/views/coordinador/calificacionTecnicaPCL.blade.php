@@ -31,7 +31,7 @@
     </div>
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
-            <h4>Calificación PCL - Evento: {{$array_datos_calificacionPclTecnica[0]->ID_evento}}</h4>
+            <h4>Calificación PCL - Evento: <u><a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer;">{{$array_datos_calificacionPclTecnica[0]->ID_evento}}</a></u> Afiliado: {{$array_datos_calificacionPclTecnica[0]->Nombre_afiliado}} {{$array_datos_calificacionPclTecnica[0]->Nombre_tipo_documento}} {{$array_datos_calificacionPclTecnica[0]->Nro_identificacion}} - {{$array_datos_calificacionPclTecnica[0]->Tipo_afiliado}}</h4>
             <h5 style="font-style: italic;">Calificación Técnica</h5>
             <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
         </div>
@@ -99,7 +99,7 @@
                         ?>                        
                         {{-- <div class="d-none" id="div_calificacion_Pcl">   --}}               
                         <!-- Informacion Afiliado-->
-                        <div class="card-info columna_row1_afiliado" @if ($decreto_1507=='1') style="display:block" @else style="display:none" @endif>
+                        <div class="card-info columna_row1_afiliado d-none">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Información del afiliado</h5>
                             </div>
@@ -173,7 +173,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row d-none">
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="nombre_apoderado">Nombre apoderado</label>
