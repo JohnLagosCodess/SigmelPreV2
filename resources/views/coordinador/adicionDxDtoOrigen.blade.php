@@ -30,7 +30,7 @@
             </div>
         </div>
     </div>
-    <?php if($bandera_hay_dto === "no_hay_dto_atel"):?>
+    @if($bandera_hay_dto === "no_hay_dto_atel")
         <div class="row">
             <div class="col-12">
                 <div class="alert alert-info" role="alert">
@@ -39,10 +39,10 @@
                 </div>
             </div>
         </div>
-    <?php else:?>
+    @else
         <div class="card-info" style="border: 1px solid black;">
             <div class="card-header text-center">
-                <h4>Origen ATEL - Evento: {{$array_datos_calificacion_origen[0]->ID_evento}}</h4>
+                <h4>Origen ATEL - Evento: <u><a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer;">{{$array_datos_calificacion_origen[0]->ID_evento}}</a></u> Afiliado: {{$array_datos_calificacion_origen[0]->Nombre_afiliado}} {{$array_datos_calificacion_origen[0]->Nombre_tipo_documento}} {{$array_datos_calificacion_origen[0]->Nro_identificacion}} - {{$array_datos_calificacion_origen[0]->Tipo_afiliado}}</h4>
                 <h5 style="font-style: italic;">Adición DX</h5>
                 <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
                 <input type="hidden" name="NombreUsuario" id="NombreUsuario" value="{{$user->name}}">
@@ -60,7 +60,7 @@
 
             </div>
         {{-- </div> --}}
-        <?php if($bandera_tipo_evento === "tipo_evento_incorrecto"):?>
+        @if($bandera_tipo_evento === "tipo_evento_incorrecto")
             <div class="row mt-2">
                 <div class="col-12">
                     <div class="alert alert-info" role="alert">
@@ -69,7 +69,7 @@
                     </div>
                 </div>
             </div>
-        <?php else:?>
+        @else
             <form method="POST" id="form_Adicion_Dx">
                 <div class="card-body">
                     <div class="row">
@@ -86,33 +86,33 @@
                                                 <label for="activo">Activo <span style="color:red;">(*)</span></label>
                                                 <select class="custom-select es_activo" name="es_activo" id="es_activo" required>
                                                     <option value=""></option>
-                                                    <?php if(!empty($info_adicion_dx[0]->Activo)):?>
-                                                        <?php if(!empty($info_adicion_dx[0]->Activo)):?>
-                                                            <?php if($info_adicion_dx[0]->Activo == "Si"):?>
+                                                    @if(!empty($info_adicion_dx[0]->Activo))
+                                                        @if(!empty($info_adicion_dx[0]->Activo))
+                                                            @if($info_adicion_dx[0]->Activo == "Si")
                                                                 <option value="Si" selected>Si</option>
                                                                 <option value="No">No</option>
-                                                            <?php else:?>
+                                                            @else
                                                                 <option value="Si">Si</option>
                                                                 <option value="No" selected>No</option>
-                                                            <?php endif?>
-                                                        <?php else:?>
+                                                            @endif
+                                                        @else
                                                             <option value="Si">Si</option>
                                                             <option value="No">No</option>
-                                                        <?php endif?>
-                                                    <?php else:?>
-                                                        <?php if(!empty($datos_bd_DTO_ATEL[0]->Activo)):?>
-                                                            <?php if($datos_bd_DTO_ATEL[0]->Activo == "Si"):?>
+                                                        @endif
+                                                    @else
+                                                        @if(!empty($datos_bd_DTO_ATEL[0]->Activo))
+                                                            @if($datos_bd_DTO_ATEL[0]->Activo == "Si")
                                                                 <option value="Si" selected>Si</option>
                                                                 <option value="No">No</option>
-                                                            <?php else:?>
+                                                            @else
                                                                 <option value="Si">Si</option>
                                                                 <option value="No" selected>No</option>
-                                                            <?php endif?>
-                                                        <?php else:?>
+                                                            @endif
+                                                        @else
                                                             <option value="Si">Si</option>
                                                             <option value="No">No</option>
-                                                        <?php endif?>
-                                                    <?php endif?>
+                                                        @endif
+                                                    @endif
                                                 </select>
                                             </div>
                                         </div>
@@ -129,7 +129,7 @@
                             </div>
                             <div id="mostrar_ocultar_formularios">
                                 {{-- Información del afiliado --}}
-                                <div class="card-info">
+                                <div class="card-info d-none">
                                     <div class="card-header text-center" style="border: 1.5px solid black;">
                                         <h5>Información del afiliado</h5>
                                     </div>
@@ -186,7 +186,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row d-none">
                                             <div class="col-6">
                                                 <div class="form-group">
                                                     <label for="nombre_apoderado">Nombre apoderado</label>
@@ -423,10 +423,11 @@
                                                     <label for="fecha_evento">Fecha del evento</label>
                                                     <input type="hidden" id="bd_fecha_evento" value="">
                                                     <?php if(!empty($info_adicion_dx[0]->Fecha_evento)):?>
-                                                        <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" value="<?php echo $info_adicion_dx[0]->Fecha_evento;?>" required>
+                                                        <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php echo $info_adicion_dx[0]->Fecha_evento;?>" required>
                                                     <?php else: ?>
-                                                        <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>" required>
+                                                        <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>" required>
                                                     <?php endif ?>
+                                                    <span class="d-none" id="fecha_evento_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -502,10 +503,11 @@
                                                 <div class="form-group">
                                                     <label for="fecha_fallecimiento">Fecha de fallecimiento</label>
                                                     <?php if(!empty($info_adicion_dx[0]->Fecha_fallecimiento)):?>
-                                                        <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" value="<?php echo $info_adicion_dx[0]->Fecha_fallecimiento;?>">
+                                                        <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php echo $info_adicion_dx[0]->Fecha_fallecimiento;?>">
                                                     <?php else: ?>
-                                                        <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)){echo $datos_bd_DTO_ATEL[0]->Fecha_fallecimiento;}?>" >
+                                                        <input type="date" class="form-control" name="fecha_fallecimiento" id="fecha_fallecimiento" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_fallecimiento)){echo $datos_bd_DTO_ATEL[0]->Fecha_fallecimiento;}?>" >
                                                     <?php endif ?>
+                                                    <span class="d-none" id="fecha_fallecimiento_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1117,6 +1119,12 @@
                                                 <input type="date" class="form-control" name="f_visado_comite" id="f_visado_comite" value="{{now()->format('Y-m-d')}}"  disabled>                                                
                                             @endif
                                         </div>
+                                    </div>
+                                    <div class="col-2 form-group align-self-end">
+                                        <div class="custom-control custom-checkbox">                                                
+                                            <input type="checkbox" class="custom-control-input" name="oficio_origen" value="Si" id="oficio_origen" {{isset($array_comite_interdisciplinario[0]->Visar) ? 'checked' : ''}} required>                                                
+                                            <label for="oficio_origen" class="custom-control-label">Oficio origen<span style="color: red;">(*)</label>
+                                        </div>
                                     </div>                                    
                                     <div class="col-2">
                                         <div class="form-group" style="padding-top: 31px;">                                             
@@ -1135,8 +1143,8 @@
                     </div>
                 <?php endif ?>
                 <!--  Correspondencia -->
-                @if(!empty($array_comite_interdisciplinario[0]->Visar) && $array_comite_interdisciplinario[0]->Visar == "Si")
-                    <div class="card-info <?php if(!empty($array_comite_interdisciplinario[0]->Asunto)):?> d-none <?php endif?>" id="div_correspondecia">
+
+                <div class="card-info d-none" id="div_correspondecia">
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Correspondencia</h5>
                         </div>
@@ -1148,18 +1156,6 @@
                         <form id="form_correspondencia_adx" action="POST">                            
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-3">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_comite_interdisciplinario[0]->Oficio_Origen) && $array_comite_interdisciplinario[0]->Oficio_Origen == 'Si')
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si" checked>
-                                                @else
-                                                    <input class="custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si">                                                    
-                                                @endif
-                                                <label for="oficio_origen" class="custom-control-label">Oficio Origen</label>
-                                            </div>
-                                        </div>
-                                    </div> 
                                     {{-- <div class="col-3">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
@@ -1540,8 +1536,8 @@
                                 </div> 
                             </div>
                         </form>
-                    </div>
-                @endif
+                </div>
+
             <!-- Comunicados - Dictamen y Oficio remisorio -->                    
             <div class="card-info" id="div_comunicado_dictamen_oficioremisorio">
                 <div class="card-header text-center" style="border: 1.5px solid black;">
@@ -1757,8 +1753,8 @@
             </div>  
             </div>
         </div>
-        <?php endif?>
-    <?php endif?>
+        @endif
+    @endif
 
     {{-- Retornar al modulo de calificacionOrigen --}}
     <form action="{{route('calificacionOrigen')}}" id="formularioEnvio" method="POST">            
@@ -1824,7 +1820,7 @@
 
             contador_examen = contador_examen + 1;
             var nueva_fila_examen = [
-                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}" required/>',
+                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}" min="1900-01-01" required/><span class="d-none" id="fecha_examen_fila_'+contador_examen+'_alerta" style="color: red; font-style: italic;"></span>',
                 '<input type="text" class="form-control" id="nombre_examen_fila_'+contador_examen+'" name="nombre_examen"/>',
                 '<textarea id="descripcion_resultado_fila_'+contador_examen+'" class="form-control" name="descripcion_resultado" cols="90" rows="4"></textarea>',
                 '<div class="centrar"><a href="javascript:void(0);" id="btn_remover_examen_fila" class="text-info" data-fila="fila_'+contador_examen+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
@@ -1834,9 +1830,11 @@
             var agregar_examen_fila = listado_examenes_interconsultas.row.add(nueva_fila_examen).draw().node();
             $(agregar_examen_fila).addClass('fila_'+contador_examen);
             $(agregar_examen_fila).attr("id", 'fila_'+contador_examen);
+            // Llamar a la función para añadir la validación al nuevo campo de tipo fecha
+            agregarValidacionFecha(`#fecha_examen_fila_${contador_examen}`);
 
         });
-        
+
         $(document).on('click', '#btn_remover_examen_fila', function(){
             var nombre_exame_fila = $(this).data("fila");
             listado_examenes_interconsultas.row("."+nombre_exame_fila).remove().draw();
@@ -2036,6 +2034,37 @@
 
         }, 500);
 
+    </script>
+    {{-- Validación general para todos los campos de tipo fecha --}}
+    <script>
+        let today = new Date().toISOString().split("T")[0];
+
+        // Seleccionar todos los inputs de tipo date
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+
+        // Agregar evento de escucha a cada input de tipo date que haya
+        dateInputs.forEach(input => {
+            //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
+            input.addEventListener('change', function() {
+                //Validamos que la fecha sea mayor a la fecha de 1900-01-01
+                if(this.value < '1900-01-01'){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                    $('#GuardarAdicionDx').addClass('d-none');
+                    $('#ActualizarAdicionDx').addClass('d-none');
+                    return;
+                }
+                //Validamos que la fecha no sea mayor a la fecha actual
+                if(this.value > today){
+                    $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                    $('#GuardarAdicionDx').addClass('d-none');
+                    $('#ActualizarAdicionDx').addClass('d-none');
+                    return;
+                }
+                $('#GuardarAdicionDx').removeClass('d-none');
+                $('#ActualizarAdicionDx').removeClass('d-none');
+                return $(`#${this.id}_alerta`).text('').addClass("d-none");
+            });
+        });
     </script>
     <script type="text/javascript" src="/js/adicion_dx_dto.js"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>

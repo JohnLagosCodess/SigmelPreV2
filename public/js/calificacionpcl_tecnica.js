@@ -2861,7 +2861,7 @@ $(document).ready(function(){
 
     Visar.change(function(){
         if ($(this).prop('checked')) {
-            $("#profesional_comite").val(NombreUsuario);            
+            $("#profesional_comite").val(NombreUsuario);
         } else {            
             $("#profesional_comite").val('');            
         }
@@ -2897,11 +2897,7 @@ $(document).ready(function(){
                     $('#GuardarComiteInter').prop('disabled', true);
                     $('#div_alerta_comiteInter').removeClass('d-none');
                     $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');                                            
-                    setTimeout(function(){
-                        $('#div_alerta_comiteInter').addClass('d-none');
-                        $('.alerta_comiteInter').empty();   
-                        location.reload();
-                    }, 3000);   
+                    $('#form_correspondencia_pcl').trigger('submit'); 
                 }
             }          
         })
@@ -2966,7 +2962,7 @@ $(document).ready(function(){
 
         // formulario corrrespondencia
         $("#GuardarComiteInter").prop('disabled', true);
-        $("#div_correspondecia").removeClass('d-none');
+        //$("#div_correspondecia").removeClass('d-none');
     }
 
     // Validar cual de los oficios esta marcado
@@ -3701,6 +3697,7 @@ $(document).ready(function(){
             'estado_notificacion': $('#modalCorrespondencia #state_notificacion').val(),
             'tipo_correspondencia': tipo_correspondencia,
             'id_correspondencia': $('#modalCorrespondencia #id_correspondencia').val(),
+            'id_destinatario':$("#modalCorrespondencia #id_destinatario").val(),
             'accion': $('#btn_guardar_actualizar_correspondencia').val()
         };
         $.ajax({    
@@ -4159,6 +4156,8 @@ $(document).ready(function(){
                     $('#GuardarCorrespondencia').prop('disabled', true);
                     $('#div_alerta_Correspondencia').removeClass('d-none');
                     $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');
+                    $('.alerta_comiteInter').empty();
+                    $('.alerta_comiteInter').append('<strong>' + response.mensaje + '</strong>'); 
                     let Id_Comunicado = response.Id_Comunicado;
                     let Bandera_boton_guardar_oficio = response.Bandera_boton_guardar_oficio;
                     let datos_generar_oficios = {
@@ -4252,172 +4251,201 @@ $(document).ready(function(){
     }
     // Captura Formulario Dictamen pericial
     $('#form_dictamen_pericial').submit(function (e){
-        e.preventDefault();              
-        document.querySelector('#GuardrDictamenPericial').disabled=true;        
-        // Abrir modal para mostrar alerta y retornar al input
-        var validarsuma_combinada = $('#suma_combinada').val();
-        var validarTotal_Deficiencia50 = $('#Total_Deficiencia50').val();
-        
-        // Funcion de modal si la suma combinada esta vacia o la total deficiencia 50
-        function displayModal() {
-            $('#AlertaScTd').modal('show');    
-            // Remover eventos previos para evitar duplicación
-            $('#AlertaScTd').off('hidden.bs.modal');    
-            // Configurar el evento para que, al cerrar la modal, se haga focus en el botón
-            $('#AlertaScTd').on('hidden.bs.modal', function () {
-                setTimeout(function() {
-                    // Establecer el foco
-                    $('#suma_combinada').focus(); 
-                    document.querySelector('#GuardrDictamenPericial').disabled=false;
-                }, 200);
-            });
-        }          
-
-        if ((validarsuma_combinada.trim() === "" && validarTotal_Deficiencia50.trim() === "") 
-        || (validarsuma_combinada.trim() === "" && validarTotal_Deficiencia50.trim() !== "") 
-        || (validarsuma_combinada.trim() !== "" && validarTotal_Deficiencia50.trim() === "")) {
-            displayModal();
-            return;
-        }
-
-        var Decreto_pericial = $('#decreto_califi').val();
-        var Id_EventoDecreto = $('#Id_Evento_decreto').val();
-        var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
-        var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
-        var suma_combinada = $('#suma_combinada').val();
-        var Total_Deficiencia50 = $('#Total_Deficiencia50').val();
-        var total_discapacidades = $('#total_discapacidades').val();
-        var total_minusvalia = $('#total_minusvalia').val();
-        var radicado_dictamen = $('#radicado_dictamen').val();
-        var porcentaje_pcl = $('#porcentaje_pcl').val();
-        var rango_pcl = $('#rango_pcl').val();
-        var monto_inde = $('#monto_inde').val();
-        var tipo_evento = $('#tipo_evento').val();
-        var tipo_origen = $('#tipo_origen').val();
-        var f_evento_pericial = $('#f_evento_pericial').val();
-        var f_estructura_pericial = $('#f_estructura_pericial').val();
-        var n_siniestro = $('#n_siniestro').val();
-        var requiere_rev_pension = $('input[name="requiere_rev_pension"]:checked').val();
-        var sustenta_fecha = $('#sustenta_fecha').val();
-        var detalle_califi = $('#detalle_califi').val();
-        var enfermedad_catastrofica = $('input[name="enfermedad_catastrofica"]:checked').val(); 
-        var enfermedad_congenita = $('input[name="enfermedad_congenita"]:checked').val(); 
-        var tipo_enfermedad = $('#tipo_enfermedad').val();
-        var requiere_persona = $('input[name="requiere_persona"]:checked').val(); 
-        var requiere_decisiones_persona = $('input[name="requiere_decisiones_persona"]:checked').val(); 
-        var requiere_dispositivo_apoyo = $('input[name="requiere_dispositivo_apoyo"]:checked').val();         
-        var justi_dependencia = $('#justi_dependencia').val();   
-        var bandera_dictamen_pericial = $('#bandera_dictamen_pericial').val();
-        
-        var datos_dictamenPericial={
-            '_token': token,            
-            'Decreto_pericial':Decreto_pericial,
-            'Id_EventoDecreto':Id_EventoDecreto,
-            'Id_ProcesoDecreto':Id_ProcesoDecreto,
-            'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,
-            'suma_combinada':suma_combinada,
-            'Total_Deficiencia50':Total_Deficiencia50,
-            'total_discapacidades':total_discapacidades,
-            'total_minusvalia':total_minusvalia,
-            'radicado_dictamen':radicado_dictamen,
-            'porcentaje_pcl':porcentaje_pcl,
-            'rango_pcl':rango_pcl,
-            'monto_inde':monto_inde,
-            'tipo_evento':tipo_evento,
-            'tipo_origen':tipo_origen,
-            'f_evento_pericial':f_evento_pericial,
-            'f_estructura_pericial':f_estructura_pericial,
-            'n_siniestro':n_siniestro,
-            'requiere_rev_pension': requiere_rev_pension,
-            'sustenta_fecha':sustenta_fecha,
-            'detalle_califi':detalle_califi,
-            'enfermedad_catastrofica':enfermedad_catastrofica,
-            'enfermedad_congenita':enfermedad_congenita,
-            'tipo_enfermedad':tipo_enfermedad,
-            'requiere_persona':requiere_persona,
-            'requiere_decisiones_persona':requiere_decisiones_persona,
-            'requiere_dispositivo_apoyo':requiere_dispositivo_apoyo,
-            'justi_dependencia':justi_dependencia,
-            'bandera_dictamen_pericial' :bandera_dictamen_pericial,
-        }
-
+        e.preventDefault();
+        datos_info_cal = {
+            '_token': token,
+            'tipo_decreto':$('#decreto_califi').val(),
+            'id_evento':$('#Id_Evento_decreto').val(),
+            'id_asignacion':$('#Id_Asignacion_decreto').val(),
+            'id_proceso':$('#Id_Proceso_decreto').val(),
+            'tipo_servicio': 'Cal_Tecnica'
+        };
         $.ajax({
             type:'POST',
-            url:'/guardardictamenesPericial',
-            data: datos_dictamenPericial,
+            url:'/getInfoCalPCL',
+            data: datos_info_cal,
+            beforeSend:function(){
+                $("#GuardrDictamenPericial").addClass("descarga-deshabilitada");
+            },
             success: function(response){
-                if (response.parametro == 'insertar_dictamen_pericial') {
-                    // document.querySelector('#GuardrDictamenPericial').disabled=true;
-                    $('#div_alerta_dictamen_pericial').removeClass('d-none');
-                    $('.alerta_dictamen_pericial').append('<strong>'+response.mensaje+'</strong>'); 
-
-                    // retornamos la variables necesarios para poder generar el dictamen y guardarlo en el servidor
-                    let Id_Comunicado = response.Id_Comunicado;
-                    let radicado_dictamen = response.radicado_dictamen; 
-                    let Bandera_boton_guardar_dictamen = response.Bandera_boton_guardar_dictamen;
-
-                    let datos_generar_dictamenes = {
-                        '_token': token,
-                        'ID_Evento_comuni':Id_EventoDecreto,
-                        'Id_Proceso_comuni':Id_ProcesoDecreto,
-                        'Id_Asignacion_comuni':Id_Asignacion_Dcreto,
-                        'N_siniestro':n_siniestro,
-                        'Radicado_comuni': radicado_dictamen,
-                        'Id_Comunicado': Id_Comunicado,
-                        'Bandera_boton_guardar_dictamen': Bandera_boton_guardar_dictamen,
-
-                    };
-                    // Llamar a la URL para generar el PDF después de que la primera solicitud que se completo
-                    // Según el decreto
-                    if (Decreto_pericial == 1) {
-                        $.ajax({
-                            type: 'POST',
-                            url: '/generarPdfDictamenesPcl',
-                            data: datos_generar_dictamenes,
-                            success: function(pdfResponse) {
-                                // la respuesta de generarPdfDictamenPcl
-                                // console.log('PDF generado');
-                            },
-                            error: function(xhr) {
-                                console.error('Error al generar el PDF', xhr);
-                            }
-                        });                        
-                    } else if (Decreto_pericial == 2){
-                        $.ajax({
-                            type: 'POST',
-                            url: '/generarPdfDictamenesPclCero',
-                            data: datos_generar_dictamenes,
-                            success: function(pdfResponse) {
-                                // la respuesta de generarPdfDictamenPcl
-                                // console.log('PDF generado');
-                            },
-                            error: function(xhr) {
-                                console.error('Error al generar el PDF', xhr);
-                            }
-                        }); 
-                    } else if (Decreto_pericial == 3){
-                        $.ajax({
-                            type: 'POST',
-                            url: '/generarPdfDictamenesPcl917',
-                            data: datos_generar_dictamenes,
-                            success: function(pdfResponse) {
-                                // la respuesta de generarPdfDictamenPcl
-                                // console.log('PDF generado');
-                            },
-                            error: function(xhr) {
-                                console.error('Error al generar el PDF', xhr);
-                            }
-                        }); 
-                    }
-
-                    setTimeout(function(){
-                        $('#div_alerta_dictamen_pericial').addClass('d-none');
-                        $('.alerta_dictamen_pericial').empty();   
-                        location.reload();
-                    }, 3000);   
+                if(response && !response[0]){
+                    let alerta = $('#alerta_falta_guardado');
+                    alerta.removeClass('d-none');
+                    alerta.text(response[1]);
+                    return setTimeout(() => {
+                        alerta.addClass('d-none');
+                        alerta.text('');
+                    }, 4500); 
                 }
-            }          
-        });
+                document.querySelector('#GuardrDictamenPericial').disabled=true;        
+                // Abrir modal para mostrar alerta y retornar al input
+                var validarsuma_combinada = $('#suma_combinada').val();
+                var validarTotal_Deficiencia50 = $('#Total_Deficiencia50').val();
+                
+                // Funcion de modal si la suma combinada esta vacia o la total deficiencia 50
+                function displayModal() {
+                    $('#AlertaScTd').modal('show');    
+                    // Remover eventos previos para evitar duplicación
+                    $('#AlertaScTd').off('hidden.bs.modal');    
+                    // Configurar el evento para que, al cerrar la modal, se haga focus en el botón
+                    $('#AlertaScTd').on('hidden.bs.modal', function () {
+                        setTimeout(function() {
+                            // Establecer el foco
+                            $('#suma_combinada').focus(); 
+                            document.querySelector('#GuardrDictamenPericial').disabled=false;
+                        }, 200);
+                    });
+                }          
+        
+                if ((validarsuma_combinada.trim() === "" && validarTotal_Deficiencia50.trim() === "") 
+                || (validarsuma_combinada.trim() === "" && validarTotal_Deficiencia50.trim() !== "") 
+                || (validarsuma_combinada.trim() !== "" && validarTotal_Deficiencia50.trim() === "")) {
+                    displayModal();
+                    return;
+                }
+        
+                var Decreto_pericial = $('#decreto_califi').val();
+                var Id_EventoDecreto = $('#Id_Evento_decreto').val();
+                var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
+                var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
+                var suma_combinada = $('#suma_combinada').val();
+                var Total_Deficiencia50 = $('#Total_Deficiencia50').val();
+                var total_discapacidades = $('#total_discapacidades').val();
+                var total_minusvalia = $('#total_minusvalia').val();
+                var radicado_dictamen = $('#radicado_dictamen').val();
+                var porcentaje_pcl = $('#porcentaje_pcl').val();
+                var rango_pcl = $('#rango_pcl').val();
+                var monto_inde = $('#monto_inde').val();
+                var tipo_evento = $('#tipo_evento').val();
+                var tipo_origen = $('#tipo_origen').val();
+                var f_evento_pericial = $('#f_evento_pericial').val();
+                var f_estructura_pericial = $('#f_estructura_pericial').val();
+                var n_siniestro = $('#n_siniestro').val();
+                var requiere_rev_pension = $('input[name="requiere_rev_pension"]:checked').val();
+                var sustenta_fecha = $('#sustenta_fecha').val();
+                var detalle_califi = $('#detalle_califi').val();
+                var enfermedad_catastrofica = $('input[name="enfermedad_catastrofica"]:checked').val(); 
+                var enfermedad_congenita = $('input[name="enfermedad_congenita"]:checked').val(); 
+                var tipo_enfermedad = $('#tipo_enfermedad').val();
+                var requiere_persona = $('input[name="requiere_persona"]:checked').val(); 
+                var requiere_decisiones_persona = $('input[name="requiere_decisiones_persona"]:checked').val(); 
+                var requiere_dispositivo_apoyo = $('input[name="requiere_dispositivo_apoyo"]:checked').val();         
+                var justi_dependencia = $('#justi_dependencia').val();   
+                var bandera_dictamen_pericial = $('#bandera_dictamen_pericial').val();
+                
+                var datos_dictamenPericial={
+                    '_token': token,
+                    'Decreto_pericial':Decreto_pericial,
+                    'Id_EventoDecreto':Id_EventoDecreto,
+                    'Id_ProcesoDecreto':Id_ProcesoDecreto,
+                    'Id_Asignacion_Dcreto':Id_Asignacion_Dcreto,
+                    'suma_combinada':suma_combinada,
+                    'Total_Deficiencia50':Total_Deficiencia50,
+                    'total_discapacidades':total_discapacidades,
+                    'total_minusvalia':total_minusvalia,
+                    'radicado_dictamen':radicado_dictamen,
+                    'porcentaje_pcl':porcentaje_pcl,
+                    'rango_pcl':rango_pcl,
+                    'monto_inde':monto_inde,
+                    'tipo_evento':tipo_evento,
+                    'tipo_origen':tipo_origen,
+                    'f_evento_pericial':f_evento_pericial,
+                    'f_estructura_pericial':f_estructura_pericial,
+                    'n_siniestro':n_siniestro,
+                    'requiere_rev_pension': requiere_rev_pension,
+                    'sustenta_fecha':sustenta_fecha,
+                    'detalle_califi':detalle_califi,
+                    'enfermedad_catastrofica':enfermedad_catastrofica,
+                    'enfermedad_congenita':enfermedad_congenita,
+                    'tipo_enfermedad':tipo_enfermedad,
+                    'requiere_persona':requiere_persona,
+                    'requiere_decisiones_persona':requiere_decisiones_persona,
+                    'requiere_dispositivo_apoyo':requiere_dispositivo_apoyo,
+                    'justi_dependencia':justi_dependencia,
+                    'bandera_dictamen_pericial' :bandera_dictamen_pericial,
+                }
+                $.ajax({
+                    type:'POST',
+                    url:'/guardardictamenesPericial',
+                    data: datos_dictamenPericial,
+                    success: function(response){
+                        if (response.parametro == 'insertar_dictamen_pericial') {
+                            // document.querySelector('#GuardrDictamenPericial').disabled=true;
+                            $('#div_alerta_dictamen_pericial').removeClass('d-none');
+                            $('.alerta_dictamen_pericial').append('<strong>'+response.mensaje+'</strong>'); 
+        
+                            // retornamos la variables necesarios para poder generar el dictamen y guardarlo en el servidor
+                            let Id_Comunicado = response.Id_Comunicado;
+                            let radicado_dictamen = response.radicado_dictamen; 
+                            let Bandera_boton_guardar_dictamen = response.Bandera_boton_guardar_dictamen;
+        
+                            let datos_generar_dictamenes = {
+                                '_token': token,
+                                'ID_Evento_comuni':Id_EventoDecreto,
+                                'Id_Proceso_comuni':Id_ProcesoDecreto,
+                                'Id_Asignacion_comuni':Id_Asignacion_Dcreto,
+                                'N_siniestro':n_siniestro,
+                                'Radicado_comuni': radicado_dictamen,
+                                'Id_Comunicado': Id_Comunicado,
+                                'Bandera_boton_guardar_dictamen': Bandera_boton_guardar_dictamen,
+        
+                            };
+                            // Llamar a la URL para generar el PDF después de que la primera solicitud que se completo
+                            // Según el decreto
+                            if (Decreto_pericial == 1) {
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/generarPdfDictamenesPcl',
+                                    data: datos_generar_dictamenes,
+                                    success: function(pdfResponse) {
+                                        // la respuesta de generarPdfDictamenPcl
+                                        // console.log('PDF generado');
+                                    },
+                                    error: function(xhr) {
+                                        console.error('Error al generar el PDF', xhr);
+                                    }
+                                });                        
+                            } else if (Decreto_pericial == 2){
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/generarPdfDictamenesPclCero',
+                                    data: datos_generar_dictamenes,
+                                    success: function(pdfResponse) {
+                                        // la respuesta de generarPdfDictamenPcl
+                                        // console.log('PDF generado');
+                                    },
+                                    error: function(xhr) {
+                                        console.error('Error al generar el PDF', xhr);
+                                    }
+                                }); 
+                            } else if (Decreto_pericial == 3){
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/generarPdfDictamenesPcl917',
+                                    data: datos_generar_dictamenes,
+                                    success: function(pdfResponse) {
+                                        // la respuesta de generarPdfDictamenPcl
+                                        // console.log('PDF generado');
+                                    },
+                                    error: function(xhr) {
+                                        console.error('Error al generar el PDF', xhr);
+                                    }
+                                }); 
+                            }
+        
+                            setTimeout(function(){
+                                $('#div_alerta_dictamen_pericial').addClass('d-none');
+                                $('.alerta_dictamen_pericial').empty();   
+                                location.reload();
+                            }, 3000);   
+                        }
+                    }          
+                });
+            },
+            complete:function(){
+                $("#GuardrDictamenPericial").removeClass("descarga-deshabilitada");
+            }
+        })
     })
 
     // Funcionalidad para insertar las etiquetas de diagnosticos cie10 y origen Notificacion calificacion numerica
@@ -4728,7 +4756,24 @@ $(document).ready(function(){
     //Valida si hay radicados duplicados
     setTimeout(function() {
         radicados_duplicados('listado_comunicados_clpcl');
-    }, 500);
+
+        //Accion fundamentos de la calificacion
+        $("#ActualizarDecreto, #GuardarDecreto").focus(function() {
+            let listen_id = "#ActualizarDecreto, #GuardarDecreto, #GuardarNoDecreto, #ActualizarNoDecreto";
+            procesar_alertas_gestion(listen_id, "#form_CaliTecDecreto","calificacion_tec","alerta");
+        });
+
+        //Accion dictamen pericial
+        $("#GuardrDictamenPericial").focus(function() {
+            procesar_alertas_gestion("#GuardrDictamenPericial", "#form_dictamen_pericial","calificacion_tec_pericial","alerta");
+        });
+
+        //Accion de visar
+        $("#GuardarComiteInter").focus(function() {
+            procesar_alertas_gestion("#GuardarComiteInter", "#form_comite_interdisciplinario","calificacion_tec_visar","alerta");
+        });
+    }, 1000);
+  
 });
 // guardar examenes de interconsulta
 $(document).ready(function(){

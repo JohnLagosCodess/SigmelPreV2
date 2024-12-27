@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('sigmel_gestiones')->create('sigmel_informacion_expedientes_eventos', function (Blueprint $table) {
-            $table->increments('Id_expedientes');
+            $table->increments('Id_expedientes');            
+            $table->integer('Id_Registro_Documento')->nullable();
+            $table->integer('Id_Asignacion')->nullable();
             $table->integer('Id_Documento')->nullable();
             $table->string('ID_evento', 20)->nullable();
             $table->text('Nombre_documento')->nullable();

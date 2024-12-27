@@ -83,3 +83,17 @@ if (!function_exists("fechaFormateada")) {
         return $fecha_formateada;
     }
 }
+if (!function_exists("generarNumeroEvento")) {
+    function generarNumeroEvento(){
+        $dato_consecutivoEvento = DB::table(getDatabaseName('sigmel_gestiones') . "sigmel_numero_orden_eventos")->select('Numero_orden')
+        ->where([['Proceso', 'General_Evento'], ['Estado', 'activo']])->get();
+    
+        $Id_evento = $dato_consecutivoEvento[0]->Numero_orden;        
+        $consecutivoEventos = (int)$Id_evento;        
+        $consecutivoEventos+=1;
+        $Nuevo_consecutivoEvento = sprintf("%015d", $consecutivoEventos);   
+    
+        return $Nuevo_consecutivoEvento;
+    }
+}
+

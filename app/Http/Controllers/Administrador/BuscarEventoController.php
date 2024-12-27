@@ -22,9 +22,16 @@ use App\Models\sigmel_informacion_comunicado_eventos;
 
 /* Procedimiento para calculo fecha vencimiento */
 use App\Models\sigmel_informacion_alertas_ans_eventos;
+use App\Services\GlobalService;
 
 class BuscarEventoController extends Controller
 {
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
     /* TODO LO REFERENTE AL FORMULARIO DE BUSCAR UN EVENTO*/
     // Busqueda Evaluado y evento
     public function mostrarVistaBuscarEvento(){
@@ -32,12 +39,13 @@ class BuscarEventoController extends Controller
             return redirect('/');
         }
         $user = Auth::user();
-
+        $info_cliente = $this->globalService->infoCliente();
+        // dd($info_cliente);
         // $session = app('session');
         // $session->put('num_ident', "");
         // $session->put('num_id_evento', "");
 
-        return view('administrador.busquedaEvento', compact('user'));
+        return view('administrador.busquedaEvento', compact('user','info_cliente'));
     }
 
 
@@ -3106,12 +3114,12 @@ class BuscarEventoController extends Controller
             if($documento["estado_documento"] == 'Cargado'){
 
                 //Para los dictamenes que esten repetidos se evaluaran como complementario
-                $dictamen_repetido = ($documento["Id_Documento"] === 13) ? 1 : 0;
+                $dictamen_repetido += ($documento["Id_Documento"] === 13) ? 1 : 0;
 
                 if(isset($documento["bandera"]) && $documento["bandera"] == "doc_adicional"){
                     $infoDocumento[$contador] = $documento;
-                    $infoDocumento[$contador]["Tipo"] = $dictamen_repetido > 0 ? "Complementario" : null;
-                    $nombreDocumento = $dictamen_repetido > 0 ? $infoDocumento[$contador]['Alias'] . "_IdEvento_{$evento}_IdServicio_{$servicio}_IdAsignacion_{$nuevo_id_asignacion}" : $infoDocumento[$contador]['nuevo_nombre']; //Deja el nombre del pdf, en caso de que sea un dictamen
+                    $infoDocumento[$contador]["Tipo"] = $dictamen_repetido > 1 ? "Complementario" : null;
+                    $nombreDocumento = $dictamen_repetido > 1 ? $infoDocumento[$contador]['Alias'] . "_IdEvento_{$evento}_IdServicio_{$servicio}_IdAsignacion_{$nuevo_id_asignacion}" : $infoDocumento[$contador]['nuevo_nombre']; //Deja el nombre del pdf, en caso de que sea un dictamen
 
                     $nombreFisico = $infoDocumento[$contador]['Nombre_fisico'];
 

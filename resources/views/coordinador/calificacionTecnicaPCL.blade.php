@@ -31,7 +31,7 @@
     </div>
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
-            <h4>Calificación PCL - Evento: {{$array_datos_calificacionPclTecnica[0]->ID_evento}}</h4>
+            <h4>Calificación PCL - Evento: <u><a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer;">{{$array_datos_calificacionPclTecnica[0]->ID_evento}}</a></u> Afiliado: {{$array_datos_calificacionPclTecnica[0]->Nombre_afiliado}} {{$array_datos_calificacionPclTecnica[0]->Nombre_tipo_documento}} {{$array_datos_calificacionPclTecnica[0]->Nro_identificacion}} - {{$array_datos_calificacionPclTecnica[0]->Tipo_afiliado}}</h4>
             <h5 style="font-style: italic;">Calificación Técnica</h5>
             <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
         </div>
@@ -99,7 +99,7 @@
                         ?>                        
                         {{-- <div class="d-none" id="div_calificacion_Pcl">   --}}               
                         <!-- Informacion Afiliado-->
-                        <div class="card-info columna_row1_afiliado" @if ($decreto_1507=='1') style="display:block" @else style="display:none" @endif>
+                        <div class="card-info columna_row1_afiliado d-none">
                             <div class="card-header text-center" style="border: 1.5px solid black;">
                                 <h5>Información del afiliado</h5>
                             </div>
@@ -164,7 +164,7 @@
                                         <div class="form-group">                                                
                                             <label for="modalidad_calificacion">Modalidad Calificación<span style="color: red;">(*)</span></label>
                                             <select class="modalidad_calificacion custom-select" name="modalidad_calificacion" id="modalidad_calificacion" required>
-                                                @if ($Modalidad_calificacion)
+                                                @if ($Modalidad_calificacion && $Modalidad_calificacion[0]->Modalidad_calificacion)
                                                     <option value="{{$Modalidad_calificacion[0]->Modalidad_calificacion}}" selected>{{$Modalidad_calificacion[0]->Nombre_modalidad_calificacion}}</option>
                                                 @else
                                                     <option value="">Seleccione una opción</option>
@@ -173,7 +173,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row d-none">
                                     <div class="col-6">
                                         <div class="form-group">
                                             <label for="nombre_apoderado">Nombre apoderado</label>
@@ -354,10 +354,10 @@
                                     <div class="col-12">
                                         <div class="form-group">
                                             @if (empty($array_info_decreto_evento[0]->ID_Evento))
-                                                <input type="submit" id="GuardarDecreto" name="GuardarDecreto" class="btn btn-info" value="Guardar">                                                
+                                                <input type="button" id="GuardarDecreto" name="GuardarDecreto" class="btn btn-info" value="Guardar">                                                
                                                 <input hidden="hidden" type="text" id="bandera_decreto_guardar_actualizar" value="Guardar">
                                             @else
-                                                <input type="submit" id="ActualizarDecreto" name="ActualizarDecreto" class="btn btn-info" value="Actualizar">
+                                                <input type="button" id="ActualizarDecreto" name="ActualizarDecreto" class="btn btn-info" value="Actualizar">
                                                 <input hidden="hidden" type="text" id="bandera_decreto_guardar_actualizar" value="Actualizar">
                                             @endif
                                         </div>
@@ -376,10 +376,10 @@
                                 <div class="col-12">
                                     <div class="form-group">
                                         @if (empty($datos_demos[0]->ID_Evento))                                            
-                                            <input type="submit" id="GuardarNoDecreto" name="GuardarNoDecreto" class="btn btn-info" value="Guardar">
+                                            <input type="button" id="GuardarNoDecreto" name="GuardarNoDecreto" class="btn btn-info" value="Guardar">
                                             <input hidden="hidden" type="text" name="banderaGuardarNoDecreto" id="banderaGuardarNoDecreto" value="Guardar">
                                         @else
-                                            <input type="submit" id="ActualizarNoDecreto" name="ActualizarNoDecreto" class="btn btn-info" value="Actualizar">
+                                            <input type="button" id="ActualizarNoDecreto" name="ActualizarNoDecreto" class="btn btn-info" value="Actualizar">
                                             <input hidden="hidden" type="text" name="banderaGuardarNoDecreto" id="banderaGuardarNoDecreto" value="Actualizar">
                                         @endif
                                     </div>
@@ -6959,22 +6959,24 @@
                                         <div class="form-group">
                                             <label for="f_evento_pericial">Fecha de evento<span style="color: red;">(*)</span></label>
                                             @if (!empty($array_dictamen_pericial[0]->F_evento) && $array_dictamen_pericial[0]->F_evento !== '0000-00-00')                                                
-                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_dictamen_pericial[0]->F_evento}}" max="{{now()->format('Y-m-d')}}"required>                                                                                                
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_dictamen_pericial[0]->F_evento}}" max="{{now()->format('Y-m-d')}}" min='1900-01-01' required>                                                                                                
                                             @elseif(!empty($array_tipo_fecha_evento[0]->F_evento))
-                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_tipo_fecha_evento[0]->F_evento}}" max="{{now()->format('Y-m-d')}}"required>
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" value="{{$array_tipo_fecha_evento[0]->F_evento}}" max="{{now()->format('Y-m-d')}}" min='1900-01-01' required>
                                             @else
-                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" max="{{now()->format('Y-m-d')}}"required>                                                
-                                            @endif                                        
+                                                <input type="date" class="f_evento_pericial form-control" id="f_evento_pericial" name="f_evento_pericial" max="{{now()->format('Y-m-d')}}" min='1900-01-01' required>                                                
+                                            @endif 
+                                            <span class="d-none" id="f_evento_pericial_alerta" style="color: red; font-style: italic;"></span>
                                         </div>
                                     </div>
                                     <div class="col-3">
                                         <div class="form-group">
                                             <label for="f_estructura_pericial">Fecha de estructuración<span style="color: red;">(*)</span></label>                                            
                                             @if (!empty($array_dictamen_pericial[0]->F_estructuracion))                                                
-                                                <input type="date" class="f_estructura_pericial form-control" id="f_estructura_pericial" name="f_estructura_pericial" value="{{$array_dictamen_pericial[0]->F_estructuracion}}" max="{{now()->format('Y-m-d')}}" required>                                                
+                                                <input type="date" class="f_estructura_pericial form-control" id="f_estructura_pericial" name="f_estructura_pericial" value="{{$array_dictamen_pericial[0]->F_estructuracion}}" max="{{now()->format('Y-m-d')}}" min='1900-01-01' required>                                                
                                             @else                                               
-                                                <input type="date" class="f_estructura_pericial form-control" id="f_estructura_pericial" name="f_estructura_pericial" max="{{now()->format('Y-m-d')}}" required>                                                
+                                                <input type="date" class="f_estructura_pericial form-control" id="f_estructura_pericial" name="f_estructura_pericial" max="{{now()->format('Y-m-d')}}" min='1900-01-01' required>                                                
                                             @endif
+                                            <span class="d-none" id="f_estructura_pericial_alerta" style="color: red; font-style: italic;"></span>
                                         </div>
                                     </div>
                                     <div class="col-3">
@@ -7117,12 +7119,15 @@
                                 @endif
                                 <div class="row">
                                     <div class="col-12">
+                                        <div id="alerta_falta_guardado" class="alerta_roja_datos_examenes alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
+                                    </div>
+                                    <div class="col-12">
                                         <div class="form-group">                                             
                                             @if (!empty($array_dictamen_pericial[0]->F_estructuracion) && $array_dictamen_pericial[0]->F_estructuracion !== '0000-00-00')
-                                                <input type="submit" id="GuardrDictamenPericial" name="GuardrDictamenPericial" class="btn btn-info" value="Actualizar">                                                                                                                                                
+                                                <input type="button" id="GuardrDictamenPericial" name="GuardrDictamenPericial" class="btn btn-info" value="Actualizar">                                                                                                                                                
                                                 <input hidden="hidden" type="text" id="bandera_dictamen_pericial" value="Actualizar">                                                                                           
                                             @else
-                                                <input type="submit" id="GuardrDictamenPericial" name="GuardrDictamenPericial" class="btn btn-info" value="Guardar">                                                                                                
+                                                <input type="button" id="GuardrDictamenPericial" name="GuardrDictamenPericial" class="btn btn-info" value="Guardar">                                                                                                
                                                 <input hidden="hidden" type="text" id="bandera_dictamen_pericial" value="Guardar">                                                                                           
                                             @endif
                                         </div>
@@ -7159,7 +7164,7 @@
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">                                                
                                                 @if(!empty($array_comite_interdisciplinario[0]->Visar))
-                                                    <input type="checkbox" class="custom-control-input" name="visar" id="visar" value="Si" checked disabled>                                                
+                                                    <input type="checkbox" class="custom-control-input" name="visar" id="visar" value="Si" checked disabled required>                                                
                                                 @else
                                                     <input type="checkbox" class="custom-control-input" name="visar" id="visar" value="Si" required>                                                
                                                 @endif
@@ -7167,7 +7172,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-4">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="profesional_comite">Profesional comité</label>                                                                                           
                                             @if(!empty($array_comite_interdisciplinario[0]->Profesional_comite))
@@ -7186,10 +7191,22 @@
                                                 <input type="date" class="form-control" name="f_visado_comite" id="f_visado_comite" value="{{now()->format('Y-m-d')}}"  disabled>                                                
                                             @endif
                                         </div>
-                                    </div>                                    
+                                    </div>
+                                    <div class="col-3 form-group align-self-end">
+                                        <div class="custom-control custom-checkbox d-flex flex-column">                                                
+                                            <div>
+                                                <input  class="custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" {{ @$array_comite_interdisciplinario[0]->Oficio_pcl == 'Si' ? 'checked' : '' }} required>                                                
+                                                <label for="oficiopcl" class="custom-control-label">Oficio PCL
+                                            </div>
+                                            <div>
+                                                <input  class=" custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" {{ @$array_comite_interdisciplinario[0]->Oficio_incapacidad  == 'Si' ? 'checked' : '' }} required>                                                
+                                                <label for="oficioinca" class="custom-control-label">Oficio Incapacidad
+                                            </div>
+                                        </div>
+                                    </div>  
                                     <div class="col-2">
                                         <div class="form-group" style="padding-top: 31px;">                                             
-                                            <input type="submit" id="GuardarComiteInter" name="GuardarComiteInter" class="btn btn-info" value="Guardar">                                                
+                                            <input type="button" id="GuardarComiteInter" name="GuardarComiteInter" class="btn btn-info" value="Guardar">                                                
                                             <input hidden="hidden" type="text" id="bandera_comiteInter" value="Guardar">                                                                                           
                                         </div>
                                     </div>
@@ -7229,30 +7246,7 @@
                                             </div>
                                         </div>
                                     @endif --}}
-                                    <div class="col-3">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_comite_interdisciplinario[0]->Oficio_pcl) && $array_comite_interdisciplinario[0]->Oficio_pcl == 'Si')
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" checked>
-                                                @else
-                                                    <input class="custom-control-input" type="checkbox" id="oficiopcl" name="oficiopcl" value="Si" required>                                                    
-                                                @endif
-                                                <label for="oficiopcl" class="custom-control-label">Oficio PCL</label>
-                                            </div>
-                                        </div>
-                                    </div> 
-                                    <div class="col-3">
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox">
-                                                @if (!empty($array_comite_interdisciplinario[0]->Oficio_incapacidad) && $array_comite_interdisciplinario[0]->Oficio_incapacidad == 'Si')
-                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" checked>
-                                                @else
-                                                    <input class="custom-control-input" type="checkbox" id="oficioinca" name="oficioinca" value="Si" required>                                                    
-                                                @endif
-                                                <label for="oficioinca" class="custom-control-label">Oficio Incapacidad</label>
-                                            </div>
-                                        </div>
-                                    </div> 
+
                                     {{-- <div class="col-3" style="display: flex; flex-direction: row; justify-content:space-between;">
                                         <div>
                                             <div class="form-group">
@@ -8125,6 +8119,7 @@
     </x-adminlte-modal>
     @include('//.coordinador.modalReemplazarArchivos')
     @include('//.coordinador.modalCorrespondencia')
+    @include('modals.alertasGestion')
  @stop
  
 
@@ -8167,7 +8162,7 @@
 
             contador_examen = contador_examen + 1;
             var nueva_fila_examen = [
-                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}" required/>',
+                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}" min="1900-01-01" required/><span class="d-none" id="fecha_examen_fila_'+contador_examen+'_alerta" style="color: red; font-style: italic;"></span>',
                 '<input type="text" class="form-control" id="nombre_examen_fila_'+contador_examen+'" name="nombre_examen"/>',
                 '<textarea id="descripcion_resultado_fila_'+contador_examen+'" class="form-control" name="descripcion_resultado" cols="90" rows="4"></textarea>',
                 '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_examen_fila" class="text-info" data-fila="fila_'+contador_examen+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
@@ -8178,8 +8173,8 @@
             $(agregar_examen_fila).addClass('fila_'+contador_examen);
             $(agregar_examen_fila).attr("id", 'fila_'+contador_examen);
 
-            //Valida que la fecha no sea mayor a la actual
-            Validarfecha("#fecha_examen_fila_"+contador_examen);
+            //Agrega las validaciones generales a las fechas
+            agregarValidacionFecha("#fecha_examen_fila_"+contador_examen, 'guardar_datos_examenes');
 
         });
 
@@ -8400,4 +8395,32 @@
 {{-- JS: DATATABLE AGUDEZA VISUAL --}}
 <script type="text/javascript" src="/js/datatable_agudeza_visual.js"></script>
 <script src="/plugins/summernote/summernote.min.js"></script>
+{{-- Validación general para todos los campos de tipo fecha --}}
+<script>
+    let today = new Date().toISOString().split("T")[0];
+
+    // Seleccionar todos los inputs de tipo date
+    const dateInputs = document.querySelectorAll('input[type="date"]');
+
+    // Agregar evento de escucha a cada input de tipo date que haya
+    dateInputs.forEach(input => {
+        //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
+        input.addEventListener('change', function() {
+            //Validamos que la fecha sea mayor a la fecha de 1900-01-01
+            if(this.value < '1900-01-01'){
+                $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+                $('#GuardrDictamenPericial').addClass('d-none');
+                return;
+            }
+            //Validamos que la fecha no sea mayor a la fecha actual
+            if(this.value > today){
+                $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+                $('#GuardrDictamenPericial').addClass('d-none');
+                return;
+            }
+            $('#GuardrDictamenPericial').removeClass('d-none');
+            return $(`#${this.id}_alerta`).text('').addClass("d-none");
+        });
+    });
+</script>
 @stop

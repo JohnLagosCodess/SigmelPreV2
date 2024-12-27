@@ -1257,7 +1257,7 @@ $(document).ready(function(){
                         $(elemento).slideUp(tiempoDeslizamiento_concepto);
                     }); 
                      
-                    $('#causal_decision').prop('required', true);
+                    $('#causal_decision').prop('required', false);
                     $('#sustentacion_concepto_jrci').prop('required', true);
                     $("#f_notificacion_recurso_jrci").val("");
                     $("#n_radicado_recurso_jrci").val("");
@@ -1273,7 +1273,7 @@ $(document).ready(function(){
                     elementosDeslizar_concepto3.forEach(elemento => {
                         $(elemento).slideDown(tiempoDeslizamiento_concepto);
                     }); 
-                    $('#causal_decision').prop('required', true);
+                    $('#causal_decision').prop('required', false);
                     $('#sustentacion_concepto_jrci').prop('required', true);
                  break;
                  case "Informativo":
@@ -1902,6 +1902,14 @@ $(document).ready(function(){
                 });
             }
         });
+        if(arrayDatosDiagnostico.length == 0 && datos_finales_motivo_calificacion.length == 0 || $("#origen_controversia").val() == ''){
+            $('.alerta_diagnosticos').append('<strong>Información incompleta. Por favor valide nuevamente</strong>').removeClass('d-none')
+            setTimeout(function(){
+                $('.alerta_diagnosticos').addClass('d-none');
+                $('.alerta_diagnosticos').empty();
+            }, 1500);
+            return;
+        }
         var datos_controvertido_juntas = {
             '_token': token,
             'newId_evento': $('#newId_evento').val(),
@@ -1963,7 +1971,6 @@ $(document).ready(function(){
             url:'/eliminarDiagnosticosMotivoCalificacionContro',
             data: datos_fila_quitar_examen,
             success:function(response){
-                console.log(response);
                 if (response.parametro == "fila_diagnostico_eliminada") {
                     $('#resultado_insercion_cie10_controvertido').empty();
                     $('#resultado_insercion_cie10_controvertido').removeClass('d-none');
@@ -1974,6 +1981,7 @@ $(document).ready(function(){
                         $('#resultado_insercion_cie10_controvertido').addClass('d-none');
                         $('#resultado_insercion_cie10_controvertido').removeClass('alert-success');
                         $('#resultado_insercion_cie10_controvertido').empty();
+                        location.reload();
                     }, 3000);
                 }
                 if (response.total_registros == 0) {
@@ -2049,7 +2057,6 @@ $(document).ready(function(){
             url:'/eliminarDiagnosticosMotivoCalificacionContro',
             data: datos_fila_quitar_examen,
             success:function(response){
-                console.log(response);
                 if (response.parametro == "fila_diagnostico_eliminada") {
                     $('#resultado_insercion_cie10_jrci_emitido').empty();
                     $('#resultado_insercion_cie10_jrci_emitido').removeClass('d-none');
@@ -2060,6 +2067,7 @@ $(document).ready(function(){
                         $('#resultado_insercion_cie10_jrci_emitido').addClass('d-none');
                         $('#resultado_insercion_cie10_jrci_emitido').removeClass('alert-success');
                         $('#resultado_insercion_cie10_jrci_emitido').empty();
+                        location.reload();
                     }, 3000);
                 }
                 /* if (response.total_registros == 0) {
@@ -2135,7 +2143,6 @@ $(document).ready(function(){
             url:'/eliminarDiagnosticosMotivoCalificacionContro',
             data: datos_fila_quitar_examen,
             success:function(response){
-                console.log(response);
                 if (response.parametro == "fila_diagnostico_eliminada") {
                     $('#resultado_insercion_cie10_jrci_reposicion').empty();
                     $('#resultado_insercion_cie10_jrci_reposicion').removeClass('d-none');
@@ -2146,6 +2153,7 @@ $(document).ready(function(){
                         $('#resultado_insercion_cie10_jrci_reposicion').addClass('d-none');
                         $('#resultado_insercion_cie10_jrci_reposicion').removeClass('alert-success');
                         $('#resultado_insercion_cie10_jrci_reposicion').empty();
+                        location.reload();
                     }, 3000);
                 }
                 /* if (response.total_registros == 0) {
@@ -2221,7 +2229,6 @@ $(document).ready(function(){
             url:'/eliminarDiagnosticosMotivoCalificacionContro',
             data: datos_fila_quitar_examen,
             success:function(response){
-                console.log(response);
                 if (response.parametro == "fila_diagnostico_eliminada") {
                     $('#resultado_insercion_cie10_jnci_emitido').empty();
                     $('#resultado_insercion_cie10_jnci_emitido').removeClass('d-none');
@@ -2232,6 +2239,7 @@ $(document).ready(function(){
                         $('#resultado_insercion_cie10_jnci_emitido').addClass('d-none');
                         $('#resultado_insercion_cie10_jnci_emitido').removeClass('alert-success');
                         $('#resultado_insercion_cie10_jnci_emitido').empty();
+                        location.reload();
                     }, 3000);
                 }
                 /* if (response.total_registros == 0) {
@@ -2319,6 +2327,14 @@ $(document).ready(function(){
                 });
             }
         });
+        if(arrayDatosEmitidoJrci.length == 0 && datos_finales_motivo_calificacion.length == 0 || $("#origen_jrci_emitido").val() == '' || $("#f_noti_dictamen_jrci").val() == '' || $("#f_radica_dictamen_jrci").val() == ''){
+            $('.alerta_roja_emitido_jrci').append('<strong>Información incompleta. Por favor valide nuevamente</strong>').removeClass('d-none')
+            setTimeout(function(){
+                $('.alerta_roja_emitido_jrci').addClass('d-none');
+                $('.alerta_roja_emitido_jrci').empty();
+            }, 1500);
+            return;
+        }
         var datos_emitido_jrci = {
             '_token': token,
             'newId_evento': $('#newId_evento').val(),
@@ -2382,11 +2398,7 @@ $(document).ready(function(){
                 if (response.parametro == 'registro_revision_jrci') {
                     $('.alerta_revision_jrci').removeClass('d-none');
                     $('.alerta_revision_jrci').append('<strong>'+response.mensaje+'</strong>');
-                    setTimeout(function(){
-                        $('.alerta_revision_jrci').addClass('d-none');
-                        $('.alerta_revision_jrci').empty();
-                        location.reload();
-                    }, 3000);
+                    $('#form_correspondencia_juntas').trigger('submit');
                 }
             }
         })
@@ -2524,7 +2536,14 @@ $(document).ready(function(){
                 });
             }
         });
-
+        if(arrayDatosReposiDictJrci.length == 0 && datos_finales_motivo_calificacion.length == 0 || $("#origen_reposicion_jrci").val() == ''){
+            $('.alerta_datos_reposicion_jrci').append('<strong>Información incompleta. Por favor valide nuevamente</strong>').removeClass('d-none')
+            setTimeout(function(){
+                $('.alerta_datos_reposicion_jrci').addClass('d-none');
+                $('.alerta_datos_reposicion_jrci').empty();
+            }, 1500);
+            return;
+        }
         var datos_partes_repo_jrci = {
             '_token': token,
             'newId_evento': $('#newId_evento').val(),
@@ -2692,6 +2711,15 @@ $(document).ready(function(){
                 });
             }
         });
+
+        if(arrayDatosEmitidoJnci.length == 0 && datos_finales_motivo_calificacion.length == 0 || $("#origen_jnci_emitido").val() == ''){
+            $('.alerta_roja_emitido_jnci').append('<strong>Información incompleta. Por favor valide nuevamente</strong>').removeClass('d-none')
+            setTimeout(function(){
+                $('.alerta_roja_emitido_jnci').addClass('d-none');
+                $('.alerta_roja_emitido_jnci').empty();
+            }, 1500);
+            return;
+        }
         var datos_emitido_jnci = {
             '_token': token,
             'newId_evento': $('#newId_evento').val(),
@@ -3216,9 +3244,7 @@ $(document).ready(function(){
             var existeOtroOficio = arrayComunicadosCorrespondencia.some(function(comunicado) {
                 return comunicado.Tipo_descarga !== 'Manual';
             });
-            if(!existeOtroOficio){
-                $("#div_correspondencia").removeClass('d-none');
-            }
+
         }else{
             $("#div_correspondencia").removeClass('d-none');
         }
@@ -3710,7 +3736,10 @@ $(document).ready(function(){
                 if (response.parametro == 'insertar_correspondencia') {
                     $('#GuardarCorrespondencia').prop('disabled', true);
                     $('#div_alerta_Correspondencia').removeClass('d-none');
-                    $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');                                            
+                    $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');      
+                    $('.alerta_revision_jrci').removeClass('d-none');
+                    $('.alerta_revision_jrci').empty();
+                    $('.alerta_revision_jrci').append('<strong>'+response.mensaje+'</strong>');                                      
                     setTimeout(function(){
                         $('#div_alerta_Correspondencia').addClass('d-none');
                         $('.alerta_Correspondencia').empty();   
@@ -4103,6 +4132,7 @@ $(document).ready(function(){
             'estado_notificacion': $('#modalCorrespondencia #state_notificacion').val(),
             'tipo_correspondencia': tipo_correspondencia,
             'id_correspondencia': $('#modalCorrespondencia #id_correspondencia').val(),
+            'id_destinatario':$("#modalCorrespondencia #id_destinatario").val(),
             'accion': $('#btn_guardar_actualizar_correspondencia').val()
         };
         $.ajax({    
@@ -5120,7 +5150,12 @@ $(document).ready(function(){
     //Valida si hay radicados duplicados
     setTimeout(function() {
         radicados_duplicados('tabla_comunicados_juntas');
+
+        $("#guardar_datos_revision_jrci").focus(function() {
+            procesar_alertas_gestion("#guardar_datos_revision_jrci", "#form_guardarRevisionjrci","juntas","alerta");
+        });
     }, 500);
+
 });
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/
 /*Para Diagnosticos Controvertido*/

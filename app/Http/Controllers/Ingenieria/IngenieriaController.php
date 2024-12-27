@@ -1663,8 +1663,6 @@ class IngenieriaController extends Controller
             
         }
     }
-    
-
     function rgb2hex2rgb($color){ 
         if(!$color) return false; 
         $color = trim($color); 

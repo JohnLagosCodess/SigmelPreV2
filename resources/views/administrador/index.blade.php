@@ -11,4 +11,9 @@
         <div class="card-header">ADMIN</div>
     </div>
 @stop
+@if(session('info_cliente'))
+    <script>
+        sessionStorage.setItem("infoCliente",JSON.stringify(@json(session('info_cliente'))));
+    </script>
+@endif
 

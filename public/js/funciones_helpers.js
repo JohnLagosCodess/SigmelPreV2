@@ -472,11 +472,18 @@ $(document).ready(function () {
     } 
     
     function NumerosEnteros(input) {
-        var value = $(input).val();      
-        if (!Number.isInteger(Number(value))) {
-          $(input).val("");
+        var value = $(input).val();  
+        // Expresión regular para solo números enteros positivos, sin comas ni puntos
+        var isInteger = /^[0-9]+$/; 
+        if (!isInteger.test(value)) {
+            // Si no es un número entero positivo válido, limpiamos el valor del input
+            $(input).val("");
         }
     }
+
+    $(document).on("input", '[id^="posicionFoleo"], [id^="posicion_expediente_"]', function() {
+        NumerosEnteros(this);
+    });   
     
     // Obtener el botón
     // let mybutton = document.getElementById("id_subir_scroll");
@@ -588,9 +595,11 @@ $(document).ready(function () {
     var id_rol = $("#id_rol").val();
     if (id_rol == 10) {
         $("#visar").prop('disabled', false);
+        $("#oficio_origen").prop("disabled", false);
         $("#GuardarComiteInter").prop('disabled', false);
     } else {
         $("#visar").prop('disabled', true);
+        $("#oficio_origen").prop("disabled", true);
         $("#GuardarComiteInter").prop('disabled', true);
     }
 
@@ -637,9 +646,8 @@ $(document).ready(function () {
         allowClear:false
     });
 
-    $(document).on('click',"#Edicion",function(e){
+    $(document).on('click',"#Edicion", async function(e){
         e.preventDefault();
-
         /**
          * Datos que se incluiran en la modal
          */
@@ -649,16 +657,64 @@ $(document).ready(function () {
         let profecional_asignado = $("#profesional option:selected").text();
         let id_profecional_asignado = $("#profesional option:selected").val();
         let servicio = $("#servicio").val();
-
         //Limpiamos los campos de la modal
         $("#c_accion_ejecutar, #c_f_accion, #c_e_facturacion, #c_profesional, #c_servicio, #alerta_accion").empty();
-
+        // VALIDACIÓN DEL GUARDADO DEL SUBMODULO ANTES DE EJECUTAR CIERTAS ACCIONES - PBS 068
+        if($("#accion").val() && ($("#accion").val() == 144 || $("#accion").val() == 145 || $("#accion").val() == 146)){
+            let id_evento = $("#Id_evento").val();
+            let id_asignacion = $("#Id_asignacion").val();
+            let id_proceso = $("#Id_procesos").val();
+            let id_servicio = $('#Id_servicio').val();
+            let is_save = await consultaGuardadoSubmodulo(id_evento,id_asignacion,id_proceso,id_servicio);
+            if(!is_save){
+                $('#modalAlerta').modal('show');
+                $('#mensaje_alerta').text('Recuerde que antes de ejecutar ésta acción debe gestionar y guardar el Pronunciamiento. Por favor valide nuevamente');
+                setTimeout(() => {
+                    $('#modalAlerta').modal('hide');
+                    $('#mensaje_alerta').text('');
+                }, 4000);
+                $("#alerta_accion").removeClass('d-none');
+                $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong>Recuerde que antes de ejecutar ésta acción debe gestionar y guardar el Pronunciamiento. Por favor valide nuevamente");
+                $("#c_ejecutar_accion").prop('disabled',true);
+                return;
+            }
+        }
+        // VALIDACIÓN DEL VISADO DEL SUBMODULO ANTES DE EJECUTAR CIERTAS ACCIONES - PBS068
+        if($("#accion").val() && ($("#accion").val() == 141 || $("#accion").val() == 142 || $("#accion").val() == 143 || $("#accion").val() == 175 
+        || $("#accion").val() == 176 || $("#accion").val() == 152 || $("#accion").val() == 153 || $("#accion").val() == 154)){
+            let id_evento = $("#Id_evento").val();
+            let id_asignacion = $("#Id_asignacion").val();
+            let id_proceso = $("#Id_procesos").val();
+            let id_servicio = $('#Id_servicio').val();
+            let is_save = await consultaVisadoSubmodulo(id_evento,id_asignacion,id_proceso,id_servicio);
+            if(!is_save){
+                $('#modalAlerta').modal('show');
+                $('#mensaje_alerta').text('Recuerde que antes de aprobar la calificación debe realizar el visado de la misma. Por favor valide nuevamente');
+                setTimeout(() => {
+                    $('#modalAlerta').modal('hide');
+                    $('#mensaje_alerta').text('');
+                }, 4000);
+                $("#alerta_accion").removeClass('d-none');
+                $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong>Recuerde que antes de aprobar la calificación debe realizar el visado de la misma. Por favor valide nuevamente");
+                $("#c_ejecutar_accion").prop('disabled',true);
+                return;
+            }
+        }
+        //Si en controversia no han seleccionado una fuente de información PBS068
+        if(servicio.startsWith('Controversia')){
+            if($("#fuente_info_juntas").val() == ''){
+                $("#alerta_accion").removeClass('d-none');
+                $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong> Por favor seleccione una fuente de información");
+                $("#c_ejecutar_accion").prop('disabled',true);
+                return;
+            }
+        }
         /**
          * De no haber una accion y/o profesional seleccionado no se habilitara el boton de ejecucion
          */
         if(accion_ejecutar == "" || id_profecional_asignado == ""){
            $("#alerta_accion").removeClass('d-none');
-           $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong> No se puede ejecutar la accion debio a que no ha seleccionado una accion y/o profesional");
+           $("#alerta_accion").append("<i class='fas fa-info-circle'></i><strong>Importante:</strong> No se puede ejecutar la accion debido a que no ha seleccionado una accion y/o profesional");
            $("#c_ejecutar_accion").prop('disabled',true);
            profecional_asignado = "";
         }else{
@@ -699,7 +755,7 @@ $(document).ready(function () {
                     setTimeout(() => {
                         $("#alerta_accion_ejecutando").addClass('d-none');
                         location.reload();
-                    }, 1500);
+                    }, 7000);
 
                 } else {
                     $("#alerta_accion").removeClass('d-none');
@@ -712,21 +768,20 @@ $(document).ready(function () {
 
 
     });
-});
 
-// Función que permite solamente dos decimales escribir
-function Maximo2Decimales(idinput){
+    // Función que permite solamente dos decimales escribir
+    function Maximo2Decimales(idinput){
     $('#'+idinput).on('input', function(){
         var inputValue = $(this).val();
         var decimalCount = (inputValue.split('.')[1] || []).length;        
         if (decimalCount > 2) {
           $(this).val(parseFloat(inputValue).toFixed(2));
         }
-    });
-};
+        });
+    };
 
-// Función que permite solamente un decimal escribir
-function Maximo1Decimal(idinput){
+    // Función que permite solamente un decimal escribir
+    function Maximo1Decimal(idinput){
     $('#'+idinput).on('input', function(){
         var inputValue = $(this).val();
         var decimalCount = (inputValue.split('.')[1] || []).length;        
@@ -734,7 +789,7 @@ function Maximo1Decimal(idinput){
           $(this).val(parseFloat(inputValue).toFixed(1));
         }
     });
-}
+    }
 
     //evento cuando se le de click en el boton de eliminar
     $(document).on('click', '.btn_eliminar_radicado', function() {  
@@ -769,14 +824,320 @@ function Maximo1Decimal(idinput){
         var that = this;
         $(document).on('focusin.modal', function (e) {
         if ($(e.target).hasClass('select2-input')) {
-            return true;
+           return true;
         }
 
-        if (that.$element[0] !== e.target && !that.$element.has(e.target).length) {
+        if (that && that.$element && that && that.$element && that.$element[0] !== e.target && !that.$element.has(e.target).length){
             that.$element.focus();
+        }
+        });
+    };
+});
+
+/**
+ * Procesa una alerta y la muestra para un proceso correspondiente, homologando la acccion del boton sobre el formulario al cual esta enlazado.
+ * @param {string} id_boton selector del boton donde se estara escuchando el evento. 
+ * @param {string} id_form selector del formulario al cual se delegará el evento submit
+ * @param {int} proceso id del proceso para el cual se esta procesando la alerta 
+ * @param {string} tipo_alerta El tipo de la alerta que se estara mostrando. alerta -> muestra una modal interactiva con botones de accion, otro - Muestra solo una modal informativa.
+ */
+function procesar_alertas_gestion(id_boton, id_form, proceso, tipo_alerta = "alerta") {
+    let timet_out = "";
+
+    //Remueve el footer slot, por alguna razon en algunos casos se agrega el footer slot y en otros no
+    $("#alertas_gestion").find(".modal-footer").remove();
+
+    let id_servicio = $("#newIdservicio").val();
+
+    /**
+     * Obtiene el nombre del servicio en funcion del id indicado
+     * @param {int} id_servicio 
+     * @returns
+     */
+    let nombre_servicio = (id_servicio) => {
+            let servicios = {
+                1: "Determinación del origen ATEL",
+                6: "Calificación Técnica", 
+                7: "Recalificacion", 
+                8: "Revisión pensión",
+                9: "Pronunciamiento PCL",
+                3: "Pronunciamiento Origen",
+                13: "Controversia PCL",
+                12: "Controversia Origen"
+            };
+        return servicios[id_servicio] || "";
+    }
+
+    /**
+     * Obtiene la alerta correspondiente al proceso indicado
+     * @param {string} proceso 
+     * @returns 
+     */
+    let data_alerta = (proceso) => {
+        let subtitulo = $("#nombre_afiliado").val() + " " + $("#tipo_documento").find(":selected").text() + " " + $("#nro_identificacion").val();
+
+        let match = {
+            creacion_evento: {
+                titulo: "¡Usted está registrando la información del afiliado!",
+                subtitulo: subtitulo.trim() == "Seleccione" ? "" : subtitulo.toUpperCase(),
+                subtitulo2: "Al cual se le ejecutará el siguiente movimiento:",
+                cuerpo: {
+                    Fecha_radicacion: $("#fecha_radicacion").val(),
+                    Proceso: $("#proceso").find(":selected").text(),
+                    Servicio: $("#servicio").find(":selected").text(),
+                    Accion: $("#accion").find(":selected").text(),
+                    Fecha_alerta: $("#fecha_alerta").val(),
+                    Profesional_asignado: $("#profesional").find(":selected").text() == "Seleccione" ? "" : $("#profesional").find(":selected").text(),
+                    Fecha_vencimiento: $("#fecha_vencimiento_visual").val()
+                },
+                alerta_gestion: "<span>Asignacion <b><u>No</u></b> guardada. !Valide nuevamente!</span>"
+            },
+            consultador_evento: {
+                titulo: "Está a punto de realizar el siguiente movimiento:",
+                cuerpo: {
+                    Fecha_radicacion: $("#fecha_radicacion_nuevo_proceso").val() || "",
+                    Proceso: $("[name^='selector_nuevo_proceso']").find(":selected").text() || "",
+                    Servicio: $("[name^='selector_nuevo_servicio']").find(":selected").text() || "",
+                    Accion: $("[name^='nueva_accion_nuevo_proceso']").find(":selected").text() || "",
+                    Fecha_alerta: $("#nueva_fecha_alerta_nuevo_proceso").val() || "",
+                    Profesional_asignado: $("[name^='nuevo_profesional_nuevo_proceso']").find(":selected").text() || "",
+                    Fecha_vencimiento: $("#fecha_visual_vencimiento_nuevo_proceso_").val() || ""
+                },
+                alerta_gestion: "<span>Movimiento <b><u>No</u></b> guardada. !Valide nuevamente!</span>"
+            },
+            dto: {
+                titulo: "Está a punto de emitir la siguiente calificación:",
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#tipo_evento").find(":selected").text() || "",
+                    Origen: $("#origen_dto_atel").find(":selected").text() || "",
+                },
+                alerta_gestion: "<span>Calificacion <b><u>No</u></b> guardada. !Valide nuevamente!</span>",
+            },
+            visar_dto: {
+                titulo: "Está a punto de visar la siguiente calificación:",
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#tipo_evento").find(":selected").text() || "",
+                    Origen: $("#origen_dto_atel").find(":selected").text() || "",
+                },
+                alerta_gestion: "<span>Visado <b><u>No</u></b> guardada. !Valide nuevamente!</span>",
+                footer: "<span class='text-danger text-center h6 mt-2'><b>Nota:</b>  Recuerde que, posterior al visado, no podrá realizar ajustes a la calificación<span>"
+            },
+            calificacion_tec:{
+                subtitulo: `Se iniciará la <b>${nombre_servicio(id_servicio)}</b> con el decreto <b>${$("#decreto_califi").find(":selected").text()}</b>; posterior a su confirmación, el sistema <b>NO</b> le permitirá modificar el decreto de calificación.`,
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Decreto: $("#decreto_califi").find(":selected").text(),
+                },
+                alerta_gestion: "<span>No se realizo el guardado. !Valide nuevamente!</span>",
+            },
+            calificacion_tec_pericial:{
+                subtitulo: `Esta a punto de emitir la siguiente calificación:`,
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#tipo_evento").find(":selected").text() || "",
+                    Origen:  $("#tipo_origen").find(":selected").text(),
+                    $pPCL: $("#porcentaje_pcl").val() + "%",
+                    Decreto: $("#decreto_califi").find(":selected").text(),
+                },
+                alerta_gestion: "<span>Calificacion <b><u>No</u></b> guardada. !Valide nuevamente!</span>",
+            },
+            calificacion_tec_visar:{
+                subtitulo: `Esta a punto de visar la siguiente calificación:`,
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#tipo_evento").find(":selected").text(),
+                    Origen: $("#tipo_origen").find(":selected").text(),
+                    $pPCL: $("#porcentaje_pcl").val() + "%",
+                    Decreto: $("#decreto_califi").find(":selected").text(),
+                },
+                alerta_gestion: "<span>No se realizo el guardado. !Valide nuevamente!</span>",
+                footer: "<span class='text-danger text-center h6 mt-2'><b>Nota:</b>  Recuerde que, posterior al visado, no podrá realizar ajustes a la calificación<span>"
+            },
+            pronunciamiento_pcl:{
+                subtitulo: `Está a punto de emitir el siguiete pronunciamiento:`,
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#tipo_evento").find(":selected").text(),
+                    Origen: $("#tipo_origen").find(":selected").text(),
+                    $iPCL: $("#porcentaje_pcl").val() + "%",
+                    pronunciamiento_ante_la_calificación: $("[name^='decision_pr']:checked").val(),
+                },
+                alerta_gestion: "<span>Pronunciamiento <b>No</b> guardado. !Valide nuevamente!</span>",
+            },
+            pronunciamiento_origen:{
+                subtitulo: `Está a punto de emitir el siguiete pronunciamiento:`,
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#tipo_evento").find(":selected").text(),
+                    Origen: $("#tipo_origen").find(":selected").text(),
+                    pronunciamiento_ante_la_calificación: $("[name^='decision_pr']:checked").val(),
+                },
+                alerta_gestion: "<span>Pronunciamiento <b>No</b> guardado. !Valide nuevamente!</span>",
+            },
+            juntas:{
+                subtitulo: `Está a punto de emitir el siguiente pronunciamiento ante la JRCI:`,
+                cuerpo: {
+                    Servicio: nombre_servicio(id_servicio),
+                    Tipo_de_evento: $("#Tipo_evento_juntas").val(),
+                    Origen_JRCI: $("#origen_jrci_emitido").find(":selected").text(),
+                    $iPCL_JRCI:  $("#porcentaje_pcl_jrci_emitido").val() || "",
+                    pronunciamiento_ante_Dictamen_de_JRCI: $("[name^='decision_dictamen_jrci']:checked").val(),
+                },
+                alerta_gestion: "<span>Pronunciamiento <b>No</b> guardado. !Valide nuevamente!</span>",
+            }
+        }
+
+        return match[proceso] || null;
+    }
+
+    /**
+     * Dibuja la alerta dentro del modal
+     * @param {string} titulo 
+     * @param {string} subtitulo 
+     * @param {string} subtitulo2 
+     * @param {string} cuerpoHTML 
+     * @param {string} footer 
+     */
+    const mostrarAlerta = (titulo, subtitulo, subtitulo2, cuerpoHTML,footer) => {
+        const $alerta = $("#contenido_header_gestion");
+        $alerta.find("#titulo").html(titulo);
+        $alerta.find("#subtitulo").html(subtitulo);
+        $alerta.find("#subtitulo2").html(subtitulo2);
+
+        $("#content_footer").html(footer);
+        $("#cuerpo_gestion").empty().append(cuerpoHTML);
+        $("#alerta_gestion").addClass("d-none");
+        $("#contenido_header_gestion, #info_footer, #ejecutar_gestion").removeClass('d-none');
+        $("#alertas_gestion").show();
+    };
+
+    /**
+     * Dibuja el cuerpo de la alerta dentro de la modal
+     * @param {Array} cuerpo
+     * @returns 
+     */
+    const generarCuerpoHTML = (cuerpo) => {
+        return Object.entries(cuerpo)
+            .map(([key, value]) => {
+                const columna1 = transformar_caracteres(key);
+                return `
+                    <div class="col-5"><span class="h6"><b>${columna1}:</b></span></div>
+                    <div class="col-7"><span class="h6">${value}</span></div>
+                `;
+            })
+            .join('');
+    };
+
+    const ocultarAlerta = () => {
+        $("#alertas_gestion").hide();
+        $("#alerta_gestion").addClass("d-none");
+    };
+
+    /**
+     * Dependiento del tipo de alerta mostrara los botones interaccion para homologar el evento submit, sino mostrara solo una alerta
+     */
+    if (tipo_alerta == "alerta") {
+        $(id_boton).click(function () {
+            clearTimeout(timet_out);
+            const datos = data_alerta(proceso);
+            const cuerpoHTML = generarCuerpoHTML(datos.cuerpo);
+            $("#cerrar_modal").remove();
+            $("#no_ejecutar_gestion").removeClass("d-none");
+            mostrarAlerta(datos.titulo, datos.subtitulo, datos.subtitulo2, cuerpoHTML,datos.footer);
+
+            $("#ejecutar_gestion").off('click').on('click', function () {
+                const $form = $(id_form);
+                if ($form[0].checkValidity()) {
+                    $form.trigger("submit");
+                } else {
+                    $form[0].reportValidity();
+                }
+                ocultarAlerta();
+            });
+        });
+    }else {
+        //Actualmente solo para dto
+        $("#alertas_gestion").show();
+        $("#contenido_header_gestion, #info_footer, #ejecutar_gestion").addClass('d-none');
+        $("#no_ejecutar_gestion").addClass("d-none");
+        $("#cerrar_modal").remove();
+        $("#no_ejecutar_gestion").after('<button class="btn btn-danger d-none" id="cerrar_modal" data-dismiss="modal">Cerrar</button>');
+        $("#cerrar_modal").removeClass("d-none");
+        $("#cuerpo_gestion").empty().html(`
+        <span>
+            El formulario a gestionar dependerá de la selección registrada en el campo Tipo de evento.
+            Adicionalmente, esta información actualizará el campo de Tipo de Evento del formulario 
+            <u><b>Edición de Evento</b></u>
+        </span>
+    `);
+
+        timet_out = setTimeout(ocultarAlerta, 6000);
+    }
+
+    $("#no_ejecutar_gestion").click(function () {
+        const alertaHTML = data_alerta(proceso).alerta_gestion;
+        $("#alerta_gestion").removeClass("d-none").html(alertaHTML);
+        timet_out =  setTimeout(ocultarAlerta, 3000);
+    });
+
+    $("#cerrar_modal").click(function(){clearTimeout(timet_out); ocultarAlerta()});
+    
+}
+
+/**
+ * Transforma un string de acuerdo al patron que este definido dentro del string
+ * _ : lo remplaza por espacios en blanco
+ * $p : transforma el string en una pregunta
+ * $i : agrega el signo % de acuerdo a la coincidencia del patron
+ * 
+ * @param {string} target 
+ * @returns 
+ */
+function transformar_caracteres(target) {
+    let remplazar = {
+        "_": (string) => string.replace(/_/g, ' '),  //Transforma los espacios bajo en guiones
+        "$p": (string) => string.includes("$p") ? "¿" + string.replace("$p","") + "?" : string, // si el string tiene la letra $p lo convertira en una pregunta ¿..?
+        "$i": (string) => string.replace("$i", '%') // si el string tiene la letra $i lo convertira en un $
+    };
+
+    if (typeof target === "string") {
+        let string_transformado = target;
+
+        for (let key in remplazar) {
+            if (remplazar.hasOwnProperty(key)) {
+                // Ejecutamos la función correspondiente a cada clave
+                string_transformado = remplazar[key](string_transformado);
+            }
+        }
+
+        return string_transformado;
+    }
+
+    return undefined;
+}
+// Función que permite solamente dos decimales escribir
+function Maximo2Decimales(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 2) {
+        $(this).val(parseFloat(inputValue).toFixed(2));
         }
     });
 };
+
+// Función que permite solamente un decimal escribir
+function Maximo1Decimal(idinput){
+    $('#'+idinput).on('input', function(){
+        var inputValue = $(this).val();
+        var decimalCount = (inputValue.split('.')[1] || []).length;        
+        if (decimalCount > 1) {
+        $(this).val(parseFloat(inputValue).toFixed(1));
+        }
+    });
+}
 
 /**
  * Obtiene el historial de servicio para el evento consultado con base a la identificacion del afiliado.
@@ -963,6 +1324,54 @@ function Validarfecha(IdSelector,operador = '>',fecha = null,info = 'La fecha no
 
 }
 /**
+ * Función para agregar la validación a los inputs de tipo fecha actualmente se esta usando en los que se generan dinamicamente
+ * @param {string} input Id del input tipo date al cual se le quieren agregar las validaciones generales de fecha.
+ * @param {string} hideButton Id del boton que se quiere ocultar para evitar acciones de guardado o demás en caso de que el input este con error.
+*/
+function agregarValidacionFecha(input,hideButton = null) {
+    let today = new Date().toISOString().split("T")[0];
+    
+    $(input).on('change', function() {
+        // Validación de fecha mínima
+        if (this.value < '1900-01-01') {
+            $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+            if(hideButton != null){
+                $(`#${hideButton}`).addClass("d-none");
+            }
+            return;
+        }
+        // Validación de fecha máxima (hoy)
+        if (this.value > today) {
+            $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
+            if(hideButton != null){
+                $(`#${hideButton}`).addClass("d-none");
+            }
+            return;
+        }
+        // Limpiar mensaje de error si la fecha es válida
+        if(hideButton != null){
+            $(`#${hideButton}`).removeClass("d-none");
+        }
+        $(`#${this.id}_alerta`).text('').addClass("d-none");
+    });
+}
+ /*
+ * Funcion para esconder boton, hasta que la tabla no tenga un registro
+ * @returns void
+ */
+function EsconderBotonGuardado(id_boton, id_tabla, id_alerta) {
+    let tbody = document.querySelector(`#${id_tabla} tbody`);
+    let table = document.getElementById(`${id_tabla}`);
+    console.log(tbody.children)
+    // let rowCount = tabla.rows({ filter: 'applied' }).nodes().toArray().filter(row => !$(row).hasClass('dataTables_empty')).length
+    if (tbody && tbody.children.length > 0) {
+        $(`#${id_boton}`).removeClass('d-none');
+    } else {
+        $(`#${id_boton}`).addClass('d-none'); // Oculta el botón si no hay filas
+        $(`.${id_alerta}`).removeClass('d-none');
+    }
+}
+/**
  * Funcion para descargar los documentos generales
  * @returns void
  */
@@ -1129,7 +1538,94 @@ function retornarIdDestinatario(ids_destinatario, destinatario){
         else{
             return null;
         }
-}
+    }
+    /*
+        Consulta si el submodulo fue guardado para poder permitir el guardado de alguna de las siguientes acciones 
+        144, 145 o 146
+    */
+    function consultaGuardadoSubmodulo(id_evento, id_asignacion, id_proceso, id_servicio){
+        return new Promise((resolve, reject) => {
+            data = {
+                '_token': $('input[name=_token]').val(),
+                'id_evento': id_evento,
+                'id_asignacion': id_asignacion,
+                'id_proceso': id_proceso,
+                'id_servicio': id_servicio,
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/validarGuardadoSubmodulo',
+                data: data,
+                beforeSend: function(){
+                    $('#c_ejecutar_accion').addClass("descarga-deshabilitada");
+                },
+                success: function(response) {
+                    if(response){
+                        resolve(response[0]);
+                    }
+                },
+                complete: function(){
+                    $('#c_ejecutar_accion').removeClass("descarga-deshabilitada");
+                }
+            });
+        })
+    }
+    /*
+        Consulta si el submodulo fue visado para poder permitir el guardado de alguna de las siguientes acciones 
+        141, 142, 143, 175, 176, 152, 153, 154
+    */
+    function consultaVisadoSubmodulo(id_evento, id_asignacion, id_proceso, id_servicio){
+        return new Promise((resolve, reject) => {
+            data = {
+                '_token': $('input[name=_token]').val(),
+                'id_evento': id_evento,
+                'id_asignacion': id_asignacion,
+                'id_proceso': id_proceso,
+                'id_servicio': id_servicio,
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/validarVisadoSubmodulo',
+                data: data,
+                beforeSend: function(){
+                    $('#c_ejecutar_accion').addClass("descarga-deshabilitada");
+                },
+                success: function(response) {
+                    if(response){
+                        resolve(response[0]);
+                    }
+                },
+                complete: function(){
+                    $('#c_ejecutar_accion').removeClass("descarga-deshabilitada");
+                }
+            });
+        })
+    }
+    /*
+        Cuando seleccionen la acción de ejecutar acción de DEVOLVER ASIGNACIÓN, se haran las validaciones solicitadas
+        en el PBS068 y si todo sale correcto se retornara la información del usuario, si no, se retornara null;  
+    */
+    function consultaUltimoUsuarioEjecutarAccion(data_ult_usuario){
+        return new Promise((resolve, reject) => { 
+            $.ajax({
+                type:'POST',
+                url:'/capturarUsuarioUltAccion',
+                data: data_ult_usuario,
+                beforeSend: function () {
+                    showLoading();
+                },
+                success:function (data) {
+                    if(data){
+                        resolve(data);
+                    }
+                    resolve(null);
+                },
+                complete: function () {
+                    hideLoading();
+                }
+            });
+        })
+    }
 
 /**
  * 

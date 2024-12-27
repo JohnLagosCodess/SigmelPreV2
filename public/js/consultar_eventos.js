@@ -989,13 +989,13 @@ $(document).ready(function () {
                                         <div class="form-group row">\
                                             <label for="" class="col-sm-3 col-form-label">Fecha alerta</label>\
                                             <div class="col-sm-9">\
-                                                <input type="date" class="form-control" name="nueva_fecha_alerta_nuevo_proceso" id="nueva_fecha_alerta_nuevo_proceso_'+id_evento_nuevo_proceso+'" min="'+fecha_de_hoy+'">\
+                                                <input type="date" class="form-control" name="nueva_fecha_alerta_nuevo_proceso" id="nueva_fecha_alerta_nuevo_proceso" min="'+fecha_de_hoy+'">\
                                             </div>\
                                         </div>\
                                         <div class="form-group row">\
                                             <label for="" class="col-sm-3 col-form-label">Fecha de vencimiento</label>\
                                             <div class="col-sm-9">\
-                                                <input type="date" class="form-control" name="fecha_visual_vencimiento_nuevo_proceso" id="fecha_visual_vencimiento_nuevo_proceso_'+id_evento_nuevo_proceso+'" disabled>\
+                                                <input type="date" class="form-control" name="fecha_visual_vencimiento_nuevo_proceso" id="fecha_visual_vencimiento_nuevo_proceso_" disabled>\
                                                 <div class="d-none">\
                                                     <input type="text" class="form-control" name="Id_ans_nuevo_proceso" id="Id_ans_nuevo_proceso_'+id_evento_nuevo_proceso+'">\
                                                     <input type="text" class="form-control" name="fecha_vencimiento_nuevo_proceso" id="fecha_vencimiento_nuevo_proceso_'+id_evento_nuevo_proceso+'">\
@@ -1017,7 +1017,7 @@ $(document).ready(function () {
                                 <input type="hidden" class="form-control" id="nro_evento_nuevo_proceso_'+id_evento_nuevo_proceso+'" value="'+id_evento_nuevo_proceso+'">\
                                 <a href="javascript:void(0);" class="text-dark text-md mr-auto" data-toggle="modal" data-target="#modalListaDocumentos" id="cargue_documentos_nuevo_proceso_evento_'+id_evento_nuevo_proceso+'">\
                                 <i class="far fa-file text-info"></i> <strong>Cargue Documentos</strong></a>\
-                                <button type="submit" class="btn btn-info" id="crear_proceso_evento_'+id_evento_nuevo_proceso+'">Crear</button>\
+                                <button type="button" class="btn btn-info" id="crear_proceso_evento_'+id_evento_nuevo_proceso+'">Crear</button>\
                                 <button type="button" class="btn btn-info d-none" id="actualizar_consulta_nuevo_proceso_'+id_evento_nuevo_proceso+'">Actualizar</button>\
                                 <input type="hidden" class="form-control" id="tupla_proceso_evento_'+id_evento_nuevo_proceso+'" value="'+id_asignacion_nuevo_proceso+'">\
                                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>\
@@ -1029,6 +1029,8 @@ $(document).ready(function () {
         ';
         $('.renderizar_nuevo_proceso').empty();
         $('.renderizar_nuevo_proceso').append($string_html_modal_nuevo_proceso);
+
+        procesar_alertas_gestion(`#crear_proceso_evento_${id_evento_nuevo_proceso}`,`#form_nuevo_proceso_evento_${id_evento_nuevo_proceso}`,"consultador_evento");
     });
 
     /* FUNCIONES ASOCIADAS AL BOTÓN DE NUEVO PROCESO */

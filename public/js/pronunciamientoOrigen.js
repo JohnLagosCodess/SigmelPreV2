@@ -1228,6 +1228,7 @@ $(document).ready(function(){
             'estado_notificacion': $('#modalCorrespondencia #state_notificacion').val(),
             'tipo_correspondencia': tipo_correspondencia,
             'id_correspondencia': $('#modalCorrespondencia #id_correspondencia').val(),
+            'id_destinatario':$("#modalCorrespondencia #id_destinatario").val(),
             'accion': $('#btn_guardar_actualizar_correspondencia').val()
         };
         $.ajax({    
@@ -1496,6 +1497,21 @@ $(document).ready(function(){
                 formData.append('Id_Comunicado',null);
             }
         }
+        console.log(arrayDatosDiagnosticos,datos_finales_diagnosticos_moticalifi)
+        if(arrayDatosDiagnosticos.length == 0 && datos_finales_diagnosticos_moticalifi.length == 0){
+            $('.alerta_roja_guardado').append('<strong>Debe registrar por lo menos un Diagnóstico para poder guardar o actualizar el Pronunciamiento</strong>').removeClass('d-none')
+            setTimeout(function(){
+                $('.alerta_roja_guardado').addClass('d-none');
+                $('.alerta_roja_guardado').empty();
+                if (GuardarPronuncia.length > 0) {
+                    document.querySelector('#GuardarPronuncia').disabled=false;            
+                }
+                if (ActualizarPronuncia.length > 0) {
+                    document.querySelector('#ActualizarPronuncia').disabled=false;
+                }
+            }, 1500);
+            return;
+        }
         $.ajax({
             type:'POST',
             url:'/guardarInfoServiPronunciaOrigen',
@@ -1725,6 +1741,7 @@ $(document).ready(function(){
                         $('#resultado_insercion_cie10').addClass('d-none');
                         $('#resultado_insercion_cie10').removeClass('alert-success');
                         $('#resultado_insercion_cie10').empty();
+                        location.reload();
                     }, 3000);
                 }
                 if (response.total_registros == 0) {
@@ -2026,6 +2043,9 @@ $(document).ready(function(){
     //Valida si hay radicados duplicados
     setTimeout(function() {
         radicados_duplicados('listado_comunicado_pronu_origen');
+        $("#ActualizarPronuncia, #GuardarPronuncia").focus(function() {
+            procesar_alertas_gestion("#ActualizarPronuncia, #GuardarPronuncia", "#form_CaliPronuncia","pronunciamiento_origen","alerta");
+        });
     }, 500);
 
     /* Si se selecciona la opción Otro Cual Inserta un campo*/
@@ -2061,6 +2081,7 @@ $(document).ready(function(){
         }
 
     });
+
 
 });
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/

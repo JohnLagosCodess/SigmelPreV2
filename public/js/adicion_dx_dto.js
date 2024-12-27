@@ -1615,8 +1615,11 @@ $(document).ready(function(){
 
     Visar.change(function(){
         if ($(this).prop('checked')) {
-            $("#profesional_comite").val(NombreUsuario);            
+            $("#profesional_comite").val(NombreUsuario); 
+            $("#oficio_origen").prop('checked',true);      
+            $("#oficio_origen").trigger('change');              
         } else {            
+            $("#oficio_origen").prop('checked',false); 
             $("#profesional_comite").val('');            
         }
     });    
@@ -1651,11 +1654,7 @@ $(document).ready(function(){
                     $('#GuardarComiteInter').prop('disabled', true);
                     $('#div_alerta_comiteInter').removeClass('d-none');
                     $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');                                            
-                    setTimeout(function(){
-                        $('#div_alerta_comiteInter').addClass('d-none');
-                        $('.alerta_comiteInter').empty();   
-                        location.reload();
-                    }, 3000);   
+                    $('#form_correspondencia_adx').trigger('submit');
                 }
             }          
         })
@@ -2133,10 +2132,14 @@ $(document).ready(function(){
                                 $('#GuardarCorrespondencia').prop('disabled', true);
                                 $('#ActualizarCorrespondencia').prop('disabled', true);
                                 $('#div_alerta_Correspondencia').removeClass('d-none');
-                                $('.alerta_Correspondencia').append('<strong>'+mensaje+'</strong>');                                            
+                                $('.alerta_Correspondencia').append('<strong>'+mensaje+'</strong>');
+                                $('.alerta_comiteInter').empty();
+                                $('.alerta_comiteInter').append('<strong>' + mensaje + '</strong>');                                               
                                 setTimeout(function(){
                                     $('#div_alerta_Correspondencia').addClass('d-none');
                                     $('.alerta_Correspondencia').empty();   
+                                    $('#div_alerta_comiteInter').addClass('d-none');
+                                    $('.alerta_comiteInter').empty();    
                                     location.reload();
                                 }, 1500);  
                             }
@@ -2602,6 +2605,7 @@ $(document).ready(function(){
             'estado_notificacion': $('#modalCorrespondencia #state_notificacion').val(),
             'tipo_correspondencia': tipo_correspondencia,
             'id_correspondencia': $('#modalCorrespondencia #id_correspondencia').val(),
+            'id_destinatario':$("#modalCorrespondencia #id_destinatario").val(),
             'accion': $('#btn_guardar_actualizar_correspondencia').val()
         };
         $.ajax({    

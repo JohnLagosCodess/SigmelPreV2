@@ -32,7 +32,7 @@
     </div>
     <div class="card-info" style="border: 1px solid black;">
         <div class="card-header text-center">
-            <h4>Origen ATEL - Evento: {{$array_datos_calificacion_origen[0]->ID_evento}}</h4>
+            <h4>Origen ATEL - Evento: <u><a onclick="document.getElementById('botonVerEdicionEvento').click();" style="cursor:pointer;">{{$array_datos_calificacion_origen[0]->ID_evento}}</a></u> Afiliado: {{$array_datos_calificacion_origen[0]->Nombre_afiliado}} {{$array_datos_calificacion_origen[0]->Nombre_tipo_documento}} {{$array_datos_calificacion_origen[0]->Nro_identificacion}} - {{$array_datos_calificacion_origen[0]->Tipo_afiliado}}</h4>
             <h5 style="font-style: italic;">Determinación de Origen (DTO)</h5>
             <input type="hidden" id="id_rol" value="<?php echo session('id_cambio_rol');?>">
             <input type="hidden" name="NombreUsuario" id="NombreUsuario" value="{{$user->name}}">
@@ -83,7 +83,7 @@
                         {{-- FORMULARIO ACCIDENTE, ENFERMEDAD, INCIDENTE, SIN COBERTURA --}}
                         <div id="mostrar_ocultar_formularios" class="d-none1">
                             {{-- Información del afiliado --}}
-                            <div class="card-info">
+                            <div class="card-info d-none">
                                 <div class="card-header text-center" style="border: 1.5px solid black;">
                                     <h5>Información del afiliado</h5>
                                 </div>
@@ -141,7 +141,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row d-none">
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <label for="nombre_apoderado">Nombre apoderado</label>
@@ -451,7 +451,8 @@
                                         <div class="col-4" id="contenedor_fecha_diagnos_enfermedad">
                                             <div class="form-group">
                                                 <label for="fecha_enfermedad">Fecha Diagnostico de Enfermedad</label>
-                                                <input type="date" class="form-control" name="fecha_enfermedad" id="fecha_enfermedad" max="{{date("Y-m-d")}}" value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_diagnostico_enfermedad)){echo $datos_bd_DTO_ATEL[0]->Fecha_diagnostico_enfermedad;}?>">
+                                                <input type="date" class="form-control" name="fecha_enfermedad" id="fecha_enfermedad" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_diagnostico_enfermedad)){echo $datos_bd_DTO_ATEL[0]->Fecha_diagnostico_enfermedad;}?>">
+                                                <span class="d-none" id="fecha_enfermedad_alerta" style="color: red; font-style: italic;"></span>
                                             </div>
                                         </div>
                                         <div class="col-4">
@@ -952,12 +953,15 @@
                     <i class="fas fa-chevron-up"></i>
                 </a>                 
                 <div class="row">
+                    <div class="col-12">
+                        <div class="alerta_roja_dto_dict alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
+                    </div>
                     <div class="col-6">
                         <div class="form-group">
                             @if (empty($datos_bd_DTO_ATEL[0]->ID_evento))
-                                <input type="submit" class="btn btn-info" id="GuardarDTOATEL" name="GuardarDTOATEL" value="Guardar">    
+                                <input type="button" class="btn btn-info" id="GuardarDTOATEL" name="GuardarDTOATEL" value="Guardar">    
                             @else
-                                <input type="submit" class="btn btn-info" id="EditarDTOATEL" name="EditarDTOATEL" value="Actualizar">    
+                                <input type="button" class="btn btn-info" id="EditarDTOATEL" name="EditarDTOATEL" value="Actualizar">    
                             @endif
                         </div>
                     </div>
@@ -988,12 +992,12 @@
                 </div>
                 <form id="form_comite_interdisciplinario" action="POST">                            
                     <div class="card-body">
-                        <div class="row">   
+                        <div class="row d-flex align-items-center">   
                             <div class="col-1">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">                                                
                                         @if(!empty($array_comite_interdisciplinario[0]->Visar))
-                                            <input type="checkbox" class="custom-control-input" name="visar" id="visar" value="Si" checked disabled>                                                
+                                            <input type="checkbox" class="custom-control-input" name="visar" id="visar" value="Si" checked disabled required>                                                
                                         @else
                                             <input type="checkbox" class="custom-control-input" name="visar" id="visar" value="Si" required>                                                
                                         @endif
@@ -1005,9 +1009,9 @@
                                 <div class="form-group">
                                     <label for="profesional_comite">Profesional comité</label>                                                                                           
                                     @if(!empty($array_comite_interdisciplinario[0]->Profesional_comite))
-                                        <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" value="{{$array_comite_interdisciplinario[0]->Profesional_comite}}" disabled>                                                
+                                        <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" value="{{$array_comite_interdisciplinario[0]->Profesional_comite}}" required disabled>                                                
                                     @else
-                                        <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" disabled>                                                
+                                        <input type="text" class="form-control" name="profesional_comite" id="profesional_comite" required disabled>                                                
                                     @endif
                                 </div>
                             </div>
@@ -1020,10 +1024,16 @@
                                         <input type="date" class="form-control" name="f_visado_comite" id="f_visado_comite" value="{{now()->format('Y-m-d')}}"  disabled>                                                
                                     @endif
                                 </div>
+                            </div>
+                            <div class="col-2 form-group align-self-end">
+                                <div class="custom-control custom-checkbox">                                                
+                                    <input  class="custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si" {{isset($array_comite_interdisciplinario[0]->Visar) ? 'checked' : ''}} required>                                                
+                                    <label for="oficio_origen" class="custom-control-label">Oficio origen<span style="color: red;">(*)</label>
+                                </div>
                             </div>                                    
                             <div class="col-2">
                                 <div class="form-group" style="padding-top: 31px;">                                             
-                                    <input type="submit" id="GuardarComiteInter" name="GuardarComiteInter" class="btn btn-info" value="Guardar">                                                
+                                    <input type="button" id="GuardarComiteInter" name="GuardarComiteInter" class="btn btn-info" value="Guardar">                                                
                                     <input hidden="hidden" type="text" id="bandera_comiteInter" value="Guardar">                                                                                           
                                 </div>
                             </div>
@@ -1049,18 +1059,6 @@
                 <form id="form_correspondencia_dto" action="POST">                            
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-3">
-                                <div class="form-group">
-                                    <div class="custom-control custom-checkbox">
-                                        @if (!empty($array_comite_interdisciplinario[0]->Oficio_Origen) && $array_comite_interdisciplinario[0]->Oficio_Origen == 'Si')
-                                            <input class="dependencia_justificacion custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si" checked>
-                                        @else
-                                            <input class="custom-control-input" type="checkbox" id="oficio_origen" name="oficio_origen" value="Si">                                                    
-                                        @endif
-                                        <label for="oficio_origen" class="custom-control-label">Oficio Origen</label>
-                                    </div>
-                                </div>
-                            </div> 
                             {{-- <div class="col-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
@@ -1684,6 +1682,7 @@
    @include('//.coordinador.modalReemplazarArchivos')
    @include('//.coordinador.modalCorrespondencia')
    @include('//.modals.alertaRadicado')
+   @include('modals.alertasGestion')
 
 @stop
 
@@ -1742,7 +1741,7 @@
 
             contador_examen = contador_examen + 1;
             var nueva_fila_examen = [
-                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}" required/>',
+                '<input type="date" class="form-control" id="fecha_examen_fila_'+contador_examen+'" name="fecha_examen" max="{{date("Y-m-d")}}" min="1900-01-01" required/><span class="d-none" id="fecha_examen_fila_'+contador_examen+'_alerta" style="color: red; font-style: italic;"></span>',
                 '<input type="text" class="form-control" id="nombre_examen_fila_'+contador_examen+'" name="nombre_examen"/>',
                 '<textarea id="descripcion_resultado_fila_'+contador_examen+'" class="form-control" name="descripcion_resultado" cols="90" rows="4"></textarea>',
                 '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_examen_fila" class="text-info" data-fila="fila_'+contador_examen+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
@@ -1752,6 +1751,8 @@
             var agregar_examen_fila = listado_examenes_interconsultas.row.add(nueva_fila_examen).draw().node();
             $(agregar_examen_fila).addClass('fila_'+contador_examen);
             $(agregar_examen_fila).attr("id", 'fila_'+contador_examen);
+            // Llamar a la función para añadir la validación al nuevo campo de tipo fecha
+            agregarValidacionFecha(`#fecha_examen_fila_${contador_examen}`);
 
         });
         
@@ -1764,6 +1765,10 @@
             var nombre_exame_fila = $(this).data("clase_fila");
             listado_examenes_interconsultas.row("."+nombre_exame_fila).remove().draw();
         });
+        // Lista de documentos solicitados
+        let lista_documentos_solicitados = @json($array_datos_examenes_interconsultas);
+        // Lista de diagnosticos agregados
+        let lista_diagnosticos_cie10 = @json($array_datos_diagnostico_motcalifi);
 
         //SCRIPT PARA INSERTAR O ELIMINAR FILAS DINAMICAS DEL DATATABLES DE DIAGNOSTCO CIE10
         $(".centrar").css('text-align', 'center');
@@ -1916,19 +1921,22 @@
         dateInputs.forEach(input => {
             //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
             input.addEventListener('change', function() {
-                console.log('This is value of input type date ', this.value);
                 //Validamos que la fecha sea mayor a la fecha de 1900-01-01
                 if(this.value < '1900-01-01'){
                     $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
                     $('#EditarDTOATEL').addClass('d-none');
+                    $('#GuardarDTOATEL').addClass('d-none');
                     return;
                 }
                 //Validamos que la fecha no sea mayor a la fecha actual
                 if(this.value > today){
                     $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
                     $('#EditarDTOATEL').addClass('d-none');
+                    $('#GuardarDTOATEL').addClass('d-none');
                     return;
                 }
+                $('#EditarDTOATEL').removeClass('d-none');
+                $('#GuardarDTOATEL').removeClass('d-none');
                 return $(`#${this.id}_alerta`).text('').addClass("d-none");
             });
         });

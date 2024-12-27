@@ -522,7 +522,7 @@
         </table>
         <div class="content2">
             @if (count($array_datos_relacion_examentes) > 0)
-                @foreach ($array_datos_relacion_examentes as $examenes_interconsultas)
+                @foreach ($array_datos_relacion_examentes->sortBy('F_examen_interconsulta') as $examenes_interconsultas)
                     <section class="border_section">
                         <div class="dato_dinamico_font"><b>Fecha:</b> <?php echo date('d/m/Y', strtotime($examenes_interconsultas->F_examen_interconsulta))?> - <b>Nombre del documento:</b> <?php echo $examenes_interconsultas->Nombre_examen_interconsulta?></div>
                         <div class="dato_dinamico_font"><b>Descripción:</b></div>
