@@ -200,11 +200,13 @@ class CalificacionPCLController extends Controller
         $N_siniestro_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
         ->select('N_siniestro')
         ->where([['ID_evento',$newIdEvento]])
-        ->get();        
+        ->get();
+
+        $Id_Asignacion = $newIdAsignacion;
         
         return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 
         'arraylistado_documentos', 'cantidad_documentos_cargados', 'dato_validacion_no_aporta_docs', 'SubModulo','consecutivo','arraycampa_documento_solicitado', 
-        'info_comite_inter', 'Id_servicio', 'newIdAsignacion', 'info_accion_eventos', 'enviar_notificaciones','N_siniestro_evento'));
+        'info_comite_inter', 'Id_servicio', 'newIdAsignacion', 'info_accion_eventos', 'enviar_notificaciones','N_siniestro_evento', 'Id_Asignacion'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){
@@ -545,6 +547,25 @@ class CalificacionPCLController extends Controller
 
             $datos_status_notificacion_corresp = json_decode(json_encode($datos_status_notificacion_correspondencia, true));
             return response()->json($datos_status_notificacion_corresp);
+        }
+
+        if ($parametro == "docs_complementarios") {
+
+            $datos_tipos_documentos_familia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+            ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+            ->select('sld.Nro_documento', 'sld.Nombre_documento')
+            ->where([
+                ['srde.ID_evento', $request->evento],
+                ['srde.Id_servicio', $request->servicio],
+                ['srde.Id_Documento', $request->tipo_correspondencia],
+                ['sld.Estado', 'activo']
+            ])
+            // ->whereIn('srde.Id_Documento', [19, 20, 21, 22, 23])
+            ->groupBy('sld.Nro_documento')
+            ->get();
+
+            $info_datos_tipos_documentos_familia = json_decode(json_encode($datos_tipos_documentos_familia, true));
+            return response()->json($info_datos_tipos_documentos_familia);
         }
         
     }
@@ -5937,11 +5958,16 @@ class CalificacionPCLController extends Controller
         //Traer la modalidad de calificación
         $Modalidad_calificacion = $this->globalService->retornarModalidadCalificacionPCL($Id_evento_calitec,$Id_asignacion_calitec);
 
+        $Id_servicio = 6;
+        $Id_Asignacion = $Id_asignacion_calitec;
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento_calitec,$Id_servicio,$Id_asignacion_calitec));
+
         return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 
         'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo',
         'array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 
         'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 
-        'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado', 'Modalidad_calificacion'));
+        'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado', 'Modalidad_calificacion',
+        'arraylistado_documentos', 'Id_servicio', 'Id_Asignacion'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){
@@ -6213,6 +6239,24 @@ class CalificacionPCLController extends Controller
             return response()->json($info_lista_dominancia);
         }
         
+        if ($parametro == "docs_complementarios") {
+
+            $datos_tipos_documentos_familia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+            ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+            ->select('sld.Nro_documento', 'sld.Nombre_documento')
+            ->where([
+                ['srde.ID_evento', $request->evento],
+                ['srde.Id_servicio', $request->servicio],
+                ['srde.Id_Documento', $request->tipo_correspondencia],
+                ['sld.Estado', 'activo']
+            ])
+            // ->whereIn('srde.Id_Documento', [19, 20, 21, 22, 23])
+            ->groupBy('sld.Nro_documento')
+            ->get();
+
+            $info_datos_tipos_documentos_familia = json_decode(json_encode($datos_tipos_documentos_familia, true));
+            return response()->json($info_datos_tipos_documentos_familia);
+        }
 
     }
 
