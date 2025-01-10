@@ -1039,6 +1039,8 @@ class PronunciamientoPCLController extends Controller
         $Firma_corre = $request->Firma_corre;
         $desicion_proforma = $request->desicion_proforma;
         $N_siniestro = $request->N_siniestro;
+        $nro_dictamen_pri_cali = $request->N_dictamen;
+        $fecha_dictamen_pri_cali = $request->F_dictamen;
 
         $datos = $Id_Evento_pronuncia_corre;
         // Codigo QR y Logo del Header
@@ -1171,7 +1173,7 @@ class PronunciamientoPCLController extends Controller
         }
         
 
-        $Asunto_cali = $info_pronunciamiento[0]->Asunto_cali;
+        $Asunto_cali = strtoupper($info_pronunciamiento[0]->Asunto_cali);
         $Nombre_calificador = $info_pronunciamiento[0]->Nombre_calificador;        
         $Fecha_calificador = $info_pronunciamiento[0]->Fecha_calificador;
         $Fecha_calificador = date("d/m/Y", strtotime($Fecha_calificador));
@@ -1576,27 +1578,6 @@ class PronunciamientoPCLController extends Controller
                 'marginBottom'=> 0,
             );
             $section = $phpWord->addSection($estilosPaginaWord);
-            
-            // Configuramos las margenes del documento (estrechas)
-            // $section = $phpWord->addSection();
-            // $section->setMarginLeft(0.5 * 72);
-            // $section->setMarginRight(0.5 * 72);
-            // $section->setMarginTop(0.5 * 72);
-            // $section->setMarginBottom(0.5 * 72);
-
-            // $ruta_vigilado = "/images/logos_preformas/vigilado.png";
-            // $imagenPath_vigilado = public_path($ruta_vigilado);
-
-            // $imageStyle = array(
-            //     'height' => 150,
-            //     'positioning' => Image::POSITION_ABSOLUTE,
-            //     // 'marginLeft' => -50,  // Ajusta este valor según tus necesidades
-            //     'marginRight' => -500,
-            //     'marginTop' => 600,
-            //     // 'wrappingStyle' => 'behind', 
-            // );
-
-
             // Creación de Header
             $header = $section->addHeader();
             $header->addWatermark($pathVigilado, $styleVigilado);
@@ -1648,7 +1629,18 @@ class PronunciamientoPCLController extends Controller
 
             $table = $section->addTable(array('alignment'=>'center'));
 
-    
+            // Configuramos el reemplazo de la etiqueta del asunto
+            $patron1_asunto = '/\{\{\$NRO_DICTAMEN_PRI_CALI\}\}/';
+            $patron2_asunto = '/\{\{\$FECHA_DICTAMEN_PRI_CALI\}\}/';
+            if (preg_match($patron1_asunto, $Asunto_cali) && preg_match($patron2_asunto, $Asunto_cali)) {
+                $asunto_modificado = str_replace('{{$NRO_DICTAMEN_PRI_CALI}}', $nro_dictamen_pri_cali, $Asunto_cali);
+                $asunto_modificado = str_replace('{{$FECHA_DICTAMEN_PRI_CALI}}', date("d/m/Y", strtotime($fecha_dictamen_pri_cali)), $asunto_modificado);
+
+                $Asunto_cali = $asunto_modificado;
+            }else{
+                $Asunto_cali = "";
+            }
+
             $table->addRow();
 
 
@@ -1689,6 +1681,8 @@ class PronunciamientoPCLController extends Controller
                 // $texto_modificado = str_replace('{{$OrigenPcl}}', $T_origen , $texto_modificado);
                 $texto_modificado = str_replace('{{$PorcentajePcl}}', '<b>'.$Porcentaje_pcl.'</b>', $texto_modificado);
                 $texto_modificado = str_replace('{{$F_estructuracionPcl}}', '<b>'.$Fecha_estruturacion.'</b>', $texto_modificado);
+                $texto_modificado = str_replace('ANEXO:', '<b>ANEXO:</b>', $texto_modificado);
+                $texto_modificado = str_replace('NOTIFICACIONES:', '<b>NOTIFICACIONES:</b>', $texto_modificado);
                 $texto_modificado = str_replace('</p>', '</p><br></br>', $texto_modificado);
                 $texto_modificado = str_replace('<p><br>', ' ', $texto_modificado);
                 $cuerpo = $texto_modificado;
@@ -1785,7 +1779,7 @@ class PronunciamientoPCLController extends Controller
 
             $cellCuadro = $tableCuadro->addCell(10000);
             //Estilo del texto del cuadro
-            $styleTextCuadro = ['bold' => true,'name' => 'Calibri', 'size' => 8];
+            $styleTextCuadro = ['bold' => true,'name' => 'Calibri', 'size' => 9];
             //Cuadro
             $cuadro = $cellCuadro->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80*60, 'alignment'=>'center', 'padding'=>20));
             $cuadro->addRow();

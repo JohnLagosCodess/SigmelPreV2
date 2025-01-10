@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         // $schedule->command('app:acciones-automaticas')->cron('*/2 * * * *'); // Ejecuta cada 2 minutos
         $schedule->command('app:acciones-automaticas')->dailyAt('00:10');
+        $schedule->command('app:reit-documentos-rev-pen')->dailyAt('00:15');
 
     }
 

@@ -182,7 +182,11 @@
                             <span class="fuente_todo_texto paddingTexto">{{$email_destinatario}}</span><br>
                             <span class="fuente_todo_texto paddingTexto">{{$direccion}}</span><br>
                             <span class="fuente_todo_texto paddingTexto">{{$telefono}}</span><br>
-                            <span class="fuente_todo_texto paddingTexto">{{$ciudad_final}} - {{$departamento_final}}</span>
+                            @if($ciudad_final == 'Bogota D.C.' || $ciudad_final == 'Bogotá D.C.')
+                                <span class="fuente_todo_texto paddingTexto">Bogotá D.C.</span>
+                            @else
+                                <span class="fuente_todo_texto paddingTexto">{{$ciudad_final.' - '.$departamento_final}}</span>
+                            @endif
                         </div>
                     </td>
                 </tr>

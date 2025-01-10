@@ -256,7 +256,7 @@
                                     <div class="col-4">
                                         <div class="form-group">
                                             <label for="fecha_estruturacion">Fecha Estructuración<span style="color: red;">(*)</span></label>
-                                            @if (!empty($info_pronuncia[0]->Fecha_calificador))
+                                            @if (!empty($info_pronuncia[0]->Fecha_estruturacion))
                                                 <input type="date" class="form-control" id="fecha_estruturacion" name="fecha_estruturacion" max="{{date("Y-m-d")}}" min='1900-01-01' value="{{$info_pronuncia[0]->Fecha_estruturacion}}" required>
                                             @else
                                                 <input type="date" class="form-control" id="fecha_estruturacion" name="fecha_estruturacion" max="{{date("Y-m-d")}}" min='1900-01-01' required/>

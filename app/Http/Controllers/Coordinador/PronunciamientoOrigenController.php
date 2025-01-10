@@ -1808,7 +1808,7 @@ class PronunciamientoOrigenController extends Controller
             
             $cellCuadro = $tableCuadro->addCell(10000);
             //Estilo del texto del cuadro
-            $styleTextCuadro = ['bold' => true,'name' => 'Calibri', 'size' => 8];
+            $styleTextCuadro = ['bold' => true,'name' => 'Calibri', 'size' => 9];
             //Cuadro
             $cuadro = $cellCuadro->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80*60, 'alignment'=>'center'));
             $cuadro->addRow();
