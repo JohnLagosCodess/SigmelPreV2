@@ -785,7 +785,7 @@
 
                 <div class="grupo_botones" style="float: left;">
                     {{-- <input type="reset" id="btn_borrar" class="btn btn-info" value="Restablecer"> --}}
-                    <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar">
+                    <input type="button" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar">
                     {{-- <input type="submit" id="btn_guardar_evento" class="btn btn-info d-none" value="Guardar" onclick="OcultarbotonGuardar()"> --}}
                 </div>
                 <div class="text-center" id="mostrar_barra_creacion_evento"  style="display:none;">                                
@@ -802,6 +802,7 @@
         {{-- MODAL PARA MOSTRAR EL LISTADO DE DOCUMETNOS --}}
         <?php $aperturaModal = 'Nuevo'; ?>
         @include('administrador.modalcarguedocumentos')
+        @include('modals.alertasGestion')
         @include('//.administrador.modalProgressbar')
     </div>
 @stop

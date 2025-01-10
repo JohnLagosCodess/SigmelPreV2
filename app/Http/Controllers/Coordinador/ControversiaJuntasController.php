@@ -151,6 +151,7 @@ class ControversiaJuntasController extends Controller
         ])->get(); 
 
         //Trae Documetos Generales del evento
+        $Id_Asignacion = $Id_asignacion_juntas;
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento_juntas, $Id_servicio, $Id_asignacion_juntas));
 
         // cantidad de documentos cargados
@@ -252,7 +253,7 @@ class ControversiaJuntasController extends Controller
         'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
-        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado','N_siniestro_evento', 'cantidad_documentos_cargados'));
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado','N_siniestro_evento', 'cantidad_documentos_cargados', 'Id_Asignacion'));
     
     }
 
@@ -531,6 +532,25 @@ class ControversiaJuntasController extends Controller
 
             $datos_status_notificacion_corresp = json_decode(json_encode($datos_status_notificacion_correspondencia, true));
             return response()->json($datos_status_notificacion_corresp);
+        }
+
+        if ($parametro == "docs_complementarios") {
+
+            $datos_tipos_documentos_familia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+            ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+            ->select('sld.Nro_documento', 'sld.Nombre_documento')
+            ->where([
+                ['srde.ID_evento', $request->evento],
+                ['srde.Id_servicio', $request->servicio],
+                ['srde.Id_Documento', $request->tipo_correspondencia],
+                ['sld.Estado', 'activo']
+            ])
+            // ->whereIn('srde.Id_Documento', [19, 20, 21, 22, 23])
+            ->groupBy('sld.Nro_documento')
+            ->get();
+
+            $info_datos_tipos_documentos_familia = json_decode(json_encode($datos_tipos_documentos_familia, true));
+            return response()->json($info_datos_tipos_documentos_familia);
         }
     }
 

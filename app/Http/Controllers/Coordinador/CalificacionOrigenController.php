@@ -269,10 +269,13 @@ class CalificacionOrigenController extends Controller
 
         // Validar si la accion ejecutada tiene enviar a notificaciones            
         $enviar_notificaciones = BandejaNotifiController::evento_en_notificaciones($newIdEvento,$newIdAsignacion);
+
+        $Id_Asignacion = $newIdAsignacion;
+
         return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos', 'cantidad_documentos_cargados',
         'arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc',
         'dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados',
-        'cali_profe_comite', 'Id_servicio', 'newIdAsignacion', 'enviar_notificaciones','N_siniestro_evento'));
+        'cali_profe_comite', 'Id_servicio', 'newIdAsignacion', 'enviar_notificaciones','N_siniestro_evento', 'Id_Asignacion'));
     }
 
     //Guardar informacion del modulo de Origen ATEL
@@ -2002,6 +2005,7 @@ class CalificacionOrigenController extends Controller
             ->where([
                 ['srde.ID_evento', $request->evento],
                 ['srde.Id_servicio', $request->servicio],
+                ['srde.Id_Asignacion', $request->asignacion],
                 ['sld.Estado', 'activo']
             ])
             ->groupBy('sld.Nro_documento')
@@ -2055,6 +2059,25 @@ class CalificacionOrigenController extends Controller
 
             $datos_status_notificacion_corresp = json_decode(json_encode($datos_status_notificacion_correspondencia, true));
             return response()->json($datos_status_notificacion_corresp);
+        }
+
+        if ($parametro == "docs_complementarios") {
+
+            $datos_tipos_documentos_familia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+            ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+            ->select('sld.Nro_documento', 'sld.Nombre_documento')
+            ->where([
+                ['srde.ID_evento', $request->evento],
+                ['srde.Id_servicio', $request->servicio],
+                ['srde.Id_Documento', $request->tipo_correspondencia],
+                ['sld.Estado', 'activo']
+            ])
+            // ->whereIn('srde.Id_Documento', [19, 20, 21, 22, 23])
+            ->groupBy('sld.Nro_documento')
+            ->get();
+
+            $info_datos_tipos_documentos_familia = json_decode(json_encode($datos_tipos_documentos_familia, true));
+            return response()->json($info_datos_tipos_documentos_familia);
         }
     }
 

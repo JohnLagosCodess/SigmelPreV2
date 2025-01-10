@@ -301,12 +301,14 @@ class CalificacionJuntasController extends Controller
         $array_registros_documentos = array_column($array_info_registros_documentos, 'Id_Registro_Documento');
         // archivo no encontrado en la tabla de sigmel_registro_documentos_eventos
         $archivo_noencontrado = array_diff($array_expediente_eventos, $array_registros_documentos);
-        $archivo_encontrado = array_diff($array_registros_documentos, $array_expediente_eventos);  
+        $archivo_encontrado = array_diff($array_registros_documentos, $array_expediente_eventos);
+
+        $Id_Asignacion = $newIdAsignacion;
 
         // dd($archivo_noencontrado, $archivo_encontrado);
         return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos', 'cantidad_documentos_cargados', 'arrayinfo_afiliado',
         'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs',
-        'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio', 'newIdAsignacion', 'enviar_notificaciones', 'N_siniestro_evento', 'info_evento', 'validar_lista_chequeo', 'info_cuadros_expedientes', 'IdExpediente_estado', 'posicionExpediente', 'archivo_noencontrado', 'archivo_encontrado'));
+        'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio', 'newIdAsignacion', 'enviar_notificaciones', 'N_siniestro_evento', 'info_evento', 'validar_lista_chequeo', 'info_cuadros_expedientes', 'IdExpediente_estado', 'posicionExpediente', 'archivo_noencontrado', 'archivo_encontrado', 'Id_Asignacion'));
     }
     //Cargar Selectores Juntas
     public function cargueListadoSelectoresJuntas(Request $request){
@@ -628,6 +630,7 @@ class CalificacionJuntasController extends Controller
             ->where([
                 ['srde.ID_evento', $request->evento],
                 ['srde.Id_servicio', $request->servicio],
+                ['srde.Id_Asignacion', $request->asignacion],
                 ['sld.Estado', 'activo']
             ])
             ->groupBy('sld.Nro_documento')
@@ -770,6 +773,25 @@ class CalificacionJuntasController extends Controller
 
             return response()->json($info_listado_Comunicados_expediente);
 
+        }
+
+        if ($parametro == "docs_complementarios") {
+
+            $datos_tipos_documentos_familia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+            ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+            ->select('sld.Nro_documento', 'sld.Nombre_documento')
+            ->where([
+                ['srde.ID_evento', $request->evento],
+                ['srde.Id_servicio', $request->servicio],
+                ['srde.Id_Documento', $request->tipo_correspondencia],
+                ['sld.Estado', 'activo']
+            ])
+            // ->whereIn('srde.Id_Documento', [19, 20, 21, 22, 23])
+            ->groupBy('sld.Nro_documento')
+            ->get();
+
+            $info_datos_tipos_documentos_familia = json_decode(json_encode($datos_tipos_documentos_familia, true));
+            return response()->json($info_datos_tipos_documentos_familia);
         }
         
     }

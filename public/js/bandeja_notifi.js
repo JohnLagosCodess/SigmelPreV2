@@ -208,7 +208,7 @@ function procesar_accion(id,procesos){
                 // data[i] = dataTMP.datos;
                 // cellCss.push(dataTMP.estilos);
 
-                crearHipervinculos(data[i], alertasNaranjaMap, procesos, true, function(result) {
+                crearHipervinculos(data[i], alertasNaranjaMap, procesos, false, function(result) {
                     data[i] = result.datos;
                     cellCss.push(result.estilos);
                 });
