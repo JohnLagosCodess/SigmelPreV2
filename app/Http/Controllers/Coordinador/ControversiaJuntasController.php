@@ -33,6 +33,7 @@ use PhpOffice\PhpWord\Shared\Converter;
 use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
 use PhpOffice\PhpWord\Style\Image;
+\PhpOffice\PhpWord\Settings::setOutputEscapingEnabled(true);
 
 class ControversiaJuntasController extends Controller
 {
@@ -2882,12 +2883,12 @@ class ControversiaJuntasController extends Controller
 
         $table->addRow();
 
-        $cell1 = $table->addCell(6000);
+        $cell1 = $table->addCell(10000);
 
         $textRun1 = $cell1->addTextRun(array('alignment'=>'left'));
-        $textRun1->addText('Señores: ',array('bold' => true));
+        $textRun1->addText('Señores: ');
         $textRun1->addTextBreak();
-        $textRun1->addText($nombre_junta);
+        $textRun1->addText($nombre_junta,array('bold' => true));
         $textRun1->addTextBreak();
         $textRun1->addText($direccion_junta);
         $textRun1->addTextBreak();
@@ -2895,7 +2896,7 @@ class ControversiaJuntasController extends Controller
         $textRun1->addText($telefono_junta);
         $textRun1->addTextBreak();
         if($ciudad_junta !== 'Bogota D.C.'){
-            $textRun1->addText($ciudad_junta.' - '.$departamento_junta);
+            $textRun1->addText($ciudad_junta.', '.$departamento_junta);
         }else{
             $textRun1->addText($ciudad_junta);
         }
@@ -2942,10 +2943,12 @@ class ControversiaJuntasController extends Controller
 
         $table->addRow();
 
-        $cell1 = $table->addCell(10000);
+        $cell1 = $table->addCell(2000);
+        $cell2 = $table->addCell(8000);
 
-        $asuntoyafiliado = $cell1->addTextRun(array('alignment'=>'left'));
-        $asuntoyafiliado->addText('Asunto: ', array('bold' => true));
+        $asuntoh = $cell1->addTextRun(array('alignment'=>'left'));
+        $asuntoh->addText('Asunto: ', array('bold' => true));
+        $asuntoyafiliado = $cell2->addTextRun(array('alignment'=>'both'));
         $asuntoyafiliado->addText($asunto, array('bold' => true));
         $asuntoyafiliado->addTextBreak();
         $asuntoyafiliado->addText('PACIENTE: ', array('bold' => true));
@@ -3187,7 +3190,7 @@ class ControversiaJuntasController extends Controller
         
         $cellCuadro = $tableCuadro->addCell(10000);
         //Estilo del texto del cuadro
-        $styleTextCuadro = ['bold' => true,'name' => 'Calibri', 'size' => 8];
+        $styleTextCuadro = ['bold' => true,'name' => 'Calibri', 'size' => 9];
         //Cuadro
         $cuadro = $cellCuadro->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80*60, 'alignment'=>'center'));
         $cuadro->addRow();

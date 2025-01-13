@@ -22,6 +22,8 @@ class sigmel_informacion_historial_accion_eventos extends Model
     'Documento',
     'Descripcion',
     'F_accion',
+    'Movimiento_automatico',
+    'F_primer_accion',
     'Nombre_usuario',    
     ];
 }

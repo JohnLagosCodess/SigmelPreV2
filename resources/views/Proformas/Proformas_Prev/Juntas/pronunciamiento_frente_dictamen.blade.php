@@ -196,7 +196,11 @@
                         <span class="fuente_todo_texto negrita">Señores: <br>{{$nombre_junta}}</span><br>
                         <span class="fuente_todo_texto">{{$direccion_junta}}</span><br>
                         <span class="fuente_todo_texto">{{$telefono_junta}}</span><br>
-                        <span class="fuente_todo_texto">{{$ciudad_junta}} - {{$departamento_junta}}</span>
+                        @if($ciudad_junta == 'Bogota D.C.' || $ciudad_junta == 'Bogotá D.C.')
+                            <span class="fuente_todo_texto paddingTexto">Bogotá D.C.</span>
+                        @else
+                            <span class="fuente_todo_texto paddingTexto">{{$ciudad_junta.' - '.$departamento_junta}}</span>
+                        @endif
                     </td>
                 </tr>
             </tbody>
@@ -421,7 +425,7 @@
             </table>
         </section>
         <br>
-        <div class="cuadro fuente_cuadro_inferior" style="margin: 0 auto; page-break-before: always;">
+        <div class="cuadro fuente_cuadro_inferior" style="margin: 0 auto; ">
             <span class="fuente_cuadro_inferior"><span class="negrita">Nro. Radicado: <br>{{$nro_radicado}}</span></span><br>
             <span class="fuente_cuadro_inferior"><span class="negrita">{{$tipo_identificacion}} {{$num_identificacion}}</span></span><br>
             <span class="fuente_cuadro_inferior"><span class="negrita">Siniestro: {{$N_siniestro}}</span></span><br>
