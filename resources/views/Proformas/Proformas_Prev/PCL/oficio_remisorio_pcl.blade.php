@@ -201,8 +201,10 @@
         <table class="tabla2">                        
             <tbody>
                 <tr>
+                    <p class="fuente_todo_texto paddingTexto derecha"><span class="negrita">{{$Ciudad_correspondencia}} {{$F_correspondecia}}</span></p>
+                    <br>
+                    <br>
                     <td style="width:100%; display:table; justify-content: space-between;">
-                        <p class="fuente_todo_texto paddingTexto derecha"><span class="negrita">{{$Ciudad_correspondencia}} {{$F_correspondecia}}</span></p>
                         <div>
                             <div class="fuente_todo_texto paddingTexto">
                                 <span class="negrita">Señores:</span><br>

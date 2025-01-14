@@ -2657,8 +2657,8 @@ class AdicionDxDTO extends Controller
                     $nombre_destinatario_principal = $datos_entidad[0]->Nombre_entidad;
                     $email_destinatario_principal = $datos_entidad[0]->Emails;
                     $direccion_destinatario_principal = $datos_entidad[0]->Direccion;
-                    $telefono_destinatario_principal = $datos_entidad[0]->Telefonos;
-                    $ciudad_destinatario_principal = $datos_entidad[0]->Nombre_ciudad.' ('.$datos_entidad[0]->Nombre_departamento.')';
+                    $telefono_destinatario_principal = $datos_entidad[0]->Telefonos; 
+                    $ciudad_destinatario_principal = $datos_entidad[0]->Nombre_ciudad == 'Bogota D.C.' || $datos_entidad[0]->Nombre_ciudad == 'Bogotá D.C.' ? $datos_entidad[0]->Nombre_ciudad : $datos_entidad[0]->Nombre_ciudad.' ('.$datos_entidad[0]->Nombre_departamento.')';
                 break;
                 
                 // Si escoge la opción Afiliado: Se sacan los datos del destinatario principal pero del afiliado
@@ -2676,7 +2676,7 @@ class AdicionDxDTO extends Controller
                     $email_destinatario_principal = $email_afp;
                     $direccion_destinatario_principal = $direccionAfp;
                     $telefono_destinatario_principal = $telefono_afp;
-                    $ciudad_destinatario_principal = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"].' ('.$array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"].')';
+                    $ciudad_destinatario_principal = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"] == 'Bogota D.C.' || $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"] == 'Bogotá D.C.' ? $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"] : $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"].' ('.$array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"].')';
                 break;
 
                 // Si escoge la opción Empleador: Se sacan los datos del destinatario principal pero del Empleador
@@ -2690,7 +2690,7 @@ class AdicionDxDTO extends Controller
                     $email_destinatario_principal = $datos_entidad_empleador[0]->Email;
                     $direccion_destinatario_principal = $datos_entidad_empleador[0]->Direccion;
                     $telefono_destinatario_principal = $datos_entidad_empleador[0]->Telefono_empresa;
-                    $ciudad_destinatario_principal = $datos_entidad_empleador[0]->Nombre_ciudad.' ('.$datos_entidad_empleador[0]->Nombre_departamento.')';
+                    $ciudad_destinatario_principal = $datos_entidad_empleador[0]->Nombre_ciudad == 'Bogota D.C.' || $datos_entidad_empleador[0]->Nombre_ciudad == 'Bogotá D.C.' ? $datos_entidad_empleador[0]->Nombre_ciudad : $datos_entidad_empleador[0]->Nombre_ciudad.' ('.$datos_entidad_empleador[0]->Nombre_departamento.')';
                 break;
                 
                 // Si escoge la opción Otro: se sacan los datos del destinatario de la tabla sigmel_informacion_comite_interdisciplinario_eventos
@@ -2721,7 +2721,7 @@ class AdicionDxDTO extends Controller
                     };
 
                     if (!empty($array_datos_para_destinatario_principal[0]["Ciudad_destinatario"])) {
-                        $ciudad_destinatario_principal = $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"].' ('.$array_datos_para_destinatario_principal[0]["Departamento_destinatario"].')';
+                        $ciudad_destinatario_principal = $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"] === 'Bogotá D.C.' || $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"] === 'Bogota D.C.' ? $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"] : $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"].' ('.$array_datos_para_destinatario_principal[0]["Departamento_destinatario"].')';
                     } else {
                         $ciudad_destinatario_principal = "";
                     };
@@ -2748,7 +2748,7 @@ class AdicionDxDTO extends Controller
             $direccion_destinatario_principal = $direccionAfp;
             $telefono_destinatario_principal = $telefono_afp;
             // $ciudad_destinatario_principal = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
-            $ciudad_destinatario_principal = $ciudad_afp === 'Bogotá D.C.' ? $ciudad_afp.' ('.$ciudad_afp.')' : $ciudad_afp;
+            $ciudad_destinatario_principal = $ciudad_afp;
         }
         
         $ramo = "Previsionales";

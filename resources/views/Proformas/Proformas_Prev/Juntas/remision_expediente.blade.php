@@ -208,7 +208,11 @@
                         <span class="fuente_todo_texto paddingTexto"><span class="negrita">Señores: <br>{{$nombre_junta}}</span></span><br>
                         <span class="fuente_todo_texto paddingTexto">Dirección: {{$direccion_junta}}</span><br>
                         <span class="fuente_todo_texto paddingTexto">Teléfono: {{$telefono_junta}}</span><br>
-                        <span class="fuente_todo_texto paddingTexto">{{$ciudad_junta}} - {{$departamento_junta}}</span>
+                        @if($ciudad_junta == 'Bogota D.C.' || $ciudad_junta == 'Bogotá D.C.')
+                            <span class="fuente_todo_texto paddingTexto">Bogotá D.C.</span>
+                        @else
+                            <span class="fuente_todo_texto paddingTexto">{{$ciudad_junta.' - '.$departamento_junta}}</span>
+                        @endif
                     </td>
                 </tr>
             </tbody>
