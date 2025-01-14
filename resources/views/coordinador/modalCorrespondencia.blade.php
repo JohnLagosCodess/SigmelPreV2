@@ -197,6 +197,203 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        {{-- Guías Ventana Correspondencia --}}
+                                        <div class="accordion" id="accordionGuia">
+                                            <a class="text-dark text-md" data-toggle="collapse" data-target="#collapseGuia" role="button" aria-expanded="false" aria-controls="collapseGuia"><i class="far fa-file text-info"></i> <b>Guía <span id="tipo_guia"></span></b></a>
+                                            <br><br>
+                                            <div id="collapseGuia" class="collapse" data-parent="#accordionGuia">
+                                                <div class="row">
+                                                    {{-- Documentos Complementarios --}}
+                                                    <div class="col-12">
+                                                        <div class="alert alert-warning" role="alert">
+                                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para cargar un documento del mismo tipo debe usar este formulario.
+                                                        </div>
+                                                        {{-- <form id="familia_documentos" method="POST" enctype="multipart/form-data"> --}}
+                                                            @csrf
+                                                            <div class="row">
+                                                                <div class="col-6">
+                                                                    <div class="form-group">
+                                                                        <label for="listado_tipos_documentos_guias">Listado Documentos Complementarios <span style="color: red;">(*)</span></label><br>
+                                                                        <select class="listado_tipos_documentos_guias custom-select" name="listado_tipos_documentos_guias" id="listado_tipos_documentos_guias" style="width: 100%;" required>
+                                                                            <option value="">Seleccione una Opción</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <div class="form-group">
+                                                                        <label for="" style="color: white;">label</label>
+                                                                        <div class="d-none1">
+                                                                            <input type="text" name="id_doc_familia_guias" id="id_doc_familia_guias">
+                                                                            <input type="text" name="nombre_doc_familia_guias" id="nombre_doc_familia_guias">
+                                                                            <input type="text" name="id_evento_familia_guias" id="id_evento_familia_guias">
+                                                                            <input type="text" name="id_servicio_familia_guias" id="id_servicio_familia_guias">
+                                                                            <input type="text" name="id_asignacion_familia_guias" id="id_asignacion_familia_guias">
+                                                                        </div>
+                                                                        <div class="input-group">
+                                                                            <input type="file" class="form-control select-doc" name="doc_subir_guias" id="doc_subir_guias" aria-describedby="Carguedocumentos" aria-label="Upload" required>&nbsp;
+                                                                            <button class="btn btn-info button-doc-select" type="button" id="CargarDocumento_guias">Cargar</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {{-- </form> --}}
+                                                        <div class="mostrar_fallo_doc_familia alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
+                                                        <div class="mostrar_exito_doc_familia alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                                    </div>
+                                                    {{-- Listado de Documentos --}}
+                                                    <div class="col-12">
+                                                        <div class="table table-responsive">
+                                                            <table id="listado_documentos_ed" class="table table-striped table-bordered" style="width:100%">
+                                                                <thead>
+                                                                    <tr class="bg-info">
+                                                                        <th>N°</th>
+                                                                        <th>Documento</th>
+                                                                        <th>Estado</th>
+                                                                        <th>Archivo</th>
+                                                                        <th>Fecha Cargue</th>
+                                                                        <th>Descarga</th>
+                                                                        <th>Detalle</th>
+                                                                        <th style="width: 1px !important;">Obligatorio</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>                                 
+                                                                    @foreach ($arraylistado_documentos as $documento)
+                                                                        <tr id="fila_doc_{{$documento->Nro_documento}}">
+                                                                            {{-- Nro --}}
+                                                                            <td>{{$documento->Nro_documento}}</td>
+                                                                            {{-- Documento --}}
+                                                                            <td style="width: 20% !important;">{{$documento->Nombre_documento}}</td>
+                                                                            {{-- Estado --}}
+                                                                            <td id="estadoDocumento_{{$documento->Id_Documento}}">
+                                                                                <?php if($documento->estado_documento == "Cargado"):?>
+                                                                                    <strong class="text-success">Cargado</strong>
+                                                                                <?php else:?>
+                                                                                    <strong class="text-danger">No Cargado</strong>
+                                                                                <?php endif?>
+                                                                            </td>
+                                                                            {{-- Archivo --}}
+                                                                            <td>
+                                                                                <form id="formulario_documento_{{$documento->Id_Documento}}" data-id_reg_doc="{{$documento->id_Registro_Documento}}" data-id_doc="{{$documento->Id_Documento}}" data-tipo_documento="{{$documento->Tipo}}" method="POST" enctype="multipart/form-data">
+                                                                                    @csrf
+                                                                                    <div class="d-none1">
+                                                                                        <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
+                                                                                        <?php if($documento->Tipo == "Complementario"):?>
+                                                                                            <?php 
+                                                                                                $patron = '/^(.*?)_IdEvento/';
+                                                                                                preg_match($patron, $documento->nombre_Documento, $matches);
+                                                                                                $name = $matches[1];
+                                                                                            ?>
+                                                                                            <input type="text" name="Nombre_documento" id="Nombre_documento_{{$documento->Id_Documento}}" value="{{$name}}">  
+                                                                                        <?php else:?>
+                                                                                            <input type="text" name="Nombre_documento" id="Nombre_documento_{{$documento->Id_Documento}}" value="{{$documento->Nombre_documento}}">  
+                                                                                        <?php endif?>
+                                                                                        <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">
+                                                                                        <input type="text" name="Id_servicio" id="Id_servicio_{{$documento->Id_Documento}}" value="{{$Id_servicio}}">
+                                                                                        <input type="text" name="string_nombre_doc" id="string_nombre_doc_{{$documento->Id_Documento}}" value="<?php if($documento->nombre_Documento <> ""){echo "{$documento->nombre_Documento}";}?>">
+                                                                                        @if (isset($Id_Asignacion))
+                                                                                            <input  type="text" name="Id_asignacion" id="Id_asignacion_{{$documento->Id_Documento}}" value="{{$Id_Asignacion}}">                                                                                                    
+                                                                                        @endif
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <p><?php if($documento->nombre_Documento <> ""){echo "{$documento->nombre_Documento}.{$documento->formato_documento}";}?></p>
+                                                                                        <div class="input-group" style="justify-content: space-between;">
+                                                                                            @if($documento->Id_Documento === 4 && $documento->Tipo === null)
+                                                                                                <input type="file" class="form-control select-doc" style="display: none;" data-id_reg_doc="{{$documento->id_Registro_Documento}}" data-tipo_documento="{{$documento->Tipo}}" id="listadodocumento_{{$documento->Id_Documento}}" data-id_doc="{{$documento->Id_Documento}}" aria-describedby="Carguedocumentos" aria-label="Upload" <?php if($documento->Requerido === "Si"):?>
+                                                                                                required
+                                                                                                <?php endif?>>
+                                                                                                <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%;">
+                                                                                                    <div style="display: flex;flex-direction: row;align-items: center;width: 82%; max-width:520px; border: 1px solid black; border-radius: 4px;">
+                                                                                                        <label for="listadodocumento_{{$documento->Id_Documento}}" id="thebutton_{{$documento->Id_Documento}}" class="btn btn-info button-doc-select" style="margin:0;font-weight: 400; border-radius: 1px 0px 0px 1px;">Seleccionar archivo</label>
+                                                                                                        <label for="listadodocumento_{{$documento->Id_Documento}}" id="fileName_{{$documento->Id_Documento}}" style="width: 60%; margin:0;padding-left: 5px;font-weight: 400; overflow: hidden;text-wrap: nowrap;text-overflow: ellipsis;">Sin archivos seleccionados</label>
+                                                                                                    </div>
+                                                                                                    <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_{{$documento->Id_Documento}}">
+                                                                                                        <?php if($documento->estado_documento == "Cargado"):?>
+                                                                                                            Actualizar
+                                                                                                        <?php else:?>
+                                                                                                            Cargar
+                                                                                                        <?php endif?>
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            @else
+                                                                                                <input type="file" class="form-control select-doc" name="listadodocumento" 
+                                                                                                id="listadodocumento_{{$documento->Id_Documento}}" data-id_doc="{{$documento->Id_Documento}}" data-tipo_documento="{{$documento->Tipo}}" aria-describedby="Carguedocumentos" aria-label="Upload"
+                                                                                                <?php if($documento->Requerido === "Si"):?>
+                                                                                                    required
+                                                                                                <?php endif?>
+                                                                                                >
+                                                                                                &nbsp;
+                                                                                                <button class="btn btn-info button-doc-select" type="submit" id="CargarDocumento_{{$documento->Id_Documento}}">
+                                                                                                    <?php if($documento->estado_documento == "Cargado"):?>
+                                                                                                        Actualizar
+                                                                                                    <?php else:?>
+                                                                                                        Cargar
+                                                                                                    <?php endif?>
+                                                                                                </button>
+                                                                                                
+                                                                                            @endif
+                                                                                        </div>                                                                                                                                                              
+                                                                                    </div>
+                                                                                </form>
+                                                                            </td>
+                                                                            {{-- Fecha Cargue --}}
+                                                                            <td>
+                                                                                <?php if(!empty($documento->fecha_cargue_documento)):?>
+                                                                                    <input type="date" class="form-control" id="fecha_cargue_documento_{{$documento->id_Registro_Documento}}_{{$documento->Id_Documento}}" value="{{$documento->fecha_cargue_documento}}" readonly>
+                                                                                <?php else: ?>
+                                                                                    <input type="date" class="form-control" id="fecha_cargue_documento_{{$documento->id_Registro_Documento}}_{{$documento->Id_Documento}}" readonly>
+                                                                                <?php endif?>
+                                                                            </td>
+                                                                            {{-- Descarga --}}
+                                                                            <td>
+                                                                                <?php if($documento->estado_documento == "Cargado"):?>
+                                                                                    <div class="d-none">
+                                                                                        <input type="text" id="nombre_documento_descarga_{{$documento->id_Registro_Documento}}_{{$documento->Id_Documento}}" value="{{$documento->nombre_Documento}}">                                                
+                                                                                        <input type="text" id="extension_documento_descarga_{{$documento->id_Registro_Documento}}_{{$documento->Id_Documento}}" value="{{$documento->formato_documento}}">                                                
+                                                                                    </div>
+                                                                                    <div class="text-center">
+                                                                                        <a href="javascript:void(0);" id="btn_generar_descarga_{{$documento->Id_Documento}}" data-id_doc_reg_descargar="{{$documento->id_Registro_Documento}}" data-id_documento_descargar="{{$documento->Id_Documento}}"><i class="fas fa-download text-info"></i></a>
+                                                                                    </div>
+                                                                                <?php endif?>
+                                                                            </td>
+                                                                            {{-- Detalle --}}
+                                                                            <td>
+                                                                                <?php if($documento->Tipo == "Complementario"): ?>
+                                                                                    <form id="form_eliminar_doc_complementario_{{$documento->Id_Documento}}" method="POST">
+                                                                                        @csrf
+                                                                                        <div class="d-none">
+                                                                                            <input type="text" name="tupla_doc_complementario" id="tupla_doc_complementario" value="{{$documento->id_Registro_Documento}}">
+                                                                                            <input type="text" name="nombre_doc_complementario" value="<?php echo "{$documento->nombre_Documento}.{$documento->formato_documento}";?>"> 
+                                                                                        </div>
+                                                                                        <div class="form-group text-center">
+                                                                                            <button class="btn" type="submit" id="EliminarDocComplementario">
+                                                                                                <i class="fas fa-minus-circle text-info" style="font-size:20px;"></i>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </form>
+                                                                                <?php endif ?>
+                                                                            </td>
+                                                                            {{-- Obligatorio --}}
+                                                                            <td class="text-center" style="width: 10% !important;">
+                                                                                <input type="checkbox" class="scales" name="checkdocumentos" id="check_documento_{{$documento->Id_Documento}}" 
+                                                                                    <?php if($documento->Requerido === "Si"): ?>
+                                                                                        checked
+                                                                                        disabled
+                                                                                    <?php else:?>
+                                                                                        disabled
+                                                                                    <?php endif ?>
+                                                                                >
+                                                                            </td>
+                                                                        </tr>
+                                                                    @endforeach                                                                                              
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                        <div class="mostrar_fallo alert alert-danger mt-2 mr-auto d-none" role="alert"></div>
+                                                        <div class="mostrar_exito alert alert-success mt-2 mr-auto d-none" role="alert"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

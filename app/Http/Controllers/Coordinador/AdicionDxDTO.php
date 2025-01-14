@@ -904,12 +904,16 @@ class AdicionDxDTO extends Controller
         ->where([['ID_evento',$Id_evento]])
         ->get();
 
+        $Id_servicio = 2;
+        $Id_Asignacion = $Id_asignacion_actual;
+        $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento,$Id_servicio,$Id_asignacion_actual));
+
         return view('coordinador.adicionDxDtoOrigen', compact('user', 'Id_asignacion_actual', 'datos_bd_DTO_ATEL', 'bandera_hay_dto', 'array_datos_calificacion_origen', 
             'bandera_tipo_evento', 'nombre_del_evento_guardado', 'numero_consecutivo', 'motivo_solicitud_actual',
             'datos_apoderado_actual', 'array_datos_info_laboral','listado_documentos_solicitados', 'dato_articulo_12', 'array_datos_examenes_interconsultas',
             'array_datos_diagnostico_motcalifi', 'info_adicion_dx', 'array_datos_diagnostico_adicionales','array_comite_interdisciplinario', 'consecutivo', 
-            'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento', 'caso_notificado', 'N_siniestro_evento','info_evento'
-            )
+            'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento', 'caso_notificado', 'N_siniestro_evento','info_evento', 
+            'arraylistado_documentos', 'Id_servicio', 'Id_Asignacion')
         );
         
     }
@@ -1122,6 +1126,25 @@ class AdicionDxDTO extends Controller
 
             $datos_status_notificacion_corresp = json_decode(json_encode($datos_status_notificacion_correspondencia, true));
             return response()->json($datos_status_notificacion_corresp);
+        }
+
+        if ($parametro == "docs_complementarios") {
+
+            $datos_tipos_documentos_familia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+            ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+            ->select('sld.Nro_documento', 'sld.Nombre_documento')
+            ->where([
+                ['srde.ID_evento', $request->evento],
+                ['srde.Id_servicio', $request->servicio],
+                ['srde.Id_Documento', $request->tipo_correspondencia],
+                ['sld.Estado', 'activo']
+            ])
+            // ->whereIn('srde.Id_Documento', [19, 20, 21, 22, 23])
+            ->groupBy('sld.Nro_documento')
+            ->get();
+
+            $info_datos_tipos_documentos_familia = json_decode(json_encode($datos_tipos_documentos_familia, true));
+            return response()->json($info_datos_tipos_documentos_familia);
         }
 
     }

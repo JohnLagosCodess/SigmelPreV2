@@ -948,6 +948,10 @@ class RecalificacionPCLController extends Controller
 
                 //Traer la modalidad de calificación
                 $Modalidad_calificacion = $this->globalService->retornarModalidadCalificacionPCL($Id_evento_recali,$Id_asignacion_recali);
+
+                $Id_servicio = $Id_servicioRecalifi;
+                $Id_Asignacion = $Id_asignacion_recali;
+                $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento_recali,$Id_servicio,$Id_asignacion_recali));
                 
                 return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'eventoAsigancion_Recalifi', 'eventoAsigancion_Recalifi_estadoDecreto', 
                 'validar_estado_decreto', 'eventoAsigancion_RecalifiPCL', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 
@@ -956,7 +960,7 @@ class RecalificacionPCLController extends Controller
                 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 
                 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento',
                 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 
-                'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado','Modalidad_calificacion'));
+                'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado','Modalidad_calificacion', 'Id_servicio', 'arraylistado_documentos', 'Id_Asignacion'));
                 
             }                        
         } 
@@ -1559,12 +1563,16 @@ class RecalificacionPCLController extends Controller
                 //Traer la modalidad de calificación
                 $Modalidad_calificacion = $this->globalService->retornarModalidadCalificacionPCL($Id_evento_recali,$Id_asignacion_recali);
                 
-                
+                $Id_servicio = $Id_servicioRecalifi;
+                $Id_Asignacion = $Id_asignacion_recali;
+                $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento_recali,$Id_servicio,$Id_asignacion_recali));
+
                 return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'validar_estado_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 
                 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultasre', 
                 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditivare', 'hay_agudeza_visualre', 'array_laboralmente_Activore', 
                 'array_rol_ocupacionalre', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinariore', 'consecutivore', 
-                'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado','Modalidad_calificacion'));
+                'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado','Modalidad_calificacion', 
+                'Id_servicio', 'arraylistado_documentos', 'Id_Asignacion'));
             }            
             elseif (!empty($validar_evento_CalifiTecnica[0]->Id_servicio)) { 
                 
@@ -2385,13 +2393,17 @@ class RecalificacionPCLController extends Controller
                 //Traer la modalidad de calificación
                 $Modalidad_calificacion = $this->globalService->retornarModalidadCalificacionPCL($Id_evento_recali,$Id_asignacion_recali);
 
+                $Id_servicio = $Id_servicioRecalifi;
+                $Id_Asignacion = $Id_asignacion_recali;
+                $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento_recali,$Id_servicio,$Id_asignacion_recali));
+
                 return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'validar_estado_decreto', 'datos_decreto', 'datos_decretore', 
                 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 
                 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 'array_datos_examenes_interconsultasre', 'array_datos_diagnostico_motcalifi', 
                 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 
                 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 
                 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinariore', 'consecutivore', 
-                'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado', 'Modalidad_calificacion'));
+                'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado', 'Modalidad_calificacion', 'Id_servicio', 'arraylistado_documentos', 'Id_Asignacion'));
                 
             }
         }
@@ -2641,6 +2653,24 @@ class RecalificacionPCLController extends Controller
             
         }
         
+        if ($parametro == "docs_complementarios") {
+
+            $datos_tipos_documentos_familia = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_lista_documentos as sld')
+            ->leftJoin('sigmel_gestiones.sigmel_registro_documentos_eventos as srde', 'sld.Id_Documento', '=', 'srde.Id_Documento')
+            ->select('sld.Nro_documento', 'sld.Nombre_documento')
+            ->where([
+                ['srde.ID_evento', $request->evento],
+                ['srde.Id_servicio', $request->servicio],
+                ['srde.Id_Documento', $request->tipo_correspondencia],
+                ['sld.Estado', 'activo']
+            ])
+            // ->whereIn('srde.Id_Documento', [19, 20, 21, 22, 23])
+            ->groupBy('sld.Nro_documento')
+            ->get();
+
+            $info_datos_tipos_documentos_familia = json_decode(json_encode($datos_tipos_documentos_familia, true));
+            return response()->json($info_datos_tipos_documentos_familia);
+        }
 
     }
 
