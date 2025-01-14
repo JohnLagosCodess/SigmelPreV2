@@ -2444,7 +2444,9 @@ class ControversiaJuntasController extends Controller
         $id_Jrci_califi_invalidez = $request->id_Jrci_califi_invalidez;
         $f_dictamen_jrci_emitido = $request->f_dictamen_jrci_emitido;
         $sustentacion_concepto_jrci = $request->sustentacion_concepto_jrci;
+        $sustentacion_concepto_jrci = htmlspecialchars($sustentacion_concepto_jrci);
         $sustentacion_concepto_jrci1 = $request->sustentacion_concepto_jrci1;
+        $sustentacion_concepto_jrci1 = htmlspecialchars($sustentacion_concepto_jrci1);
         $copia_afiliado = $request->copia_afiliado;
         $copia_empleador = $request->copia_empleador;
         $copia_eps = $request->copia_eps;

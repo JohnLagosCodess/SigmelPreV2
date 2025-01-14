@@ -872,6 +872,7 @@ $(document).ready(function(){
 
     function cleanModalCorrespondencia(){
         $("#btn_guardar_actualizar_correspondencia").val('Guardar');
+        $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
 
         correspondencia_array = [];
         $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);
@@ -1372,7 +1373,7 @@ $(document).ready(function(){
                 }, 3000);
             },
             complete: function(){
-                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
+                // $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
                 hideLoading();
             }
         });
