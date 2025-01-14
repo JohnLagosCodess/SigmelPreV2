@@ -180,8 +180,10 @@
         <table class="tabla2">
             <tbody>
                 <tr>
+                    <br>
+                    <p class="fuente_todo_texto paddingTexto derecha"><span class="negrita">{{$ciudad}} {{$fecha}}</span></p>
+                    <br>
                     <td style="width:100%; display:table; justify-content: space-between;">
-                        <p class="fuente_todo_texto paddingTexto derecha"><span class="negrita">{{$ciudad}} {{$fecha}}</span></p>
                         <div>
                             <div class="fuente_todo_texto paddingTexto">
                                 <span class="negrita">Señores:</span><br>
@@ -202,12 +204,16 @@
             <tbody>
                 <tr>
                     <td>
-                        <span class="fuente_todo_texto"><span class="negrita">Asunto: {{$asunto}}</span></span><br>
-                        <div style="margin-left: 1.3cm;">
-                            <span class="fuente_todo_texto"><span class="negrita">PACIENTE: {{$nombre_afiliado}} {{$tipo_identificacion}} {{$num_identificacion}} </span></span><br>
-                            <span class="fuente_todo_texto"><span class="negrita">Ramo: </span>{{$ramo}}</span><br>
-                            {{-- <span class="fuente_todo_texto"><span class="negrita">Siniestro: </span>{{$N_siniestro}}</span> --}}
+                        <div class="fuente_todo_texto">
+                            <span class="negrita">Asunto: {{$asunto}}</span>
+                            <br>
+                            <div style="margin-left: 1.3cm;">
+                                <span class="negrita">PACIENTE: {{$nombre_afiliado}} {{$tipo_identificacion}} {{$num_identificacion}}</span>
+                                <br>
+                                <span class="negrita">Ramo: </span><span>{{$ramo}}</span>
+                            </div>
                         </div>
+
                     </td>
                 </tr>
             </tbody>
@@ -339,7 +345,7 @@
         if ( isset($pdf) ) {
             $pdf->page_script('
                 $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $pdf->text(485, 50, "Página $PAGE_NUM de $PAGE_COUNT", $font, 9);
+                $pdf->text(485, 65, "Página $PAGE_NUM de $PAGE_COUNT", $font, 9);
             ');
         }
 	</script>

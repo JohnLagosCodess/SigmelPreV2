@@ -177,8 +177,10 @@
         <table class="tabla2">            
             <tbody>
                 <tr>
+                    <p class="fuente_todo_texto paddingTexto derecha"><span class="negrita">{{$ciudad}} {{$fecha}}</span></p>
+                    <br>
+                    <br>
                     <td style="width:100%; display:table; justify-content: space-between;">
-                        <p class="fuente_todo_texto paddingTexto derecha"><span class="negrita">{{$ciudad}} {{$fecha}}</span></p>
                         <div>
                             <div class="fuente_todo_texto paddingTexto">
                                 <span class="negrita">Señor(a): </span><br>
@@ -187,7 +189,11 @@
                             <div class="fuente_todo_texto paddingTexto">{{$Email_afiliado}}</div>
                             <div class="fuente_todo_texto paddingTexto">{{$direccion}}</div>
                             <div class="fuente_todo_texto paddingTexto">{{$telefono}}</div>
-                            <div class="fuente_todo_texto paddingTexto">{{$municipio.' - '.$departamento}}</div>
+                            @if($municipio == 'Bogota D.C.' || $municipio == 'Bogotá D.C.')
+                                <div class="fuente_todo_texto paddingTexto">Bogotá D.C.</div>
+                            @else
+                                <div class="fuente_todo_texto paddingTexto">{{$municipio.' - '.$departamento}}</div>
+                            @endif
                         </div>   
                     </td>
                 </tr>

@@ -83,6 +83,25 @@ if (!function_exists("fechaFormateada")) {
         return $fecha_formateada;
     }
 }
+if (!function_exists("fechaFormatoDinamico")) {
+    /**
+     * Funcion para para obtener la fecha con un formato dinamico o por defecto formateada como: # de día de nombre del mes de # de año 
+     * @param string $fecha 
+     * @param string $format 
+     * @return string fecha formateada
+     */
+    function fechaFormatoDinamico($fecha,$format='d \d\e F \d\e Y')
+    {
+
+        // Establecemos el idioma a español para que los meses y días se traduzcan correctamente.
+        Carbon::setLocale('es');
+
+        // Realizamos el formateo de la fecha segun el formato recibido 
+        $fecha_formateada_dinamicamente = Carbon::parse($fecha)->translatedFormat($format);
+
+        return $fecha_formateada_dinamicamente;
+    }
+}
 if (!function_exists("generarNumeroEvento")) {
     function generarNumeroEvento(){
         $dato_consecutivoEvento = DB::table(getDatabaseName('sigmel_gestiones') . "sigmel_numero_orden_eventos")->select('Numero_orden')
