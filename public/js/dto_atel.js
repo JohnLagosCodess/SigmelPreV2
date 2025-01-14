@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    let flagDictamen = 0;
 
     var idRol = $("#id_rol").val();
 
@@ -83,6 +84,13 @@ $(document).ready(function(){
     });
 
     $(".state_notificacion").select2({
+        placeholder:"Seleccione una opción",
+        allowClear:false
+    });
+
+    // cargue selector documentos complementarios
+    $(".listado_tipos_documentos_guias").select2({      
+        width: '100%',
         placeholder:"Seleccione una opción",
         allowClear:false
     });
@@ -1309,6 +1317,7 @@ $(document).ready(function(){
 
     function cleanModalCorrespondencia(){
         $("#btn_guardar_actualizar_correspondencia").val('Guardar');
+        $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
 
         correspondencia_array = [];
         $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);
@@ -1631,6 +1640,112 @@ $(document).ready(function(){
                 $("#check_principal").prop('disabled', true).prop('required', true);
             }
         });
+
+        /* Aqui se programará algunas cosas de la ficha PBS 082 */
+
+        // 1. motrar el botón de que tipo de guia es
+        // 2. precargar el selector de documentos complementarios dependiendo de que correspondecia es.
+
+        $("#tipo_guia").text('');
+        $('#listado_documentos_ed tr[id^="fila_doc_"]').removeClass('d-none');
+        $("#collapseGuia").removeClass('show');
+        $("#doc_subir_guias").val('');
+        switch (tipo_correspondencia) {
+            case 'Afiliado':
+                $("#tipo_guia").text('Afiliado');
+                $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_22').addClass('d-none');
+
+                var datos_lista_tipos_documentos = {
+                    '_token': token,
+                    'evento': $("#Id_Evento_dto_atel").val(),
+                    'servicio': 1,
+                    'parametro':"docs_complementarios",
+                    'tipo_correspondencia': 22,
+                };
+                
+                break;
+            case 'Empleador':
+                $("#tipo_guia").text('Empleador');
+                $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_23').addClass('d-none');
+
+                var datos_lista_tipos_documentos = {
+                    '_token': token,
+                    'evento': $("#Id_Evento_dto_atel").val(),
+                    'servicio': 1,
+                    'parametro':"docs_complementarios",
+                    'tipo_correspondencia': 23,
+                };
+                
+                break;
+            case 'eps':
+                $("#tipo_guia").text('EPS');
+                $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_21').addClass('d-none');
+
+                var datos_lista_tipos_documentos = {
+                    '_token': token,
+                    'evento': $("#Id_Evento_dto_atel").val(),
+                    'servicio': 1,
+                    'parametro':"docs_complementarios",
+                    'tipo_correspondencia': 21,
+                };
+
+                break;
+            case 'afp':
+                $("#tipo_guia").text('AFP');
+                $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_20').addClass('d-none');
+
+                var datos_lista_tipos_documentos = {
+                    '_token': token,
+                    'evento': $("#Id_Evento_dto_atel").val(),
+                    'servicio': 1,
+                    'parametro':"docs_complementarios",
+                    'tipo_correspondencia': 20,
+                };
+
+                break;
+            case 'arl':
+                $("#tipo_guia").text('ARL');
+                $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_19').addClass('d-none');
+
+                var datos_lista_tipos_documentos = {
+                    '_token': token,
+                    'evento': $("#Id_Evento_dto_atel").val(),
+                    'servicio': 1,
+                    'parametro':"docs_complementarios",
+                    'tipo_correspondencia': 19,
+                };
+
+                break;
+            case 'afp_conocimiento':
+                $("#tipo_guia").text('Entidad conocimiento');
+                $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_20').addClass('d-none');
+
+                var datos_lista_tipos_documentos = {
+                    '_token': token,
+                    'evento': $("#Id_Evento_dto_atel").val(),
+                    'servicio': 1,
+                    'parametro':"docs_complementarios",
+                    'tipo_correspondencia': 20,
+                };
+
+                break;
+            default:
+                break;
+        }
+        
+        $.ajax({
+            type:'POST',
+            url:'/cargueListadoSelectoresDTOATEL',
+            data: datos_lista_tipos_documentos,
+            success:function(data) {
+                $("#listado_tipos_documentos_guias").empty();
+                $("#listado_tipos_documentos_guias").append('<option value="">Seleccione una Opción</option>');
+                let tiposdoc = Object.keys(data);
+                for (let i = 0; i < tiposdoc.length; i++) {
+                    $('#listado_tipos_documentos_guias').append('<option value="'+data[tiposdoc[i]]["Nro_documento"]+'">'+data[tiposdoc[i]]["Nro_documento"]+' - '+data[tiposdoc[i]]["Nombre_documento"]+'</option>');
+                }
+            }
+        });
     });
 
     
@@ -1711,7 +1826,7 @@ $(document).ready(function(){
                 }, 3000);
             },
             complete: function(){
-                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
+                // $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
                 hideLoading();
             }
         });
@@ -2143,7 +2258,7 @@ $(document).ready(function(){
             }
 
         }
-        console.log('listaDocsSolicitados ',lista_documentos_solicitados,'lista_diagnosticos_cie10 ',lista_diagnosticos_cie10,' datos_finales_examenes_interconsultas ',datos_finales_examenes_interconsultas,' datos_finales_motivo_calificacion ',datos_finales_motivo_calificacion)
+        // console.log('listaDocsSolicitados ',lista_documentos_solicitados,'lista_diagnosticos_cie10 ',lista_diagnosticos_cie10,' datos_finales_examenes_interconsultas ',datos_finales_examenes_interconsultas,' datos_finales_motivo_calificacion ',datos_finales_motivo_calificacion)
         if((lista_documentos_solicitados.length == 0 && datos_finales_examenes_interconsultas.length == 0) || (lista_diagnosticos_cie10.length == 0 && datos_finales_motivo_calificacion.length == 0)){
             $('.alerta_roja_dto_dict').append('<strong>Debe registrar por lo menos un Documento o interconsulta y un Diagnóstico para poder guardar la calificación de Origen</strong>').removeClass('d-none')
             setTimeout(function(){
@@ -2179,11 +2294,13 @@ $(document).ready(function(){
                                 $("#EditarDTOATEL").addClass('d-none');
                                 $("#mostrar_mensaje_agrego_dto_atel").removeClass('d-none');
                                 $(".mensaje_agrego_dto_atel").append('<strong>'+mensaje+'</strong>');
-                                setTimeout(() => {
-                                    $("#mostrar_mensaje_agrego_dto_atel").addClass('d-none');
-                                    $(".mensaje_agrego_dto_atel").empty();
-                                    location.reload();
-                                }, 1000);
+                                if(flagDictamen == 0){
+                                    setTimeout(() => {
+                                        $("#mostrar_mensaje_agrego_dto_atel").addClass('d-none');
+                                        $(".mensaje_agrego_dto_atel").empty();
+                                        location.reload();
+                                    }, 1000);
+                                }
                             }
                             else{
                                 $("#mostrar_mensaje_error").removeClass('d-none');
@@ -2213,8 +2330,10 @@ $(document).ready(function(){
                     }, 1000);
                 }
             },
+            complete: function() {
+                flagDictamen = 0; 
+            }
         });
-
     });
 
     //Captura de data para el Formulario DML ORIGEN PREVISIONAL (DICTAMEN)
@@ -2472,8 +2591,11 @@ $(document).ready(function(){
                     $('#GuardarComiteInter').prop('disabled', true);
                     $('#div_alerta_comiteInter').removeClass('d-none');
                     $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');
-                    $('#form_correspondencia_dto').trigger('submit');
-
+                    flagDictamen = 1;
+                    $("#form_DTO_ATEL").trigger('submit');
+                    setTimeout(() => {
+                        $('#form_correspondencia_dto').trigger('submit');
+                    }, 2000);
                 }
             }          
         })
@@ -2861,7 +2983,6 @@ $(document).ready(function(){
         var f_correspondencia = $('#f_correspondencia').val();
         var radicado = $('#radicado').val();
         var bandera_correspondecia_guardar_actualizar = $('#bandera_correspondecia_guardar_actualizar').val();
-        console.log('Radicado ', radicado);
         var datos_correspondecia={
             '_token': token,            
             'Id_Evento_dto_atel':Id_Evento_dto_atel,
@@ -2926,14 +3047,19 @@ $(document).ready(function(){
                                 $('#div_alerta_Correspondencia').removeClass('d-none');
                                 $('.alerta_Correspondencia').append('<strong>'+mensaje+'</strong>'); 
                                 $('.alerta_comiteInter').empty();
-                                $('.alerta_comiteInter').append('<strong>' + mensaje + '</strong>');                                          
+                                $('.alerta_comiteInter').append('<strong>' + mensaje + '</strong>');
                                 setTimeout(function(){
                                     $('#div_alerta_Correspondencia').addClass('d-none');
                                     $('.alerta_Correspondencia').empty();
                                     $('#div_alerta_comiteInter').addClass('d-none');
                                     $('.alerta_comiteInter').empty();     
-
-                                    location.reload();
+                                    // Verifica periódicamente si flagDictamen es 0 lo que indica que aun no se ha generado la actualización del dictamen
+                                    const interval = setInterval(() => {
+                                        if (flagDictamen === 0) {
+                                            clearInterval(interval); // Detenemos el intervalo
+                                            location.reload(); // Recargamos la página
+                                        }
+                                    }, 1000); // Revisamos cada 1s
                                 }, 1500);
                             }
                             else{
@@ -3295,6 +3421,10 @@ $(document).ready(function(){
         $("#div_correspondecia").addClass('d-none');
         $("label[for='editar_correspondencia']").addClass('d-none');
         $("#btn_guardar_actualizar_correspondencia").prop('disabled',true);
+
+        $("button[id^='CargarDocumento_']").prop('disabled', true);
+        $("#listado_tipos_documentos_guias").prop('disabled', true);
+        $("#CargarDocumento_guias").prop('disabled', true);
     }
 
     // A los usuarios que no tengan el rol Administrador se les aplica los siguientes controles en el formulario de correspondencia:
@@ -3334,7 +3464,220 @@ $(document).ready(function(){
         });
     }, 500);    
 
+    /* INICIO FUNCIONALIDAD DEL CARGUE DE DOCUMENTOS (GUIA) */
 
+    // seteo del id, nombre del documento familia, id evento, id servicio
+    $("#CargarDocumento_guias").prop('disabled', true);
+    $("#listado_tipos_documentos_guias").change(function(){
+        var id_doc_familia_seleccionado = $(this).val();
+        var nombre_doc_familia_seleccionado = $(this).find("option:selected").text().replace(/^\d+\s*-\s*/, '');
+        $("#id_doc_familia_guias").val(id_doc_familia_seleccionado);
+        $("#nombre_doc_familia_guias").val(nombre_doc_familia_seleccionado);
+
+        var evento = $("#Id_Evento_dto_atel").val();
+        var servicio = 1;
+        var asignacion = $("#Id_Asignacion_dto_atel").val();
+        
+        $("#id_evento_familia_guias").val(evento);
+        $("#id_servicio_familia_guias").val(servicio);
+        $("#id_asignacion_familia_guias").val(asignacion);
+        
+        
+        if (id_doc_familia_seleccionado != "") {
+            $("#CargarDocumento_guias").prop('disabled', false);
+        }
+    });
+
+    /* Envío de información del documento familia */
+    // $("#familia_documentos").submit(function(e){
+    $("#CargarDocumento_guias").click(function(){
+
+        let formData = new FormData();
+        formData.append('_token', $('input[name=_token]').val());
+        formData.append('id_doc_familia', $("#id_doc_familia_guias").val());
+        formData.append('nombre_doc_familia', $("#nombre_doc_familia_guias").val());
+        formData.append('id_evento_familia', $("#id_evento_familia_guias").val());
+        formData.append('id_servicio_familia', $("#id_servicio_familia_guias").val());
+        formData.append('id_asignacion_familia', $("#id_asignacion_familia_guias").val());
+        formData.append('doc_subir', $("#doc_subir_guias")[0].files[0]);
+    
+        $.ajax({
+            url: "/cargaDocumentosComplementarios",
+            method: 'POST',
+            data: formData,
+            processData: false, // No procesar los datos automáticamente
+            contentType: false, // Establecer contentType en false
+            success:function(response){
+                if (response.parametro == "fallo") {
+                    if (response.otro != undefined) {
+                        $('#listadodocumento_'+response.otro).val('');
+                    }else{
+                        $('#doc_subir_guias').val('');
+                    }
+                    $('.mostrar_fallo_doc_familia').removeClass('d-none');
+                    $('.mostrar_fallo_doc_familia').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_fallo_doc_familia').addClass('d-none');
+                        $('.mostrar_fallo_doc_familia').empty();
+                    }, 6000);
+                }else if (response.parametro == "exito") {
+                    $('.mostrar_exito_doc_familia').removeClass('d-none');
+                    $('.mostrar_exito_doc_familia').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_exito_doc_familia').addClass('d-none');
+                        $('.mostrar_exito_doc_familia').empty();
+                    }, 6000);
+                }else{}
+
+            }         
+        });
+    });
+
+    /* Envío de Información para eliminar el documento Complementario */
+    $("form[id^='form_eliminar_doc_complementario_']").submit(function(e){
+        e.preventDefault();
+        var formData = new FormData($(this)[0]);
+        // for (var pair of formData.entries()) {
+        //     //console.log(pair[0] + ": " + pair[1]);
+        // }
+        $.ajax({
+            url: "/eliminarDocumentoComplementario",
+            type: "post",
+            dataType: "json",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success:function(response){
+                if (response.parametro == "fallo") {
+                    $('.mostrar_fallo').removeClass('d-none');
+                    $('.mostrar_fallo').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_fallo').addClass('d-none');
+                        $('.mostrar_fallo').empty();
+                    }, 6000);
+                }else if (response.parametro == "exito") {
+                    $('.mostrar_exito').removeClass('d-none');
+                    $('.mostrar_exito').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_exito').addClass('d-none');
+                        $('.mostrar_exito').empty();
+                    }, 6000);
+                }else{}
+            }         
+        });
+    });
+
+    /* Obtener el ID del evento a dar clic en cualquier botón de cargue de archivo y asignarlo al input hidden del id evento */
+    $("input[id^='listadodocumento_']").click(function(){
+        let idobtenido = $('#Id_Evento_dto_atel').val();
+        $("input[id^='EventoID_']").val(idobtenido);
+    });
+
+    /* Envío de Información del Documento a Cargar */
+    var fechaActual = new Date().toISOString().slice(0,10);
+    $("form[id^='formulario_documento_']").submit(function(e){
+        
+        e.preventDefault();
+        var id_reg_doc = $(this).data("id_reg_doc");
+        var id_doc = $(this).data("id_doc");
+
+        var formData = new FormData($(this)[0]);
+        var cambio_estado = $(this).parents()[1]['children'][2]["id"];
+        var input_documento = $(this).parents()[0]['children'][0][4]["id"];  
+        
+        //for (var pair of formData.entries()) {
+        //   //console.log(pair[0]+ ', ' + pair[1]); 
+        //}
+        // Enviamos los datos para validar y guardar el docmuento correspondiente
+        $.ajax({
+            url: "/cargarDocumentos",
+            type: "post",
+            dataType: "json",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false  ,
+            success:function(response){
+                // //console.log(response);
+                if (response.parametro == "fallo") {
+                    if (response.otro != undefined) {
+                        $('#listadodocumento_'+response.otro).val('');
+                    }else{
+                        $('#'+input_documento).val('');
+                    }
+                    $('.mostrar_fallo').removeClass('d-none');
+                    $('.mostrar_fallo').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_fallo').addClass('d-none');
+                        $('.mostrar_fallo').empty();
+                    }, 6000);
+                }else if (response.parametro == "exito") {
+                    $("#fecha_cargue_documento_"+id_reg_doc+"_"+id_doc).val(fechaActual);
+                    if(response.otro != undefined){
+                        $("#estadoDocumentoOtro_"+response.otro).empty();
+                        $("#estadoDocumentoOtro_"+response.otro).append('<strong class="text-success">Cargado</strong>');
+                        $('#listadodocumento_'+response.otro).prop("disabled", true);
+                        $('#CargarDocumento_'+response.otro).prop("disabled", true);
+                        $('#habilitar_modal_otro_doc').prop("disabled", true);
+                    }else{
+                        $("#"+cambio_estado).empty();
+                        $("#"+cambio_estado).append('<strong class="text-success">Cargado</strong>');
+                    }
+                    $('.mostrar_exito').removeClass('d-none');
+                    $('.mostrar_exito').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.mostrar_exito').addClass('d-none');
+                        $('.mostrar_exito').empty();
+                    }, 6000);
+                }else{}
+                
+
+            }         
+        });
+    });
+
+    /* FUNCIONALIDAD DESCARGA DOCUMENTO */
+    $("a[id^='btn_generar_descarga_']").click(function(){
+        var id_registro_doc = $(this).data('id_doc_reg_descargar');
+        var id_documento = $(this).data('id_documento_descargar');
+
+        var nombre_documento = $("#nombre_documento_descarga_"+id_registro_doc+"_"+id_documento).val();
+        var extension_documento = $("#extension_documento_descarga_"+id_registro_doc+"_"+id_documento).val();
+
+        var regex = /IdEvento_(.*?)_IdServicio/;
+        var resultado = nombre_documento.match(regex);
+
+        if (resultado) {
+            var id_evento = resultado[1];
+        } else {
+            var id_evento = "";
+        }
+    
+        // Crear un enlace temporal para la descarga
+        var enlaceDescarga = document.createElement('a');
+        enlaceDescarga.href = '/descargar-archivo/'+nombre_documento+'.'+extension_documento+'/'+id_evento;
+        enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+        enlaceDescarga.style.display = 'none';
+        document.body.appendChild(enlaceDescarga);
+    
+        // Simular clic en el enlace para iniciar la descarga
+        enlaceDescarga.click();
+    
+        // Eliminar el enlace después de la descarga
+        setTimeout(function() {
+            document.body.removeChild(enlaceDescarga);
+        }, 1000);
+    });
+    /* FIN FUNCIONALIDAD DEL CARGUE DE DOCUMENTOS (GUIA) */
+});
+
+$(document).ready(function () {
+    $('a[data-toggle="collapse"]').on('click', function (e) {
+        e.preventDefault(); // Prevenir el comportamiento predeterminado si lo necesitas
+        var target = $(this).data('target'); // Obtener el ID del colapsable
+        $(target).collapse('toggle'); // Alternar el colapsable
+    });
 });
 
 /* Función para añadir los controles de cada elemento de cada fila en la tabla Diagnostico motivo de calificación*/

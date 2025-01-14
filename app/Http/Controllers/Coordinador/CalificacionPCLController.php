@@ -586,7 +586,6 @@ class CalificacionPCLController extends Controller
         $Id_servicio = $request->Id_servicio;
         $fecha_asignacion_calificacion = $request->fecha_asignacion_calificacion;
         $fecha_calificacion = $request->fecha_calificacion;
-
         $Accion_realizar = $request->accion;
 
         //VALIDACIONES PBS068
@@ -623,7 +622,6 @@ class CalificacionPCLController extends Controller
         } else {
             $Nueva_fecha_radicacion = null;
         }
-        
         // validacion de bandera para guardar o actualizar
         if ($request->banderaguardar == 'Guardar') {
                
@@ -1469,7 +1467,6 @@ class CalificacionPCLController extends Controller
                             ['sipc.Servicio_asociado', $Id_servicio],
                             ['sipc.Status_parametrico', 'Activo']
                         ])->get();
-                        
                             $Accion_ejecutar_automatica = $info_datos_accion_automatica[0]->Accion_ejecutar;
                             $Profesional_asignado_automatico = $info_datos_accion_automatica[0]->Profesional_asignado;
                             $NombreProfesional_asignado_automatico = $info_datos_accion_automatica[0]->name;
@@ -2502,7 +2499,6 @@ class CalificacionPCLController extends Controller
         $tipo_descarga = $request->tipo_descarga;
 
         $radicado = $this->disponible($request->radicado2,$Id_evento)->getRadicado('pcl',$Id_evento);
-
         //Se asignan los IDs de destinatario por cada posible destinatario
         $ids_destinatarios = $this->globalService->asignacionConsecutivoIdDestinatario();
         
@@ -2994,7 +2990,7 @@ class CalificacionPCLController extends Controller
                     $Email_destinatario = $request->email_destinatario_act;
     
             }elseif(!empty($nombre_destinatario) && !empty($nit_cc) && !empty($direccion_destinatario) && 
-                !empty($telefono_destinatario) && !empty($email_destinatario)){
+                ($telefono_destinatario != null || $telefono_destinatario === '') && !empty($email_destinatario)){
                 $Nombre_destinatario = $nombre_destinatario;
                 $Nit_cc = $nit_cc;
                 $Direccion_destinatario = $direccion_destinatario;
@@ -5324,7 +5320,7 @@ class CalificacionPCLController extends Controller
         $array_datos_historial_accion_eventos = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_historial_accion_eventos as sihae')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_acciones as sia', 'sia.Id_Accion', '=', 'sihae.Id_accion')
         ->select('sihae.Id_historial_accion', 'sihae.ID_evento', 'sihae.Id_proceso', 'sihae.Id_servicio', 'sihae.Id_accion', 
-        'sia.Accion', 'sihae.Documento', 'sihae.Descripcion', 'sihae.F_accion', 'sihae.Nombre_usuario')
+        'sia.Accion', 'sihae.Documento', 'sihae.Descripcion', 'sihae.F_accion','sihae.Movimiento_automatico','sihae.F_primer_accion', 'sihae.Nombre_usuario')
         ->where([['sihae.ID_evento', $request->ID_evento],['sihae.Id_proceso', $request->Id_proceso]])
         ->orderBy('sihae.F_accion', 'asc')->get();
        
@@ -10364,7 +10360,7 @@ class CalificacionPCLController extends Controller
         }
         
         // validamos la firma esta marcado para la Captura de la firma del cliente           
-        if ($Firma_comuni_comite == 'Firma') {            
+        if ($Firma_comuni_comite == 'Firma' || $Firma_comuni_comite == 'Firmar') {            
             $idcliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente', 'Nombre_cliente')
             ->where('Id_cliente', $Cliente)->get();
     
@@ -10393,7 +10389,12 @@ class CalificacionPCLController extends Controller
         $Direccion_empresa_noti = $array_datos_info_laboral[0]->Direccion;
         $Telefono_empresa_noti = $array_datos_info_laboral[0]->Telefono_empresa;
         $Email_empresa_noti = $array_datos_info_laboral[0]->Email;
-        $Ciudad_departamento_empresa_noti = $array_datos_info_laboral[0]->Nombre_municipio.'-'.$array_datos_info_laboral[0]->Nombre_departamento;        
+        if($array_datos_info_laboral[0]->Nombre_municipio == 'Bogota D.C.' || $array_datos_info_laboral[0]->Nombre_municipio === 'Bogotá D.C.'){
+            $Ciudad_departamento_empresa_noti = 'Bogotá D.C.';
+        }
+        else{
+            $Ciudad_departamento_empresa_noti = $array_datos_info_laboral[0]->Nombre_municipio.'-'.$array_datos_info_laboral[0]->Nombre_departamento;
+        }
 
         if(!empty($Copia_empleador_correspondecia) && $Copia_empleador_correspondecia == 'Empleador'){
             $copiaNombre_empresa_noti = $Nombre_empresa_noti;
@@ -10434,7 +10435,11 @@ class CalificacionPCLController extends Controller
                     $nombre_destinatario_principal = $datos_entidad[0]->Nombre_entidad;
                     $direccion_destinatario_principal = $datos_entidad[0]->Direccion;
                     $telefono_destinatario_principal = $datos_entidad[0]->Telefonos;
-                    $ciudad_destinatario_principal = $datos_entidad[0]->Nombre_municipio.'-'.$datos_entidad[0]->Nombre_departamento;
+                    if($datos_entidad[0]->Nombre_municipio == 'Bogota D.C.' || $datos_entidad[0]->Nombre_municipio === 'Bogotá D.C.'){
+                        $ciudad_destinatario_principal = 'Bogotá D.C.';
+                    }else{
+                        $ciudad_destinatario_principal = $datos_entidad[0]->Nombre_municipio.'-'.$datos_entidad[0]->Nombre_departamento;
+                    }
                 break;
                 
                 // Si escoge la opción Afiliado: Se sacan los datos del destinatario principal pero del afiliado
@@ -10442,7 +10447,11 @@ class CalificacionPCLController extends Controller
                     $nombre_destinatario_principal = $Nombre_afiliado_noti;
                     $direccion_destinatario_principal = $Direccion_afiliado_noti;
                     $telefono_destinatario_principal = $Telefono_afiliado_noti;
-                    $ciudad_destinatario_principal = $Ciudad_afiliado_noti.'-'.$Departamento_afiliado_noti;
+                    if($Ciudad_afiliado_noti == 'Bogota D.C.' || $Ciudad_afiliado_noti === 'Bogotá D.C.'){
+                        $ciudad_destinatario_principal = 'Bogotá D.C.';
+                    }else{
+                        $ciudad_destinatario_principal = $Ciudad_afiliado_noti.'-'.$Departamento_afiliado_noti;
+                    }
                 break;
 
                 // Si escoge la opción Empleador: Se sacan los datos del destinatario principal pero del Empleador
@@ -10499,7 +10508,11 @@ class CalificacionPCLController extends Controller
             $nombre_destinatario_principal = $Nombre_afiliado_noti;
             $direccion_destinatario_principal = $Direccion_afiliado_noti;
             $telefono_destinatario_principal = $Telefono_afiliado_noti;
-            $ciudad_destinatario_principal = $Ciudad_afiliado_noti.'-'.$Departamento_afiliado_noti;
+            if($Ciudad_afiliado_noti == 'Bogota D.C.' || $Ciudad_afiliado_noti === 'Bogotá D.C.'){
+                $ciudad_destinatario_principal = 'Bogotá D.C.';
+            }else{
+                $ciudad_destinatario_principal = $Ciudad_afiliado_noti.'-'.$Departamento_afiliado_noti;
+            }
         }
 
         /* Extraemos los datos del footer */
@@ -10594,11 +10607,6 @@ class CalificacionPCLController extends Controller
                 'footer' => $footer,
                 'N_siniestro' => $N_siniestro,
                 'Email_afp_conocimiento' => $Email_afp_conocimiento
-                // 'footer_dato_1' => $footer_dato_1,
-                // 'footer_dato_2' => $footer_dato_2,
-                // 'footer_dato_3' => $footer_dato_3,
-                // 'footer_dato_4' => $footer_dato_4,
-                // 'footer_dato_5' => $footer_dato_5,
             ];
             
             // Crear una instancia de Dompdf

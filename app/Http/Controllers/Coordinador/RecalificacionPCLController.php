@@ -7292,7 +7292,7 @@ class RecalificacionPCLController extends Controller
         }
         
         // validamos la firma esta marcado para la Captura de la firma del cliente           
-        if ($Firma_comuni_comite == 'Firma') {            
+        if ($Firma_comuni_comite == 'Firma' || $Firma_comuni_comite == 'Firmar') {            
             $idcliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente', 'Nombre_cliente')
             ->where('Id_cliente', $Cliente)->get();
     
@@ -7321,7 +7321,12 @@ class RecalificacionPCLController extends Controller
         $Direccion_empresa_noti = $array_datos_info_laboral[0]->Direccion;
         $Telefono_empresa_noti = $array_datos_info_laboral[0]->Telefono_empresa;
         $Email_empresa_noti = $array_datos_info_laboral[0]->Email;
-        $Ciudad_departamento_empresa_noti = $array_datos_info_laboral[0]->Nombre_municipio.'-'.$array_datos_info_laboral[0]->Nombre_departamento;        
+        if($array_datos_info_laboral[0]->Nombre_municipio == 'Bogota D.C.' || $array_datos_info_laboral[0]->Nombre_municipio === 'Bogotá D.C.'){
+            $Ciudad_departamento_empresa_noti = 'Bogotá D.C.';
+        }
+        else{
+            $Ciudad_departamento_empresa_noti = $array_datos_info_laboral[0]->Nombre_municipio.'-'.$array_datos_info_laboral[0]->Nombre_departamento;
+        }
 
         if(!empty($Copia_empleador_correspondecia) && $Copia_empleador_correspondecia == 'Empleador'){
             $copiaNombre_empresa_noti = $Nombre_empresa_noti;
@@ -7363,7 +7368,11 @@ class RecalificacionPCLController extends Controller
                     $nombre_destinatario_principal = $datos_entidad[0]->Nombre_entidad;
                     $direccion_destinatario_principal = $datos_entidad[0]->Direccion;
                     $telefono_destinatario_principal = $datos_entidad[0]->Telefonos;
-                    $ciudad_destinatario_principal = $datos_entidad[0]->Nombre_municipio.'-'.$datos_entidad[0]->Nombre_departamento;
+                    if($datos_entidad[0]->Nombre_municipio == 'Bogota D.C.' || $datos_entidad[0]->Nombre_municipio === 'Bogotá D.C.'){
+                        $ciudad_destinatario_principal = 'Bogotá D.C.';
+                    }else{
+                        $ciudad_destinatario_principal = $datos_entidad[0]->Nombre_municipio.'-'.$datos_entidad[0]->Nombre_departamento;
+                    }
                 break;
                 
                 // Si escoge la opción Afiliado: Se sacan los datos del destinatario principal pero del afiliado
@@ -7371,7 +7380,11 @@ class RecalificacionPCLController extends Controller
                     $nombre_destinatario_principal = $Nombre_afiliado_noti;
                     $direccion_destinatario_principal = $Direccion_afiliado_noti;
                     $telefono_destinatario_principal = $Telefono_afiliado_noti;
-                    $ciudad_destinatario_principal = $Ciudad_afiliado_noti.'-'.$Departamento_afiliado_noti;
+                    if($Ciudad_afiliado_noti == 'Bogota D.C.' || $Ciudad_afiliado_noti === 'Bogotá D.C.'){
+                        $ciudad_destinatario_principal = 'Bogotá D.C.';
+                    }else{
+                        $ciudad_destinatario_principal = $Ciudad_afiliado_noti.'-'.$Departamento_afiliado_noti;
+                    }
                 break;
 
                 // Si escoge la opción Empleador: Se sacan los datos del destinatario principal pero del Empleador
@@ -7428,7 +7441,11 @@ class RecalificacionPCLController extends Controller
             $nombre_destinatario_principal = $Nombre_afiliado_noti;
             $direccion_destinatario_principal = $Direccion_afiliado_noti;
             $telefono_destinatario_principal = $Telefono_afiliado_noti;
-            $ciudad_destinatario_principal = $Ciudad_afiliado_noti.'-'.$Departamento_afiliado_noti;
+            if($Ciudad_afiliado_noti == 'Bogota D.C.' || $Ciudad_afiliado_noti === 'Bogotá D.C.'){
+                $ciudad_destinatario_principal = 'Bogotá D.C.';
+            }else{
+                $ciudad_destinatario_principal = $Ciudad_afiliado_noti.'-'.$Departamento_afiliado_noti;
+            }
         }
 
         /* Extraemos los datos del footer */
