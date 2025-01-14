@@ -7292,7 +7292,7 @@ class RecalificacionPCLController extends Controller
         }
         
         // validamos la firma esta marcado para la Captura de la firma del cliente           
-        if ($Firma_comuni_comite == 'Firma') {            
+        if ($Firma_comuni_comite == 'Firma' || $Firma_comuni_comite == 'Firmar') {            
             $idcliente = sigmel_clientes::on('sigmel_gestiones')->select('Id_cliente', 'Nombre_cliente')
             ->where('Id_cliente', $Cliente)->get();
     

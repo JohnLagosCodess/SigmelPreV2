@@ -4882,6 +4882,7 @@ $(document).ready(function(){
                         }
 
                     });
+                    $('#form_dictamen_pericial').trigger('submit');
                     setTimeout(function(){
                         $('#div_alerta_Correspondencia').addClass('d-none');
                         $('.alerta_Correspondencia').empty();   
