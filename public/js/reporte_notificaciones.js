@@ -78,7 +78,7 @@ $(document).ready(function () {
                                                  
                     ],
                     exportOptions: {
-                        columns: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]
+                        columns: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
                     }
                 }
             ]
@@ -236,6 +236,7 @@ function renderizarRegistros(data, inicio, fin, reporteNotificacionesTable) {
             data[a].Cons,
             data[a].ID_evento,
             data[a].F_comunicado,
+            data[a].F_asignacion_notificaciones,
             data[a].N_radicado,
             data[a].Nombre_documento,
             data[a].Carpeta_impresion,
