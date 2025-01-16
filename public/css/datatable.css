@@ -1,0 +1,51 @@
+/* Estilo para el icono de la fila cerrada (control) */
+table.dataTable td.dt-control {
+  text-align: center;
+  cursor: pointer;
+}
+
+/* Estilo inicial para el ícono (control) */
+table.dataTable td.dt-control:before {
+  content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>');
+  transition: transform 0.3s ease, filter 0.3s ease; /* Transición suave */
+  display: block;
+  width: 18px; /* Tamaño más pequeño en píxeles */
+  height: 18px; /* Tamaño más pequeño en píxeles */
+  filter: opacity(0.5); /* Color gris opaco */
+  cursor: pointer;
+}
+
+/* Estilo para el ícono cuando se expande la fila (dt-hasChild) */
+table.dataTable td.dt-hasChild:before {
+  content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"/></svg>');
+  transition: transform 0.3s ease, filter 0.3s ease; /* Transición suave */
+  display: block;
+  width: 18px; /* Tamaño más pequeño en píxeles */
+  height: 18px; /* Tamaño más pequeño en píxeles */
+  filter: opacity(0.5); /* Color gris opaco */
+  cursor: pointer;
+}
+
+/* Asegurar una transición suave también para el cambio de opacidad y escala */
+table.dataTable td.dt-control:before, 
+table.dataTable td.dt-control.dt-hasChild:before {
+  transition: transform 0.3s ease, filter 0.3s ease; /* Transición de escala y opacidad */
+}
+
+/* Ocultar el pie de página vacío */
+table.dataTable tfoot:empty {
+  display: none;
+}
+
+/* Estilos para el tema oscuro */
+html.dark table.dataTable td.dt-control:before,
+:root[data-bs-theme=dark] table.dataTable td.dt-control:before,
+:root[data-theme=dark] table.dataTable td.dt-control:before {
+  filter: invert(1);
+}
+
+html.dark table.dataTable td.dt-control.dt-hasChild:before,
+:root[data-bs-theme=dark] table.dataTable td.dt-control.dt-hasChild:before,
+:root[data-theme=dark] table.dataTable td.dt-control.dt-hasChild:before {
+  filter: invert(1);
+}

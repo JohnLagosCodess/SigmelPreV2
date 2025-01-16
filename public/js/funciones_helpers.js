@@ -1169,7 +1169,8 @@ function historial_servicios(){
                 'id': 'form_modulo_califi_Juntas_',
                 'url': $("#action_modulo_calificacion_Juntas").val()
             }
-        }
+        },
+        default: () => { return null}
     }
 
     let afiliado =  $("#nombre_afiliado").val();
@@ -1214,6 +1215,7 @@ function historial_servicios(){
                 { "data": "Accion" },
                 { "data": "F_accion" },
                 { "data": null, render: function(data){
+                        if (data.Id_proceso == null) return "";
                         let action = procesos[data.Id_proceso]().url;
                         let form = `
                             <form action="${action}" method="POST">
@@ -1278,6 +1280,21 @@ function autoAdjustColumns(table) {
       resizeObserver.observe(container);
     } else {
       console.error("'container' is not a valid DOM element.");
+    }
+}
+
+/**
+ * Fuerza los atributos min - max del input de tipo date
+ * @param {event} selector del input 
+ */
+function enforceMinMax(el) {
+    if (el.val() !== "") {
+        if (parseInt(el.val()) < parseInt(el.attr('min'))) {
+            el.val(el.attr('min'));
+        }
+        if (parseInt(el.val()) > parseInt(el.attr('max'))) {
+            el.val(el.attr('max'));
+        }
     }
 }
 
@@ -1824,5 +1841,28 @@ function ColoreadoEventosANS(Tiempo_actual,Fecha_alerta_naranja, Fecha_alerta_ro
                 $(tabla_bandeja).find('td').css({'color':'red', 'font-weight': 'bold'});
             }
         }
+    }
+}
+
+/**
+ * Obtiene la diferencia entre dos fechas
+ * @param {string} fecha_inicial 
+ * @param {string} fecha_final 
+ * @returns devuelve la cantidad de dias entre las fechas
+ */
+function diff_date(fecha_inicial, fecha_final){
+    let diff = moment(new Date(fecha_final)).diff(new Date(fecha_inicial), 'months', true);
+
+    return Math.round(diff);
+}
+
+/**
+ * Calcula la antiguedad en la empresa
+ */
+function calc_antiguedad_empresa(){
+    if($("#fecha_ingreso").val() !== '' && $("#fecha_retiro").val() !== ''){
+        let antiguedad = diff_date($("#fecha_ingreso").val(),$("#fecha_retiro").val());
+
+        $("#antiguedad_empresa").val(antiguedad);
     }
 }
