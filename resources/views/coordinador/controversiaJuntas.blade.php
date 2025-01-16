@@ -630,7 +630,7 @@
                                         <div class="col-12 row_sustenta_jrci" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci)){ ?> <?php }else{ ?>style="display:none"<?php } ?>>
                                             <div class="form-group">
                                                 <label for="sustentacion_concepto_jrci">Sustentación ante concepto de la JRCI <span style="color: red;">(*)</span></span></label>
-                                                <textarea class="form-control soloPrimeraLetraMayus" name="sustentacion_concepto_jrci " id="sustentacion_concepto_jrci" cols="30" rows="5" style="resise:none;"><?php if(!empty($arrayinfo_controvertido[0]->Sustentacion_concepto_jrci)) { echo $arrayinfo_controvertido[0]->Sustentacion_concepto_jrci;} ?></textarea>
+                                                <textarea class="form-control soloPrimeraLetraMayus" name="sustentacion_concepto_jrci " id="sustentacion_concepto_jrci" cols="30" rows="5" style="resise:none;" required><?php if(!empty($arrayinfo_controvertido[0]->Sustentacion_concepto_jrci)) { echo $arrayinfo_controvertido[0]->Sustentacion_concepto_jrci;} ?></textarea>
                                             </div>
                                         </div>
                                         <div class="col-4 row_f_sustenta_jrci" <?php if(!empty($arrayinfo_controvertido[0]->Decision_dictamen_jrci)){ ?> <?php }else{ ?>style="display:none"<?php } ?>>

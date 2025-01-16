@@ -5141,7 +5141,7 @@ $(document).ready(function(){
             'Id_Asignacion': $('#Id_Asignacion_decreto').val(),
             'Id_proceso': $('#Id_Proceso_decreto').val(),
             'Estado_Recalificacion': 'Inactivo',
-        };            
+        };
         $.ajax({
             type:'POST',
             url:'/guardarExamenesInterconsultas',
@@ -5161,8 +5161,7 @@ $(document).ready(function(){
                 }
             }
             
-        });        
-               
+        });
     });     
 });
 // remover filas de examenes de interconsulta
