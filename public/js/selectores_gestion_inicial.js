@@ -268,11 +268,14 @@ $(document).ready(function(){
         success:function(data) {
             // console.log(data);
             $('#cliente').empty();
-            $('#cliente').append('<option value="" selected>Seleccione</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
                 $('#cliente').append('<option value="'+data[claves[i]]["Id_Cliente"]+'">'+data[claves[i]]["Nombre_cliente"]+'</option>');
             }
+
+            //Selecciona el primer cliente
+            $('#cliente option').first().prop('selected', true);
+            $('#cliente').trigger('change');
         }
     });
 

@@ -79,7 +79,13 @@ return [
             'days' => 10,
             'replace_placeholders' => true,
         ],
-
+        'tools' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/tools.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 10,
+            'replace_placeholders' => true,
+        ],
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

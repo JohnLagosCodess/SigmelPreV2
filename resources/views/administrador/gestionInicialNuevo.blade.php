@@ -40,7 +40,7 @@
                 </div>
             @endif
         </div>
-        <form action="{{route('creacionEvento')}}" method="POST" id="gestion_inicial_nuevo">
+        <form action="{{route('creacionEvento')}}" method="POST" id="gestion_inicial_nuevo" enctype="multipart/form-data">
             @csrf
             <div class="card-body">
                 <div class="row">
@@ -108,7 +108,7 @@
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label for="fecha_radicacion" class="col-form-label">Fecha de radicación <span style="color:red;">(*)</span></label>
-                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" max="{{date("Y-m-d")}}" required>
+                                                    <input type="date" class="fecha_radicacion form-control" name="fecha_radicacion" id="fecha_radicacion" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
@@ -719,6 +719,12 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
+                                            <div class="col-2">
+                                                <div class="form-group">
+                                                    <label for="fecha_accion">Fecha de acción <span style="color: red;">(*)</span></label>
+                                                    <input type="text" class="form-control" name="fecha_accion" id="fecha_accion" value="<?php if(!empty($array_datos_calificacionPcl[0]->F_accion_realizar)){echo $array_datos_calificacionPcl[0]->F_accion_realizar; }else{echo now()->format('Y-m-d H:i:s');} ?>" disabled>
+                                                </div>
+                                            </div>
                                             <div class="col-sm">
                                                 <div class="form-group">
                                                     <label for="proceso" class="col-form label">Proceso <span style="color:red;">(*)</span></label>
@@ -736,15 +742,15 @@
                                                     <label for="accion" class="col-form label">Acción <span style="color:red;">(*)</span></label>
                                                     <select class="accion custom-select" name="accion" id="accion" required></select>
                                                 </div>
-                                            </div> 
-                                            <div class="col-sm">
-                                                <div class="form-group">
-                                                    <label for="fecha_alerta" class="col-form label">Fecha Alerta</label>
-                                                    <input type="date" class="fecha_alerta form-control" name="fecha_alerta" id="fecha_alerta" min="{{date("Y-m-d")}}">
-                                                </div>
-                                            </div>                                                                                      
+                                            </div>                                                                                       
                                         </div>
                                         <div class="row">
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <label for="estado_facturacion">Estado de Facturación</label>
+                                                    <input type="text" class="form-control" name="estado_facturacion" id="estado_facturacion" value="<?php if(!empty($array_datos_calificacionPcl[0]->Estado_Facturacion)){echo $array_datos_calificacionPcl[0]->Estado_Facturacion;}?>" readonly>
+                                                </div>
+                                            </div>
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label for="profesional" class="col-form label">Profesional</label>
@@ -761,6 +767,18 @@
                                                         <input type="text" class="form-control" name="fecha_alerta_naranja_ans" id="fecha_alerta_naranja_ans">
                                                         <input type="text" class="form-control" name="fecha_alerta_roja_ans" id="fecha_alerta_roja_ans">
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm">
+                                                <div class="form-group">
+                                                    <label for="fecha_alerta" class="col-form label">Fecha Alerta</label>
+                                                    <input type="date" class="fecha_alerta form-control" name="fecha_alerta" id="fecha_alerta" min="{{date("Y-m-d")}}">
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="cargue_documentos">Cargue Documento Historial:</label>                                                
+                                                    <input type="file" class="form-control select-doc" name="cargue_documentos" id="cargue_documentos" aria-describedby="Carguedocumentos" aria-label="Upload"/>
                                                 </div>
                                             </div>
                                         </div>  
@@ -809,9 +827,10 @@
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 <script src="/plugins/toatsr/build/toastr.min.js"></script>
-<script src="/js/selectores_gestion_inicial.js"></script>
 <script src="/js/funciones_helpers.js?v=1.0.0"></script>
+<script src="/js/selectores_gestion_inicial.js"></script>
 <script>
     $(document).ready(function(){
         $('#gestion_inicial_nuevo').submit(function(e){
@@ -848,6 +867,32 @@
 
             }
             return true;
+        });
+    });
+    $("#accion").change(async function(){
+        let datos_ejecutar_parametrica_mod_principal = {
+            '_token': '{{ csrf_token() }}',
+            'parametro': "validarSiModNuevo",
+            'Id_proceso': $("#proceso").find(":selected").val(),
+            'Id_servicio': $("#servicio").find(":selected").val(),
+            'Id_accion': $(this).val(),
+            'Id_cliente': $("#cliente").find(":selected").val(),
+        };
+
+        $.ajax({
+            type:'POST',
+            url:'/validacionParametricaEnSi',
+            data: datos_ejecutar_parametrica_mod_principal,
+            success:function(data) {
+                $("#estado_facturacion").empty();
+                if(data.length > 0){
+                    if (data[0]["Estado_facturacion"] != null) {
+                        
+                        $("#estado_facturacion").val(data[0]["Estado_facturacion"]);
+                    }
+                }
+            
+            }
         });
     });
 
@@ -914,6 +959,7 @@
     $(document).on('keyup change click', '#fecha_radicacion',function(event){
         
         var fechaEvento = $("#fecha_evento").val();
+        enforceMinMax($(this));
         var tipo_handler = event.type;
         /* 
             CASO 1: Si el evento es de tipo click entonces modifica el atributo min de la f de radicación
@@ -937,6 +983,11 @@
                     }
                     let alerta = '<i style="color:red;">La fecha debe ser igual o mayor a la fecha evento: '+fechaEvento+'</i>';
                     $(this).after(alerta);
+
+                    setTimeout(() => {
+                        $(this).val(fechaEvento);
+                        $(this).next('i').remove();
+                    }, 3000);
                 }else{
                     if ($(this).next('i').length) {
                         $(this).next('i').remove();
@@ -975,32 +1026,73 @@
             var fechaEvento = $(this).val();
             $("#fecha_retiro").val('').attr("min", fechaEvento);
         });
+
+        $(document).on('keyup change', '#fecha_retiro', function(event){
+            var fechaIngreso = $("#fecha_ingreso").val();
+
+            var tipo_handler = event.type;
+            if (tipo_handler == 'keyup' || tipo_handler == 'change') {
+                if ($(this).val() > '1900-01-01' && $(this).val() < fechaIngreso) {
+                    // Eliminar cualquier alerta previa
+                    if ($(this).next('i').length) {
+                        $(this).next('i').remove();
+                    }
+                    let alerta = '<i style="color:red;">La fecha debe ser igual o mayor a: '+fechaIngreso+'</i>';
+                    $(this).after(alerta);
+
+                    setTimeout(() => {
+                        $(this).val(fechaIngreso);
+                        calc_antiguedad_empresa();
+                        $(this).next('i').remove();
+                    }, 2500);
+                }else{
+                    if ($(this).next('i').length) {
+                        $(this).next('i').remove();
+                    }
+                    calc_antiguedad_empresa();
+                }
+            }
+        });
     });
 </script>
 {{-- Validación general para todos los campos de tipo fecha --}}
 <script>
     let today = new Date().toISOString().split("T")[0];
 
-    // Seleccionar todos los inputs de tipo date
-    const dateInputs = document.querySelectorAll('input[type="date"]');
+    // Seleccionar todos los inputs de tipo 'date'
+    $('input[type="date"]').each(function() {
+        // Usar los eventos 'keyup' y 'change' para cada input de tipo 'date'
+        $(this).on('keyup change', function() {
+            var today = new Date().toISOString().split('T')[0]; // Fecha actual en formato YYYY-MM-DD
+            var inputValue = $(this).val();
+            $(this).next('i').remove();
+            // Validar que la fecha sea mayor a '1900-01-01'
+            if (inputValue < '1900-01-01') {
+                $(`#${this.id}_alerta`).empty();
+                $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada")
+                    .removeClass("d-none");
+                $('#Edicion_editar').addClass('d-none');
+                setTimeout(() => {
+                    $(`#${this.id}_alerta`).addClass('d-none');
+                }, 2000);
+                return;
+            }
 
-    // Agregar evento de escucha a cada input de tipo date que haya
-    dateInputs.forEach(input => {
-        //Usamos el evento change para detectar los cambios de cada uno de los inputs de tipo fecha
-        input.addEventListener('change', function() {
-            //Validamos que la fecha sea mayor a la fecha de 1900-01-01
-            if(this.value < '1900-01-01'){
-                $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada").removeClass("d-none");
+            // Validar que la fecha no sea mayor a la fecha actual
+            if (inputValue > today) {
+                $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual")
+                    .removeClass("d-none");
                 $('#Edicion_editar').addClass('d-none');
+
+                setTimeout(() => {
+                    $(this).val(today);
+                    $(`#${this.id}_alerta`).addClass('d-none');
+                }, 2500);
                 return;
             }
-            //Validamos que la fecha no sea mayor a la fecha actual
-            if(this.value > today){
-                $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual").removeClass("d-none");
-                $('#Edicion_editar').addClass('d-none');
-                return;
-            }
-            return $(`#${this.id}_alerta`).text('').addClass("d-none");
+
+            // Si la fecha es válida, ocultar el mensaje de alerta
+            $(`#${this.id}_alerta`).text('').addClass("d-none");
         });
     });
 </script>

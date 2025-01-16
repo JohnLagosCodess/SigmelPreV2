@@ -7492,6 +7492,7 @@ $(document).ready(function(){
     $(document).on("click", "a[id^='editar_posicion_foleo_expediente_']",function(){
         // Remover la variable localStorage en caso de que se de mas click en el icono
         // localStorage.removeItem("#Generar_lista_expediente");
+        $("a[id^='editar_posicion_foleo_expediente_']").prop('disabled', true);
         let validarDocumento_exp = true;
         // Recorrer todos los inputs de id 'posicion_expediente_' y verificar su estado
         $("select[id^='documento_expediente_']").each(function() {
@@ -7583,6 +7584,7 @@ $(document).ready(function(){
                         $('#resultado_inseractua_expediente').removeClass('alert-success');
                         $('#resultado_inseractua_expediente').addClass('d-none');  
                         $('#resultado_inseractua_expediente').empty();
+                        $("a[id^='editar_posicion_foleo_expediente_']").prop('disabled', false);
                         // Crear variable localStorage despues de manipular el icono 
                         // localStorage.setItem("#Generar_lista_expediente", true);
                     }, 3000);                   
@@ -7595,6 +7597,7 @@ $(document).ready(function(){
                         $('#resultado_inseractua_expediente').removeClass('alert-danger');
                         $('#resultado_inseractua_expediente').addClass('d-none');  
                         $('#resultado_inseractua_expediente').empty();
+                        $("a[id^='editar_posicion_foleo_expediente_']").prop('disabled', false);
                         // Crear variable localStorage despues de manipular el icono 
                         // localStorage.setItem("#Generar_lista_expediente", true);
                     }, 3000);

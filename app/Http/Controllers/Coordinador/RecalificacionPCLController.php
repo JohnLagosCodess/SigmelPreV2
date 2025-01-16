@@ -5593,7 +5593,7 @@ class RecalificacionPCLController extends Controller
             }
             
             sigmel_informacion_eventos::on('sigmel_gestiones')
-            ->where('ID_evento', $request->Id_EventoDecreto)->update(["Tipo_evento" => $request->tipo_evento]);
+            ->where('ID_evento', $request->Id_EventoDecreto)->update(["Tipo_evento" => $request->tipo_evento, 'F_evento' => $request->f_evento_pericial]);
         }        
         $id_servicio = $this->globalService->retornarNumeroDeServicio($Id_Asignacion_Dcreto);
         $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
