@@ -21,6 +21,8 @@ return new class extends Migration
             $table->text('Documento')->nullable();
             $table->text('Descripcion')->nullable();
             $table->datetime('F_accion')->nullable();
+            $table->integer('Movimiento_automatico')->nullable();
+            $table->datetime('F_primer_accion')->nullable();
             $table->text('Nombre_usuario')->nullable();
         });
     }

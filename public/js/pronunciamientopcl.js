@@ -1016,7 +1016,7 @@ $(document).ready(function(){
             $("#firmar").prop('checked', true);
 
         }else if (opc_seleccionada == 'Desacuerdo' && $("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?') {
-            $('#asunto_cali').val('RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN FRENTE A DICTAMEN N°');
+            $('#asunto_cali').val(`RECURSO DE REPOSICIÓN EN SUBSIDIO DE APELACIÓN FRENTE A DICTAMEN N° {{$nro_dictamen_pri_cali}} DEL {{$fecha_dictamen_pri_cali}}`);
             var texto_insertar = "<p>Respetados Señores, </p>"+
             "<p><strong>HUGO IGNACIO GÓMEZ DAZA</strong>, identificado como aparece al pie de mi firma, actuando en nombre y representación de <strong>SEGUROS DE VIDA "+ 
             "ALFA S.A.</strong> Aseguradora que expidió el <b><u>seguro previsional a la AFP PORVENIR S.A.</u></b>, debidamente facultado para ello, en atención al "+
@@ -1274,6 +1274,8 @@ $(document).ready(function(){
                             'desicion_proforma':desicion_proforma,
                             'id_comunicado': Id_Comunicado,
                             'N_siniestro' : N_siniestro,
+                            'N_dictamen' : $("#dictamen_calificador").val(),
+                            'F_dictamen' : $("#fecha_calificador").val(),
                             'Bandera_boton_guardar_pronunciamiento': Bandera_boton_guardar_pronunciamiento,
                         };
                         $.ajax({
@@ -1322,6 +1324,8 @@ $(document).ready(function(){
                             'desicion_proforma':desicion_proforma,
                             'id_comunicado': Id_Comunicado,
                             'N_siniestro' : N_siniestro,
+                            'N_dictamen' : $("#dictamen_calificador").val(),
+                            'F_dictamen' : $("#fecha_calificador").val(),
                             'Bandera_boton_guardar_pronunciamiento': Bandera_boton_guardar_pronunciamiento,
                         };
                         $.ajax({
@@ -1424,7 +1428,9 @@ $(document).ready(function(){
             'Firma_corre':firmar,
             'desicion_proforma':desicion_proforma,
             'id_comunicado': comunicado.Id_Comunicado,
-            'N_siniestro' : N_siniestro
+            'N_siniestro' : N_siniestro,
+            'N_dictamen' : $("#dictamen_calificador").val(),
+            'F_dictamen' : $("#fecha_calificador").val(),
         };
         if(comunicado.Reemplazado == 1){
             var nombre_doc = comunicado.Nombre_documento;
@@ -2064,7 +2070,7 @@ $(document).ready(function(){
                 }, 3000);
             },
             complete: function(){
-                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
+                // $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
                 hideLoading();
             }
         });
@@ -2418,6 +2424,7 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
 
 function cleanModalCorrespondencia(){
     $("#btn_guardar_actualizar_correspondencia").val('Guardar');
+    $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
 
     correspondencia_array = [];
     $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);

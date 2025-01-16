@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    let flagDictamen = 0;
 
     var idRol = $("#id_rol").val();
 
@@ -1505,11 +1506,13 @@ $(document).ready(function(){
                                     $("#ActualizarAdicionDx").addClass('d-none');
                                     $("#mostrar_mensaje_agrego_adicion_dx").removeClass('d-none');
                                     $(".mensaje_agrego_adicion_dx").append('<strong>'+mensaje+'</strong>');
-                                    setTimeout(() => {
-                                        $("#mostrar_mensaje_agrego_adicion_dx").addClass('d-none');
-                                        $(".mensaje_agrego_adicion_dx").empty();
-                                        location.reload();
-                                    }, 1500);
+                                    if(flagDictamen == 0){
+                                        setTimeout(() => {
+                                            $("#mostrar_mensaje_agrego_adicion_dx").addClass('d-none');
+                                            $(".mensaje_agrego_adicion_dx").empty();
+                                            location.reload();
+                                        }, 1500);
+                                    }
                                 }
                                 else{
                                     $("#mostrar_mensaje_error").removeClass('d-none');
@@ -1534,6 +1537,9 @@ $(document).ready(function(){
                             $(".mostrar_mensaje_error").empty();
                         }, 1000);
                     }
+                },
+                complete: function() {
+                    flagDictamen = 0; 
                 }
             });
         }
@@ -1660,8 +1666,12 @@ $(document).ready(function(){
                 if (response.parametro == 'insertar_comite_interdisciplinario') {
                     $('#GuardarComiteInter').prop('disabled', true);
                     $('#div_alerta_comiteInter').removeClass('d-none');
-                    $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');                                            
-                    $('#form_correspondencia_adx').trigger('submit');
+                    $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');
+                    flagDictamen = 1;
+                    $("#form_Adicion_Dx").trigger('submit');
+                    setTimeout(() => {
+                        $('#form_correspondencia_adx').trigger('submit');
+                    }, 2000);
                 }
             }          
         })
@@ -2146,8 +2156,14 @@ $(document).ready(function(){
                                     $('#div_alerta_Correspondencia').addClass('d-none');
                                     $('.alerta_Correspondencia').empty();   
                                     $('#div_alerta_comiteInter').addClass('d-none');
-                                    $('.alerta_comiteInter').empty();    
-                                    location.reload();
+                                    $('.alerta_comiteInter').empty();
+                                    // Verifica periódicamente si flagDictamen es 0 lo que indica que aun no se ha generado la actualización del dictamen
+                                    const interval = setInterval(() => {
+                                        if (flagDictamen === 0) {
+                                            clearInterval(interval); // Detenemos el intervalo
+                                            location.reload(); // Recargamos la página
+                                        }
+                                    }, 1000); // Revisamos cada 1s
                                 }, 1500);  
                             }
                             else{
@@ -2244,6 +2260,7 @@ $(document).ready(function(){
 
     function cleanModalCorrespondencia(){
         $("#btn_guardar_actualizar_correspondencia").val('Guardar');
+        $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
 
         correspondencia_array = [];
         $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);
@@ -2751,7 +2768,7 @@ $(document).ready(function(){
                 }, 3000);
             },
             complete: function(){
-                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
+                // $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
                 hideLoading();
             }
         });

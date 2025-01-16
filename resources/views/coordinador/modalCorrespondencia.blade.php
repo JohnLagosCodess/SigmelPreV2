@@ -214,7 +214,7 @@
                                                                 <div class="col-6">
                                                                     <div class="form-group">
                                                                         <label for="listado_tipos_documentos_guias">Listado Documentos Complementarios <span style="color: red;">(*)</span></label><br>
-                                                                        <select class="listado_tipos_documentos_guias custom-select" name="listado_tipos_documentos_guias" id="listado_tipos_documentos_guias" style="width: 100%;" required>
+                                                                        <select class="listado_tipos_documentos_guias custom-select" name="listado_tipos_documentos_guias" id="listado_tipos_documentos_guias" style="width: 100%;">
                                                                             <option value="">Seleccione una Opción</option>
                                                                         </select>
                                                                     </div>
@@ -222,7 +222,7 @@
                                                                 <div class="col-6">
                                                                     <div class="form-group">
                                                                         <label for="" style="color: white;">label</label>
-                                                                        <div class="d-none1">
+                                                                        <div class="d-none">
                                                                             <input type="text" name="id_doc_familia_guias" id="id_doc_familia_guias">
                                                                             <input type="text" name="nombre_doc_familia_guias" id="nombre_doc_familia_guias">
                                                                             <input type="text" name="id_evento_familia_guias" id="id_evento_familia_guias">
@@ -230,7 +230,7 @@
                                                                             <input type="text" name="id_asignacion_familia_guias" id="id_asignacion_familia_guias">
                                                                         </div>
                                                                         <div class="input-group">
-                                                                            <input type="file" class="form-control select-doc" name="doc_subir_guias" id="doc_subir_guias" aria-describedby="Carguedocumentos" aria-label="Upload" required>&nbsp;
+                                                                            <input type="file" class="form-control select-doc" name="doc_subir_guias" id="doc_subir_guias" aria-describedby="Carguedocumentos" aria-label="Upload">&nbsp;
                                                                             <button class="btn btn-info button-doc-select" type="button" id="CargarDocumento_guias">Cargar</button>
                                                                         </div>
                                                                     </div>

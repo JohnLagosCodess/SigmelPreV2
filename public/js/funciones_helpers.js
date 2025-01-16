@@ -1476,6 +1476,25 @@ function ubicacionEvento() {
         });
     });
 }
+
+// Función para enviar el formulario y retornar una promesa
+function enviarFormulario(selectorFormulario) {
+    return new Promise((resolve, reject) => {
+        // Enviar el formulario
+        $(selectorFormulario).trigger('submit');
+
+        // Escuchar un evento que confirme el envío (puedes adaptarlo)
+        $(selectorFormulario).on('submit', function(event) {
+            event.preventDefault(); // Esto puede omitirse si no quieres prevenir el envío
+
+            // Aquí podrías verificar si el formulario fue enviado correctamente
+            resolve(); // Llamar a resolve cuando se complete el envío
+        });
+
+        // Opcional: Rechazar la promesa si ocurre un error en un tiempo límite
+        setTimeout(() => reject("El formulario tardó demasiado en procesarse"), 5000);
+    });
+}
 /*
 * Recibe una cadena string con todos los IDs de destinatario de un comunicado y el 'destinatario' con el fin d
 * @returns string | null

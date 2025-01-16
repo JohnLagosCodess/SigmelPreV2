@@ -1713,6 +1713,7 @@ $(document).ready(function(){
 
     function cleanModalCorrespondencia(){
         $("#btn_guardar_actualizar_correspondencia").val('Guardar');
+        $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
 
         correspondencia_array = [];
         $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);
@@ -2164,7 +2165,7 @@ $(document).ready(function(){
                 }, 3000);
             },
             complete: function(){
-                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
+                // $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
                 hideLoading();
             }
         });
@@ -4278,7 +4279,17 @@ $(document).ready(function(){
                             
                         }else{
                             data[i]['descargardoc'] = ""; 
-                        } 
+                        }
+                        if(data[i]['Movimiento_automatico'] && data[i]['Movimiento_automatico'] == 1){
+                            let fecha_primer_accion = new Date(data[i]['F_primer_accion'].replace(' ', 'T'));
+                            let fecha_ejecucion_accion = new Date(data[i]['F_accion'].replace(' ', 'T'));
+                            let tiempo_para_movimiento = Math.round((fecha_ejecucion_accion-fecha_primer_accion)/ (1000*60*60*24));
+                            data[i]['F_accion'] = `<p>${data[i]['F_accion']}</p><p>${tiempo_para_movimiento} días después</p>`;
+                            let accion_anterior = data[i-1];
+                            if(accion_anterior){
+                                data[i]['Descripcion'] = `Acción automática ejecutada a los ${tiempo_para_movimiento} días de ${accion_anterior['Accion']}`;
+                            }
+                        }
                     } 
 
                     $.each(data, function(index, value){
@@ -4318,7 +4329,10 @@ $(document).ready(function(){
             "data": response,
             "order": [[0, 'desc']],
             "columns":[
-                {"data":"F_accion"},
+                {"data":"F_accion", "render": function(data, type, row){
+                    // Permite renderizar HTML en la columna
+                    return data;
+                }},
                 {"data":"Nombre_usuario"},
                 {"data":"Accion"},
                 {"data":"Descripcion"},

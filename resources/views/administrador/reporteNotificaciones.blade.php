@@ -84,6 +84,7 @@
                                                     <th>CONS</th>                                                    
                                                     <th>ID EVENTO</th>
                                                     <th>FECHA COMUNICADO</th>
+                                                    <th>FECHA DE ASIGNACIÓN NOTIFICACIONES</th>
                                                     <th>N° RADICADO</th>
                                                     <th>DOCUMENTO</th>
                                                     <th>CARPETA DE IMPRESIÓN</th>

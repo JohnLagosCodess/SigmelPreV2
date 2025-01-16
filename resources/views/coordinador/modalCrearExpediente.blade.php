@@ -164,7 +164,7 @@
                                                 <div class="col-12"> 
                                                     <div class="row">
                                                         <div class="col-8 alert alert-warning mr-auto" role="alert" style="padding:7px; left:7px;">
-                                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para visualizar los cambios dar click en el botón <strong>Actualizar Tabla Expediente</strong>
+                                                            <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Para visualizar los cambios dar click en el botón <strong>Actualizar Tabla Expediente</strong> y después de guardar un documento o editar una posición debe esperar a que realicé dicha acción para ejecutar otra.
                                                         </div>
                                                         <div class="col-3" style="text-align:right;">
                                                             <x-adminlte-button class="mr-auto" id="refrescar_expedientes" theme="info" label="Actualizar Tabla Expediente"/>

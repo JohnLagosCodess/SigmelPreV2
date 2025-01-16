@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    let flagDictamen = 0;
 
     var idRol = $("#id_rol").val();
 
@@ -1316,6 +1317,7 @@ $(document).ready(function(){
 
     function cleanModalCorrespondencia(){
         $("#btn_guardar_actualizar_correspondencia").val('Guardar');
+        $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
 
         correspondencia_array = [];
         $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);
@@ -1824,7 +1826,7 @@ $(document).ready(function(){
                 }, 3000);
             },
             complete: function(){
-                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
+                // $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
                 hideLoading();
             }
         });
@@ -2292,11 +2294,13 @@ $(document).ready(function(){
                                 $("#EditarDTOATEL").addClass('d-none');
                                 $("#mostrar_mensaje_agrego_dto_atel").removeClass('d-none');
                                 $(".mensaje_agrego_dto_atel").append('<strong>'+mensaje+'</strong>');
-                                setTimeout(() => {
-                                    $("#mostrar_mensaje_agrego_dto_atel").addClass('d-none');
-                                    $(".mensaje_agrego_dto_atel").empty();
-                                    location.reload();
-                                }, 1000);
+                                if(flagDictamen == 0){
+                                    setTimeout(() => {
+                                        $("#mostrar_mensaje_agrego_dto_atel").addClass('d-none');
+                                        $(".mensaje_agrego_dto_atel").empty();
+                                        location.reload();
+                                    }, 1000);
+                                }
                             }
                             else{
                                 $("#mostrar_mensaje_error").removeClass('d-none');
@@ -2326,8 +2330,10 @@ $(document).ready(function(){
                     }, 1000);
                 }
             },
+            complete: function() {
+                flagDictamen = 0; 
+            }
         });
-
     });
 
     //Captura de data para el Formulario DML ORIGEN PREVISIONAL (DICTAMEN)
@@ -2585,8 +2591,11 @@ $(document).ready(function(){
                     $('#GuardarComiteInter').prop('disabled', true);
                     $('#div_alerta_comiteInter').removeClass('d-none');
                     $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');
-                    $('#form_correspondencia_dto').trigger('submit');
-
+                    flagDictamen = 1;
+                    $("#form_DTO_ATEL").trigger('submit');
+                    setTimeout(() => {
+                        $('#form_correspondencia_dto').trigger('submit');
+                    }, 2000);
                 }
             }          
         })
@@ -2974,7 +2983,6 @@ $(document).ready(function(){
         var f_correspondencia = $('#f_correspondencia').val();
         var radicado = $('#radicado').val();
         var bandera_correspondecia_guardar_actualizar = $('#bandera_correspondecia_guardar_actualizar').val();
-        console.log('Radicado ', radicado);
         var datos_correspondecia={
             '_token': token,            
             'Id_Evento_dto_atel':Id_Evento_dto_atel,
@@ -3039,14 +3047,19 @@ $(document).ready(function(){
                                 $('#div_alerta_Correspondencia').removeClass('d-none');
                                 $('.alerta_Correspondencia').append('<strong>'+mensaje+'</strong>'); 
                                 $('.alerta_comiteInter').empty();
-                                $('.alerta_comiteInter').append('<strong>' + mensaje + '</strong>');                                          
+                                $('.alerta_comiteInter').append('<strong>' + mensaje + '</strong>');
                                 setTimeout(function(){
                                     $('#div_alerta_Correspondencia').addClass('d-none');
                                     $('.alerta_Correspondencia').empty();
                                     $('#div_alerta_comiteInter').addClass('d-none');
                                     $('.alerta_comiteInter').empty();     
-
-                                    location.reload();
+                                    // Verifica periódicamente si flagDictamen es 0 lo que indica que aun no se ha generado la actualización del dictamen
+                                    const interval = setInterval(() => {
+                                        if (flagDictamen === 0) {
+                                            clearInterval(interval); // Detenemos el intervalo
+                                            location.reload(); // Recargamos la página
+                                        }
+                                    }, 1000); // Revisamos cada 1s
                                 }, 1500);
                             }
                             else{
@@ -3656,7 +3669,6 @@ $(document).ready(function(){
             document.body.removeChild(enlaceDescarga);
         }, 1000);
     });
-
     /* FIN FUNCIONALIDAD DEL CARGUE DE DOCUMENTOS (GUIA) */
 });
 

@@ -5718,86 +5718,29 @@ class CalificacionJuntasController extends Controller
                         $section->addText($Firma_cliente);
                     }
                     
-                    $section->addTextBreak();
                     $section->addText('Departamento de medicina laboral', array('bold' => true));
-                    $section->addTextBreak();
                     $section->addText('Convenio Codess - Seguros de Vida Alfa S.A', array('bold' => true));
                     $section->addTextBreak();
-                    // $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
-                    // $section->addTextBreak();
-
-                    // Configuramos la tabla de copias a partes interesadas
-                    // $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
-                    // if (count($Agregar_copias) == 0) {
-                    //     $htmltabla2 .= '
-                    //         <tr>
-                    //             <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
-                    //         </tr>';
-                    // } else {
-                    //     $htmltabla2 .= '
-                    //         <tr>
-                    //             <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
-                    //         </tr>';
-
-                    //     $Afiliado = 'Afiliado';
-                    //     $Empleador = 'Empleador';
-                    //     $EPS = 'EPS';
-                    //     $AFP = 'AFP';
-                    //     $ARL = 'ARL';
-                    //     $JRCI = 'JRCI';
-                    //     $JNCI = 'JNCI';
-
-                    //     if (isset($Agregar_copias[$Afiliado])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
-                    //     }
-
-                    //     if (isset($Agregar_copias[$Empleador])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
-                    //     }
-
-                    //     if (isset($Agregar_copias[$EPS])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
-                    //     }
-
-                    //     if (isset($Agregar_copias[$AFP])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
-                    //     }
-
-                    //     if (isset($Agregar_copias[$ARL])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
-                    //     }
-
-                    //     if (isset($Agregar_copias[$JRCI])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
-                    //     }
-
-                    //     if (isset($Agregar_copias[$JNCI])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
-                    //     }
-                    // }
-
-                    // $htmltabla2 .= '</table>';
-                    // Html::addHtml($section, $htmltabla2, false, true);
-                    // $section->addTextBreak();
-
                     //Cuadro con la información del siniestro
                     $tableCuadro = $section->addTable();
 
                     $tableCuadro->addRow();
                     
                     $cellCuadro = $tableCuadro->addCell(10000);
+                    //Estilo del texto del cuadro
+                    $styleTextCuadro = ['bold' => true,'name' => 'Calibri', 'size' => 9];
                     //Cuadro
                     $cuadro = $cellCuadro->addTable(array('borderSize' => 12, 'borderColor' => '000000', 'width' => 80*60, 'alignment'=>'center'));
                     $cuadro->addRow();
                     $celdaCuadro = $cuadro->addCell();
                     $cuadroTextRun = $celdaCuadro->addTextRun(array('alignment'=>'left'));
-                    $cuadroTextRun->addText('Nro. Radicado: ', array('bold' => true));
+                    $cuadroTextRun->addText('Nro. Radicado: ', $styleTextCuadro);
                     $cuadroTextRun->addTextBreak();
-                    $cuadroTextRun->addText($nro_radicado, array('bold' => true));
+                    $cuadroTextRun->addText($nro_radicado, $styleTextCuadro);
                     $cuadroTextRun->addTextBreak();
-                    $cuadroTextRun->addText($tipo_doc_afiliado . ' ' . $num_identificacion_afiliado, array('bold' => true));
+                    $cuadroTextRun->addText($tipo_doc_afiliado . ' ' . $num_identificacion_afiliado, $styleTextCuadro);
                     $cuadroTextRun->addTextBreak();
-                    $cuadroTextRun->addText('Siniestro: ' . $request->n_siniestro_proforma_editar, array('bold' => true));
+                    $cuadroTextRun->addText('Siniestro: ' . $request->n_siniestro_proforma_editar, $styleTextCuadro);
 
                     // Configuramos el footer
                     $info = $nombre_afiliado." - ".$tipo_doc_afiliado." ".$num_identificacion_afiliado." - Siniestro: ".$request->n_siniestro_proforma_editar;
