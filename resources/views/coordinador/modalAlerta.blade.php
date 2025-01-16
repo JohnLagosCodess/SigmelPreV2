@@ -25,20 +25,19 @@
         justify-content: center;
     }
     .image_attention{
-        width: 30%;
-        height: 30%;
+        width: 20%;
+        height: 20%;
     }
     .container_message{
         display: flex;
         justify-content: center;
     }
     .message{
-        font-size: 24px;
-        font-family: sans-serif;
+        font-size: 22px;
         font-weight: bold;
         text-align: justify;
     }
     #modalAlerta .modal-body{
-        border: 10px solid #ffc107;
+        border: 10px solid #29b3c9;
     }
 </style>

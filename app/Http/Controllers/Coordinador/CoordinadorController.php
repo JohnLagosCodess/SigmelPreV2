@@ -2140,7 +2140,6 @@ class CoordinadorController extends Controller
         $id_cliente = $request->id_cliente;
         //Id acción devolución ejecutada, si llega 131 significa que estan ejecutando DEVOLUCIÓN DE ASIGNACIÓN y si llega 140 estan ejecutando DEVOLVER CALIFICACIÓN
         $id_accion_devolucion = $request->id_accion_devolucion;
-
         if($id_accion_devolucion == 131){
             //Validaciones de acción
             if($id_servicio == 1 || $id_servicio == 2 || $id_servicio == 3 || $id_servicio === 8 || $id_servicio === 9){
