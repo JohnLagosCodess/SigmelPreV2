@@ -1047,7 +1047,7 @@ $(document).ready(function(){
         $("#anexos").val(seteo_nro_anexos);
 
         // Deselección automática de las copias a partes interesadas: Eps
-        $("#afiliado").prop('checked', false);
+        $("#afiliado").prop('checked', true);
 
         // Selección automática del checkbox firmar
         $("#firmar").prop('checked', true);
@@ -1189,7 +1189,7 @@ $(document).ready(function(){
             $("#anexos").val(seteo_nro_anexos);
 
             // Deselección automática de las copias a partes interesadas: Eps
-            $("#afiliado").prop('checked', false);
+            $("#afiliado").prop('checked', true);
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', true);
