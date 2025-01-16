@@ -78,7 +78,7 @@ class DeterminacionOrigenATEL extends Controller
         ->where('ID_evento', $Id_evento_dto_atel)->get();
 
         $info_evento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as info')
-        ->select('dto.Activo','lp.Nombre_evento','info.tipo_evento')
+        ->select('dto.Activo','lp.Nombre_evento','info.tipo_evento','info.F_evento')
         ->leftjoin('sigmel_gestiones.sigmel_lista_tipo_eventos as lp','lp.Id_Evento','info.Tipo_evento')
         ->leftjoin('sigmel_gestiones.sigmel_informacion_dto_atel_eventos as dto','info.ID_Evento','dto.ID_Evento')
         ->where([
@@ -582,7 +582,8 @@ class DeterminacionOrigenATEL extends Controller
         ->where('ID_evento', $request->ID_Evento)->update($datos_actualizar_motivo_solicitud);
 
         $datos_actualizar_tipo_evento = [
-            'Tipo_evento' => $request->Tipo_evento
+            'Tipo_evento' => $request->Tipo_evento,
+            'F_evento' => $request->Fecha_evento,
         ];
 
         sigmel_informacion_eventos::on('sigmel_gestiones')

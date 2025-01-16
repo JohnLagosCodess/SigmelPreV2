@@ -305,7 +305,7 @@
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <div class="form-group">
-                                                            <label for="descripcion" class="col-form-label">Descripción</label>
+                                                            <label for="descripcion" class="col-form-label">Funciones del cargo</label>
                                                             <textarea class="form-control descripcion" name="descripcion" id="descripcion" rows="2" disabled><?php if(!empty($array_datos_info_laboral[0]->Funciones_cargo)){echo $array_datos_info_laboral[0]->Funciones_cargo;}?></textarea>
                                                         </div>
                                                     </div>
@@ -391,7 +391,7 @@
                                             <div class="row">
                                                 <div class="col-12">
                                                     <div class="form-group">
-                                                        <label for="descripcion" class="col-form-label">Descripción</label>
+                                                        <label for="descripcion" class="col-form-label">Funciones del cargo</label>
                                                         <textarea class="form-control descripcion" name="descripcion" id="descripcion" rows="2" disabled></textarea>
                                                     </div>
                                                 </div>
@@ -422,11 +422,7 @@
                                                 <div class="form-group">
                                                     <label for="fecha_evento">Fecha del evento</label>
                                                     <input type="hidden" id="bd_fecha_evento" value="">
-                                                    <?php if(!empty($info_adicion_dx[0]->Fecha_evento)):?>
-                                                        <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php echo $info_adicion_dx[0]->Fecha_evento;?>" required>
-                                                    <?php else: ?>
-                                                        <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" min='1900-01-01' value="<?php if(!empty($datos_bd_DTO_ATEL[0]->Fecha_evento)){echo $datos_bd_DTO_ATEL[0]->Fecha_evento;}?>" required>
-                                                    <?php endif ?>
+                                                    <input type="date" class="form-control" name="fecha_evento" id="fecha_evento" max="{{date("Y-m-d")}}" min='1900-01-01' value="{{$info_evento->F_evento}}" required>
                                                     <span class="d-none" id="fecha_evento_alerta" style="color: red; font-style: italic;"></span>
                                                 </div>
                                             </div>

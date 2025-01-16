@@ -23,6 +23,7 @@ use App\Models\sigmel_informacion_comunicado_eventos;
 /* Procedimiento para calculo fecha vencimiento */
 use App\Models\sigmel_informacion_alertas_ans_eventos;
 use App\Services\GlobalService;
+use App\Services\Tools;
 
 class BuscarEventoController extends Controller
 {
@@ -2536,8 +2537,14 @@ class BuscarEventoController extends Controller
             'Nombre_usuario' => $nombre_usuario,
         ];
 
-        sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insert($datos_historial_accion_eventos);
-        sleep(2);
+        $idInsertado = sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_historial_accion_eventos);
+        sleep(1);
+
+        //Carga el documento para el historial de acciones
+        $nombre_final_documento = Tools::make($request,null)->CargueDocumentos($request->id_evento,$request->selector_nuevo_proceso,$idInsertado);
+    
+        sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
+        ->where('Id_historial_accion',$idInsertado)->update(['Documento' => $nombre_final_documento]);    
 
         //Saca los documentos que esten dentro de la carpeta temporal
         AdministradorController::mover_archivoTEMP($request->id_evento,$Id_Asignacion,$request->selector_nuevo_servicio);
@@ -2941,8 +2948,18 @@ class BuscarEventoController extends Controller
                     $Controvertido['F_estructuracion_contro'] = optional($informacionComite)->F_estructuracion;
                     $Controvertido['Id_Asignacion_Servicio_Anterior'] = $Id_Asignacion_origen;
 
+                    $notificacion_afiliado = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_correspondencia_eventos as sicore')
+                    ->leftJoin('sigmel_gestiones.sigmel_informacion_comunicado_eventos as sicome', 'sicore.Id_comunicado', '=', 'sicome.Id_Comunicado')
+                    ->select('sicore.F_notificacion')
+                    ->where([
+                        ['sicore.Id_Asignacion', $Id_Asignacion_origen],
+                        ['sicore.Tipo_correspondencia', 'Afiliado'],
+                        ['sicome.Tipo_descarga', 'Dictamen']
+                    ])->first();
+
                     //Se copian los documentos siempre y cuando no se una controversia y cumpla las reglas.
                     if($servicio['Nombre_servicio'] != 'Controversia PCL'){
+                        $Controvertido['F_notifi_afiliado'] = $notificacion_afiliado->F_notificacion ?? null;
                         $info_dictamen = $this->copiar_dictamenes($evento,$Id_Asignacion_origen,$servicioNuevo,$nuevo_id_asignacion);
                         $this->copiarLisdatoGeneralDocumentos($evento,$servicioNuevo,$servicioOrigen,$Id_Asignacion_origen,$nuevo_id_asignacion,$info_dictamen);
                     }
@@ -2980,12 +2997,21 @@ class BuscarEventoController extends Controller
                         ->on('DTO.Id_Asignacion', '=', 'IAE.Id_Asignacion');
                     })->where('IAE.Id_Asignacion', $Id_Asignacion_origen)->get();
 
+                    $notificacion_afiliado = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_correspondencia_eventos as sicore')
+                    ->leftJoin('sigmel_gestiones.sigmel_informacion_comunicado_eventos as sicome', 'sicore.Id_comunicado', '=', 'sicome.Id_Comunicado')
+                    ->select('sicore.F_notificacion')
+                    ->where([
+                        ['sicore.Id_Asignacion', $Id_Asignacion_origen],
+                        ['sicore.Tipo_correspondencia', 'Afiliado'],
+                        ['sicome.Tipo_descarga', 'Dictamen']
+                    ])->first();
+
                     $Controvertido['Origen_controversia'] = optional($origen[0])->DTO_Origen;
                     $Controvertido['N_dictamen_controvertido'] = optional($origen[0])->Consecutivo_dictamen;
                     $Controvertido['F_dictamen_controvertido'] = optional($origen[0])->F_registro;
                     $Controvertido['N_siniestro'] = optional($origen[0])->N_siniestro;
                     $Controvertido['Id_Asignacion_Servicio_Anterior'] = $Id_Asignacion_origen;
-
+                    $Controvertido['F_notifi_afiliado'] = $notificacion_afiliado->F_notificacion ?? null;
                     $info_dictamen = $this->copiar_dictamenes($evento,$Id_Asignacion_origen,$servicioNuevo,$nuevo_id_asignacion);
 
                     //Se copian los documentos siempre y cuando no se una controversia y cumpla las reglas.
