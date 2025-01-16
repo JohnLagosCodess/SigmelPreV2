@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use App\Http\Requests\CargarDocRequest;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Services\Tools;
 // use Illuminate\Validation\Rules\File;
 
 use Illuminate\Support\Facades\File;
@@ -39,7 +41,7 @@ use App\Models\sigmel_lista_solicitantes;
 use App\Models\sigmel_lista_procesos_servicios;
 use App\Models\sigmel_lista_acciones_procesos_servicios;
 use App\Models\sigmel_lista_documentos;
-
+use App\Models\sigmel_auditorias_bitacora_eventos;
 /* llamado modelos para insertar la información del formulario de gestion inicial (creacion de evento) */
 use App\Models\sigmel_informacion_eventos;
 use App\Models\sigmel_informacion_afiliado_eventos;
@@ -3051,7 +3053,7 @@ class AdministradorController extends Controller
                     $string_ids_servicios = array_values($string_ids_servicios);
                     // Actualizar el tamaño del array
                     $tamanio = count($string_ids_servicios);
-                } 
+                }
                 else {
                     // Si el valor 12,12 ya no está en el array, salimos del bucle
                     break;
@@ -3071,7 +3073,7 @@ class AdministradorController extends Controller
                     ->where([
                         ['Id_proceso',$request->id_proceso_escogido],
                         ['Id_cliente',$request->id_cliente]
-                    ])->get();
+                    ])->get(); 
 
                     $servicio_cliente = array();
                     for ($i=0; $i < count($servicios_contratados); $i++) { 
@@ -3382,15 +3384,16 @@ class AdministradorController extends Controller
 
         if ($parametro == "validarSiModNuevo") {
             $casilla_mod_nuevo = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_parametrizaciones_clientes as sipc')
-            ->select('sipc.Modulo_nuevo')
+            ->select('sipc.Modulo_nuevo','sipc.Estado_facturacion')
             ->where([
                 ['sipc.Id_cliente', '=', $request->Id_cliente],
                 ['sipc.Id_proceso', '=', $request->Id_proceso],
                 ['sipc.Servicio_asociado', '=', $request->Id_servicio],
                 ['sipc.Accion_ejecutar', '=', $request->Id_accion]
             ])->get();
-    
+
             $info_casilla_mod_nuevo = json_decode(json_encode($casilla_mod_nuevo, true));
+           
             return response()->json($info_casilla_mod_nuevo);
         };
 
@@ -3518,7 +3521,7 @@ class AdministradorController extends Controller
         sigmel_informacion_eventos::on('sigmel_gestiones')->insert($datos_info_evento);
 
         // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
-        sleep(2);
+        sleep(1);
 
         /* RECOLECCIÓN INFORMACIÓN PARA LA TABLA: sigmel_informacion_afiliado_eventos */
         
@@ -3725,7 +3728,7 @@ class AdministradorController extends Controller
         sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')->insert($datos_info_afiliado_evento);
 
         // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
-        sleep(2);
+        sleep(1);
 
 
         /* RECOLECCIÓN INFORMACIÓN PARA LA TABLA: sigmel_informacion_laboral_eventos */
@@ -3803,7 +3806,7 @@ class AdministradorController extends Controller
         sigmel_informacion_laboral_eventos::on('sigmel_gestiones')->insert($datos_info_laboral_evento);
 
         // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
-        sleep(2);
+        sleep(1);
 
         /* RECOLECCIÓN INFORMACIÓN PARA LA TABLA: sigmel_informacion_pericial_eventos */
 
@@ -3933,7 +3936,7 @@ class AdministradorController extends Controller
         sigmel_informacion_pericial_eventos::on('sigmel_gestiones')->insert($datos_info_pericial_evento);
 
         // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
-        sleep(2);
+        sleep(1);
 
         //Trae El numero de orden actual
         $n_orden = sigmel_numero_orden_eventos::on('sigmel_gestiones')
@@ -4057,7 +4060,7 @@ class AdministradorController extends Controller
         }
 
         // colacamos un tiempo de retardo pequeño para que alcance a insertar los datos
-        sleep(2);
+        sleep(1);
 
         //Si el servicio es una DTO insertamos el CIE-10 que debe tener por defecto
         if($request->servicio == 1 && $request->proceso == 1){
@@ -4087,7 +4090,7 @@ class AdministradorController extends Controller
         ];
 
         sigmel_historial_acciones_eventos::on('sigmel_gestiones')->insert($datos_historial_acciones);
-        sleep(2);
+        sleep(1);
 
         // Insertar informacion en la tabla sigmel_informacion_historial_accion_eventos
 
@@ -4103,9 +4106,9 @@ class AdministradorController extends Controller
             'Nombre_usuario' => $nombre_usuario,
         ];
 
-        sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insert($datos_historial_accion_eventos);
+        $idInsertado = sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_historial_accion_eventos);
 
-        sleep(2);
+        sleep(1);
 
         $idEvento = $Id_evento;
         $path = public_path('Documentos_Eventos/' . $idEvento);
@@ -4120,6 +4123,11 @@ class AdministradorController extends Controller
         } 
 
         // return back()->with('mensaje_confirmacion_nuevo_evento', 'Evento '.$idEvento.' creado correctamente');
+        //Carga el documento para el historial de acciones
+        $nombre_final_documento = Tools::make($request,null)->CargueDocumentos($Id_evento,$request->proceso,$idInsertado);
+
+        sigmel_informacion_historial_accion_eventos::on('sigmel_gestiones')
+        ->where('Id_historial_accion',$idInsertado)->update(['Documento' => $nombre_final_documento]);  
 
         return back()->with([
             'mensaje_confirmacion_nuevo_evento' => 'Evento '.$idEvento.' creado correctamente.',
@@ -4128,7 +4136,6 @@ class AdministradorController extends Controller
             'id_asignacion_registrado' => $Id_Asignacion
         ]);
         // }
-        
     }
 
     public function ConsultaFechaNroIdent(Request $request){
@@ -4405,7 +4412,7 @@ class AdministradorController extends Controller
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, 0, 0)); 
         
         return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
-        'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos', 'Id_servicio'));
+        'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos', 'Id_servicio','newIdEvento'));
 
     }
 
@@ -4418,6 +4425,8 @@ class AdministradorController extends Controller
         $date = date("Y-m-d", $time);
         $nombre_usuario = Auth::user()->name;
         $IdEventoactulizar = $request->id_evento_enviar;
+        /** Contiene los cambios realizados en el modulo */
+        $bitacora = [];
         
         /* Actualizacion tabla sigmel_informacion_eventos */
 
@@ -4452,11 +4461,14 @@ class AdministradorController extends Controller
         
         $eventoActualizar = sigmel_informacion_eventos::on('sigmel_gestiones')
         ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+
+
+        $bitacora["informacion_evento"] = ["original" => $eventoActualizar->getAttributes()];
         $eventoActualizar->fill($actualizar_GestionInicialEvento);
         $eventoActualizar->save();
+        $bitacora["informacion_evento"]["cambios"] = $eventoActualizar->getChanges();
 
-        
-        sleep(2);
+        sleep(1);
 
         /* Actualizacion tabla sigmel_informacion_afiliado_eventos */
 
@@ -4549,7 +4561,7 @@ class AdministradorController extends Controller
         }
         
         // validacion si selecciona la opción Otro/¿Cuál? del selector de Tipo de afiliado
-        if ($request->tipo_afiliado == 29) {
+        if ($request->tipo_afiliado == 344) {
             
             $datos_otro_tipo_afiliado_edicion = [
                 'Tipo_lista' => 'Tipo de Afiliado',
@@ -4666,10 +4678,12 @@ class AdministradorController extends Controller
 
         $afiliadoActualizar = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
         ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+
+        $bitacora["informacion_afiliado"] = ["original" => $afiliadoActualizar->getAttributes()];
         $afiliadoActualizar->fill($actualizar_GestionInicialAfiliado);
         $afiliadoActualizar->save();
-
-        sleep(2);
+        $bitacora["informacion_afiliado"]["cambios"] = $afiliadoActualizar->getChanges();
+        sleep(1);
 
         /* Actualizacion tabla sigmel_informacion_laboral_eventos */
 
@@ -4782,28 +4796,30 @@ class AdministradorController extends Controller
         if ($objetoconvertido['Tipo_empleado'] == 'Independiente' || $objetoconvertido['Tipo_empleado'] == 'Beneficiario') {
             $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
             ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
-            $laboralActualizar->fill($actualizar_GestionInicialLaboral);
-            $laboralActualizar->save();              
+            //$laboralActualizar->fill($actualizar_GestionInicialLaboral);
+            //$laboralActualizar->save();              
         }else{
             //Si los array son iguales no se guarda en la tabla historico            
             if ($cantidadarray == 24) {    
                 $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
                 ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
-                $laboralActualizar->fill($actualizar_GestionInicialLaboral);
-                $laboralActualizar->save();         
+                //$laboralActualizar->fill($actualizar_GestionInicialLaboral);
+                //$laboralActualizar->save();         
     
             }else{    
                 sigmel_historico_empresas_afiliados::on('sigmel_gestiones')->insert($objetoconvertido);    
-                sleep(2);    
                 $laboralActualizar = sigmel_informacion_laboral_eventos::on('sigmel_gestiones')
                 ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
-                $laboralActualizar->fill($actualizar_GestionInicialLaboral);
-                $laboralActualizar->save(); 
-    
-                sleep(2);
+                //$laboralActualizar->fill($actualizar_GestionInicialLaboral);
+                //$laboralActualizar->save(); 
             }
         }        
 
+        $bitacora["informacion_laboral"] = ["original" => $laboralActualizar->getAttributes()];
+
+        $laboralActualizar->fill($actualizar_GestionInicialLaboral);
+        $laboralActualizar->save();
+        $bitacora["informacion_laboral"]["cambios"] = $laboralActualizar->getChanges();
         /* Actualizacion tabla sigmel_informacion_pericial_eventos */
 
         // Si es Arl o Afp o Eps el id de solicitante y nombre solicitante son correspondiente a la entidad respectivamente
@@ -4929,10 +4945,11 @@ class AdministradorController extends Controller
 
         $pericialActualizar = sigmel_informacion_pericial_eventos::on('sigmel_gestiones')
         ->where('ID_evento', $IdEventoactulizar)->firstOrFail();
+        $bitacora["informacion_pericial"] = ["original" => $pericialActualizar->getAttributes()];
         $pericialActualizar->fill($actualizar_GestionIniciaPericial);
         $pericialActualizar->save();
-
-        sleep(2);
+        $bitacora["informacion_pericial"]["cambios"] = $pericialActualizar->getChanges();
+        sleep(1);
 
 
         /* Actualizacion tabla sigmel_informacion_asignacion_eventos (NO ESTÁ YA ACTIVADA ESTE PARTE DEL CÓDIGO DEBIDO A QUE ESTA INFORMACIÓN YA NO SERÁ DE ACCESO PARA EL USUARIO) */
@@ -5055,14 +5072,143 @@ class AdministradorController extends Controller
         ->get(); */          
 
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($newIdEvento, 0, 0)); 
-        
+
+        $this->registrar_bitacora($request,$bitacora);
         // return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
         // 'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos'))->with('evento_actualizado', 'Evento actualizado Sactifactoriamente');
 
         return view('administrador.gestionInicialEdicion', compact('user', 'array_datos_info_evento', 'array_datos_info_afiliados',
-        'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos'))
+        'array_datos_info_laboral', 'array_datos_info_pericial', 'arraylistado_documentos','newIdEvento'))
         ->with('evento_actualizado', 'Evento actualizado Satisfactoriamente');
 
+    
+    }
+
+    /**
+     * Registra los cambios efectuados sobre los campos
+     */
+    private function registrar_bitacora(Request $request, $bitacora)
+    {
+        $map_evento = [
+            "tipo_evento" => ["info:t_evento","bitacora:Tipo_de_evento"],
+            "f_evento" => ["bitacora:Fecha_de_evento"],
+            "f_radicacion" => ["bitacora:Fecha_de_radicación"],
+            "n_siniestro" => ["bitacora:N°_de_Siniestro"],
+            "entidad_conocimiento" => ["bitacora:Entidad_de_conocimiento"],
+            "id_afp_entidad_conocimiento" => ["info:afp","bitacora:Entidad_de_conocimiento"],
+            "tipo_afiliado" => [ "info:t_afiliado","bitacora:Tipo_de_afiliado"],
+            "tipo_documento" => ["info:t_documento", "bitacora:Tipo_de_documento"],
+            "otro_nombre_documento" => ["bitacora:Tipo_de_documento", "info:t_evento"],
+            "nombre_afiliado" => ["bitacora:Nombre_de_afiliado"],
+            "direccion" => ["bitacora:Dirección"],
+            "f_nacimiento" => ["bitacora:Fecha_de_nacimiento"],
+            "edad" => ["bitacora:edad"],
+            "genero" => ["info:t_genero", "bitacora:Genero"],
+            "email" => ["bitacora:Email", "info:t_email"],
+            "telefono_contacto" => ["bitacora:Teléfono/Celular"],
+            "estado_civil" => [ "info:estado_civil","bitacora:Estado_civil"],
+            "otro_estado_civil" => ["bitacora:Tipo_de_evento"],
+            "nivel_escolar" => ["info:nivel_escolar","bitacora:nivel_escolar"],
+            "otro_nivel_escolar" => ["bitacora:Tipo_de_evento"],
+            "id_dominancia" => ["info:t_domininacia","bitacora:Dominancia"],
+            "id_departamento" => ["info:departamento", "bitacora:Departamento"],
+            "id_municipio" => ["info:ciudad", "bitacora:Ciudad"],
+            "pais_exterior_info_afiliado" => ["bitacora:Ciudad"],
+            "ocupacion" => ["bitacora:Ocupacion"],
+            "ibc" => ["bitacora:IBC",],
+            "id_eps" => [ "info:eps", "bitacora:EPS"],
+            "otra_eps" => ["bitacora:Otra_eps"],
+            "id_afp" => ["info:afp", "bitacora:AFP"],
+            "otra_afp" => ["bitacora:otra_afp"],
+            "id_arl" => ["info:arl", "bitacora:ARL"],
+            "otra_arl_info_afiliado" => ["bitacora:ARL"],
+            "apoderado" => ["bitacora:apoderado"],
+            "nombre_apoderado" => ["bitacora:Nombre_del_apoderado"],
+            "nro_identificacion_apoderado" => ["bitacora:N°_identificación_apoderado"],
+            "activo" => ["bitacora:activo"],
+            "medio_notificacion" => ["bitacora:Medio_de_Notificación"],
+            "nro_identificacion_benefi" => ["bitacora:N°_de_identificación_afiliado"],
+            "tipo_documento_benefi" => ["info:t_documento","bitacora:Tipo_de_documento_beneficiario"],
+            "afi_otro_nombre_documento" => ["info:m_notificacion", "bitacora:Tipo_de_documento_afiliado"],
+            "nombre_afiliado_benefi" => ["bitacora:Nombre_beneficiario"],
+            "direccion_benefi" => ["bitacora:Dirección_afiliado"],
+            "id_departamento_benefi" => ["info:departamento","bitacora:Departamento_beneficiario"],
+            "id_municipio_benefi" => ["info:ciudad","bitacora:Ciudad_beneficiario"],
+            "afi_pais_exterior_info_afiliado" => ["bitacora:Ciudad_afiliado", "info:ciudad"],
+            "tipo_empleado" => ["bitacora:Tipo_empleado"],
+            "t_laboral" => ["bitacora:afp", "info:afp"],
+            "arl_info_laboral" => ["bitacora:afp", "info:afp"],
+            "otra_arl_info_laboral" => ["bitacora:afp", "info:afp"],
+            "empresa" => ["bitacora:Nombre"],
+            "nit_o_cc" => ["bitacora:NIT/CC"],
+            "telefono_empresa" => ["bitacora:Télefono_empresa"],
+            "email_info_laboral" => ["info:t_email","bitacora:Email"],
+            "direccion_info_laboral" => ["bitacora:Direccion"],
+            "departamento_info_laboral" => ["info:departamento","bitacora:Departamento"],
+            "municipio_info_laboral" => [ "info:ciudad", "bitacora:Ciudad"],
+            "id_actividad_economica" => ["info:actividad_economica","bitacora:Actividad_economica"],
+            "id_clase_riesgo" => ["info:t_riesgo","bitacora:Clase/Riesgo"],
+            "persona_contacto" => ["bitacora:Persona_de_contacto"],
+            "telefono_persona_contacto" => ["bitacora:Telefono_persona_contacto"],
+            "id_codigo_ciuo" => ["info:ciuo","bitacora:Código_CIUO"],
+            "f_ingreso" => ["bitacora:Fecha_de_ingreso"],
+            "cargo" => ["bitacora:Cargo"],
+            "funciones_cargo" => ["bitacora:Funciones_del_cargo"],
+            "antiguedad_empresa" => ["bitacora:Antiguedad_empresa"],
+            "antiguedad_cargo_empresa" => ["bitacora:Antiguedad_cargo_empresa"],
+            "fecha_retiro" => ["bitacora:afp", "info:afp"],
+            "medio_notificacion_laboral" => ["bitacora:afp", "info:afp"],
+            "descripcion" => ["bitacora:Descripcion"],
+            "motivo_solicitud" => ["bitacora:Motivo_solicitud"],
+            "tipo_vinculacion" => ["info:t_vinculacion", "bitacora:Tipo_vinculacion"],
+            "regimen_salud" => ["info:r_salud", "bitacora:regimen_salud"],
+            "id_solicitante" => ["info:solicitante","bitacora:Solicitante"],
+            //"id_nombre_solicitante" => ["info:n_solicitante","bitacora:Nombre_solicitante"],
+            "nombre_solicitante" => ["bitacora:Nombre_solicitante"],
+            "fuente_informacion" => ["info:f_informacion", "bitacora:Fuente_de_informacion"],
+            "otra_fuente_informacion" => ["bitacora:Otra_fuente_de_informacion"],
+        ];
+
+        $ultima_accion = AccionesController::getUltimaAccion($request->id_evento_enviar);
+
+        Tools::make($request, null, function() use ($bitacora,$map_evento, $ultima_accion ){
+            $tools = new Tools();
+            
+            foreach ($bitacora as $seccion => $cambios) {
+                $registrar_bitacora = [
+                    'Id_accion' => $ultima_accion->Id_accion,
+                    'Id_Asignacion' => $ultima_accion->Id_Asignacion,
+                    'ID_evento' => $ultima_accion->ID_evento,
+                    'Id_proceso' => $ultima_accion->Id_proceso,
+                    'Id_servicio' => $ultima_accion->Id_servicio,
+                    'Nombre_accion' => $ultima_accion->Accion,
+                    'Descripcion' => "",
+                    'F_accion' => date('Y-m-d H:i:s'),
+                    'Nombre_usuario' => Auth::user()->name
+                ];
+                
+                foreach ($cambios["cambios"] as $campo => $nuevo_valor) {
+                    $campo = strtolower($campo);
+                    Log::channel('seguimiento_juntas')->info("Bitacora",[$seccion , $cambios, $campo , @$map_evento[$campo]]);
+                   //dd($seccion , $cambios, $campo , $map_evento[$campo]);
+                    if(isset($map_evento[$campo])){
+                        $tools->registro_original = array_change_key_case($cambios["original"], CASE_LOWER);
+                        $tools->nuevo_registro[$campo] = $nuevo_valor;
+                        $response = $tools->invocar_acciones($map_evento[$campo],$campo);
+                        Log::channel('seguimiento_juntas')->info("Resultado",$response);
+                        $seccion = str_replace("_"," ",$seccion);
+
+                        $registrar_bitacora['Descripcion'] .= "<li>{$seccion} / {$response["bitacora"]["detalle"]}</li>";   
+                        
+                    }
+                }
+
+                if(!empty($registrar_bitacora['Descripcion'])){
+                    sigmel_auditorias_bitacora_eventos::on('sigmel_auditorias')->insert($registrar_bitacora);
+                }
+            }
+        });
+ 
     }
 
     public function registrarOtraEmpresa(Request $request){

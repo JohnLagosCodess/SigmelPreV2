@@ -190,7 +190,8 @@ $(document).ready(function () {
                             /*if(data[i]['Visible_Nuevo_Proceso'] == 'Si'){*/
                                 agregar_nuevo_proceso = '<a href="javascript:void(0);" data-toggle="modal" data-target="#modalNuevoProceso_'+data[i]["ID_evento"]+'" id="btn_nuevo_proceso_'+data[i]["ID_evento"]+'" title="Agregar Nuevo Proceso"\
                                 data-id_evento_nuevo_proceso="'+data[i]["ID_evento"]+'" data-id_proceso_nuevo_proceso="'+data[i]["Id_proceso"]+'"\
-                                data-id_servicio_nuevo_proceso="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_proceso="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'"><i class="far fa-clone text-info"></i></a>';
+                                data-id_servicio_nuevo_proceso="'+data[i]["Id_Servicio"]+'" data-id_asignacion_nuevo_proceso="'+data[i]["Id_Asignacion"]+'" data-id_cliente="'+data[i]["Id_cliente"]+'" data-tipo_evento="'+data[i]["Nombre_evento"]+'">\
+                                <i class="far fa-clone text-info"></i></a>';
                                 data[i]['agregar_nuevo_proceso'] = agregar_nuevo_proceso; 
                             /*}else{*/
                                 //data[i]['agregar_nuevo_proceso'] = ""; 
@@ -917,6 +918,7 @@ $(document).ready(function () {
         var id_servicio_nuevo_proceso =  $(this).data("id_servicio_nuevo_proceso"); //ID SERVICIO ACTUAL
         var id_asignacion_nuevo_proceso =  $(this).data("id_asignacion_nuevo_proceso"); // ID TUPLA DE PROCESO (PARA COLOCAR ESTADO DE VISIBLE EN NO)
         var id_cliente = $(this).data("id_cliente"); // ID DEL CLIENTE
+        let tipo_evento = $(this).data("tipo_evento");
         var fecha_de_hoy = $("#fecha_de_hoy").val();
 
         $string_html_modal_nuevo_proceso = '\
@@ -935,10 +937,10 @@ $(document).ready(function () {
                                 <input type="hidden" class="form-control" name="id_clientes" id="id_clientes_'+id_cliente+'" value="'+id_cliente+'">\
                                 <div class="row">\
                                     <div class="col-12">\
-                                        <div class="form-group row">\
+                                        <div class="form-group row d-none">\
                                             <label for="" class="col-sm-3 col-form-label">ID evento relacionado</label>\
                                             <div class="col-sm-9">\
-                                                <input type="text" class="form-control" readonly value="'+id_evento_nuevo_proceso+'">\
+                                                <input type="text" class="form-control" readonly id="info_evento_selecionado" data-tipo_evento="'+tipo_evento+'" value="'+id_evento_nuevo_proceso+'">\
                                             </div>\
                                         </div>\
                                         <div class="form-group row">\
@@ -1003,6 +1005,10 @@ $(document).ready(function () {
                                                     <input type="text" class="form-control" name="fecha_alerta_roja_ans_nuevo_proceso" id="fecha_alerta_roja_ans_nuevo_proceso_'+id_evento_nuevo_proceso+'">\
                                                 </div>\
                                             </div>\
+                                        </div>\
+                                        <div class="form-group row mt-2">\
+                                            <label for="cargue_documentos">Cargue Documento Historial:</label>\
+                                            <input type="file" class="form-control select-doc" name="cargue_documentos" id="cargue_documentos" aria-describedby="Carguedocumentos" aria-label="Upload">\
                                         </div>\
                                     </div>\
                                 </div>\
@@ -1304,6 +1310,7 @@ $(document).ready(function () {
         let nro_evento_nuevo_proceso = $('.renderizar_nuevo_proceso').find("input[id^='nro_evento_nuevo_proceso_']").val();
         let token = $("input[name='_token']").val();
         let id_proceso_escogido = $(this).val();
+        let tipo_evento = $("#info_evento_selecionado").data("tipo_evento");
 
         var selector_nuevo_servicio = $('.renderizar_nuevo_proceso').find("select[id^='selector_nuevo_servicio_']").attr("id");
         let selector_nuevo_profesional_nuevo_proceso = $('.renderizar_nuevo_proceso').find("select[id^='nuevo_profesional_nuevo_proceso_']").attr("id");
@@ -1328,6 +1335,9 @@ $(document).ready(function () {
     
                 let claves = Object.keys(data);
                 for (let i = 0; i < claves.length; i++) {
+                    if(id_proceso_escogido = 1 && tipo_evento == "Enfermedad" && data[claves[i]]["Nombre_servicio"] == "Adición DX"){
+                        continue;
+                    }
                     $("#"+selector_nuevo_servicio).append('<option value="'+data[claves[i]]["Id_Servicio"]+'">'+data[claves[i]]["Nombre_servicio"]+'</option>');
                 }
             }
@@ -1545,22 +1555,20 @@ $(document).ready(function () {
 
         let nombre_profesional_escogido = $('.renderizar_nuevo_proceso').find("select[id^='nuevo_profesional_nuevo_proceso_'] option:selected").text();
 
-        let datos_nuevo_proceso = {
-            "_token": token,
-            'nombre_profesional_nuevo_proceso': nombre_profesional_escogido,
-            "id_evento": nro_evento_nuevo_proceso,
-            "tupla_proceso_escogido": tupla_proceso_escogido
-        };
-
         var formData = new FormData($(this)[0]);
-        for (var pair of formData.entries()) {
-            var nombres_keys = pair[0];
-            datos_nuevo_proceso[nombres_keys] = pair[1];
-        }
+        const archivo = $('#cargue_documentos')[0].files[0];
+        formData.append('historial_documento', archivo);
+        formData.append('_token', token);
+        formData.append('nombre_profesional_nuevo_proceso', nombre_profesional_escogido);
+        formData.append('id_evento', nro_evento_nuevo_proceso);
+        formData.append('tupla_proceso_escogido', tupla_proceso_escogido); 
+
         $.ajax({
             url: "/crearNuevoProceso",
             type: "post",
-            data: datos_nuevo_proceso,
+            data: formData,
+            processData: false,
+            contentType: false,
             success:function(response){
                 if(response.parametro == "creo_proceso"){
     

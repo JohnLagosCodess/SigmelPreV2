@@ -473,6 +473,7 @@ $(document).ready(function(){
                 'id_servicio': $("#Id_servicio").val(),
                 'id_evento': $("#newId_evento").val(),
                 'id_asignacion':$('#newId_asignacion').val(),
+                'id_accion_devolucion': $(this).val()
             };
             let ultimoUsuario = await consultaUltimoUsuarioEjecutarAccion(data_ult_usuario);
             console.log('ultimoUsuario ', ultimoUsuario);

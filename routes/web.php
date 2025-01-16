@@ -377,6 +377,8 @@ Route::post('/consultarHistorialAcciones', [CalificacionPCLController::class, 'h
 Route::post('/historialAccionesEventosPcl', [CalificacionPCLController::class, 'historialAccionesEventoPcl']);
 // Acción: Valida si una accion ya ha sido ejecutada
 Route::post('/validar_acciones', [AccionesController::class, 'validar_acciones']);
+// Acción: Obtiene una bitacora para un evento dado
+Route::post('/getBitacoraEventos', [AccionesController::class, 'get_bitacora']);
 
 
 // 01/08/2023

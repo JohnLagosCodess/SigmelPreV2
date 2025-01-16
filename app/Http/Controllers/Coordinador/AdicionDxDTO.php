@@ -404,7 +404,7 @@ class AdicionDxDTO extends Controller
         $bandera_hay_dto = "hay_dto_atel";
 
         $info_evento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_eventos as info')
-        ->select('dx.Activo','lp.Nombre_evento','info.tipo_evento')
+        ->select('dx.Activo','lp.Nombre_evento','info.tipo_evento','info.F_evento')
         ->leftjoin('sigmel_gestiones.sigmel_lista_tipo_eventos as lp','lp.Id_Evento','info.Tipo_evento')
         ->leftjoin('sigmel_gestiones.sigmel_informacion_adiciones_dx_eventos as dx','info.ID_Evento','dx.ID_Evento')
         ->where([
@@ -1396,7 +1396,8 @@ class AdicionDxDTO extends Controller
         ->where('ID_evento', $request->ID_Evento)->update($datos_actualizar_motivo_solicitud);
 
         $datos_actualizar_tipo_evento = [
-            'Tipo_evento' => $request->Tipo_evento
+            'Tipo_evento' => $request->Tipo_evento,
+            'F_evento' => $request->Fecha_evento,
         ];
 
         sigmel_informacion_eventos::on('sigmel_gestiones')

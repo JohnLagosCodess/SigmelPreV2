@@ -124,15 +124,15 @@
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <?php if(!$arraycampa_documento_solicitado->isEmpty()):?>                                                
-                                                <a href="#" id="clicGuardado" style="font-size: 1.05rem !important;" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" data-target="#modalControversiaSeguimiento"><i class="fas fa-book-open text-info"></i> <strong>Gestión de controversia - Seguimiento</strong> <i class="fas fa-bell text-info icono"></i></a>
+                                                <a href="#" id="clicGuardado" style="font-size: 1.09rem !important;" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" data-target="#modalControversiaSeguimiento"><i class="fas fa-book-open text-info"></i> <strong>Gestión de controversia - Seguimiento</strong> <i class="fas fa-bell text-info icono"></i></a>
                                                 <?php else:?>
-                                                <a href="#" id="clicGuardado" style="font-size: 1.05rem !important;" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" data-target="#modalControversiaSeguimiento"><i class="fas fa-book-open text-info"></i> <strong>Gestión de controversia - Seguimiento</strong></a>
+                                                <a href="#" id="clicGuardado" style="font-size: 1.09rem !important;" class="text-dark text-md apertura_modal" label="Open Modal" data-toggle="modal" data-target="#modalControversiaSeguimiento"><i class="fas fa-book-open text-info"></i> <strong>Gestión de controversia - Seguimiento</strong></a>
                                                 <?php endif?>    
                                             </div>
                                         </div>
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <a onclick="document.getElementById('botonFormulario2').click();" id="llevar_servicio" style="cursor:pointer;font-size: 1.05rem !important;" id="servicio_Juntas"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionJuntas[0]->Nombre_servicio}}</strong></a>
+                                                <a onclick="document.getElementById('botonFormulario2').click();" id="llevar_servicio" style="cursor:pointer;font-size: 1.09rem !important;" id="servicio_Juntas"><i class="fa fa-puzzle-piece text-info"></i> <strong class="text-dark">{{$array_datos_calificacionJuntas[0]->Nombre_servicio}}</strong></a>
                                                 <input type="hidden" class="form-control" name="servicio" id="servicio" value="{{$array_datos_calificacionJuntas[0]->Nombre_servicio}}">
                                             </div>
                                         </div>
@@ -236,7 +236,7 @@
                                                 <input type="text" class="form-control" name="proceso_envia" id="proceso_envia" value="{{$array_datos_calificacionJuntas[0]->Nombre_proceso_anterior}}" disabled>
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4 d-none">
                                             <div class="form-group">
                                                 <label for="dias_trascurrido">Dias transcurridos desde el evento</label>
                                                 <input type="text" class="form-control" name="dias_trascurrido" id="dias_trascurrido" value="{{$array_datos_calificacionJuntas[0]->Dias_transcurridos_desde_el_evento}}" disabled>

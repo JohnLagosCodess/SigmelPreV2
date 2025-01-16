@@ -361,6 +361,7 @@ class CalificacionJuntasController extends Controller
                 ['Tipo_lista', '=', 'Juntas Controversia'],
                 ['Estado', '=', 'activo']
             ])
+            ->whereNotIn("Nombre_parametro",["Afiliado","Empleador"])
             ->get();
 
             $info_listado_tipo_entidad = json_decode(json_encode($listado_tipo_entidad, true));
