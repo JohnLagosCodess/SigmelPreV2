@@ -1010,7 +1010,7 @@ $(document).ready(function(){
             $("#n_anexos").val(seteo_nro_anexos);
 
             // Deselección automática de las copias a partes interesadas: Afiliado
-            $("#copia_afiliado").prop('checked', false);
+            $("#copia_afiliado").prop('checked', true);
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', true);

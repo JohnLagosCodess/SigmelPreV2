@@ -282,7 +282,8 @@ class CoordinadorController extends Controller
                         WHEN Fecha_alerta = 'VIGENTE' THEN 3
                     END, F_vencimiento ASC
                 ")
-                ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
+                // ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
+                ->whereBetween('F_registro_asignacion', ['2024-07-01' , $date])
                 ->get();  
             }
             // $ID_evento_bandeja = $bandejaPCL[0]->ID_evento;

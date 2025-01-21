@@ -246,7 +246,9 @@ class BandejaJuntasController extends Controller
                     ['Nombre_proceso_actual', '=', 'Juntas']
                 ])->where(function($query){
                     $query->whereNull('Enviar_bd_Notificacion')->orWhere('Enviar_bd_Notificacion', '=', 'No');
-                })->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
+                })
+                // ->whereBetween('F_registro_asignacion', [$year.'-01-01' , $date])
+                ->whereBetween('F_registro_asignacion', ['2024-07-01' , $date])
                 ->orderByRaw("
                     CASE 
                         WHEN Fecha_alerta = 'VENCIDO' THEN 1
