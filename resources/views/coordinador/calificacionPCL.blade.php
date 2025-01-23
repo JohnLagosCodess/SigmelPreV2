@@ -798,6 +798,16 @@
                                                 </div>
                                             </div> 
                                         @endif
+                                        @if (!empty($array_datos_calificacionPcl[0]->Id_Servicio) && $array_datos_calificacionPcl[0]->Id_Servicio == 6)
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" value="Documento_calificacion_tecnica" id="calificacion_tecnica" required>
+                                                        <label class="form-check-label custom-control-label" for="calificacion_tecnica"><strong>CALIFICACIÓN TÉCNICA</strong></label>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        @endif
                                     </div>
                                     <div class="row text-center">
                                         <label for="destinatario_principal" style="margin-left: 7px;">Destinatario Principal: <span style="color: red;">(*)</span></label>                                        
@@ -1143,6 +1153,16 @@
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" id="No_procede_recali_editar" value="Documento_No_Recalificacion" required>
                                                         <label class="form-check-label custom-control-label" for="No_procede_recali_editar"><strong>NO RECALIFICACIÓN</strong></label>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        @endif
+                                        @if (!empty($array_datos_calificacionPcl[0]->Id_Servicio) && $array_datos_calificacionPcl[0]->Id_Servicio == 6)
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                    <div class="form-check custom-control custom-radio">
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" value="Documento_calificacion_tecnica" id="calificacion_tecnica" required>
+                                                        <label class="form-check-label custom-control-label" for="calificacion_tecnica"><strong>CALIFICACIÓN TÉCNICA</strong></label>
                                                     </div>
                                                 </div>
                                             </div> 

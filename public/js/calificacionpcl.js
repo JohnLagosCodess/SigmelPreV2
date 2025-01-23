@@ -1440,6 +1440,9 @@ $(document).ready(function(){
                     if (row.Tipo_descarga === "Documento_PCL") {
                         return "SOLICITUD DOCUMENTOS (PCL)";
                     }
+                    else if(row.Tipo_descarga === "Documento_calificacion_tecnica"){
+                        return "NO CALIFICACIÓN";
+                    }
                     else if(row.Tipo_descarga === "Documento_No_Recalificacion") {
                         return "NO RECALIFICACIÓN";
                     }
@@ -3882,7 +3885,31 @@ $(document).ready(function(){
 
             // Selección automática del checkbox firmar
             $("#firmarcomunicado").prop('checked', true);
-        }        
+        }else if (opc_seleccionada == "Documento_calificacion_tecnica") {
+            $("#asunto").val("RESPUESTA A SOLICITUD DE CALIFICACIÓN DE PCL");
+
+            var texto_insertar = `<p>Reciba un cordial saludo.</p><p>Con ocasión a la solicitud de calificación de pérdida de capacidad laboral radicado por usted en la Administradora de Fondo de Pensiones Porvenir, Seguros de Vida Alfa S.A. se permite dar respuesta en los términos que se describen a continuación.</p><p>(Sustentación de no recalificación)</p><p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio.</p>`;
+
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+            // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+            // $('#btn_insertar_Origen').removeClass('d-none');
+            // $('#btn_insertar_nombreCIE10').removeClass('d-none');
+            // $('#btn_insertar_porPcl').removeClass('d-none');
+            // $('#btn_insertar_F_estructuracion').removeClass('d-none');
+
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Eps
+            $("#copia_eps").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', true);
+        }
         else{
             $("#asunto").val("");
             $('#cuerpo_comunicado').summernote('code', '');

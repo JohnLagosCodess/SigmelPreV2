@@ -1,5 +1,7 @@
 /* AQUÍ SE CREARÁN LAS FUNCIONES QUE SE IMPLEMENTARÁN PARA VARIAS VISTAS */
 $(document).ready(function () {
+
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     
     /* INPUTS DEL FORMULARIO DE CREACIÓN NUEVO USUARIO */
     $('#nombre_usuario').keyup(function(){
@@ -765,8 +767,6 @@ $(document).ready(function () {
 
             });
         });
-
-
     });
 
     // Función que permite solamente dos decimales escribir
@@ -832,6 +832,56 @@ $(document).ready(function () {
         }
         });
     };
+
+    $(document).on('click', "#limpiar_cache", function () {
+        // Actualizar datos de ejemplo en localStorage
+        localStorage.setItem('user', JSON.stringify({name: 'John', age: 30}));
+    
+        // Crear un arreglo para almacenar los recursos
+        let archivosJS = [];
+        let archivosCSS = [];
+    
+        // Recoger los scripts cargados
+        let scripts = document.scripts;
+        for (let script of scripts) {
+            if (script.src !== "") archivosJS.push(script.src);
+        }
+    
+        // Recoger los archivos CSS
+        $('link[rel="stylesheet"]').each(function () {
+            let href = $(this).attr('href');
+            if (href !== "") archivosCSS.push(href);
+        });
+    
+        // Añadir el parámetro 'cacheBust' a los recursos JS
+        archivosJS.forEach((resource) => {
+            const resourceUrl = new URL(resource, window.location.href);
+            resourceUrl.searchParams.set('cacheBust', new Date().getTime()); // Añadir timestamp a la URL
+            
+            // Reemplazar la URL de los archivos JS en el DOM
+            let scriptElement = document.querySelector(`script[src="${resource}"]`);
+            if (scriptElement) {
+                scriptElement.src = resourceUrl;
+            }
+        });
+    
+        // Añadir el parámetro 'cacheBust' a los archivos CSS
+        archivosCSS.forEach((resource) => {
+            const resourceUrl = new URL(resource, window.location.href);
+            resourceUrl.searchParams.set('cacheBust', new Date().getTime()); // Añadir timestamp a la URL
+            
+            // Reemplazar la URL de los archivos CSS en el DOM
+            let linkElement = document.querySelector(`link[href="${resource}"]`);
+            if (linkElement) {
+                linkElement.href = resourceUrl;
+            }
+        });
+
+        localStorage.clear();
+        sessionStorage.clear();
+        location.reload(true);
+    });
+    
 });
 
 /**
@@ -1395,6 +1445,8 @@ function EsconderBotonGuardado(id_boton, id_tabla, id_alerta) {
 function descargarDocumentos(){
     let evento =  $('#newId_evento').val();
     let servicio =  $(".Id_servicio").val();
+    let asignacion =  $("#newId_asignacion").val();
+
     let token = $("input[name='_token']").val();
 
     let datos = {
@@ -1402,10 +1454,11 @@ function descargarDocumentos(){
         'parametro': 'descargaCompleta',
         'IdEvento': evento,
         'IdServicio': servicio,
+        'IdAsignacion': asignacion,
 
     };
     
-    if (evento === undefined || evento === '' || servicio === undefined || servicio === '') {
+    if (evento === undefined || evento === '' || servicio === undefined || servicio === '' || asignacion === undefined || asignacion === '') {
         console.error('Debe suministrar un evento y el servicio asignado para poder descargar los documentos');
         return;
     }
