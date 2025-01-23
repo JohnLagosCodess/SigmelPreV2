@@ -726,30 +726,30 @@ class CalificacionPCLController extends Controller
                 'F_registro' => $date,
             ];
 
-            $aud_datos_info_registrarCalifcacionPcl= [
-                'Aud_ID_evento' => $request->newId_evento,
-                'Aud_Id_Asignacion' => $request->newId_asignacion,
-                'Aud_Id_proceso' => $request->Id_proceso,
-                // 'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
-                'Aud_fuente_informacion' => $request->fuente_informacion,
-                'Aud_F_accion' => $date_time,
-                'Aud_Accion' => $request->accion,
-                'Aud_F_Alerta' => $request->fecha_alerta,
-                'Aud_Enviar' => $request->enviar,
-                'Aud_Estado_Facturacion' => $request->estado_facturacion,
-                'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,                    
-                'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
-                'Aud_Descripcion_accion' => $request->descripcion_accion,
-                'Aud_F_cierre' => $request->fecha_cierre,
-                'Aud_Nombre_usuario' => $nombre_usuario,
-                'Aud_F_registro' => $date,
-            ];
+            // $aud_datos_info_registrarCalifcacionPcl= [
+            //     'Aud_ID_evento' => $request->newId_evento,
+            //     'Aud_Id_Asignacion' => $request->newId_asignacion,
+            //     'Aud_Id_proceso' => $request->Id_proceso,
+            //     // 'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
+            //     'Aud_fuente_informacion' => $request->fuente_informacion,
+            //     'Aud_F_accion' => $date_time,
+            //     'Aud_Accion' => $request->accion,
+            //     'Aud_F_Alerta' => $request->fecha_alerta,
+            //     'Aud_Enviar' => $request->enviar,
+            //     'Aud_Estado_Facturacion' => $request->estado_facturacion,
+            //     'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,                    
+            //     'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
+            //     'Aud_Descripcion_accion' => $request->descripcion_accion,
+            //     'Aud_F_cierre' => $request->fecha_cierre,
+            //     'Aud_Nombre_usuario' => $nombre_usuario,
+            //     'Aud_F_registro' => $date,
+            // ];
             
 
             $Id_Accion_eventos = sigmel_informacion_accion_eventos::on('sigmel_gestiones')->insertGetId($datos_info__registrarCalifcacionPcl);
 
             // Realizamos la inserción a la tabla de auditoria sigmel_auditorias_informacion_accion_eventos
-            sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_registrarCalifcacionPcl);
+            // sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_registrarCalifcacionPcl);
 
             // Capturar el id accion para validar la accion que se acabo de guardar
             $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
@@ -1402,31 +1402,31 @@ class CalificacionPCLController extends Controller
                 'F_registro' => $date,
             ];
 
-            $aud_datos_info_actualizarCalifcacionPcl= [
-                'Aud_ID_evento' => $request->newId_evento,
-                'Aud_Id_Asignacion' => $request->newId_asignacion,
-                'Aud_Id_proceso' => $request->Id_proceso,
-                // 'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
-                'Aud_fuente_informacion' => $request->fuente_informacion,
-                'Aud_F_accion' => $date_time,
-                'Aud_Accion' => $request->accion,
-                'Aud_F_Alerta' => $request->fecha_alerta,
-                'Aud_Enviar' => $request->enviar,
-                'Aud_Estado_Facturacion' => $request->estado_facturacion,
-                'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,
-                'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
-                'Aud_Descripcion_accion' => $request->descripcion_accion,
-                'Aud_F_cierre' => $request->fecha_cierre,
-                'Aud_Nombre_usuario' => $nombre_usuario,
-                'Aud_F_registro' => $date,
-            ];
+            // $aud_datos_info_actualizarCalifcacionPcl= [
+            //     'Aud_ID_evento' => $request->newId_evento,
+            //     'Aud_Id_Asignacion' => $request->newId_asignacion,
+            //     'Aud_Id_proceso' => $request->Id_proceso,
+            //     // 'Aud_Modalidad_calificacion' => $request->modalidad_calificacion,
+            //     'Aud_fuente_informacion' => $request->fuente_informacion,
+            //     'Aud_F_accion' => $date_time,
+            //     'Aud_Accion' => $request->accion,
+            //     'Aud_F_Alerta' => $request->fecha_alerta,
+            //     'Aud_Enviar' => $request->enviar,
+            //     'Aud_Estado_Facturacion' => $request->estado_facturacion,
+            //     'Aud_Causal_devolucion_comite' => $Causal_devolucion_comite,
+            //     'Aud_F_devolucion_comite' => $Fecha_devolucion_comite,
+            //     'Aud_Descripcion_accion' => $request->descripcion_accion,
+            //     'Aud_F_cierre' => $request->fecha_cierre,
+            //     'Aud_Nombre_usuario' => $nombre_usuario,
+            //     'Aud_F_registro' => $date,
+            // ];
             
 
             sigmel_informacion_accion_eventos::on('sigmel_gestiones')
             ->where('Id_Asignacion', $newIdAsignacion)->update($datos_info_actualizarCalifcacionPcl);
 
             // Realizamos la inserción a la tabla de auditoria sigmel_auditorias_informacion_accion_eventos
-            sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_actualizarCalifcacionPcl);
+            // sigmel_auditorias_informacion_accion_eventos::on('sigmel_auditorias')->insert($aud_datos_info_actualizarCalifcacionPcl);
 
             //Capturar el id accion para validar la accion que se acabo de guardar
             $info_accion_evento = sigmel_informacion_accion_eventos::on('sigmel_gestiones')
