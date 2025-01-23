@@ -5174,7 +5174,7 @@ $(document).ready(function(){
             "caso, podrás iniciar tu solicitud pensional a través de a página web www.porvenir.com.co o llamando a la línea de atención al cliente "+
             "de Porvenir 018000510800, con el fin de solicitar una cita para la radicación de la documentación.</p>"+
             "<p>En caso de que no te encuentres de acuerdo con la calificación emitida por Seguros de Vida Alfa S.A., cuentas con diez (10) días "+
-            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta "
+            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta "+
             "manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de "+
             "los siguientes aspectos te encuentras en desacuerdo: </p>"+
             "<p>- Pérdida de capacidad laboral</p>"+
@@ -5392,7 +5392,7 @@ $(document).ready(function(){
             "caso, podrás iniciar tu solicitud pensional a través de a página web www.porvenir.com.co o llamando a la línea de atención al cliente "+
             "de Porvenir 018000510800, con el fin de solicitar una cita para la radicación de la documentación.</p>"+
             "<p>En caso de que no te encuentres de acuerdo con la calificación emitida por Seguros de Vida Alfa S.A., cuentas con diez (10) días "+
-            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta "
+            "hábiles siguientes a partir de la fecha de recibida la notificación para manifestar tu inconformidad frente a resultado. Esta "+
             "manifestación se debe realizar por escrito y debe estar dirigida a Seguros de Vida Alfa S.A. en donde expreses sobre cuál o cuáles de "+
             "los siguientes aspectos te encuentras en desacuerdo: </p>"+
             "<p>- Pérdida de capacidad laboral</p>"+
