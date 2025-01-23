@@ -5,7 +5,7 @@
 /public/storage
 /storage/*.key
 /vendor/*
-!/var/www/html/Sigmel/vendor/jeroennoten/**
+!/vendor/jeroennoten/**
 .env
 .env.backup
 .env.production
