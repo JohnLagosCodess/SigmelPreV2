@@ -6194,7 +6194,8 @@ class AdministradorController extends Controller
         $request->validate([
             'parametro' => 'required',
             'IdEvento' => 'required',
-            'IdServicio' => 'required'
+            'IdServicio' => 'required',
+            'IdAsignacion' => 'required'
         ]);
 
         //Lugar que contiene los archivos a comprimir.
@@ -6204,7 +6205,7 @@ class AdministradorController extends Controller
             mkdir($path, 0775, true);
         }
 
-        $documentos = DB::select('CALL psrvistadocumentos(?,?)', array($request->IdEvento,$request->IdServicio));
+        $documentos = DB::select('CALL psrvistadocumentos(?,?,?)', array($request->IdEvento,$request->IdServicio,$request->IdAsignacion));
 
         $documentosZip = [];
 

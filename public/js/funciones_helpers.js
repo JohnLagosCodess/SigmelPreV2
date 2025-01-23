@@ -1,5 +1,7 @@
 /* AQUÍ SE CREARÁN LAS FUNCIONES QUE SE IMPLEMENTARÁN PARA VARIAS VISTAS */
 $(document).ready(function () {
+
+    $.fn.modal.Constructor.prototype.enforceFocus = function() {};
     
     /* INPUTS DEL FORMULARIO DE CREACIÓN NUEVO USUARIO */
     $('#nombre_usuario').keyup(function(){
@@ -1443,6 +1445,8 @@ function EsconderBotonGuardado(id_boton, id_tabla, id_alerta) {
 function descargarDocumentos(){
     let evento =  $('#newId_evento').val();
     let servicio =  $(".Id_servicio").val();
+    let asignacion =  $("#newId_asignacion").val();
+
     let token = $("input[name='_token']").val();
 
     let datos = {
@@ -1450,10 +1454,11 @@ function descargarDocumentos(){
         'parametro': 'descargaCompleta',
         'IdEvento': evento,
         'IdServicio': servicio,
+        'IdAsignacion': asignacion,
 
     };
     
-    if (evento === undefined || evento === '' || servicio === undefined || servicio === '') {
+    if (evento === undefined || evento === '' || servicio === undefined || servicio === '' || asignacion === undefined || asignacion === '') {
         console.error('Debe suministrar un evento y el servicio asignado para poder descargar los documentos');
         return;
     }

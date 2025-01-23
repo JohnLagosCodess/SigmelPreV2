@@ -4445,6 +4445,7 @@ $(document).ready(function(){
                 var f_estructura_pericial = $('#f_estructura_pericial').val();
                 var n_siniestro = $('#n_siniestro').val();
                 var requiere_rev_pension = $('input[name="requiere_rev_pension"]:checked').val();
+                var requiere_recalificacion = $('input[name="requiere_recalificacion"]:checked').val();
                 var sustenta_fecha = $('#sustenta_fecha').val();
                 var detalle_califi = $('#detalle_califi').val();
                 var enfermedad_catastrofica = $('input[name="enfermedad_catastrofica"]:checked').val(); 
@@ -4475,6 +4476,7 @@ $(document).ready(function(){
                     'f_evento_pericial':f_evento_pericial,
                     'f_estructura_pericial':f_estructura_pericial,
                     'n_siniestro':n_siniestro,
+                    'requiere_recalificacion': requiere_recalificacion,
                     'requiere_rev_pension': requiere_rev_pension,
                     'sustenta_fecha':sustenta_fecha,
                     'detalle_califi':detalle_califi,

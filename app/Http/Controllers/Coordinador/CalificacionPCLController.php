@@ -6187,7 +6187,7 @@ class CalificacionPCLController extends Controller
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slp', 'slp.Id_Parametro', '=', 'side.Origen')
         ->leftJoin('sigmel_gestiones.sigmel_lista_parametros as slps', 'slps.Id_Parametro', '=', 'side.Tipo_enfermedad')
         ->select('side.N_radicado','side.Porcentaje_pcl', 'side.Rango_pcl', 'side.Monto_indemnizacion', 'side.Tipo_evento', 'slte.Nombre_evento', 'side.Origen', 'slp.Nombre_parametro', 
-        'side.F_evento', 'side.F_estructuracion', 'side.Requiere_Revision_Pension', 'side.N_siniestro', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
+        'side.F_evento', 'side.F_estructuracion', 'side.Requiere_Recalificacion', 'side.Requiere_Revision_Pension', 'side.N_siniestro', 'side.Sustentacion_F_estructuracion', 'side.Detalle_calificacion', 'side.Enfermedad_catastrofica', 
         'side.Enfermedad_congenita', 'side.Tipo_enfermedad', 'slps.Nombre_parametro as TipoEnfermedad', 'side.Requiere_tercera_persona', 
         'side.Requiere_tercera_persona_decisiones', 'side.Requiere_dispositivo_apoyo', 'side.Justificacion_dependencia', 'side.Nombre_usuario',
         'side.F_registro')
@@ -8772,6 +8772,7 @@ class CalificacionPCLController extends Controller
             $f_evento_pericial = $request->f_evento_pericial;
             $f_estructura_pericial = $request->f_estructura_pericial; 
             $n_siniestro = $request->n_siniestro;
+            $requiere_recalificacion = $request->requiere_recalificacion;
             $requiere_rev_pension = $request->requiere_rev_pension;
             $sustenta_fecha = $request->sustenta_fecha;        
             $detalle_califi = $request->detalle_califi;        
@@ -8835,6 +8836,7 @@ class CalificacionPCLController extends Controller
                     'Origen' => $tipo_origen,
                     'F_evento' => $f_evento_pericial,
                     'F_estructuracion' => $f_estructura_pericial,
+                    'Requiere_Recalificacion' => $requiere_recalificacion,
                     'Requiere_Revision_Pension' => $requiere_rev_pension,
                     'N_siniestro' => $n_siniestro,
                     'Sustentacion_F_estructuracion' => $sustenta_fecha,
@@ -8922,6 +8924,7 @@ class CalificacionPCLController extends Controller
                     'Origen' => $tipo_origen,
                     'F_evento' => $f_evento_pericial,
                     'F_estructuracion' => $f_estructura_pericial,
+                    'Requiere_Recalificacion' => $requiere_recalificacion,
                     'Requiere_Revision_Pension' => $requiere_rev_pension,
                     'N_siniestro' => $n_siniestro,
                     'Sustentacion_F_estructuracion' => $sustenta_fecha,
@@ -9022,6 +9025,7 @@ class CalificacionPCLController extends Controller
                     'Origen' => $tipo_origen,
                     'F_evento' => $f_evento_pericial,
                     'F_estructuracion' => $f_estructura_pericial,
+                    'Requiere_Recalificacion' => $requiere_recalificacion,
                     'Requiere_Revision_Pension' => $requiere_rev_pension,
                     'N_siniestro' => $n_siniestro,
                     'Sustentacion_F_estructuracion' => $sustenta_fecha,
@@ -9052,6 +9056,7 @@ class CalificacionPCLController extends Controller
                     'Origen' => $tipo_origen,
                     'F_evento' => $f_evento_pericial,
                     'F_estructuracion' => $f_estructura_pericial,
+                    'Requiere_Recalificacion' => $requiere_recalificacion,
                     'Requiere_Revision_Pension' => $requiere_rev_pension,
                     'N_siniestro' => $n_siniestro,
                     'Sustentacion_F_estructuracion' => $sustenta_fecha,
