@@ -316,3 +316,9 @@ html {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+.icon_ajustes {
+    cursor: pointer;
+}
+.icon_ajustes .dropdown-toggle::after {
+    border-top: none !important;
+}
