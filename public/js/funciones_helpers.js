@@ -834,9 +834,6 @@ $(document).ready(function () {
     };
 
     $(document).on('click', "#limpiar_cache", function () {
-        // Actualizar datos de ejemplo en localStorage
-        localStorage.setItem('user', JSON.stringify({name: 'John', age: 30}));
-    
         // Crear un arreglo para almacenar los recursos
         let archivosJS = [];
         let archivosCSS = [];
@@ -882,6 +879,7 @@ $(document).ready(function () {
         location.reload(true);
     });
     
+
 });
 
 /**
