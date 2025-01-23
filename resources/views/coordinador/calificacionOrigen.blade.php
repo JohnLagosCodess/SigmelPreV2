@@ -27,7 +27,7 @@
                 <a href="{{route("bandejaOrigen")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
             <?php endif ?>
             <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>                
-            <button label="Open Modal" data-toggle="modal" data-target="#historial_servicios" class="btn btn-info"><i class="fas fa-project-diagram mt-1"></i>Historial de servicios</button> 
+            <button id="his_servicios" label="Open Modal" data-toggle="modal" data-target="#historial_servicios" class="btn btn-info"><i class="fas fa-project-diagram mt-1"></i>Historial de servicios</button> 
             <p>
                 <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
             </p>
