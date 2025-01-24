@@ -1440,6 +1440,9 @@ $(document).ready(function(){
                     if (row.Tipo_descarga === "Documento_PCL") {
                         return "SOLICITUD DOCUMENTOS (PCL)";
                     }
+                    else if(row.Tipo_descarga === "Documento_calificacion_tecnica"){
+                        return "NO CALIFICACIÓN";
+                    }
                     else if(row.Tipo_descarga === "Documento_No_Recalificacion") {
                         return "NO RECALIFICACIÓN";
                     }
@@ -2244,7 +2247,7 @@ $(document).ready(function(){
             // Despues de descargado el documento deja todo nuevamente deshabilitado + los controles hechos
             if (idRol == 7) {
                 // Desactivar todos los elementos excepto los especificados
-                $(':input, select, a, button').not('#listado_roles_usuario, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #abrir_agregar_seguimiento, #fecha_seguimiento, #causal_seguimiento, #descripcion_seguimiento, #Guardar_seguimientos, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
+                $(':input, select, a, button').not('#listado_roles_usuario, #his_servicios, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #abrir_agregar_seguimiento, #fecha_seguimiento, #causal_seguimiento, #descripcion_seguimiento, #Guardar_seguimientos, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
                 $('#aumentarColAccionRealizar').addClass('d-none');
                 // Quitar el disabled al formulario oculto para permitirme ir a la edicion del evento.
                 $("#enlace_ed_evento").hover(function(){
@@ -2420,6 +2423,17 @@ $(document).ready(function(){
             $("#formatoB_revisionpension_editar").prop("checked", false);
             $("#documento_revisionpension_editar").prop("checked", false);
             $("#No_procede_recali_editar").prop("checked", true);
+            $('#btn_insertar_Origen_editar').removeClass('d-none')
+            $('#btn_insertar_nombreCIE10_editar').removeClass('d-none')
+            $('#btn_insertar_porPcl_editar').removeClass('d-none')
+            $('#btn_insertar_F_estructuracion_editar').removeClass('d-none')
+        }else if (tipo_descarga == "Documento_calificacion_tecnica") {
+            $("#documentos_pcl_editar").prop("checked", false);
+            $("#otro_documento_pcl_editar").prop("checked", false);
+            $("#formatoB_revisionpension_editar").prop("checked", false);
+            $("#documento_revisionpension_editar").prop("checked", false);
+            $("#No_procede_recali_editar").prop("checked", false);
+            $("#calificacion_tecnica_editar").prop("checked", true);
             $('#btn_insertar_Origen_editar').removeClass('d-none')
             $('#btn_insertar_nombreCIE10_editar').removeClass('d-none')
             $('#btn_insertar_porPcl_editar').removeClass('d-none')
@@ -2999,6 +3013,30 @@ $(document).ready(function(){
             $('#btn_insertar_porPcl_editar').removeClass('d-none')
             $('#btn_insertar_F_estructuracion_editar').removeClass('d-none')
             // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado_editar').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos_editar").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Eps
+            $("#edit_copia_eps").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado_editar").prop('checked', true);
+        }else if (opc_seleccionada == "Documento_calificacion_tecnica") {
+            $("#asunto_editar").val("RESPUESTA A SOLICITUD DE CALIFICACIÓN DE PCL");
+
+            var texto_insertar = `<p>Reciba un cordial saludo.</p><p>Con ocasión a la solicitud de calificación de pérdida de capacidad laboral radicado por usted en la Administradora de Fondo de Pensiones Porvenir, Seguros de Vida Alfa S.A. se permite dar respuesta en los términos que se describen a continuación.</p><p>(Sustentación de no recalificación)</p><p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio.</p>`;
+
+            $('#cuerpo_comunicado_editar').summernote('code', texto_insertar);
+            // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+            // $('#btn_insertar_Origen').removeClass('d-none');
+            // $('#btn_insertar_nombreCIE10').removeClass('d-none');
+            // $('#btn_insertar_porPcl').removeClass('d-none');
+            // $('#btn_insertar_F_estructuracion').removeClass('d-none');
 
             // Auto selección de la opción Afiliado (Destinatario Principal)
             $('#afiliado_comunicado_editar').click();
@@ -3882,7 +3920,31 @@ $(document).ready(function(){
 
             // Selección automática del checkbox firmar
             $("#firmarcomunicado").prop('checked', true);
-        }        
+        }else if (opc_seleccionada == "Documento_calificacion_tecnica") {
+            $("#asunto").val("RESPUESTA A SOLICITUD DE CALIFICACIÓN DE PCL");
+
+            var texto_insertar = `<p>Reciba un cordial saludo.</p><p>Con ocasión a la solicitud de calificación de pérdida de capacidad laboral radicado por usted en la Administradora de Fondo de Pensiones Porvenir, Seguros de Vida Alfa S.A. se permite dar respuesta en los términos que se describen a continuación.</p><p>(Sustentación de no recalificación)</p><p>Esperamos de esta forma haber dado respuesta a su requerimiento y reiteramos nuestra voluntad de servicio.</p>`;
+
+            $('#cuerpo_comunicado').summernote('code', texto_insertar);
+            // $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
+            // $('#btn_insertar_Origen').removeClass('d-none');
+            // $('#btn_insertar_nombreCIE10').removeClass('d-none');
+            // $('#btn_insertar_porPcl').removeClass('d-none');
+            // $('#btn_insertar_F_estructuracion').removeClass('d-none');
+
+            // Auto selección de la opción Afiliado (Destinatario Principal)
+            $('#afiliado_comunicado').click();
+
+            // Seteo automático del nro de anexos:
+            var seteo_nro_anexos = 0;
+            $("#anexos").val(seteo_nro_anexos);
+
+            // Deselección automática de las copias a partes interesadas: Eps
+            $("#copia_eps").prop('checked', false);
+
+            // Selección automática del checkbox firmar
+            $("#firmarcomunicado").prop('checked', true);
+        }
         else{
             $("#asunto").val("");
             $('#cuerpo_comunicado').summernote('code', '');
@@ -4380,7 +4442,7 @@ $(document).ready(function(){
     /* Validaciones para el rol Consulta cuando entra a la vista */
     if (idRol == 7) {
         // Desactivar todos los elementos excepto los especificados
-        $(':input, select, a, button').not('#listado_roles_usuario, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #abrir_agregar_seguimiento, #fecha_seguimiento, #causal_seguimiento, #descripcion_seguimiento, #Guardar_seguimientos, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
+        $(':input, select, a, button').not('#listado_roles_usuario, #his_servicios, #Hacciones, #botonVerEdicionEvento, #cargue_docs, #clicGuardado, #cargue_docs_modal_listado_docs, #abrir_agregar_seguimiento, #fecha_seguimiento, #causal_seguimiento, #descripcion_seguimiento, #Guardar_seguimientos, #botonFormulario2, .btn-danger, a[id^="EditarComunicado_"]').prop('disabled', true);
         $('#aumentarColAccionRealizar').addClass('d-none');
         // Quitar el disabled al formulario oculto para permitirme ir a la edicion del evento.
         $("#enlace_ed_evento").hover(function(){
@@ -4393,9 +4455,9 @@ $(document).ready(function(){
         });
 
         // Si el servicio es Pronunciamiento deshabilita la entrada al submodulo
-        if ($("#newIdservicio").val() == 9) {
-            $("#botonFormulario2").prop('disabled', true);
-        }
+        // if ($("#newIdservicio").val() == 9) {
+        //     $("#botonFormulario2").prop('disabled', true);
+        // }
 
         // Quitar el disabled al formulario oculto para permitirme ir al submodulo
         $("#llevar_servicio").hover(function(){

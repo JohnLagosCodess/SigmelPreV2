@@ -29,4 +29,7 @@
     </div> --}}
 
 @stop
+@section('js')
+    <script src="/js/funciones_helpers.js"></script>
+@stop
 

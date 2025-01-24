@@ -174,7 +174,7 @@
         
     </div>
 
-    @include('modals.alertaBuscador');
+    @include('modals.alertaBuscador')
 @stop
 @section('js')
     <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
@@ -187,6 +187,6 @@
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.templates.min.js"></script>
     
-    <script src="/js/funciones_helpers.js?v=1.0.0"></script>
+    <script src="/js/funciones_helpers.js"></script>
     <script src="/js/consultar_eventos.js"></script>
 @stop

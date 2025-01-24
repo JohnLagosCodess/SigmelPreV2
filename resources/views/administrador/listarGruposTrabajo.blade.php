@@ -255,5 +255,5 @@
     </script>
     <script src="/plugins/duallistbox_4.0.2/dist/jquery.bootstrap-duallistbox.js"></script>
     <script src="/js/equipos_trabajo.js"></script>
-    <script src="/js/funciones_helpers.js?v=1.0.0"></script>
+    <script src="/js/funciones_helpers.js"></script>
 @stop

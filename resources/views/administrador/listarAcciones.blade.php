@@ -77,4 +77,5 @@
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/datatables-buttons-excel-styles@1.2.0/js/buttons.html5.styles.templates.min.js"></script>
     <script src="/js/acciones.js"></script>
+    <script src="/js/funciones_helpers.js"></script>
 @stop

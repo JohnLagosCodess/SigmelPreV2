@@ -6987,6 +6987,19 @@
                                         <div class="form-group">
                                             <br>
                                             <div class="custom-control custom-checkbox">
+                                                @if (!empty($array_dictamen_pericial[0]->Requiere_Recalificacion))
+                                                    <input class="custom-control-input" type="checkbox" id="requiere_recalificacion" name="requiere_recalificacion" value="Require Recalificacion" checked>
+                                                @else
+                                                    <input class="custom-control-input" type="checkbox" id="requiere_recalificacion" name="requiere_recalificacion" value="Require Recalificacion">
+                                                @endif
+                                                <label for="requiere_recalificacion" class="custom-control-label">¿Requiere recalificación?</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <br>
+                                            <div class="custom-control custom-checkbox">
                                                 @if (!empty($array_dictamen_pericial[0]->Requiere_Revision_Pension))
                                                     <input class="custom-control-input" type="checkbox" id="requiere_rev_pension" name="requiere_rev_pension" value="Require Revision Pension" checked>
                                                 @else
@@ -8381,7 +8394,7 @@
     });
 
 </script>
-<script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
+<script type="text/javascript" src="/js/funciones_helpers.js"></script>
 <script type="text/javascript" src="/js/calificacionpcl_tecnica.js"></script>
 {{-- JS: Deficiencias por Alteraciones de los Sistemas Generales cálculadas por factores --}}
 <script type="text/javascript" src="/js/datatable_deficiencias_alteraciones_sistemas.js"></script>

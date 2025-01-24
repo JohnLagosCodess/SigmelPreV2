@@ -36,6 +36,7 @@ class sigmel_informacion_decreto_eventos extends Model
     'Origen',
     'F_evento',
     'F_estructuracion',
+    'Requiere_Recalificacion',
     'Requiere_Revision_Pension',
     'Sustentacion_F_estructuracion',
     'Detalle_calificacion',

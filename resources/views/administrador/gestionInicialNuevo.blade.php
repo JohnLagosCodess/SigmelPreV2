@@ -829,7 +829,7 @@
 <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 <script src="/plugins/toatsr/build/toastr.min.js"></script>
-<script src="/js/funciones_helpers.js?v=1.0.0"></script>
+<script src="/js/funciones_helpers.js"></script>
 <script src="/js/selectores_gestion_inicial.js"></script>
 <script>
     $(document).ready(function(){
