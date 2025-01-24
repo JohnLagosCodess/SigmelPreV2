@@ -90,6 +90,9 @@
 
                                                     <input  type="text" class="EventoID" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">
                                                     <input type="text" class="Id_servicio" name="Id_servicio" id="Id_servicio_{{$documento->Id_Documento}}" value="{{$Id_servicio}}">
+                                                    @if (isset($newIdAsignacion))
+                                                        <input  type="text" name="Id_asignacion" id="Id_asignacion_{{$documento->Id_Documento}}" value="{{$newIdAsignacion}}">                                                                                                    
+                                                    @endif
                                                     <input type="text" name="bandera_nombre_otro_doc" value="{{$documento->nombre_Documento}}">
                                                 </div>
                                                 <div class="row">
@@ -399,7 +402,9 @@
                     <div class="d-none">
                         <input type="text" name="Id_Documento" value="{{$documento->Id_Documento}}">
                         <input type="text" name="Nombre_documento" id="Nombre_documento_{{$documento->Id_Documento}}" value="{{$documento->Nombre_documento}}">                                                
-                        <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}">    
+                        <input  type="text" name="EventoID" id="EventoID_{{$documento->Id_Documento}}"> 
+                        <input  type="text" name="Id_servicio" id="Id_servicio_{{$documento->Id_Documento}}">
+                        <input  type="text" name="Id_asignacion" id="Id_asignacion_{{$documento->Id_Documento}}">   
                         <input type="text" name="bandera_otro_documento" id="bandera_otro_documento" value="{{$documento->Id_Documento}}">                                            
                     </div>
                     <div class="form-group row">
