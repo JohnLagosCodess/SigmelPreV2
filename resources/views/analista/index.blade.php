@@ -9,3 +9,6 @@
   {{--   <p>CONTENIDO PAGINA</p>
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eveniet officiis sit sequi, eligendi distinctio quidem dolore alias cumque illo nobis ipsam, ab ducimus quos libero. Molestiae quos reprehenderit doloremque voluptatem?</p> --}}
 @stop
+@section('js')
+    <script src="/js/funciones_helpers.js"></script>
+@stop

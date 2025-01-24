@@ -56,5 +56,5 @@
     </div>
 @stop
 @section('js')
-    <script src="/js/funciones_helpers.js?v=1.0.0"></script>
+    <script src="/js/funciones_helpers.js"></script>
 @stop
