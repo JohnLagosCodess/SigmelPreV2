@@ -17,3 +17,6 @@
     </script>
 @endif
 
+@section('js')
+    <script src="/js/funciones_helpers.js"></script>
+@stop

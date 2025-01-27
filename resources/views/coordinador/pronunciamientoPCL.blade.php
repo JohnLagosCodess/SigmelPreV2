@@ -999,7 +999,7 @@
         };
     </script>
     <script type="text/javascript" src="/js/pronunciamientopcl.js?v=1.0.0"></script>
-    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
     {{-- Validación general para todos los campos de tipo fecha --}}
     <script>

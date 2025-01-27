@@ -12,5 +12,5 @@
     </div>
 @stop
 @section('js')
- {{-- AQUI PARA LLAMAR EL ARCHIVO JS SI ES NECESARIO --}}
+    <script src="/js/funciones_helpers.js"></script>
 @stop

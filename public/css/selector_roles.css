@@ -322,3 +322,6 @@ html {
 .icon_ajustes .dropdown-toggle::after {
     border-top: none !important;
 }
+.user-footer a:focus {
+    outline: none;
+}
