@@ -1077,9 +1077,8 @@
                 }, 2000);
                 return;
             }
-
             // Validar que la fecha no sea mayor a la fecha actual
-            if (inputValue > today) {
+            if ((inputValue > today) && this.id != 'fecha_alerta') {
                 $(`#${this.id}_alerta`).text("La fecha ingresada no puede ser mayor a la actual")
                     .removeClass("d-none");
                 $('#Edicion_editar').addClass('d-none');
