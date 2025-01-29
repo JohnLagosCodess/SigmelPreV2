@@ -803,7 +803,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" value="Documento_calificacion_tecnica" id="calificacion_tecnica" required>
-                                                        <label class="form-check-label custom-control-label" for="calificacion_tecnica"><strong>CALIFICACIÓN TÉCNICA</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="calificacion_tecnica"><strong>NO CALIFICACIÓN</strong></label>
                                                     </div>
                                                 </div>
                                             </div> 
@@ -1162,7 +1162,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" value="Documento_calificacion_tecnica" id="calificacion_tecnica_editar" required>
-                                                        <label class="form-check-label custom-control-label" for="calificacion_tecnica_editar"><strong>CALIFICACIÓN TÉCNICA</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="calificacion_tecnica_editar"><strong>NO CALIFICACIÓN</strong></label>
                                                     </div>
                                                 </div>
                                             </div> 
