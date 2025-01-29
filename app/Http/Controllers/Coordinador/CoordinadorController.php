@@ -2143,7 +2143,7 @@ class CoordinadorController extends Controller
         $id_accion_devolucion = $request->id_accion_devolucion;
         if($id_accion_devolucion == 131){
             //Validaciones de acción
-            if($id_servicio == 1 || $id_servicio == 2 || $id_servicio == 3 || $id_servicio === 8 || $id_servicio === 9){
+            if($id_servicio == 1 || $id_servicio == 2 || $id_servicio == 3 || $id_servicio == 8 || $id_servicio == 9){
                 //Validamos que la acción este activa en el modulo de acciones
                 $is_action_active = sigmel_informacion_acciones::on('sigmel_gestiones')
                     ->where([['Id_Accion',124],['Status_accion','Activo']])
@@ -2238,7 +2238,7 @@ class CoordinadorController extends Controller
             }
         }
         else if($id_accion_devolucion == 140){
-            if($id_servicio == 1 || $id_servicio == 2 || $id_servicio == 6 || $id_servicio === 7 || $id_servicio === 8){
+            if($id_servicio == 1 || $id_servicio == 2 || $id_servicio == 6 || $id_servicio == 7 || $id_servicio == 8){
                 //Validamos que la acción este activa en el modulo de acciones
                 $is_action_active = sigmel_informacion_acciones::on('sigmel_gestiones')
                     ->where([['Id_Accion',139],['Status_accion','Activo']])
