@@ -4911,6 +4911,9 @@ $(document).ready(function(){
                     type:'POST',
                     url:'/GuardarDocumentosSolicitados',
                     data: envio_datos,
+                    beforeSend:  function() {
+                        $("#guardar_datos_tabla").addClass("descarga-deshabilitada");
+                    },
                     success:function(response){
                         // console.log(response);
                         if (response.parametro == "inserto_informacion") {
@@ -4923,15 +4926,13 @@ $(document).ready(function(){
                                 $('#resultado_insercion').empty();
                             }, 3000);
                         }
+                    },
+                    complete:function(){
+                        localStorage.setItem("#guardar_datos_tabla", true);
+                        location.reload();
+                        // $("#guardar_datos_tabla").removeClass("descarga-deshabilitada");
                     }
-                });
-        
-                localStorage.setItem("#guardar_datos_tabla", true);
-        
-                setTimeout(() => {
-                    location.reload();
-                }, 3000);
-                
+                });               
             }else{
     
                 // Validación: No se inserta datos y selecciona el checkbox de No aporta documentos
@@ -4948,6 +4949,9 @@ $(document).ready(function(){
                         type:'POST',
                         url:'/GuardarDocumentosSolicitados',
                         data: envio_datos,
+                        beforeSend:  function() {
+                            $("#guardar_datos_tabla").addClass("descarga-deshabilitada");
+                        },
                         success:function(response){
                             if (response.parametro == "inserto_informacion") {
                                 $('#resultado_insercion').removeClass('d-none');
@@ -4968,15 +4972,13 @@ $(document).ready(function(){
                                     $('#resultado_insercion').empty();
                                 }, 3000);
                             }
+                        },
+                        complete:function(){
+                            localStorage.setItem("#guardar_datos_tabla", true);
+                            location.reload();
+                            // $("#guardar_datos_tabla").removeClass("descarga-deshabilitada");
                         }
                     });
-    
-                    localStorage.setItem("#guardar_datos_tabla", true);
-        
-                    setTimeout(() => {
-                        location.reload();
-                    }, 3000);
-    
                 }else{
                     $('#resultado_insercion').removeClass('d-none');
                     $('#resultado_insercion').addClass('alert-danger');
