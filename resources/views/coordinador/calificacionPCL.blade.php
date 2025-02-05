@@ -33,7 +33,7 @@
                     <a href="{{route("bandejaPCL")}}" class="btn btn-success" type="button"><i class="fa fa-arrow-left"></i> Regresar</a>
                 <?php endif ?>
                 <button id="Hacciones" class="btn btn-info"  onclick="historialDeAcciones()"><i class="fas fa-list"></i>Historial Acciones</button>
-                <button label="Open Modal" data-toggle="modal" data-target="#historial_servicios" class="btn btn-info"><i class="fas fa-project-diagram mt-1"></i>Historial de servicios</button>
+                <button id="his_servicios" label="Open Modal" data-toggle="modal" data-target="#historial_servicios" class="btn btn-info"><i class="fas fa-project-diagram mt-1"></i>Historial de servicios</button>
                 <p>
                     {{-- <i class="far fa-eye-slash text-danger"></i> Inactivar Menú/Sub Menú &nbsp;--> --}}
                     <h5>Los campos marcados con <span style="color:red;">(*)</span> son Obligatorios</h5>
@@ -803,7 +803,7 @@
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
                                                         <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" value="Documento_calificacion_tecnica" id="calificacion_tecnica" required>
-                                                        <label class="form-check-label custom-control-label" for="calificacion_tecnica"><strong>CALIFICACIÓN TÉCNICA</strong></label>
+                                                        <label class="form-check-label custom-control-label" for="calificacion_tecnica"><strong>NO CALIFICACIÓN</strong></label>
                                                     </div>
                                                 </div>
                                             </div> 
@@ -1161,8 +1161,8 @@
                                             <div class="col-4">
                                                 <div class="form-group">
                                                     <div class="form-check custom-control custom-radio">
-                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" value="Documento_calificacion_tecnica" id="calificacion_tecnica" required>
-                                                        <label class="form-check-label custom-control-label" for="calificacion_tecnica"><strong>CALIFICACIÓN TÉCNICA</strong></label>
+                                                        <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi_editar" value="Documento_calificacion_tecnica" id="calificacion_tecnica_editar" required>
+                                                        <label class="form-check-label custom-control-label" for="calificacion_tecnica_editar"><strong>NO CALIFICACIÓN</strong></label>
                                                     </div>
                                                 </div>
                                             </div> 
@@ -1626,7 +1626,7 @@
     </script>
     
     <script type="text/javascript" src="/js/calificacionpcl.js"></script>
-    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
 @stop

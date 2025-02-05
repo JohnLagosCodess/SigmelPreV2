@@ -103,7 +103,7 @@
 @stop
 
 @section('js')
-    <script src="/js/funciones_helpers.js?v=1.0.0"></script>
+    <script src="/js/funciones_helpers.js"></script>
     <script>
         $(document).ready(function(){
             /* PINTAR DATATABLE CON EL BOTÓN DE DESCARGA DE DATOS Y FILTROS POR COLUMNA */

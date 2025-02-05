@@ -95,7 +95,7 @@
 @stop
 
 @section('js')
-    <script type="text/javascript" src="/js/funciones_helpers.js?v=1.0.0"></script>
+    <script type="text/javascript" src="/js/funciones_helpers.js"></script>
     <script src="/plugins/summernote/summernote.min.js"></script>
     <script src="/js/editar_clientes.js"></script>
     <script src="/js/parametrizacion.js"></script>

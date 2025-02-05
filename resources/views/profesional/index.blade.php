@@ -11,3 +11,6 @@
         <div class="card-header">{{$user->rol_usuario}}</div>
     </div>
 @stop
+@section('js')
+    <script src="/js/funciones_helpers.js"></script>
+@stop

@@ -834,56 +834,59 @@ $(document).ready(function () {
     };
 
     $(document).on('click', "#limpiar_cache", function () {
-        // Actualizar datos de ejemplo en localStorage
-        localStorage.setItem('user', JSON.stringify({name: 'John', age: 30}));
-    
-        // Crear un arreglo para almacenar los recursos
-        let archivosJS = [];
-        let archivosCSS = [];
-    
-        // Recoger los scripts cargados
-        let scripts = document.scripts;
-        for (let script of scripts) {
-            if (script.src !== "") archivosJS.push(script.src);
-        }
-    
-        // Recoger los archivos CSS
-        $('link[rel="stylesheet"]').each(function () {
-            let href = $(this).attr('href');
-            if (href !== "") archivosCSS.push(href);
-        });
-    
-        // Añadir el parámetro 'cacheBust' a los recursos JS
-        archivosJS.forEach((resource) => {
-            const resourceUrl = new URL(resource, window.location.href);
-            resourceUrl.searchParams.set('cacheBust', new Date().getTime()); // Añadir timestamp a la URL
-            
-            // Reemplazar la URL de los archivos JS en el DOM
-            let scriptElement = document.querySelector(`script[src="${resource}"]`);
-            if (scriptElement) {
-                scriptElement.src = resourceUrl;
-            }
-        });
-    
-        // Añadir el parámetro 'cacheBust' a los archivos CSS
-        archivosCSS.forEach((resource) => {
-            const resourceUrl = new URL(resource, window.location.href);
-            resourceUrl.searchParams.set('cacheBust', new Date().getTime()); // Añadir timestamp a la URL
-            
-            // Reemplazar la URL de los archivos CSS en el DOM
-            let linkElement = document.querySelector(`link[href="${resource}"]`);
-            if (linkElement) {
-                linkElement.href = resourceUrl;
-            }
-        });
-
-        localStorage.clear();
-        sessionStorage.clear();
-        location.reload(true);
+        limpiar_cache();
     });
     
 });
 
+/**
+ * Limpia la cache del navegador
+ */
+function limpiar_cache() {
+    // Crear un arreglo para almacenar los recursos
+    let archivosJS = [];
+    let archivosCSS = [];
+
+    // Recoger los scripts cargados
+    let scripts = document.scripts;
+    for (let script of scripts) {
+        if (script.src !== "") archivosJS.push(script.src);
+    }
+
+    // Recoger los archivos CSS
+    $('link[rel="stylesheet"]').each(function () {
+        let href = $(this).attr('href');
+        if (href !== "") archivosCSS.push(href);
+    });
+
+    // Añadir el parámetro 'cacheBust' a los recursos JS
+    archivosJS.forEach((resource) => {
+        const resourceUrl = new URL(resource, window.location.href);
+        resourceUrl.searchParams.set('cacheBust', new Date().getTime()); // Añadir timestamp a la URL
+
+        // Reemplazar la URL de los archivos JS en el DOM
+        let scriptElement = document.querySelector(`script[src="${resource}"]`);
+        if (scriptElement) {
+            scriptElement.src = resourceUrl;
+        }
+    });
+
+    // Añadir el parámetro 'cacheBust' a los archivos CSS
+    archivosCSS.forEach((resource) => {
+        const resourceUrl = new URL(resource, window.location.href);
+        resourceUrl.searchParams.set('cacheBust', new Date().getTime()); // Añadir timestamp a la URL
+
+        // Reemplazar la URL de los archivos CSS en el DOM
+        let linkElement = document.querySelector(`link[href="${resource}"]`);
+        if (linkElement) {
+            linkElement.href = resourceUrl;
+        }
+    });
+
+    localStorage.clear();
+    sessionStorage.clear();
+    location.reload(true);
+}
 /**
  * Procesa una alerta y la muestra para un proceso correspondiente, homologando la acccion del boton sobre el formulario al cual esta enlazado.
  * @param {string} id_boton selector del boton donde se estara escuchando el evento. 

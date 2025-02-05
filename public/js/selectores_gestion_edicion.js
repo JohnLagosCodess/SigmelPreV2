@@ -2241,7 +2241,7 @@ $(document).ready(function(){
     var idRol = $("#id_rol").val();
     if (idRol == 7) {
         // Desactivar todos los elementos excepto los especificados
-        $(':input, select, a, button').not('#listado_roles_usuario, #cargar_historial_acciones, #llenar_tabla_historico_empresas, .btn-danger').prop('disabled', true);
+        $(':input, select, a, button').not('#listado_roles_usuario, #his_servicios, #cargar_historial_acciones, #llenar_tabla_historico_empresas, .btn-danger').prop('disabled', true);
     }
 
 });
