@@ -420,9 +420,9 @@ class BuscarEventoController extends Controller
                         ->select('side.ID_Evento','side.Id_Asignacion','side.Porcentaje_pcl');
                         foreach ($posicionPclRevi as $item) {
                             $resultadoReviPcl->orWhere([
-                                ['Id_Asignacion',$item['Id_Asignacion']], 
-                                ['Id_proceso',$item['Id_proceso']], 
-                                ['ID_Evento',$item['ID_evento']]]);
+                                ['side.Id_Asignacion',$item['Id_Asignacion']], 
+                                ['side.Id_proceso',$item['Id_proceso']], 
+                                ['side.ID_Evento',$item['ID_evento']]]);
                         }
                         $resulReviPcl = $resultadoReviPcl->get();
     
