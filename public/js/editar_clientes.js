@@ -1701,7 +1701,13 @@ $(document).ready(function(){
             "columns":[
                 {data:"Nombre"},
                 {data:"Nombre_servicio"},
-                {data:"Accion"},
+                {
+                    data:"Accion",
+                    render: function(data, type, row) {
+                        let hiddenInput = row.Id_Accion ? '<input type="hidden" id="accion_bd_' + row.Id_Accion + '" value="' + row.Id_Accion + '">' : '';
+                        return hiddenInput + '<span>' + data + '</span>';
+                    }
+                },
                 {data:"Valor"},
                 {data:"Nombre_unidad"},
                 {data:"Alerta_Naranja"},
