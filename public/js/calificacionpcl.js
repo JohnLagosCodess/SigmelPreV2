@@ -465,7 +465,7 @@ $(document).ready(function(){
             }, 4000);
         }
         //Capturar el ultimo que ejecuto la acción de asignación, cuando seleccionen la acción de devolver asignación PBS068
-        if($(this).val() == 131){
+        if($(this).val() == 131 || $(this).val() == 140){
             data_ult_usuario = {
                 '_token':token,
                 'id_proceso' : $('#Id_proceso').val(),
