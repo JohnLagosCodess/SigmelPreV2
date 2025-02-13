@@ -1029,6 +1029,7 @@ $(document).ready(function(){
             "<p>Por lo anterior, presentamos el recurso de reposición y en subsidio el de apelación, contra la pérdida de capacidad laboral (PCL), "+
             "con el fin que se dictamine el valor correspondiente a las patologías del paciente dando aplicación al Decreto 1507/2014 como "+
             "normatividad vigente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación.</p>"+
+            "<p>Esperamos haber sustentado claramente nuestra inconformidad, por lo que solicitamos se revoque el dictamen y en su lugar se expida el que se adapte a las circunstancias fácticas del paciente. En caso de que no se revoque, solicitamos se de curso a la apelación ante la Junta Regional de Calificación.</p>"+
             "<p>Por último, se informa que esta Administradora realizó pago de honorarios pertinentes, el cual se efectuó de manera efectiva y por lo tanto se anexará en los próximos días el soporte del mismo.</p>"+
             "<p style='text-align:center;'>ANEXO:</p>"+
             "<p>Certificado de existencia y representación legal expedido por la Superintendencia Financiera. </p>"+
