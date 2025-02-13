@@ -240,7 +240,35 @@
             height: auto; 
         }
 
-        #footer .page:after { content: counter(page, upper-decimal); }   
+        #footer .page:after { content: counter(page, upper-decimal); }
+        
+        #footer2 { 
+            position: fixed; 
+            left: -20px; 
+            right: 0px; 
+            width: 0px; 
+            height: 0px; 
+            color:white; 
+            background-color: white; 
+            transform: rotate(-90deg); 
+            top:550px;
+        }
+
+        .verticalTexto {
+            font-family: sans-serif;
+            font-size: 8px;
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            white-space: nowrap;
+        }
+
+        .HorizantalTexto {            
+            font-family: sans-serif;
+            font-size: 8px;
+            color: white;
+            margin-left: 225px;            
+        }
+
         #content { margin-top: 10px; }    
         .content2 { padding-left: 1.5px; padding-right: 1.5px; }                     
     </style>    
@@ -306,7 +334,10 @@
                 </tr>
             </tbody>
         </table>
-    </div>                     
+    </div>
+    <div id="footer2">                
+        <span class="verticalTexto">PCL {{$Porcentaje_Pcl_dp}}%, {{$Tipo_evento_dp}} {{$Origen_dp}}, Fecha de estructuración: {{$F_estructuracion_dpF}}</span>
+    </div>                      
     <div id="content">        
         <table class="tabla_dictamen">
             <tr>
@@ -1217,6 +1248,7 @@
                         Esta calificación de pérdida de capacidad laboral es producto de la información suministrada por el usuario y se realiza bajo el entendido que no existe un primer dictamen, no obstante, si se llega a conocer que hay uno que se encuentre en firme por el o los mismos 
                         diagnósticos o en trámite ante alguna de las entidades competentes y/o en cualquier instancia, es importante indicar que esta segunda calificación no tendría validez y tampoco sería posible de controversia ante las Juntas Regionales de Calificación de Invalidez ni de 
                         demanda ante la Jurisdicción Ordinaria Laboral. La anterior aclaración, por cuanto es nuestro interés prestar el servicio requerido sin llegar a incurrir en la conducta irregular de que trata el artículo 32 del Decreto 1352 de 2013.
+                        <span class="HorizantalTexto">PCL {{$Porcentaje_Pcl_dp}}%, {{$Tipo_evento_dp}} {{$Origen_dp}}, Fecha de estructuración: {{$F_estructuracion_dpF}}</span>
                     </p>
                     <div class="seccion8">
                         8. GRUPO CALIFICADOR
