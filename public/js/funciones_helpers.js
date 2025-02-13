@@ -1247,6 +1247,7 @@ function historial_servicios(){
             data: response,
             pageLength: 5,
             order: [[5, 'desc']],
+            destroy:true,
             columns: [
                 { "data": "F_registro" },
                 { "data": null, render: function(data){
