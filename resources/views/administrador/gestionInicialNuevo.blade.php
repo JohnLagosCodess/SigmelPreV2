@@ -381,9 +381,11 @@
                                                 <div class="col-3 mt-4 text-center">
                                                     <div class="form-group">
                                                         <input class="form-contol scalesR" type="checkbox" id="entidad_conocimiento" name="entidad_conocimiento" value="Si">
-                                                        <label for="entidad_conocimiento" class="col-form-label">&nbsp; Entidad de Conocimiento (AFP)</label>
+                                                        <label for="entidad_conocimiento" class="col-form-label">&nbsp; Entidad de Conocimiento</label>
                                                         <div id="div_afp_conocimiento" class="d-none">
-                                                            <select class="afp_conocimiento custom-select" name="afp_conocimiento" id="afp_conocimiento"></select>
+                                                            {{-- <select class="afp_conocimiento custom-select" name="afp_conocimiento" id="afp_conocimiento"></select> --}}
+                                                            <select class="entidad_conocimiento_multiple custom-select" name="entidad_conocimiento_multiple[]" id="entidad_conocimiento_multiple" multiple="multiple"></select>
+                                                            <span class="d-none" id="entidad_conocimiento_alerta" style="color: red; font-style: italic;">Solo puede seleccionar 5 entidades.</span>
                                                         </div>
                                                     </div>
                                                 </div>

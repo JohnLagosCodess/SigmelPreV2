@@ -40,6 +40,7 @@ class sigmel_informacion_afiliado_eventos extends Model
     'Id_arl',
     'Entidad_conocimiento',
     'Id_afp_entidad_conocimiento',
+    'Otras_entidades_conocimiento',
     'Activo',
     'Nombre_afiliado_benefi',
     'Tipo_documento_benefi',

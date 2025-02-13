@@ -457,11 +457,11 @@
                                                         <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_ans_fila"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                     </tr>
                                                 </thead>
-                                                <tbody id="borrar_tabla_ans">
-                                                    
-                                                </tbody>
+                                                <tbody id="borrar_tabla_ans"></tbody>
                                             </table>
                                         </div>
+                                        <br>
+                                        <div class="alert d-none" id="accion_repetida" role="alert"></div>
                                     </div>
                                 </div>
                             </div>
