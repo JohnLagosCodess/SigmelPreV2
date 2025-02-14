@@ -126,7 +126,7 @@
                                                         <tr class="bg-info">
                                                             <th>Documento</th>
                                                             <th>Posición</th>
-                                                            {{-- <th>Incluir</th> --}}
+                                                            <th>Folear</th>
                                                             <th>Acción</th>
                                                             <th class="centrar"><a href="javascript:void(0);" id="btn_agregar_fila_expediente"><i class="fas fa-plus-circle" style="font-size:24px; color:white;"></i></a></th>
                                                         </tr>
@@ -138,12 +138,12 @@
                                                                 <td>
                                                                     <input type="text" class="form-control posicion-expediente_{{$cuadro_expediente->Id_Documento}}" id="posicion_expediente_{{$cuadro_expediente->Id_expedientes}}" data-iddocumento = "{{$cuadro_expediente->Id_Documento}}" value="{{$cuadro_expediente->Posicion}}">
                                                                 </td>
-                                                                {{-- <td>
+                                                                <td>
                                                                     <select class="custom-select folear_expediente"  name="folear_expediente" id="folear_expediente_{{$cuadro_expediente->Id_expedientes}}">
                                                                         <option value="{{$cuadro_expediente->Folear}}">{{$cuadro_expediente->Folear}}</option>
                                                                         <option value="<?php if ($cuadro_expediente->Folear == 'Si') { echo 'No'; } else { echo 'Si';} ?>"><?php if ($cuadro_expediente->Folear == 'Si') { echo 'No'; } else { echo 'Si';} ?></option>
                                                                     </select>
-                                                                </td> --}}
+                                                                </td>
                                                                 <td>                                                                    
                                                                     <div style="display: flex; flex-direction: row; justify-content: space-around; align-items: center">
                                                                         <a href="javascript:void(0);" id="Descarga_listachequeo_{{$cuadro_expediente->Id_expedientes}}" data-id_doc_expediente_chequeo="{{$cuadro_expediente->Id_expedientes}}" data-nombre_documento_chequeo="{{$cuadro_expediente->Nombre_documento}}.pdf" data-id_evento = "{{$cuadro_expediente->ID_evento}}"><i style="cursor:pointer; display: flex; justify-content: center; align-items:center;" class="far fa-eye text-info"></i></a>
