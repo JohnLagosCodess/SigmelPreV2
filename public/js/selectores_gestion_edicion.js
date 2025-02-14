@@ -104,6 +104,13 @@ $(document).ready(function(){
         allowClear: false
     });
 
+    /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE Entidad de conocimiento */
+    $(".entidad_conocimiento_multiple").select2({
+        width: '100%',
+        placeholder: "Seleccione una opción",
+        allowClear: false,
+        multiple: true
+    });
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE ARL (INFORMACIÓN AFILIADO) */
     $(".arl_info_afiliado").select2({
@@ -733,6 +740,61 @@ $(document).ready(function(){
             }
         }
     });
+
+    // lista entidad conocimiento
+    if($("#bd_Entidad_conocimiento").val() != "" && $("#bd_Entidad_conocimiento").val() == "Si"){
+        var bd_Id_afp_entidad_conocimiento = $("#bd_Id_afp_entidad_conocimiento").val();
+        var bd_Otras_entidades_conocimiento = $("#bd_Otras_entidades_conocimiento").val();
+        var entidades_conocimiento = bd_Id_afp_entidad_conocimiento+", "+bd_Otras_entidades_conocimiento;
+        
+        var array_entidades_conocimiento = entidades_conocimiento.split(", ").map(Number);
+
+    }else{
+        var array_entidades_conocimiento = [];
+    }
+
+    let datos_lista_entidad_conocimiento_multiple = {
+        '_token': token,
+        'parametro': "entidades_conocimiento_edicion"
+    };
+    
+    $.ajax({
+        type: 'POST',
+        url: '/cargarselectores',
+        data: datos_lista_entidad_conocimiento_multiple,
+        success: function (data) {
+            let $select = $('#entidad_conocimiento_multiple');
+            // $select.empty();
+    
+            // Filtrar opciones seleccionadas y no seleccionadas
+            let seleccionadas = [];
+            let no_seleccionadas = [];
+    
+            let claves = Object.keys(data);
+            for (let i = 0; i < claves.length; i++) {
+                let id = data[claves[i]]["Id_Entidad"];
+                let texto = data[claves[i]]["Tipo_Entidad"] + ' - ' + data[claves[i]]["Nombre_entidad"];
+                let option = `<option value="${id}" selected>${texto}</option>`;
+    
+                if (array_entidades_conocimiento.includes(id)) {
+                    seleccionadas.push({ id, option, orden: array_entidades_conocimiento.indexOf(id) });
+                } else {
+                    no_seleccionadas.push({ id, option });
+                }
+            }
+    
+            // Ordenar seleccionadas según el orden guardado
+            seleccionadas.sort((a, b) => a.orden - b.orden);
+    
+            // Agregar opciones en el orden correcto
+            seleccionadas.forEach(item => $select.append(item.option));
+            no_seleccionadas.forEach(item => $select.append(item.option.replace(' selected', '')));
+    
+            // Volver a inicializar Select2
+            $select.trigger('change');
+        }
+    });
+    
     
     // lista arl (información afiliado)
     let datos_lista_arl_info_afiliado = {
@@ -1624,6 +1686,8 @@ $(document).ready(function(){
             $('#div_afp_conocimiento').removeClass('d-none');         
         }else{
             $('#div_afp_conocimiento').addClass('d-none');
+
+            $("#entidad_conocimiento_multiple").val('').trigger('change');
         }       
     });
 
@@ -2231,6 +2295,31 @@ $(document).ready(function(){
             document.getElementById('empresa_registrar').required = false;
             document.getElementById('nit_cc_registrar').required = false;
         }
+    });
+
+    /* 
+        FUNCIONALIDAES PARA LAS ENTIDADES DE CONOCIMIENTO
+        1. No permitir seleccionar más de 5 entidades.
+        2. Respetar el orden de selección de las entidades.
+    */
+    $(".entidad_conocimiento_multiple").on("select2:select", function (e) {
+        let selectedOptions = $(this).val(); // Obtiene las opciones seleccionadas
+        if (selectedOptions.length > 5) {
+            // Elimina la última opción seleccionada
+            $(this).find(`option[value="${e.params.data.id}"]`).prop("selected", false);
+            $(this).trigger("change"); // Refresca Select2
+            $("#entidad_conocimiento_alerta").removeClass('d-none');
+        }else{
+            $("#entidad_conocimiento_alerta").addClass('d-none');
+        }
+    
+        var elemento = e.params.data.element;
+        var $elemento = $(elemento);
+        
+        $elemento.detach();
+        $(this).append($elemento);
+        $(this).trigger("change");
+            
     });
 
     /* 

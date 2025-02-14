@@ -381,9 +381,11 @@
                                                 <div class="col-3 mt-4 text-center">
                                                     <div class="form-group">
                                                         <input class="form-contol scalesR" type="checkbox" id="entidad_conocimiento" name="entidad_conocimiento" value="Si">
-                                                        <label for="entidad_conocimiento" class="col-form-label">&nbsp; Entidad de Conocimiento (AFP)</label>
+                                                        <label for="entidad_conocimiento" class="col-form-label">&nbsp; Entidad de Conocimiento</label>
                                                         <div id="div_afp_conocimiento" class="d-none">
-                                                            <select class="afp_conocimiento custom-select" name="afp_conocimiento" id="afp_conocimiento"></select>
+                                                            {{-- <select class="afp_conocimiento custom-select" name="afp_conocimiento" id="afp_conocimiento"></select> --}}
+                                                            <select class="entidad_conocimiento_multiple custom-select" name="entidad_conocimiento_multiple[]" id="entidad_conocimiento_multiple" multiple="multiple"></select>
+                                                            <span class="d-none" id="entidad_conocimiento_alerta" style="color: red; font-style: italic;">Solo puede seleccionar 5 entidades.</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -956,27 +958,14 @@
     // });
 
     /* Nueva validación para la fecha de Radicación */
-    $(document).on('keyup change click', '#fecha_radicacion',function(event){
-        
+    var timeout;
+    $(document).on('keyup change click', '#fecha_radicacion', function(event) {
+        let today = new Date().toISOString().split("T")[0];
         var fechaEvento = $("#fecha_evento").val();
+        $(this).attr("min", fechaEvento);
         enforceMinMax($(this));
-        var tipo_handler = event.type;
-        /* 
-            CASO 1: Si el evento es de tipo click entonces modifica el atributo min de la f de radicación
-            para no permitir dejar escoger fechas anteriores a la fecha de evento seleccionada.
-        */
-       /*
-            CASO 2: Si los eventos son keyup y change entonces se valida que la fecha de radicación
-            no debe ser inferior a la fecha del evento, solo puede ser superior o igual.
-        */
-        switch (tipo_handler) {
-            case 'click':
-                $(this).attr("min", fechaEvento);
-            break;
-            
-            case 'keyup':
-            case 'change':
-                if ($(this).val() < fechaEvento) {
+
+        if ($(this).val() < fechaEvento) {
                     // Eliminar cualquier alerta previa
                     if ($(this).next('i').length) {
                         $(this).next('i').remove();
@@ -988,18 +977,39 @@
                         $(this).val(fechaEvento);
                         $(this).next('i').remove();
                     }, 3000);
-                }else{
-                    if ($(this).next('i').length) {
-                        $(this).next('i').remove();
-                    }
-                }
-            break;
+        }else{
+            if ($(this).next('i').length) {
+                $(this).next('i').remove();
+            }
+        }
 
-            default:
-            break;
+        if ($(this).val() != "" && ($(this).val() < "1900-01-01" || $(this).val() > today)) {
+            // Eliminar cualquier alerta previa
+            if ($(this).next('i').length) {
+                $(this).next('i').remove();
+            }
+
+            let alerta = '<i style="color:red;">La fecha no es valida, por favor verifique.</i>';
+            $(this).after(alerta);
+
+            // Limpiar cualquier timeout anterior si existe
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+
+            // Establecer un nuevo timeout
+            timeout = setTimeout(() => {
+                $(this).val('');
+                $(this).next('i').remove();
+            }, 1000);
+
+        } else {
+            // Si la fecha es válida, eliminar la alerta
+            if ($(this).next('i').length) {
+                $(this).next('i').remove();
+            }
         }
     });
-
     $(document).on('keyup change', '#fecha_alerta', function(event){
 
         var fechaActual = new Date().toISOString().slice(0,10);

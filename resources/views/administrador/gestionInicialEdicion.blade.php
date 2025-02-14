@@ -529,11 +529,14 @@
                                                         @else
                                                             <input class="form-contol scalesR" type="checkbox" id="entidad_conocimiento" name="entidad_conocimiento" value="Si">                                                            
                                                         @endif
-                                                        <label for="entidad_conocimiento" class="col-form-label">Entidad de Conocimiento (AFP)</label>
+                                                        <label for="entidad_conocimiento" class="col-form-label">Entidad de Conocimiento</label>
                                                         <div id="div_afp_conocimiento" class="d-none">
-                                                            <select class="afp_conocimiento custom-select" name="afp_conocimiento" id="afp_conocimiento">
-                                                                <option value="{{$array_datos_info_afiliados[0]->Id_afp_entidad_conocimiento}}">{{$array_datos_info_afiliados[0]->Nombre_afp_conocimiento}}</option>
-                                                            </select>                                                            
+                                                            <input type="hidden" id="bd_Entidad_conocimiento" value="<?php if(!empty($array_datos_info_afiliados[0]->Entidad_conocimiento)){echo $array_datos_info_afiliados[0]->Entidad_conocimiento;}?>">
+                                                            <input type="hidden" id="bd_Id_afp_entidad_conocimiento" value="<?php if(!empty($array_datos_info_afiliados[0]->Id_afp_entidad_conocimiento)){echo $array_datos_info_afiliados[0]->Id_afp_entidad_conocimiento;}?>">
+                                                            <input type="hidden" id="bd_Otras_entidades_conocimiento" value="<?php if(!empty($array_datos_info_afiliados[0]->Otras_entidades_conocimiento)){echo $array_datos_info_afiliados[0]->Otras_entidades_conocimiento;}?>">
+
+                                                            <select class="entidad_conocimiento_multiple custom-select" name="entidad_conocimiento_multiple[]" id="entidad_conocimiento_multiple" multiple="multiple"></select>
+                                                            <span class="d-none" id="entidad_conocimiento_alerta" style="color: red; font-style: italic;">Solo puede seleccionar 5 entidades.</span>
                                                         </div>
                                                     </div>
                                                 </div>

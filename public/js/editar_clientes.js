@@ -1700,8 +1700,20 @@ $(document).ready(function(){
             },
             "columns":[
                 {data:"Nombre"},
-                {data:"Nombre_servicio"},
-                {data:"Accion"},
+                {
+                    data:"Nombre_servicio",
+                    render: function(data, type, row) {
+                        let hiddenInput = row.Servicio ? '<input type="hidden" id="servicio_bd_' + row.Servicio + '" value="' + row.Servicio + '">' : '';
+                        return hiddenInput + '<span>' + data + '</span>';
+                    }
+                },
+                {
+                    data:"Accion",
+                    render: function(data, type, row) {
+                        let hiddenInput = row.Id_Accion ? '<input type="hidden" id="accion_bd_' + row.Id_Accion + '" value="' + row.Id_Accion + '">' : '';
+                        return hiddenInput + '<span>' + data + '</span>';
+                    }
+                },
                 {data:"Valor"},
                 {data:"Nombre_unidad"},
                 {data:"Alerta_Naranja"},
@@ -1916,6 +1928,7 @@ $(document).ready(function(){
                     url: $('#traer_datos_cliente').val(),
                     data: datos_lista_acciones_ans,
                     success:function(data_acciones_ans) {
+                        $('#edicion_accion_ans_' + id_ans_seleccionado).data('servicio_viene', ans[0].Servicio);
                         $('#edicion_accion_ans_'+id_ans_seleccionado).empty();
                         $('#edicion_accion_ans_'+id_ans_seleccionado).append('<option value="" selected>Seleccione</option>');
                         let claves = Object.keys(data_acciones_ans);
@@ -1934,7 +1947,7 @@ $(document).ready(function(){
                 $('#edicion_servicio_contratado_ans_' + id_ans_seleccionado).change(function(){
                     var id_servicio_seleccionado = $(this).val();
                     
-                    $('#edicion_accion_ans_' + id_ans_seleccionado).attr('data-servicio_viene', id_servicio_seleccionado);
+                    $('#edicion_accion_ans_' + id_ans_seleccionado).data('servicio_viene', id_servicio_seleccionado);
 
                     let datos_lista_acciones_ans = {
                         '_token': token,
@@ -1961,24 +1974,45 @@ $(document).ready(function(){
                 });
 
                 // controles de validación para cuando un ans se repite.
+                var acciones_bd_edicion = [];
+                var servicios_bd_edicion = [];
                 $('#edicion_accion_ans_'+id_ans_seleccionado).change(function(){
+                    var ed_servicio_viene = $(this).data('servicio_viene');
                     var ed_accion_seleccionada = $(this).val();
-                    $('#ans').find("input[id^='accion_bd_']").each(function(){
-                        var bd_accion = $(this).val();
-                        
-                        var nombre_accion = $(this).next().text();
-                        
-                        if (ed_accion_seleccionada == bd_accion) {
-                            $('#accion_repetida').empty();
-                            $('#accion_repetida').removeClass('d-none');
-                            $('#accion_repetida').addClass('alert-danger');
-                            $('#accion_repetida').append('<strong>Ya existe un ANS guardado con la acción: '+nombre_accion+', por favor valide su configuración.</strong>');
-                            $("#bd_guardar_fila_ans_"+id_ans_seleccionado).addClass('d-none');
 
-                            $('tr.fila_ans_visual_'+id_ans_seleccionado).each(function(){
-                                $(this).find('input').css('border', '2px solid red');
-                            });
-                            return false;
+                    $('#ans').find("input[id^='accion_bd_'], input[id^='servicio_bd_']").each(function(){
+                        
+                        let id = $(this).attr('id');
+                        let valor = $(this).val();
+
+                        if (id.startsWith("accion_bd_")) {
+                            var nombre_accion = $(this).next().text();
+                            if (!acciones_bd_edicion.includes(valor)) {
+                                acciones_bd_edicion.push(valor);
+                            }
+                        } else if (id.startsWith("servicio_bd_")) {
+                            if (!servicios_bd_edicion.includes(valor)) {
+                                servicios_bd_edicion.push(valor);
+                            }
+                        }
+                        
+                        // console.log("Acciones BD:", acciones_bd_edicion);
+                        // console.log("Servicios BD:", servicios_bd_edicion);
+
+                        if (acciones_bd_edicion.includes(ed_accion_seleccionada)) {
+                            if (servicios_bd_edicion.includes(ed_servicio_viene.toString())) {
+                                
+                                $('#accion_repetida').empty();
+                                $('#accion_repetida').removeClass('d-none');
+                                $('#accion_repetida').addClass('alert-danger');
+                                $('#accion_repetida').append('<strong>Ya existe un ANS guardado con la acción: '+nombre_accion+', por favor valide su configuración.</strong>');
+                                $("#bd_guardar_fila_ans_"+id_ans_seleccionado).addClass('d-none');
+    
+                                $('tr.fila_ans_visual_'+id_ans_seleccionado).each(function(){
+                                    $(this).find('input').css('border', '2px solid red');
+                                });
+                                return false;
+                            }
                         }else{
                             $('#accion_repetida').addClass('d-none');
                             $('#accion_repetida').removeClass('alert-danger');
@@ -1990,6 +2024,9 @@ $(document).ready(function(){
                             });
                         }
                     });
+
+                    acciones_bd_edicion = [];
+                    servicios_bd_edicion = [];
                 });
 
                 /* Funcionalidad solo dos numeros decimales separados por punto y que no permita valores negativos para los input de valor ans */
@@ -2637,7 +2674,7 @@ function funciones_elementos_fila_ans(num_consecutivo){
     $('#servicio_contratado_ans_' + num_consecutivo).change(function(){
         var id_servicio_seleccionado = $(this).val();
         
-        $('#accion_ans_' + num_consecutivo).attr('data-servicio_viene', id_servicio_seleccionado);
+        $('#accion_ans_' + num_consecutivo).data('servicio_viene', id_servicio_seleccionado);
 
         // preguntamos si el servicio seleccionado ya tiene una key en el array de acciones no seleccionadas y extraemos sus valores
         var claveBuscar = `_Servicio_${id_servicio_seleccionado}`;
@@ -2676,6 +2713,8 @@ function funciones_elementos_fila_ans(num_consecutivo){
 
     });
 
+    var acciones_bd = [];
+    var servicios_bd = [];
     $('#accion_ans_' + num_consecutivo).change(function(){
         var de_que_servicio_viene = $(this).data('servicio_viene');
         var accionSeleccionada = $(this).val();
@@ -2691,6 +2730,44 @@ function funciones_elementos_fila_ans(num_consecutivo){
         
         // Actualizar el objeto con las acciones no seleccionadas
         accionesNoSeleccionadas['Fila_'+num_consecutivo+'_Servicio_'+de_que_servicio_viene] = accionesNoSeleccionadasArray;
+
+        $('#ans').find("input[id^='accion_bd_'], input[id^='servicio_bd_']").each(function(){
+            let id = $(this).attr('id');
+            let valor = $(this).val();
+
+            if (id.startsWith("accion_bd_")) {
+                acciones_bd.push(valor);
+                var nombre_accion = $(this).next().text();
+            } else if (id.startsWith("servicio_bd_")) {
+                servicios_bd.push(valor);
+            }
+
+            if (acciones_bd.includes(accionSeleccionada) && servicios_bd.includes(de_que_servicio_viene)) {
+                
+                $('#accion_repetida').empty();
+                $('#accion_repetida').removeClass('d-none');
+                $('#accion_repetida').addClass('alert-danger');
+                $('#accion_repetida').append('<strong>Ya existe un ANS guardado con la acción: '+nombre_accion+', por favor valide su configuración.</strong>');
+                $("#guardar_fila_ans_"+num_consecutivo).addClass('d-none');
+
+                $('tr.fila_'+num_consecutivo).each(function(){
+                    $(this).find('input').css('border', '2px solid red');
+                });
+                return false;
+            }else{
+                $('#accion_repetida').addClass('d-none');
+                $('#accion_repetida').removeClass('alert-danger');
+                $('#accion_repetida').empty();
+                $("#guardar_fila_ans_"+num_consecutivo).removeClass('d-none');
+
+                $('tr.fila_'+num_consecutivo).each(function(){
+                    $(this).find('input').css('border', '1px solid #343a40');
+                });
+            }
+        });
+
+        acciones_bd = [];
+        servicios_bd = [];
     });
 
     /* Funcionalidad solo dos numeros decimales separados por punto y que no permita valores negativos para los input de valor ans */
