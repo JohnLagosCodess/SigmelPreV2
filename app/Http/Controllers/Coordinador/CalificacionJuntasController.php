@@ -58,6 +58,14 @@ use PhpOffice\PhpWord\Style\Image;
 use PhpParser\Node\Stmt\TryCatch;
 // use TCPDF;
 // use setasign\Fpdi\Tcpdf\Fpdi;
+// use setasign\FpdiPdfParser\PdfParser; 
+use setasign\Fpdi\Fpdi;
+// use setasign\Fpdi\PdfReader;
+// use SetaPDF\Parser\PdfParser\PdfParser;
+// require_once base_path('vendor/setasign/FpdiPdfParser/src/PdfParser/PdfParser.php');
+// use setasign\Fpdi\PdfParser\PdfParser;
+// use setasign\FpdiPdfParser\PdfParser\PdfParser;
+
 // use Mpdf\Mpdf;
 // use Mpdf\Output\Destination;
 use mikehaertl\pdftk\Pdf;
@@ -7124,14 +7132,9 @@ class CalificacionJuntasController extends Controller
         if ($id_expediente == 'documento_comunicado_expediente') {
             $documento = $request->documento;
         }
-               
         $posicion = $request->posicion;
-        // $folear = $request->folear;
-
-        // if ($folear == 'Si') {
-        // }else{
-        //     $estado = 'inactivo';
-        // }
+        $folear = $request->folear;
+        
         $estado = 'activo';
 
         // insertar o actualizar: if si es un documento de los comunicados para hacer insert
@@ -7166,7 +7169,7 @@ class CalificacionJuntasController extends Controller
                     'Id_servicio' => $Id_servicio_expediente,
                     'Estado' => $estado,
                     'Posicion' => $posicion,
-                    // 'Folear' => $folear,
+                    'Folear' => $folear,
                     'Nombre_usuario' => $nombre_usuario,
                     'F_registro' => $date,
                 ];
@@ -7183,11 +7186,28 @@ class CalificacionJuntasController extends Controller
             $datos_actualizar_expedientes = [
                 'Estado' => $estado,
                 'Posicion' => $posicion,
-                // 'Folear' => $folear,
+                'Folear' => $folear,
                 'Nombre_usuario' => $nombre_usuario,
                 'F_registro' => $date,
             ];
-    
+            // se construye array con los id's de los documentos que conforman la lista de chequeo
+            $actulizarfoleos_documentos_listachequeo = array('1','2','3','4','7','9','10','11','12','13','14','15','16','18','19','20','21','22','23','25','26','27','41');
+            // se consulta si el id Id_expedientes que se va a actualizar corresponde al documento de la lista chequeo
+            $validar_doc_lista_chequeo = sigmel_informacion_expedientes_eventos::on('sigmel_gestiones')
+            ->select('Nombre_documento')
+            ->where([
+                ['Id_expedientes', $id_expediente],
+                ['Nombre_documento', 'like', '%Lista_chequeo_IdEvento_%']
+            ])->get();
+            // Validar si el viene el documento para hacer la actualizacion en todos los documentos que hallan para la lista de chequeo
+            if (count($validar_doc_lista_chequeo) > 0) {
+                $datos_foleo = [
+                    'Folear' => $folear,
+                ];
+                sigmel_informacion_expedientes_eventos::on('sigmel_gestiones')
+                ->whereIn('Id_Documento', $actulizarfoleos_documentos_listachequeo)->update($datos_foleo);                
+            }
+            // Actualizar el id que se esta manipulando en el selector
             sigmel_informacion_expedientes_eventos::on('sigmel_gestiones')
             ->where('Id_expedientes', $id_expediente)->update($datos_actualizar_expedientes);
     
@@ -7281,15 +7301,15 @@ class CalificacionJuntasController extends Controller
             $zip = new ZipArchive;
             if ($zip->open($ruta_pdfExpedientes, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
                 $archivosAgregados = 0;
-
-                foreach ($pdfExpedientes as $index => $archivo_expediente) {
+                $consecutivoFoleo = 1;
+                foreach ($pdfExpedientes as $index => $archivo_expediente) {                    
                     // dd($archivo_expediente);
                     $baseArchivo = "/var/www/html/Sigmel/public/Documentos_Eventos/".$Id_evento_expediente."/";
                     $NombreDocumentos = str_replace($baseArchivo, "", $archivo_expediente);
-    
                     // Usar índice para asegurar el orden dentro del ZIP
                     $nombreEnZip = str_pad($index + 1, 2, "0", STR_PAD_LEFT) . "_" . $NombreDocumentos;
-
+                    $sin_extension_NombreDocumentos = str_replace(".pdf", "", $NombreDocumentos);
+                    // dd($archivo_expediente);
                     // Verificar si el archivo existe
                     if (file_exists($archivo_expediente)) { 
                         
@@ -7298,9 +7318,42 @@ class CalificacionJuntasController extends Controller
                         if (!$zip->locateName($nombre_carpeta, ZipArchive::FL_NOCASE | ZipArchive::FL_NODIR)) {
                             $zip->addEmptyDir($nombre_carpeta);
                         }
-                        
-                        // Agregar al ZIP con un nombre basado en el índice
-                        $zip->addFile($archivo_expediente, $nombre_carpeta . '/' .$nombreEnZip);
+                        $consultarfoleoDoc = sigmel_informacion_expedientes_eventos::on('sigmel_gestiones')
+                        ->select('Folear')->where([
+                            ['Nombre_documento', $sin_extension_NombreDocumentos],
+                            ['Folear', 'Si']
+                        ])->get();
+                        if (count($consultarfoleoDoc) > 0) {
+                            // Crear instancia de FPDI
+                            $pdf_Folear_doc = new Fpdi(); 
+                            // buscamos el documento donde se encuentra guardado
+                            $Foleo_Doc = public_path("Documentos_Eventos/{$Id_evento_expediente}/{$NombreDocumentos}");
+                            // Obtener el número de páginas del PDF
+                            $Contar_paginas_Foleo_Doc = $pdf_Folear_doc->setSourceFile($Foleo_Doc);
+                            // dd($Contar_paginas_Foleo_Doc);
+                            // Fuente para la numeración
+                            $pdf_Folear_doc->SetFont('Arial', 'B', 14);
+                            // dd($Foleo_Doc);
+                            // Recorrer todas las páginas del PDF original e importarlas para su edición
+                            for ($i = 1; $i <= $Contar_paginas_Foleo_Doc; $i++) {
+                                $tplId = $pdf_Folear_doc->importPage($i); // Importar cada página
+                                // Usar la misma página sin agregar una nueva
+                                $pdf_Folear_doc->AddPage();
+                                $pdf_Folear_doc->useTemplate($tplId, 0, 0, 210, 297); // Tamaño A4
+                                // Agregar número de página en la esquina superior derecha
+                                $pdf_Folear_doc->SetXY(185, 2); // Posición en la esquina superior derecha
+                                $pdf_Folear_doc->Cell(20, 10, "$consecutivoFoleo", 0, 0, 'R');
+                                $consecutivoFoleo++;
+                            }                           
+                            // Guardar el PDF en memoria (no en el servidor)
+                            $pdfData = $pdf_Folear_doc->Output('S'); 
+                            // Agregar el archivo directamente al ZIP desde la memoria
+                            $zip->addFromString($nombre_carpeta . '/' . $nombreEnZip, $pdfData);
+                            // Agregar al ZIP con un nombre basado en el índice y que SI se va a Folear
+                        }else{
+                            // Agregar al ZIP con un nombre basado en el índice y que NO se va a Folear
+                            $zip->addFile($archivo_expediente, $nombre_carpeta . '/' .$nombreEnZip);
+                        }
 
                         $archivosAgregados++;
                     } else {
@@ -7340,7 +7393,7 @@ class CalificacionJuntasController extends Controller
         }        
 
     }
-
+    
     // Eliminar el reporte de notificaciones
     public function eliminarZipExpediente(Request $request){
         $nom_archivo = $request->nom_archivo;
