@@ -4427,7 +4427,7 @@ $(document).ready(function(){
                         if(data[i]['Movimiento_automatico'] && data[i]['Movimiento_automatico'] == 1){
                             let fecha_primer_accion = new Date(data[i]['F_primer_accion'].replace(' ', 'T'));
                             let fecha_ejecucion_accion = new Date(data[i]['F_accion'].replace(' ', 'T'));
-                            let tiempo_para_movimiento = Math.round((fecha_ejecucion_accion-fecha_primer_accion)/ (1000*60*60*24));
+                            let tiempo_para_movimiento = Math.ceil((fecha_ejecucion_accion-fecha_primer_accion)/ (1000*60*60*24));
                             data[i]['F_accion'] = `<p>${data[i]['F_accion']}</p><p>${tiempo_para_movimiento} días después</p>`;
                             let accion_anterior = data[i-1];
                             if(accion_anterior){
