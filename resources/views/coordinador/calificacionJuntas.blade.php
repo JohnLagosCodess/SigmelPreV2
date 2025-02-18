@@ -1391,6 +1391,17 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
+                                        @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si")
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                            <input class="custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                                            <label for="afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">
@@ -1833,6 +1844,17 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
+                                        @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si")
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                            <input class="custom-control-input" type="checkbox" id="edit_afp_conocimiento" name="edit_afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                                            <label for="edit_afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                         <div class="col-4">
                                             <div class="form-group">
                                                 <div class="custom-control custom-checkbox">

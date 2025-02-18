@@ -1812,7 +1812,7 @@ $(document).ready(function(){
             var copiaComunicado = $(this).attr('id');            
             if (copiaComunicado === 'copia_afiliado' || copiaComunicado === 'copia_empleador' || 
                 copiaComunicado === 'copia_eps' || copiaComunicado === 'copia_afp' || 
-                copiaComunicado === 'copia_arl') {                
+                copiaComunicado === 'copia_arl' || copiaComunicado === 'afp_conocimiento') {                
                 if ($(this).is(':checked')) {                
                 var relacionCopiaValor = $(this).val();
                 copiaComunicadoTotal.push(relacionCopiaValor);
@@ -1855,127 +1855,127 @@ $(document).ready(function(){
             'modulo_creacion':'calificacionOrigen',
             'N_siniestro':N_siniestro,
         }
-   
-        $.ajax({
-            type:'POST',
-            url:'/registrarComunicadoOrigen',
-            data: datos_generarComunicado,            
-            success:function(respuesta){
-                let comunicadosSigmel = respuesta.comunicadoSigmel;
-                if (comunicadosSigmel == 'DocumentoSigmel') {
-                    let Id_Comunicados = respuesta.Id_Comunicado;
-                    let bandera_descarga = 'BotonGuardarComunicado';     
-                    datos_comunicado = {
-                        '_token': token,
-                        'cliente_comunicado2_act': cliente_comunicado2,
-                        'nombre_afiliado_comunicado2_act': nombre_afiliado_comunicado2,
-                        'tipo_documento_comunicado2_act': tipo_documento_comunicado2,
-                        'identificacion_comunicado2_act': identificacion_comunicado2,
-                        'id_evento_comunicado2_act': Id_evento,
-                        'tipo_documento_descarga_califi_editar': tipo_descarga,
-                        'radioafiliado_comunicado':radioafiliado_comunicado,
-                        'radioempresa_comunicado':radioempresa_comunicado,
-                        'radioOtro':radioOtro,
-                        'nombre_destinatario_act2': nombre_destinatario,
-                        'nic_cc_act2': nic_cc,
-                        'direccion_destinatario_act2': direccion_destinatario,
-                        'telefono_destinatario_act2': telefono_destinatario,
-                        'email_destinatario_act2': email_destinatario,
-                        'departamento_pdf': departamento_destinatario,
-                        'ciudad_pdf': ciudad_destinatario,
-                        'asunto_act': asunto,
-                        'cuerpo_comunicado_act': cuerpo_comunicado,
-                        'files': null,
-                        'anexos_act': anexos,
-                        'forma_envio_act': forma_envio,
-                        'elaboro2_act': elaboro2,
-                        'reviso_act': reviso,
-                        'firmarcomunicado_editar': firmarcomunicado,
-                        'ciudad_comunicado_act': ciudad,
-                        'Id_comunicado_act': Id_Comunicados,
-                        'Id_evento_act': Id_evento,
-                        'Id_asignacion_act': Id_asignacion,
-                        'Id_procesos_act': Id_procesos,
-                        'fecha_comunicado2_act': fecha_comunicado2,
-                        'agregar_copia_editar':copiaComunicadoTotal,
-                        'radicado2_act': radicado2,                    
-                        'n_siniestro_proforma_editar': N_siniestro,
-                        'bandera_descarga':bandera_descarga,
-                    };
+        console.log(datos_generarComunicado);
+        // $.ajax({
+        //     type:'POST',
+        //     url:'/registrarComunicadoOrigen',
+        //     data: datos_generarComunicado,            
+        //     success:function(respuesta){
+        //         let comunicadosSigmel = respuesta.comunicadoSigmel;
+        //         if (comunicadosSigmel == 'DocumentoSigmel') {
+        //             let Id_Comunicados = respuesta.Id_Comunicado;
+        //             let bandera_descarga = 'BotonGuardarComunicado';     
+        //             datos_comunicado = {
+        //                 '_token': token,
+        //                 'cliente_comunicado2_act': cliente_comunicado2,
+        //                 'nombre_afiliado_comunicado2_act': nombre_afiliado_comunicado2,
+        //                 'tipo_documento_comunicado2_act': tipo_documento_comunicado2,
+        //                 'identificacion_comunicado2_act': identificacion_comunicado2,
+        //                 'id_evento_comunicado2_act': Id_evento,
+        //                 'tipo_documento_descarga_califi_editar': tipo_descarga,
+        //                 'radioafiliado_comunicado':radioafiliado_comunicado,
+        //                 'radioempresa_comunicado':radioempresa_comunicado,
+        //                 'radioOtro':radioOtro,
+        //                 'nombre_destinatario_act2': nombre_destinatario,
+        //                 'nic_cc_act2': nic_cc,
+        //                 'direccion_destinatario_act2': direccion_destinatario,
+        //                 'telefono_destinatario_act2': telefono_destinatario,
+        //                 'email_destinatario_act2': email_destinatario,
+        //                 'departamento_pdf': departamento_destinatario,
+        //                 'ciudad_pdf': ciudad_destinatario,
+        //                 'asunto_act': asunto,
+        //                 'cuerpo_comunicado_act': cuerpo_comunicado,
+        //                 'files': null,
+        //                 'anexos_act': anexos,
+        //                 'forma_envio_act': forma_envio,
+        //                 'elaboro2_act': elaboro2,
+        //                 'reviso_act': reviso,
+        //                 'firmarcomunicado_editar': firmarcomunicado,
+        //                 'ciudad_comunicado_act': ciudad,
+        //                 'Id_comunicado_act': Id_Comunicados,
+        //                 'Id_evento_act': Id_evento,
+        //                 'Id_asignacion_act': Id_asignacion,
+        //                 'Id_procesos_act': Id_procesos,
+        //                 'fecha_comunicado2_act': fecha_comunicado2,
+        //                 'agregar_copia_editar':copiaComunicadoTotal,
+        //                 'radicado2_act': radicado2,                    
+        //                 'n_siniestro_proforma_editar': N_siniestro,
+        //                 'bandera_descarga':bandera_descarga,
+        //             };
                     
-                    // console.log(datos_comunicado);
-                    $.ajax({
-                        type:'POST',
-                        url:'/generarPdf',
-                        data: datos_comunicado,                                       
-                        success: function (response, status, xhr) {
-                            // console.log('entro a descargar documento');
+        //             // console.log(datos_comunicado);
+        //             $.ajax({
+        //                 type:'POST',
+        //                 url:'/generarPdf',
+        //                 data: datos_comunicado,                                       
+        //                 success: function (response, status, xhr) {
+        //                     // console.log('entro a descargar documento');
                             
-                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
-                            // var base64Pdf = response.pdf;
+        //                     // Obtener el contenido codificado en base64 del PDF desde la respuesta
+        //                     // var base64Pdf = response.pdf;
     
-                            // // Decodificar base64 en un array de bytes
-                            // var binaryString = atob(base64Pdf);
-                            // var len = binaryString.length;
-                            // var bytes = new Uint8Array(len);
+        //                     // // Decodificar base64 en un array de bytes
+        //                     // var binaryString = atob(base64Pdf);
+        //                     // var len = binaryString.length;
+        //                     // var bytes = new Uint8Array(len);
         
-                            // for (var i = 0; i < len; i++) {
-                            //     bytes[i] = binaryString.charCodeAt(i);
-                            // }
+        //                     // for (var i = 0; i < len; i++) {
+        //                     //     bytes[i] = binaryString.charCodeAt(i);
+        //                     // }
         
-                            // // Crear un Blob a partir del array de bytes
-                            // var blob = new Blob([bytes], { type: 'application/pdf' });
+        //                     // // Crear un Blob a partir del array de bytes
+        //                     // var blob = new Blob([bytes], { type: 'application/pdf' });
     
-                            // var nombre_pdf = response.nombre_pdf;
+        //                     // var nombre_pdf = response.nombre_pdf;
                             
-                            // // console.log(nombre_pdf);                        
-                            // // Crear un enlace de descarga similar al ejemplo anterior
-                            // var link = document.createElement('a');
-                            // link.href = window.URL.createObjectURL(blob);
-                            // link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
+        //                     // // console.log(nombre_pdf);                        
+        //                     // // Crear un enlace de descarga similar al ejemplo anterior
+        //                     // var link = document.createElement('a');
+        //                     // link.href = window.URL.createObjectURL(blob);
+        //                     // link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
                     
-                            // // Adjuntar el enlace al documento y activar el evento de clic
-                            // document.body.appendChild(link);
-                            // link.click();
+        //                     // // Adjuntar el enlace al documento y activar el evento de clic
+        //                     // document.body.appendChild(link);
+        //                     // link.click();
                     
-                            // // Eliminar el enlace del documento
-                            // document.body.removeChild(link);
+        //                     // // Eliminar el enlace del documento
+        //                     // document.body.removeChild(link);
 
-                            if (respuesta.parametro == 'agregar_comunicado') {
-                                $("#mostrar_barra_creacion_comunicado").addClass('d-none');
-                                $('.alerta_comunicado').removeClass('d-none');
-                                $('.alerta_comunicado').append('<strong>'+respuesta.mensaje+'</strong>');
-                                setTimeout(function(){
-                                    $('.alerta_comunicado').addClass('d-none');
-                                    $('.alerta_comunicado').empty();
-                                    $("#Generar_comunicados").removeClass('d-none');
-                                    localStorage.setItem("#Generar_comunicados", true);
-                                    location.reload();
-                                }, 3000);
-                            }
-                        },
-                        error: function (error) {
-                            // Manejar casos de error
-                            console.error('Error al descargar el PDF:', error);
-                        }                    
-                    });
-                } else {
+        //                     if (respuesta.parametro == 'agregar_comunicado') {
+        //                         $("#mostrar_barra_creacion_comunicado").addClass('d-none');
+        //                         $('.alerta_comunicado').removeClass('d-none');
+        //                         $('.alerta_comunicado').append('<strong>'+respuesta.mensaje+'</strong>');
+        //                         setTimeout(function(){
+        //                             $('.alerta_comunicado').addClass('d-none');
+        //                             $('.alerta_comunicado').empty();
+        //                             $("#Generar_comunicados").removeClass('d-none');
+        //                             localStorage.setItem("#Generar_comunicados", true);
+        //                             location.reload();
+        //                         }, 3000);
+        //                     }
+        //                 },
+        //                 error: function (error) {
+        //                     // Manejar casos de error
+        //                     console.error('Error al descargar el PDF:', error);
+        //                 }                    
+        //             });
+        //         } else {
                     
-                    if (respuesta.parametro == 'agregar_comunicado') {
-                        $("#mostrar_barra_creacion_comunicado").addClass('d-none');
-                        $('.alerta_comunicado').removeClass('d-none');
-                        $('.alerta_comunicado').append('<strong>'+respuesta.mensaje+'</strong>');
-                        setTimeout(function(){
-                            $('.alerta_comunicado').addClass('d-none');
-                            $('.alerta_comunicado').empty();
-                            $("#Generar_comunicados").removeClass('d-none');
-                            localStorage.setItem("#Generar_comunicados", true);
-                            location.reload();
-                        }, 3000);
-                    }
-                }
-            }
-        });  
+        //             if (respuesta.parametro == 'agregar_comunicado') {
+        //                 $("#mostrar_barra_creacion_comunicado").addClass('d-none');
+        //                 $('.alerta_comunicado').removeClass('d-none');
+        //                 $('.alerta_comunicado').append('<strong>'+respuesta.mensaje+'</strong>');
+        //                 setTimeout(function(){
+        //                     $('.alerta_comunicado').addClass('d-none');
+        //                     $('.alerta_comunicado').empty();
+        //                     $("#Generar_comunicados").removeClass('d-none');
+        //                     localStorage.setItem("#Generar_comunicados", true);
+        //                     location.reload();
+        //                 }, 3000);
+        //             }
+        //         }
+        //     }
+        // });  
     }) ;
 
     $('#cargarComunicado').click(function(){
@@ -3965,7 +3965,7 @@ $(document).ready(function(){
             var copiaComunicado2 = $(this).attr('id');            
             if (copiaComunicado2 === 'edit_copia_afiliado' || copiaComunicado2 === 'edit_copia_empleador' || 
                 copiaComunicado2 === 'edit_copia_eps' || copiaComunicado2 === 'edit_copia_afp' || 
-                copiaComunicado2 === 'edit_copia_arl') {                
+                copiaComunicado2 === 'edit_copia_arl' || copiaComunicado2 === 'edit_afp_conocimiento') {                
                 if ($(this).is(':checked')) {                
                 var relacionCopiaValor2 = $(this).val();
                 EditComunicadoTotal.push(relacionCopiaValor2);
