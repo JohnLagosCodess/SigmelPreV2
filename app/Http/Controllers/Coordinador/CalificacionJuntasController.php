@@ -305,10 +305,13 @@ class CalificacionJuntasController extends Controller
 
         $Id_Asignacion = $newIdAsignacion;
 
+        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($newIdEvento);
+
         // dd($archivo_noencontrado, $archivo_encontrado);
         return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos', 'cantidad_documentos_cargados', 'arrayinfo_afiliado',
-        'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs',
-        'arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento','SubModulo', 'Id_servicio', 'newIdAsignacion', 'enviar_notificaciones', 'N_siniestro_evento', 'info_evento', 'validar_lista_chequeo', 'info_cuadros_expedientes', 'IdExpediente_estado', 'posicionExpediente', 'archivo_noencontrado', 'archivo_encontrado', 'Id_Asignacion'));
+        'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs','arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento',
+        'SubModulo', 'Id_servicio', 'newIdAsignacion', 'enviar_notificaciones', 'N_siniestro_evento', 'info_evento', 'validar_lista_chequeo', 'info_cuadros_expedientes', 'IdExpediente_estado', 
+        'posicionExpediente', 'archivo_noencontrado', 'archivo_encontrado', 'Id_Asignacion','info_afp_conocimiento'));
     }
     //Cargar Selectores Juntas
     public function cargueListadoSelectoresJuntas(Request $request){

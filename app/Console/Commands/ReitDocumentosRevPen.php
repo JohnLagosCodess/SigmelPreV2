@@ -70,7 +70,7 @@ class ReitDocumentosRevPen extends Command
             foreach ($array_datos_info_acciones_automaticas as $key => $item) {
                 try{
                     //Se valida que la acción ejecutada automaticamente sea la 185 - REVISAR DOCUMENTOS DE REVISIÓN PENSIÓN, ya que es para la que piden la automatización PBS070
-                    if($item['Accion_automatica'] === 185){
+                    if($item['Accion_automatica'] === 172){
                         Log::info('REIT_DOCUMENTOS_REV_PEN: ID_ASIGNACION QUE CUMPLE CON LA ACCIÓN DE REVISAR DOCUMENTOS DE REVISIÓN PENSIÓN.',['Id_Asignacion',$item['Id_Asignacion']]);
                         //Se busca en los comunicados uno que cumpla con los requisitos solicitados en el PBS070 item 2
                         $comunicado_a_editar = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_comunicado_eventos as sice')
