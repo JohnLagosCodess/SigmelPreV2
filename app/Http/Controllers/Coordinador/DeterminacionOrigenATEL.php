@@ -1272,10 +1272,7 @@ class DeterminacionOrigenATEL extends Controller
                 "parametro" => 'insertar_correspondencia',
                 'Id_Comunicado' => $id_comunicado ? $id_comunicado : null,
                 "mensaje" => 'Correspondencia guardada satisfactoriamente.'
-            );
-    
-            return json_decode(json_encode($mensajes, true));
-            
+            );  
         } 
         elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
             $datos_correspondencia = [
@@ -1386,10 +1383,12 @@ class DeterminacionOrigenATEL extends Controller
                 "mensaje" => 'Correspondencia actualizada satisfactoriamente.'
             );
     
-            return json_decode(json_encode($mensajes, true));
         }
-        
 
+        //Se actualizan las copias de entidad conocimiento del dictamen, PBS092
+        $test = $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_Evento_dto_atel,$Id_Asignacion_dto_atel,$Id_Proceso_dto_atel,$nro_identificacion,'Agregar');
+
+        return json_decode(json_encode($mensajes, true));
     }
     
     // Descargar proforma DML ORIGEN PREVISIONAL (DICTAMEN)

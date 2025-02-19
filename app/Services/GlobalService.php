@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\sigmel_consecutivos_destinatarios;
+use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
 use App\Models\sigmel_informacion_comunicado_eventos;
@@ -534,5 +535,45 @@ class GlobalService
             ['Id_Asignacion',$id_asignacion]
          ])
         ->get();
+    }
+    /**
+        * Query para agregar o quitar la copia de entidad conocimiento al dictamen PBS092.
+        * 
+        * @param string $id_evento Necesario para identificar el evento al cual se le necesita hacer el ajuste.
+        *
+        * @param string $id_asignacion Necesario para identificar la asignación dada en el evento.
+        *
+        * @param string $id_proceso Necesario para conocer el proceso del servicio
+        *
+        * @param string $nro_identificacion Necesario para saber cuantas entidades de conocimiento tiene asociadas el evento
+        *
+        * @param string $accion Accion a realizar, agregar la copia o quitarla.
+        *
+        * @return Collection | null Devuelve una colección con la información y si no devuelve null
+    */
+    public function AgregaroQuitarCopiaEntidadConocimientoDictamen($id_evento,$id_asignacion,$id_proceso,$nro_identificacion,$accion){
+        $entidades_conocimiento = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$id_evento],['Nro_identificacion',$nro_identificacion]])
+            ->get();
+        if(!$entidades_conocimiento->isEmpty()){
+            if($entidades_conocimiento[0]->Entidad_conocimiento != '' && $entidades_conocimiento[0]->Entidad_conocimiento == 'Si'){
+                
+            }
+        }
+        dd($entidades_conocimiento);
+        if($accion == 'Agregar'){
+            //Copias actuales del dictamen
+            $copias_dictamen = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$id_evento],
+                ['Id_Asignacion',$id_asignacion],
+                ['Id_proceso',$id_proceso],
+                ['Tipo_descarga','Dictamen'],
+            ])
+            ->value('Agregar_copia');
+            dd($copias_dictamen);
+        }else if($accion == 'Quitar'){
+
+        }
     }
 }
