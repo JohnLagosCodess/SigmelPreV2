@@ -3071,8 +3071,8 @@ $(document).ready(function(){
         $('input[type="checkbox"]').each(function() {
             var copiaComunicado = $(this).attr('id');            
             if (copiaComunicado === 'copia_afiliado' || copiaComunicado === 'copia_empleador' || 
-                copiaComunicado === 'copia_eps' || copiaComunicado === 'copia_afp' || 
-                copiaComunicado === 'copia_arl' || copiaComunicado === 'copia_jrci' || copiaComunicado === 'copia_jnci') {                
+                copiaComunicado === 'copia_eps' || copiaComunicado === 'copia_afp' || copiaComunicado === 'copia_arl' || copiaComunicado === 'afp_conocimiento'
+                || copiaComunicado === 'copia_jrci' || copiaComunicado === 'copia_jnci') {                
                 if ($(this).is(':checked')) {     
                     var relacionCopiaValor = $(this).val();
                     copiaComunicadoTotal.push(relacionCopiaValor);
@@ -6921,8 +6921,8 @@ $(document).ready(function(){
        $('input[type="checkbox"]').each(function() {
             var copiaComunicado2 = $(this).attr('id');            
             if (copiaComunicado2 === 'edit_copia_afiliado' || copiaComunicado2 === 'edit_copia_empleador' || 
-                copiaComunicado2 === 'edit_copia_eps' || copiaComunicado2 === 'edit_copia_afp' || 
-                copiaComunicado2 === 'edit_copia_arl' || copiaComunicado2 === 'edit_copia_jrci' || copiaComunicado2 === 'edit_copia_jnci' ) {                
+                copiaComunicado2 === 'edit_copia_eps' || copiaComunicado2 === 'edit_copia_afp' || copiaComunicado2 === 'edit_copia_arl' || copiaComunicado2 === 'edit_afp_conocimiento'
+                || copiaComunicado2 === 'edit_copia_jrci' || copiaComunicado2 === 'edit_copia_jnci' ) {                
                 if ($(this).is(':checked')) {                
                 var relacionCopiaValor2 = $(this).val();
                 EditComunicadoTotal.push(relacionCopiaValor2);
@@ -7575,14 +7575,14 @@ $(document).ready(function(){
                 'id_expediente': id_expediente,
                 'documento': $("#documento_expediente_" + id_contador_expediente).val(),
                 'posicion': $("#posicion_expediente_" + id_contador_expediente).val(),
-                // 'folear': $("#folear_expediente_" + id_contador_expediente).val()
+                'folear': $("#folear_expediente_" + id_contador_expediente).val()
             };
         } else {            
             var datos_expediente_posicion_foleo = {
                 '_token': token,
                 'id_expediente': id_expediente,
                 'posicion': $("#posicion_expediente_" + id_expediente).val(),
-                // 'folear': $("#folear_expediente_" + id_expediente).val()
+                'folear': $("#folear_expediente_" + id_expediente).val()
             };
         }
         
@@ -7985,7 +7985,7 @@ $(document).ready(function(){
         var nueva_fila_expediente = [
             '<select id="documento_expediente_'+contador_expediente+'" class="custom-select documento_expediente_'+contador_expediente+'" name="documento_expediente_"><option></option></select>',
             '<input type="text" class="form-control" id="posicion_expediente_'+contador_expediente+'" name="posicion_expediente" required />',
-            // '<select id="folear_expediente_'+contador_expediente+'" class="custom-select folear_expediente_'+contador_expediente+'" name="folear_expediente_"><option value="No">No</option><option value="Si">Si</option></select>',            
+            '<select id="folear_expediente_'+contador_expediente+'" class="custom-select folear_expediente_'+contador_expediente+'" name="folear_expediente_"><option value="No">No</option><option value="Si">Si</option></select>',            
             '<div style="text-align:center;"><a href="javascript:void(0);" class="editar_posicion_foleo_expediente_'+contador_expediente+'" id="editar_posicion_foleo_expediente_'+contador_expediente+'" data-id_expediente = "documento_comunicado_expediente" data-id_contador_expediente = "'+contador_expediente+'" style="display: flex; justify-content: center;"><i class="fa fa-sm fa-check text-success"></i></a></div>',
             '<div style="text-align:center;"><a href="javascript:void(0);" id="btn_remover_fila_expediente" class="text-info" data-fila="fila_'+contador_expediente+'"><i class="fas fa-minus-circle" style="font-size:24px;"></i></a></div>',
             'fila_'+contador_expediente

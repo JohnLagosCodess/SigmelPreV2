@@ -998,6 +998,17 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
+                                        @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si")
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                            <input class="custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                                            <label for="afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>                                                                        
                                 </div>
                                 <div class="card-footer">
@@ -1366,6 +1377,17 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
+                                        @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si")
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-checkbox">
+                                                            <input class="custom-control-input" type="checkbox" id="edit_afp_conocimiento" name="edit_afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                                            <label for="edit_afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                     <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">
                                         <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Recuerde Actualizar siempre después de haber modificado uno o más campos, El botón Actualizar se bloquea cuando falte algún campo obligatorio por llenar, y el del PDF se habilitará después de realizar la actualización.
