@@ -203,10 +203,12 @@ class CalificacionPCLController extends Controller
         ->get();
 
         $Id_Asignacion = $newIdAsignacion;
+
+        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($newIdEvento);
         
         return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 
         'arraylistado_documentos', 'cantidad_documentos_cargados', 'dato_validacion_no_aporta_docs', 'SubModulo','consecutivo','arraycampa_documento_solicitado', 
-        'info_comite_inter', 'Id_servicio', 'newIdAsignacion', 'info_accion_eventos', 'enviar_notificaciones','N_siniestro_evento', 'Id_Asignacion'));
+        'info_comite_inter', 'Id_servicio', 'newIdAsignacion', 'info_accion_eventos', 'enviar_notificaciones','N_siniestro_evento', 'Id_Asignacion','info_afp_conocimiento'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){

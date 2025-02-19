@@ -3298,7 +3298,7 @@ $(document).ready(function(){
                 var copiaComunicado2 = $(this).attr('id');            
                 if (copiaComunicado2 === 'edit_copia_afiliado' || copiaComunicado2 === 'edit_copia_empleador' || 
                     copiaComunicado2 === 'edit_copia_eps' || copiaComunicado2 === 'edit_copia_afp' || 
-                    copiaComunicado2 === 'edit_copia_arl') {                
+                    copiaComunicado2 === 'edit_copia_arl' || copiaComunicado2 === 'edit_afp_conocimiento') {                
                     if ($(this).is(':checked')) {                
                     var relacionCopiaValor2 = $(this).val();
                     EditComunicadosPcl.push(relacionCopiaValor2);
@@ -4215,7 +4215,7 @@ $(document).ready(function(){
             var copiaComunicado = $(this).attr('id');            
             if (copiaComunicado === 'copia_afiliado' || copiaComunicado === 'copia_empleador' || 
                 copiaComunicado === 'copia_eps' || copiaComunicado === 'copia_afp' || 
-                copiaComunicado === 'copia_arl') {                
+                copiaComunicado === 'copia_arl' || copiaComunicado === 'afp_conocimiento') {                
                 if ($(this).is(':checked')) {                
                 var relacionCopiaValor = $(this).val();
                 copiaComunicadosPcl.push(relacionCopiaValor);

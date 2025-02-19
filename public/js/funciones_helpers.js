@@ -836,8 +836,76 @@ $(document).ready(function () {
     $(document).on('click', "#limpiar_cache", function () {
         limpiar_cache();
     });
+
+    filtrar_comunicados();
     
 });
+
+function filtrar_comunicados(){
+    $(function(){
+        /**
+         * @var {Object} match_tablas Contiene las tablas de los comunicados y la fila donde se encuentra el estado del comunicado
+         */
+        const match_tablas = [
+            { id: "listado_agregar_comunicados", target: 5 },
+            { id: "tabla_comunicados_juntas", target: 5},
+            { id: "listado_comunicados_adx", target: 5},
+            { id: "listado_comunicados_dto", target: 5},
+            { id: "listado_comunicado_pronu_origen", target: 5},
+            { id: "listado_comunicados_clpcl", target: 5},
+            { id: "listado_comunicado_pronu_origen", target: 5},
+        ];
+
+        //Contenedor de filtros
+        const $filtroCheckbox = $("#filtrar_comunicados");
+        const $contenedorFiltros = $("#contenedor_filtros_comunicados");
+
+        //ocultar las filas que sean "No notificar"
+        const ocultarFilas = (tablaId, target) => {
+            $(`#${tablaId} tbody tr`).each(function() {
+                const $campo = $(this).find('td').eq(target);
+                const estadoComunicado = $campo.find("option:selected").text();
+    
+                //en caso tal, se habilita el checkbox para mostrar u ocultar las filas
+                if (estadoComunicado === "No notificar") {
+                    $contenedorFiltros.removeClass('d-none');
+                    $filtroCheckbox.prop("checked", true);
+                    $(this).hide();
+                    if($.fn.dataTable.isDataTable(`#${tablaId}`)){
+                        autoAdjustColumns($(`#${tablaId}`).DataTable());
+                    }
+                }
+            });
+        };
+
+        //muestra todas las filas de la tabla
+        const mostrarTodasLasFilas = (tablaId) => {
+            $(`#${tablaId} tbody tr`).show();
+            if($.fn.dataTable.isDataTable(`#${tablaId}`)){
+                autoAdjustColumns($(`#${tablaId}`).DataTable());
+            }
+        };
+
+        //Espera un tiempo a que la tabla se cargue dentro el modulo en el que se encuentre
+        setTimeout(() => {
+            match_tablas.forEach(({ id, target }) => {
+                ocultarFilas(id, target);
+            });
+        }, 3000);
+    
+        //Dependiendo del checkbox se muestran u ocultan las filas
+        $filtroCheckbox.on("change", function() {
+            match_tablas.forEach(({ id, target }) => {
+                if ($(this).is(":checked")) {
+                    ocultarFilas(id, target);
+                } else {
+                    mostrarTodasLasFilas(id);
+                }
+            });
+        });
+    });
+    
+}
 
 /**
  * Limpia la cache del navegador

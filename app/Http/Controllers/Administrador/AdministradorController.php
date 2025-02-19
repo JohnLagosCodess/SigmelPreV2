@@ -3718,8 +3718,14 @@ class AdministradorController extends Controller
 
         // En caso de que esté marcado el checkbox de entidad de conocimiento se envia las entidadesde conocimiento.
         if (!empty($request->entidad_conocimiento) and $request->entidad_conocimiento == "Si") {
-            $entidad_conocimiento_inicial = $request->entidad_conocimiento_multiple[0];
-            $array_otras_entidades = implode(', ', array_slice($request->entidad_conocimiento_multiple, 1));            
+            if(!empty($request->entidad_conocimiento_multiple[0])){
+                $entidad_conocimiento_inicial = $request->entidad_conocimiento_multiple[0];
+                $array_otras_entidades = implode(', ', array_slice($request->entidad_conocimiento_multiple, 1));            
+
+            }else{
+                $entidad_conocimiento_inicial = null;
+                $array_otras_entidades = null;
+            }
         }else{
             $entidad_conocimiento_inicial = null;
             $array_otras_entidades = null;
@@ -4680,8 +4686,14 @@ class AdministradorController extends Controller
 
         // En caso de que esté marcado el checkbox de entidad de conocimiento se envia las entidadesde conocimiento.
         if (!empty($request->entidad_conocimiento) and $request->entidad_conocimiento == "Si") {
-            $entidad_conocimiento_inicial = $request->entidad_conocimiento_multiple[0];
-            $array_otras_entidades = implode(', ', array_slice($request->entidad_conocimiento_multiple, 1));            
+            if(!empty($request->entidad_conocimiento_multiple[0])){
+                $entidad_conocimiento_inicial = $request->entidad_conocimiento_multiple[0];
+                $array_otras_entidades = implode(', ', array_slice($request->entidad_conocimiento_multiple, 1));            
+            }else{
+                $entidad_conocimiento_inicial = null;
+                $array_otras_entidades = null;
+            }
+
         }else{
             $entidad_conocimiento_inicial = null;
             $array_otras_entidades = null;

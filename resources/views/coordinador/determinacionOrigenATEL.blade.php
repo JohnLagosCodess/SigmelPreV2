@@ -1047,7 +1047,7 @@
                 </form>
             </div>  
             <!--  Correspondia -->
-            <div class="card-info d-none" id="div_correspondecia">
+            <div class="card-info d-none1" id="div_correspondecia">
                 <div class="card-header text-center" style="border: 1.5px solid black;">
                     <h5>Correspondencia</h5>
                 </div>
@@ -1272,21 +1272,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
-                            @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si")
-                                <div class="col-3">
-                                    <div class="form-group">
-                                        <div class="custom-control custom-checkbox">
-                                            @if (!empty($array_comite_interdisciplinario[0]->Copia_afp_conocimiento))
-                                                <input class="dependencia_justificacion custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento" checked>
-                                            @else
-                                                <input class="custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento">                                                    
-                                            @endif
-                                            <label for="afp_conocimiento" class="custom-control-label">AFP Conocimiento</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endif
                             <div class="col-3">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
@@ -1298,7 +1283,23 @@
                                         <label for="arl" class="custom-control-label">ARL</label>
                                     </div>
                                 </div>
-                            </div>    
+                            </div>
+                            <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
+                            {{-- @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si" && !empty($info_afp_conocimiento[0]->Id_afp_entidad_conocimiento)) --}}
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            @if (!empty($array_comite_interdisciplinario[0]->Copia_afp_conocimiento))
+                                                <input class="dependencia_justificacion custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento" checked>
+                                            @else
+                                                <input class="custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                            @endif
+                                            <label for="afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            {{-- @endif --}}
+                            
                             {{-- <div class="col-4">
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox">
@@ -1456,6 +1457,14 @@
                         <div class="col-12">
                             <div class="alert alert-warning mensaje_confirmacion_cargar_evento" role="alert">                                               
                                 <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Recuerde que despues de generar o actualizar un archivo debe descargarlo y recargar la pagina para poder reemplazarlo
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-none" id="contenedor_filtros_comunicados">
+                        <div class="col-12">
+                            <div class="custom-control custom-checkbox">
+                                <input class="custom-control-input" type="checkbox" id="filtrar_comunicados" name="filtrar_comunicados">
+                                <label for="filtrar_comunicados" class="custom-control-label">Ocultar No notificar</label>                 
                             </div>
                         </div>
                     </div>

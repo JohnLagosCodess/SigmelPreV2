@@ -664,6 +664,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row d-none" id="contenedor_filtros_comunicados">
+                                <div class="col-12">
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="filtrar_comunicados" name="filtrar_comunicados">
+                                        <label for="filtrar_comunicados" class="custom-control-label">Ocultar No notificar</label>                 
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">  
                                 <div class="col-12">
                                     <div class="form-group">                                            
