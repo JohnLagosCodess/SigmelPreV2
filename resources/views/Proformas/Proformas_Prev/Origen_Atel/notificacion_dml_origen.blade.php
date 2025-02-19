@@ -311,22 +311,23 @@
                         }
                     ?>
                     <?php 
-                        if (isset($Agregar_copia[$AFP_Conocimiento])) { ?>
-                            <tr>
-                                <td class="copias">
-                                    <span class="negrita">AFP Conocimiento: </span><?=$Agregar_copia['AFP_Conocimiento'];?>
-                                </td>
-                            </tr>
-                        <?php       
-                        }
-                    ?>
-                    <?php 
                         if (isset($Agregar_copia[$ARL])) { ?>
                             <tr>
                                 <td class="copias">
                                     <span class="negrita">ARL: </span><?=$Agregar_copia['ARL'];?>
                                 </td>
                             </tr>
+                        <?php       
+                        }
+                    ?>
+                    <?php 
+                        if (isset($Agregar_copia[$AFP_Conocimiento])) { ?>
+                            {{-- <tr>
+                                <td class="copias"> --}}
+                                    {{-- <span class="negrita">AFP Conocimiento: </span><?=$Agregar_copia['AFP_Conocimiento'];?> --}}
+                                    <?=$Agregar_copia['AFP_Conocimiento'];?>
+                                {{-- </td>
+                            </tr> --}}
                         <?php       
                         }
                     ?>

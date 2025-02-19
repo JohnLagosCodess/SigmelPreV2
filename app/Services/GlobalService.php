@@ -139,7 +139,7 @@ class GlobalService
     public function retornarcuentaConAfpConocimiento($id_evento){
         $resultado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
-        ->select('siae.Entidad_conocimiento')
+        ->select('siae.Entidad_conocimiento', 'siae.Id_afp_entidad_conocimiento', 'siae.Otras_entidades_conocimiento')
         ->where([['siae.ID_evento', $id_evento]])
         ->get();
         if ($resultado->isEmpty()) {
@@ -148,6 +148,72 @@ class GlobalService
     
         return $resultado;
     }
+
+    /* Función para retornar la info de las entidades de conocimiento dependiendo del tipo de proforma */
+    public function informacionEntidadesConocimientoEvento ($id_evento, $tipo_proforma){
+
+        // Obtenemos la o las entidades de conocimiento del evento
+        $entidades_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
+        ->select('siae.Id_afp_entidad_conocimiento','siae.Otras_entidades_conocimiento')
+        ->where([['siae.ID_evento', $id_evento]])
+        ->get();
+
+        $string_entidades = $entidades_conocimiento[0]->Id_afp_entidad_conocimiento.",".$entidades_conocimiento[0]->Otras_entidades_conocimiento;
+        $array_string_entidades = array_map('trim', explode(',', $string_entidades));
+        
+        // echo "<pre>";
+        // print_r($array_string_entidades);
+        // echo "</pre>";
+
+        // echo implode(',', $array_string_entidades);
+
+        $datos_entidades_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as sle', 'sie.IdTipo_entidad', '=', 'sle.Id_Entidad')
+        // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+        // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', function ($join) {
+            $join->on('sie.Id_departamento', '=', 'sldm.Id_departamento')
+                ->on('sie.Id_Ciudad', '=', 'sldm.Id_municipios');
+        })
+        ->select(
+            'sie.Id_Entidad',
+            'sle.Tipo_Entidad',
+            'sie.Nombre_entidad',
+            'sie.Direccion',
+            'sie.Emails as Email',
+            'sie.Telefonos',
+            'sldm.Nombre_municipio as Ciudad',
+            'sldm.Nombre_departamento as Departamento'
+        )
+        ->whereIn('sie.Id_Entidad', $array_string_entidades)
+        ->orderByRaw("FIELD(sie.Id_Entidad, " . implode(',', $array_string_entidades) . ")")
+        ->get();
+
+        $array_datos_entidades_conocimiento = json_decode(json_encode($datos_entidades_conocimiento, true));
+
+        // echo "<pre>";
+        // print_r($array_datos_entidades_conocimiento);
+        // echo "</pre>";
+
+        if ($tipo_proforma == 'pdf') {
+            $string_entidades = '';
+            for ($i=0; $i < count($array_datos_entidades_conocimiento); $i++) {
+                $tipo_entidad = $array_datos_entidades_conocimiento[$i]->Tipo_Entidad;
+                $nombre_entidad = $array_datos_entidades_conocimiento[$i]->Nombre_entidad;
+                $direccion_entidad = $array_datos_entidades_conocimiento[$i]->Direccion;
+                $email_entidad = $array_datos_entidades_conocimiento[$i]->Email;
+                $telefono_entidad = $array_datos_entidades_conocimiento[$i]->Telefonos;
+                $ciudad_entidad = $array_datos_entidades_conocimiento[$i]->Ciudad;
+                $departamento_entidad = $array_datos_entidades_conocimiento[$i]->Departamento;
+    
+                $string_entidades .= "<tr><td class='copias'><span class='negrita'>{$tipo_entidad}: </span>{$nombre_entidad} - {$direccion_entidad}; {$email_entidad}; {$telefono_entidad}; {$ciudad_entidad}; {$departamento_entidad}</td></tr>";
+            }
+            return $string_entidades;
+        }elseif ($tipo_proforma == 'word') {
+            
+        }
+    }
+
     /**
         * Genera el consecutivo el cual va a ser usado como identificador de alguno de los posibles destinatarios del modal de correspondencia.
         * 
