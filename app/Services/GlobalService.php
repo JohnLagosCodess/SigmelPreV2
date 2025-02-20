@@ -10,6 +10,7 @@ use App\Models\sigmel_informacion_documentos_solicitados_eventos;
 use App\Models\sigmel_informacion_eventos;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GlobalService
 {
@@ -602,6 +603,24 @@ class GlobalService
          ])
         ->get();
     }
+    //Retorna el string de copias de entidad de conocimiento
+    public function retornarStringCopiasEntidadConocimiento($id_evento){
+        $entidades_conocimiento = $this->retornarcuentaConAfpConocimiento($id_evento);
+        if($entidades_conocimiento){
+            $afp_principal = $entidades_conocimiento[0]->Id_afp_entidad_conocimiento;
+            $entidades_concatenadas[] = 'AFP_Conocimiento';   
+            if($entidades_conocimiento[0]->Otras_entidades_conocimiento){
+                $entidades = $afp_principal.','.$entidades_conocimiento[0]->Otras_entidades_conocimiento;
+                $array_entidades = array_map('trim', explode(',',$entidades));
+                for ($i=1; $i < count($array_entidades); $i++) { 
+                    $AFP_Conocimiento = 'AFP_Conocimiento' . ($i + 1);
+                    $entidades_concatenadas[] = $AFP_Conocimiento;                
+                }
+            }
+            return $entidades_concatenadas = implode(', ', $entidades_concatenadas);
+        }
+        return null;
+    }
     /**
         * Query para agregar o quitar la copia de entidad conocimiento al dictamen PBS092.
         * 
@@ -611,35 +630,42 @@ class GlobalService
         *
         * @param string $id_proceso Necesario para conocer el proceso del servicio
         *
-        * @param string $nro_identificacion Necesario para saber cuantas entidades de conocimiento tiene asociadas el evento
-        *
-        * @param string $accion Accion a realizar, agregar la copia o quitarla.
-        *
-        * @return Collection | null Devuelve una colección con la información y si no devuelve null
     */
-    public function AgregaroQuitarCopiaEntidadConocimientoDictamen($id_evento,$id_asignacion,$id_proceso,$nro_identificacion,$accion){
-        $entidades_conocimiento = sigmel_informacion_afiliado_eventos::on('sigmel_gestiones')
-            ->where([['ID_evento',$id_evento],['Nro_identificacion',$nro_identificacion]])
-            ->get();
-        if(!$entidades_conocimiento->isEmpty()){
-            if($entidades_conocimiento[0]->Entidad_conocimiento != '' && $entidades_conocimiento[0]->Entidad_conocimiento == 'Si'){
-                
+    public function AgregaroQuitarCopiaEntidadConocimientoDictamen($id_evento,$id_asignacion,$id_proceso,$copias_oficio){
+        $copias_entidad_conocimiento = $this->retornarStringCopiasEntidadConocimiento($id_evento);
+        //Copias actuales del dictamen
+        $dictamen = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento',$id_evento],
+            ['Id_Asignacion',$id_asignacion],
+            ['Id_proceso',$id_proceso],
+            ['Tipo_descarga','Dictamen'],
+        ])->get();
+
+        if($dictamen){
+            //Copias del dictamen
+            $copias_dictamen = $dictamen[0]->Agregar_copia;
+            if($copias_dictamen){
+                // Expresión regular para eliminar "AFP_Conocimiento" con o sin número
+                $cadena_limpia = preg_replace('/,?\s*AFP_Conocimiento\d*/', '', $copias_dictamen);
+                // Eliminar espacios en blanco innecesarios y posibles comas dobles
+                $copias_dictamen = trim(preg_replace('/,\s*,/', ',', $cadena_limpia), ', ');
             }
-        }
-        dd($entidades_conocimiento);
-        if($accion == 'Agregar'){
-            //Copias actuales del dictamen
-            $copias_dictamen = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            if(str_contains($copias_oficio, "AFP_Conocimiento")){
+                if($copias_dictamen){
+                    $copias_dictamen .= ', '.$copias_entidad_conocimiento;
+                }else{
+                    $copias_dictamen = $copias_entidad_conocimiento;
+                }
+            }
+            $actualización_dictamen = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
             ->where([
                 ['ID_evento',$id_evento],
                 ['Id_Asignacion',$id_asignacion],
                 ['Id_proceso',$id_proceso],
                 ['Tipo_descarga','Dictamen'],
-            ])
-            ->value('Agregar_copia');
-            dd($copias_dictamen);
-        }else if($accion == 'Quitar'){
-
+            ])->update(['Agregar_copia' => $copias_dictamen]);
+            return $actualización_dictamen;
         }
     }
 }
