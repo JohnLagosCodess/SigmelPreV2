@@ -1391,7 +1391,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    @endif    
+                                    @endif
                                     {{-- <div class="col-4">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">

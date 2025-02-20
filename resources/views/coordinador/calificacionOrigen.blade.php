@@ -785,14 +785,14 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    {{-- <div class="col-3">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <div class="form-check custom-control custom-radio">
                                                 <input class="form-check-input custom-control-input custom-control-input-info" type="radio" name="tipo_documento_descarga_califi" id="documentos_origen" value="Documento_Origen" required>
                                                 <label class="form-check-label custom-control-label" for="documentos_origen"><strong>Solicitud Documentos Origen</strong></label>
                                             </div>
                                         </div>
-                                    </div> --}}
+                                    </div>
                                     <div class="col-2">
                                         <div class="form-group">
                                             <div class="form-check custom-control custom-radio">
