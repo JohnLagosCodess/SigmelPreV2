@@ -8821,13 +8821,8 @@ class CalificacionPCLController extends Controller
                 Se marcará como destinatario principal al Afiliado y a la EPS y ARL como copia.
             2. DML PCL 1507 / DML 1507 CERO / DML PCL 917: Adicionar las siguientes validaciones para la marcación automática de las copias:
         */
-        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
-        if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-            $agregar_copias_dml = "EPS, ARL, AFP_Conocimiento";
-        }
-        else{
-            $agregar_copias_dml = "EPS, ARL";
-        }
+        //Copias y destinatario de un dictamen segun la ficha PBS092, la copia de Entidad conocimiento se gestiona desde el oficio
+        $agregar_copias_dml = "EPS, ARL";
         $Destinatario = 'Afiliado';
 
         if ($bandera_dictamen_pericial == 'Guardar') { 

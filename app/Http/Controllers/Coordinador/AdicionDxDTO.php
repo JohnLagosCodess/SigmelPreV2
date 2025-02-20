@@ -1654,15 +1654,9 @@ class AdicionDxDTO extends Controller
         $documentos = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
         ->where([['ID_evento',$request->ID_Evento], ['Id_Asignacion',$request->Id_Asignacion], ['T_documento','N/A'], ['Modulo_creacion','adicionDxDtoOrigen']])->get();
         
-        //Copias y destinatario
-        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($request->ID_Evento);
-            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-                $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL, AFP_Conocimiento";
-            }
-            else{
-                $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL";
-            }
-            $Destinatario = 'Afp';
+        //Copias y destinatario de un dictamen segun la ficha PBS092, la copia de Entidad conocimiento se gestiona desde el oficio
+        $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL";
+        $Destinatario = 'Afp';
 
         if ($Id_Adiciones_Dx == "" || count($documentos) == 0) {
             //Asigna radicado correspondiente al nuevo comunicado
@@ -2093,10 +2087,7 @@ class AdicionDxDTO extends Controller
                 "parametro" => 'insertar_correspondencia',
                 'Id_Comunicado' => $id_comunicado ? $id_comunicado : null,
                 "mensaje" => 'Correspondencia guardada satisfactoriamente.'
-            );
-    
-            return json_decode(json_encode($mensajes, true));
-            
+            );            
         } 
         elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
             $datos_correspondencia = [
@@ -2207,12 +2198,11 @@ class AdicionDxDTO extends Controller
                 "parametro" => 'actualizar_correspondencia',
                 'Id_Comunicado' => $id_comunicado ? $id_comunicado : null,
                 "mensaje" => 'Correspondencia actualizada satisfactoriamente.'
-            );
-    
-            return json_decode(json_encode($mensajes, true));
+            );    
         }
-        
-
+        //Se actualizan las copias de entidad conocimiento del dictamen, PBS092
+        $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_Evento,$Id_Asignacion_adicion_dx,$Id_Proceso_adicion_dx,$agregar_copias_comu);
+        return json_decode(json_encode($mensajes, true));
     }
 
     // Descargar proforma DML ORIGEN PREVISIONAL (DICTAMEN)
@@ -2638,8 +2628,12 @@ class AdicionDxDTO extends Controller
 
         $array_datos_para_destinatario_principal = json_decode(json_encode($datos_para_destinatario_principal), true);
 
-        $checkbox_otro_destinatario = $array_datos_para_destinatario_principal[0]["Otro_destinatario"];
-
+        if (isset($array_datos_para_destinatario_principal[0]["Otro_destinatario"])) {
+            $checkbox_otro_destinatario = $array_datos_para_destinatario_principal[0]["Otro_destinatario"];
+        } else {
+            $checkbox_otro_destinatario = null; // O un valor por defecto
+        }
+        
         //  Si el checkbox fue marcado entonces se entra a mirar las demás validaciones
         if ($checkbox_otro_destinatario == "Si") {
             // 1: ARL; 2: AFP; 3: EPS; 4: AFILIADO; 5:EMPLEADOR; 8: OTRO

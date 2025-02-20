@@ -1815,7 +1815,7 @@ $(document).ready(function(){
             var copiaComunicado = $(this).attr('id');            
             if (copiaComunicado === 'copia_afiliado' || copiaComunicado === 'copia_empleador' || 
                 copiaComunicado === 'copia_eps' || copiaComunicado === 'copia_afp' || 
-                copiaComunicado === 'copia_arl' || copiaComunicado === 'afp_conocimiento') {                
+                copiaComunicado === 'copia_arl' || copiaComunicado === 'copia_afp_conocimiento') {                
                 if ($(this).is(':checked')) {                
                     var relacionCopiaValor = $(this).val();
                     // copiaComunicadoTotal.push(relacionCopiaValor);

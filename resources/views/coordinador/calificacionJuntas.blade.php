@@ -974,6 +974,14 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row d-none" id="contenedor_filtros_comunicados">
+                                    <div class="col-12">
+                                        <div class="custom-control custom-checkbox">
+                                            <input class="custom-control-input" type="checkbox" id="filtrar_comunicados" name="filtrar_comunicados">
+                                            <label for="filtrar_comunicados" class="custom-control-label">Ocultar No notificar</label>                 
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="table-responsive">
                                     <table id="listado_agregar_comunicados" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
                                         <thead>
@@ -1396,8 +1404,8 @@
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <div class="custom-control custom-checkbox">
-                                                            <input class="custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento">                                                    
-                                                            <label for="afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
+                                                            <input class="custom-control-input" type="checkbox" id="copia_afp_conocimiento" name="copia_afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                                            <label for="copia_afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1849,8 +1857,8 @@
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <div class="custom-control custom-checkbox">
-                                                            <input class="custom-control-input" type="checkbox" id="edit_afp_conocimiento" name="edit_afp_conocimiento" value="AFP_Conocimiento">                                                    
-                                                            <label for="edit_afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
+                                                        <input class="custom-control-input" type="checkbox" id="edit_copia_afp_conocimiento" name="edit_copia_afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                                        <label for="edit_copia_afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
                                                     </div>
                                                 </div>
                                             </div>

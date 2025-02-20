@@ -5401,10 +5401,7 @@ class RecalificacionPCLController extends Controller
                 "mensaje" => 'Correspondencia guardada satisfactoriamente.',
                 "Id_Comunicado" => $Id_Comunicado,
                 "Bandera_boton_guardar_oficio" => 'boton_oficio'
-            );
-    
-            return json_decode(json_encode($mensajes, true));
-            
+            );            
         } 
         elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
             $datos_correspondencia = [
@@ -5515,11 +5512,11 @@ class RecalificacionPCLController extends Controller
                 "mensaje" => 'Correspondencia actualizada satisfactoriamente.',
                 "Id_Comunicado" => $Id_Comunicado,
                 "Bandera_boton_guardar_oficio" => 'boton_oficio'
-            );
-    
-            return json_decode(json_encode($mensajes, true));
+            );    
         }
-        
+        //Se actualizan las copias de entidad conocimiento del dictamen, PBS092
+        $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$agregar_copias_comu);
+        return json_decode(json_encode($mensajes, true));
 
     }
 
@@ -5600,12 +5597,7 @@ class RecalificacionPCLController extends Controller
         $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
         $agregar_copias_dml = '';
         if($id_servicio === 7){
-            if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-                $agregar_copias_dml = "EPS, ARL, AFP_Conocimiento";
-            }
-            else{
-                $agregar_copias_dml = "EPS, ARL";
-            }
+            $agregar_copias_dml = "EPS, ARL";
         }
         $Destinatario = 'Afiliado';
 
