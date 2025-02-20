@@ -645,6 +645,7 @@ class GlobalService
         if($dictamen){
             //Copias del dictamen
             $copias_dictamen = $dictamen[0]->Agregar_copia;
+            dump('Copias inicial dictamen : ',$copias_dictamen);
             if($copias_dictamen){
                 // Expresión regular para eliminar "AFP_Conocimiento" con o sin número
                 $cadena_limpia = preg_replace('/,?\s*AFP_Conocimiento\d*/', '', $copias_dictamen);
@@ -658,6 +659,7 @@ class GlobalService
                     $copias_dictamen = $copias_entidad_conocimiento;
                 }
             }
+            dump('Copias finales dictamen : ',$copias_dictamen);
             $actualización_dictamen = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
             ->where([
                 ['ID_evento',$id_evento],
