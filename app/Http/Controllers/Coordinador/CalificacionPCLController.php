@@ -8615,10 +8615,7 @@ class CalificacionPCLController extends Controller
                 "mensaje" => 'Correspondencia guardada satisfactoriamente.',
                 "Id_Comunicado" => $Id_Comunicado,
                 "Bandera_boton_guardar_oficio" => 'boton_oficio'
-            );
-    
-            return json_decode(json_encode($mensajes, true));
-            
+            );            
         } 
         elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
             $datos_correspondencia = [
@@ -8725,10 +8722,12 @@ class CalificacionPCLController extends Controller
                 "mensaje" => 'Correspondencia actualizada satisfactoriamente.',
                 "Id_Comunicado" => $Id_Comunicado,
                 "Bandera_boton_guardar_oficio" => 'boton_oficio'
-            );
-    
-            return json_decode(json_encode($mensajes, true));
+            );    
         }
+        if($oficiopcl == 'Si' || $oficioinca == 'Si'){
+            $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$agregar_copias_comu);
+        }
+        return json_decode(json_encode($mensajes, true));
     }
 
     // Dictame Pericial

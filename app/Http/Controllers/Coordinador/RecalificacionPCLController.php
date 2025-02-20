@@ -5157,7 +5157,6 @@ class RecalificacionPCLController extends Controller
                 sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
                     ->where([['Id_Comunicado',$id_comunicado_dictamen]])
                     ->update($data_edit_dictamen);
-    
             }
             //En los demás casos C y D no se marcara ninguna copia.
             else{
@@ -5514,8 +5513,16 @@ class RecalificacionPCLController extends Controller
                 "Bandera_boton_guardar_oficio" => 'boton_oficio'
             );    
         }
-        //Se actualizan las copias de entidad conocimiento del dictamen, PBS092
-        $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$agregar_copias_comu);
+        //Se actualizan las copias de entidad conocimiento del dictamen, PBS092 pero solo para cuando eligen formato E
+        if($id_servicio === 8){
+            if($formatoe == 'Si'){
+                $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$agregar_copias_comu);
+            }
+        }else if($id_servicio === 7){
+            if($oficiopcl == 'Si' || $oficioinca == 'Si'){
+                $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$agregar_copias_comu);
+            }
+        }
         return json_decode(json_encode($mensajes, true));
 
     }
