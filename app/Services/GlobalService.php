@@ -601,4 +601,23 @@ class GlobalService
          ])
         ->get();
     }
+
+    //Retorna el string de copias de entidad de conocimiento
+    public function retornarStringCopiasEntidadConocimiento($id_evento){
+        $entidades_conocimiento = $this->retornarcuentaConAfpConocimiento($id_evento);
+        if($entidades_conocimiento){
+            $afp_principal = $entidades_conocimiento[0]->Id_afp_entidad_conocimiento;
+            $entidades_concatenadas[] = 'AFP_Conocimiento';   
+            if($entidades_conocimiento[0]->Otras_entidades_conocimiento){
+                $entidades = $afp_principal.','.$entidades_conocimiento[0]->Otras_entidades_conocimiento;
+                $array_entidades = explode(',',$entidades);
+                for ($i=1; $i < count($array_entidades); $i++) { 
+                    $AFP_Conocimiento = 'AFP_Conocimiento' . ($i + 1);
+                    $entidades_concatenadas[] = $AFP_Conocimiento;                
+                }
+            }
+            return $entidades_concatenadas = implode(', ', $entidades_concatenadas);
+        }
+        return null;
+    }
 }

@@ -1114,20 +1114,10 @@ class DeterminacionOrigenATEL extends Controller
 
             // $variables_llenas[] = $afp_conocimiento;
 
-            // consultamos cuantas entidades hay en total para el evento en cuestion $Id_Evento_dto_atel
-            $cantidad_entidades = $this->globalService->retornarcuentaConAfpConocimiento($Id_Evento_dto_atel);
-
-            $string_entidades = $cantidad_entidades[0]->Id_afp_entidad_conocimiento.",".$cantidad_entidades[0]->Otras_entidades_conocimiento;
-            $array_string_entidades = array_map('trim', explode(',', $string_entidades));
-
-            $entidades_concatenadas = [];
-            for ($i=1; $i < count($array_string_entidades); $i++) { 
-                $AFP_Conocimiento = 'AFP_Conocimiento' . ($i + 1);
-                $entidades_concatenadas[] = $AFP_Conocimiento;
-            }
-
-            $entidades_concatenadas = implode(', ', $entidades_concatenadas);
-            $variables_llenas[] = $afp_conocimiento.", ".$entidades_concatenadas;
+            // traemos la informacion de las copias dependiendo de cuantas entidades de conocimiento hay
+            $str_entidades = $this->globalService->retornarStringCopiasEntidadConocimiento($Id_Evento_dto_atel);
+           
+            $variables_llenas[] = $str_entidades;
         }
         if (!empty($jrci)) {
             $variables_llenas[] = $jrci;

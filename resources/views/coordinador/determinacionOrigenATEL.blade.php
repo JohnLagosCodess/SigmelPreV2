@@ -1047,7 +1047,7 @@
                 </form>
             </div>  
             <!--  Correspondia -->
-            <div class="card-info d-none1" id="div_correspondecia">
+            <div class="card-info d-none" id="div_correspondecia">
                 <div class="card-header text-center" style="border: 1.5px solid black;">
                     <h5>Correspondencia</h5>
                 </div>
@@ -1285,7 +1285,7 @@
                                 </div>
                             </div>
                             <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
-                            {{-- @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si" && !empty($info_afp_conocimiento[0]->Id_afp_entidad_conocimiento)) --}}
+                            @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si")
                                 <div class="col-3">
                                     <div class="form-group">
                                         <div class="custom-control custom-checkbox">
@@ -1298,7 +1298,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            {{-- @endif --}}
+                            @endif
                             
                             {{-- <div class="col-4">
                                 <div class="form-group">

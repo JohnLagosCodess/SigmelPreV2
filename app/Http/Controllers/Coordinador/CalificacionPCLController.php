@@ -3120,6 +3120,7 @@ class CalificacionPCLController extends Controller
                 $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
                 $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
                 $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                $final_copia_afp_conocimiento =  isset($request->edit_copia_entidad_conocimiento) ? 'AFP_Conocimiento' : '';
     
                 $total_copias = array_filter(array(
                     'copia_afiliado' => $final_copia_afiliado,
@@ -3127,6 +3128,7 @@ class CalificacionPCLController extends Controller
                     'copia_eps' => $final_copia_eps,
                     'copia_afp' => $final_copia_afp,
                     'copia_arl' => $final_copia_arl,
+                    'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
                 )); 
     
                 sleep(2);
@@ -3139,7 +3141,7 @@ class CalificacionPCLController extends Controller
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
 
                 $copiaComunicadosOrigen = $request->agregar_copia_editar;
-                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
+                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl', 'AFP_Conocimiento' => 'copia_afp_conocimiento'];
 
                 if ($copiaComunicadosOrigen > 0) {
                     
@@ -3268,6 +3270,11 @@ class CalificacionPCLController extends Controller
                 $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
                 $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+            }
+
+            if (isset($copia_afp_conocimiento)) {
+                $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_evento, 'pdf');
+                $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
             }
 
             /* Extraer el id del cliente */
