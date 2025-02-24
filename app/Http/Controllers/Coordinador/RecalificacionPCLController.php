@@ -5154,10 +5154,10 @@ class RecalificacionPCLController extends Controller
             // Cuando el servicio sea Revisión pensión y el oficio seleccionado sea NO RATIFICACIÓN(E) se marcará como destinatario principal al Afiliado y a la EPS y ARL como copia.
             if($formatoe == 'Si'){         
                 $data_edit_dictamen['Agregar_copia'] = "EPS, ARL";
-                sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                $test = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
                     ->where([['Id_Comunicado',$id_comunicado_dictamen]])
                     ->update($data_edit_dictamen);
-    
+                dump($test);
             }
             //En los demás casos C y D no se marcara ninguna copia.
             else{
@@ -5514,8 +5514,18 @@ class RecalificacionPCLController extends Controller
                 "Bandera_boton_guardar_oficio" => 'boton_oficio'
             );    
         }
-        //Se actualizan las copias de entidad conocimiento del dictamen, PBS092
-        $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$agregar_copias_comu);
+        //Se actualizan las copias de entidad conocimiento del dictamen, PBS092 pero solo para cuando eligen formato E
+        if($id_servicio === 8){
+            if($formatoe == 'Si'){
+                dump($agregar_copias_comu);
+                $test2 = $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$agregar_copias_comu);
+                dump($test2);
+            }
+        }else if($id_servicio === 7){
+            if($oficiopcl == 'Si' || $oficioinca == 'Si'){
+                $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$agregar_copias_comu);
+            }
+        }
         return json_decode(json_encode($mensajes, true));
 
     }
