@@ -3713,14 +3713,22 @@ class AdministradorController extends Controller
             $id_arl = $request->arl_info_afiliado;
         }
 
-        // Validamos si el checkbox entidad conocimiento esta marcado 
-        $entidad_conocimiento = isset($request->entidad_conocimiento) ? 'Si' : 'No';
+        // $entidad_conocimiento = isset($request->entidad_conocimiento) ? 'Si' : 'No';
 
         // En caso de que esté marcado el checkbox de entidad de conocimiento se envia las entidadesde conocimiento.
         if (!empty($request->entidad_conocimiento) and $request->entidad_conocimiento == "Si") {
-            $entidad_conocimiento_inicial = $request->entidad_conocimiento_multiple[0];
-            $array_otras_entidades = implode(', ', array_slice($request->entidad_conocimiento_multiple, 1));            
+            if(!empty($request->entidad_conocimiento_multiple[0])){
+                $entidad_conocimiento = 'Si';
+                $entidad_conocimiento_inicial = $request->entidad_conocimiento_multiple[0];
+                $array_otras_entidades = implode(', ', array_slice($request->entidad_conocimiento_multiple, 1));            
+
+            }else{
+                $entidad_conocimiento = 'No';
+                $entidad_conocimiento_inicial = null;
+                $array_otras_entidades = null;
+            }
         }else{
+            $entidad_conocimiento = 'No';
             $entidad_conocimiento_inicial = null;
             $array_otras_entidades = null;
         }
@@ -4670,19 +4678,20 @@ class AdministradorController extends Controller
             $id_arl = $request->arl_info_afiliado;
         }
 
-        $entidad_conocimiento = isset($request->entidad_conocimiento) ? 'Si' : 'No';
-
-        // if ($entidad_conocimiento == 'Si') {
-        //     $afp_conocimiento = $request->afp_conocimiento;
-        // } else {
-        //     $afp_conocimiento = null;            
-        // }
-
         // En caso de que esté marcado el checkbox de entidad de conocimiento se envia las entidadesde conocimiento.
         if (!empty($request->entidad_conocimiento) and $request->entidad_conocimiento == "Si") {
-            $entidad_conocimiento_inicial = $request->entidad_conocimiento_multiple[0];
-            $array_otras_entidades = implode(', ', array_slice($request->entidad_conocimiento_multiple, 1));            
+            if(!empty($request->entidad_conocimiento_multiple[0])){
+                $entidad_conocimiento = 'Si';
+                $entidad_conocimiento_inicial = $request->entidad_conocimiento_multiple[0];
+                $array_otras_entidades = implode(', ', array_slice($request->entidad_conocimiento_multiple, 1));            
+            }else{
+                $entidad_conocimiento = 'No';
+                $entidad_conocimiento_inicial = null;
+                $array_otras_entidades = null;
+            }
+
         }else{
+            $entidad_conocimiento = 'No';
             $entidad_conocimiento_inicial = null;
             $array_otras_entidades = null;
         }

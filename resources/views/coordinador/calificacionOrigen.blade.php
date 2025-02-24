@@ -585,6 +585,14 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row d-none" id="contenedor_filtros_comunicados">
+                                <div class="col-12">
+                                    <div class="custom-control custom-checkbox">
+                                        <input class="custom-control-input" type="checkbox" id="filtrar_comunicados" name="filtrar_comunicados">
+                                        <label for="filtrar_comunicados" class="custom-control-label">Ocultar No notificar</label>                 
+                                    </div>
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table id="listado_agregar_comunicados" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
                                     <thead>
@@ -974,6 +982,17 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
+                                    @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si")
+                                        <div class="col-2">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="copia_afp_conocimiento" name="copia_afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                                        <label for="copia_afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="row">
                                     <div class="col-4">
@@ -1286,6 +1305,17 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
+                                    @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si")
+                                        <div class="col-3">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                        <input class="custom-control-input" type="checkbox" id="edit_copia_afp_conocimiento" name="edit_copia_afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                                        <label for="edit_copia_afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="row">
                                     <div class="col-4">

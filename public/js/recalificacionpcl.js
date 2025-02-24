@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    var entidad_conocimiento = $("#entidad_conocimiento").val();
 
     var idRol = $("#id_rol").val();
     //localStorage.clear();
@@ -5741,6 +5742,10 @@ $(document).ready(function(){
             $("#empleador").prop('checked', true);
             $("#eps").prop('checked', true);
             $("#arl").prop('checked', true);
+            // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
+            if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+                $("#afp_conocimiento").prop('checked', true);
+            }
 
             // Seteo automático del nro de anexos:
             var seteo_nro_anexos = 1;

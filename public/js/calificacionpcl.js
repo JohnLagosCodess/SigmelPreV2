@@ -3298,7 +3298,7 @@ $(document).ready(function(){
                 var copiaComunicado2 = $(this).attr('id');            
                 if (copiaComunicado2 === 'edit_copia_afiliado' || copiaComunicado2 === 'edit_copia_empleador' || 
                     copiaComunicado2 === 'edit_copia_eps' || copiaComunicado2 === 'edit_copia_afp' || 
-                    copiaComunicado2 === 'edit_copia_arl') {                
+                    copiaComunicado2 === 'edit_copia_arl' || copiaComunicado2 === 'edit_copia_afp_conocimiento') {                
                     if ($(this).is(':checked')) {                
                     var relacionCopiaValor2 = $(this).val();
                     EditComunicadosPcl.push(relacionCopiaValor2);
@@ -4215,7 +4215,7 @@ $(document).ready(function(){
             var copiaComunicado = $(this).attr('id');            
             if (copiaComunicado === 'copia_afiliado' || copiaComunicado === 'copia_empleador' || 
                 copiaComunicado === 'copia_eps' || copiaComunicado === 'copia_afp' || 
-                copiaComunicado === 'copia_arl') {                
+                copiaComunicado === 'copia_arl' || copiaComunicado === 'copia_afp_conocimiento') {                
                 if ($(this).is(':checked')) {                
                 var relacionCopiaValor = $(this).val();
                 copiaComunicadosPcl.push(relacionCopiaValor);
@@ -4427,7 +4427,7 @@ $(document).ready(function(){
                         if(data[i]['Movimiento_automatico'] && data[i]['Movimiento_automatico'] == 1){
                             let fecha_primer_accion = new Date(data[i]['F_primer_accion'].replace(' ', 'T'));
                             let fecha_ejecucion_accion = new Date(data[i]['F_accion'].replace(' ', 'T'));
-                            let tiempo_para_movimiento = Math.round((fecha_ejecucion_accion-fecha_primer_accion)/ (1000*60*60*24));
+                            let tiempo_para_movimiento = Math.ceil((fecha_ejecucion_accion-fecha_primer_accion)/ (1000*60*60*24));
                             data[i]['F_accion'] = `<p>${data[i]['F_accion']}</p><p>${tiempo_para_movimiento} días después</p>`;
                             let accion_anterior = data[i-1];
                             if(accion_anterior){

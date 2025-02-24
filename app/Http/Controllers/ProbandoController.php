@@ -22,6 +22,8 @@ use App\Imports\ProbandoImportXslxSinEncabezados;
 use App\Models\sigmel_lista_solicitantes;
 use Maatwebsite\Excel\Facades\Excel;
 
+use App\Services\GlobalService;
+
 use PDF;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -31,7 +33,25 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class ProbandoController extends Controller
 {
+    protected $globalService;
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
+    
     public function index(){
+        $id_evento = '000000000000098';
+        $datos = $this->globalService->informacionEntidadesConocimientoEvento($id_evento, 'pdf');
+
+
+        $datos_pruebas = sigmel_probando::on('mysql2')->get();
+        $user= Auth::user();
+        $datos = "Hola, este es un código QR generado en Laravel.";
+        // Generar el código QR
+        $codigoQR = QrCode::size(100)->generate($datos);
+        // return view ('otra_conexion', compact('datos_pruebas', 'user', 'codigoQR'));
+    }
+    public function index2(){
 
         // Si el usuario no ha iniciado, no podrá ingresar al sistema
         if(!Auth::check()){
