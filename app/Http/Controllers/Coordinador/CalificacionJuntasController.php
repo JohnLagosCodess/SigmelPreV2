@@ -7359,9 +7359,9 @@ class CalificacionJuntasController extends Controller
                             }        
 
                             // Eliminar el documento que se desencripto
-                            // if (File::exists(public_path("Documentos_Eventos/{$Id_evento_expediente}/desencriptado_{$NombreDocumentos}"))) {
-                            //     File::delete(public_path("Documentos_Eventos/{$Id_evento_expediente}/desencriptado_{$NombreDocumentos}"));
-                            // }
+                            if (File::exists(public_path("Documentos_Eventos/{$Id_evento_expediente}/desencriptado_{$NombreDocumentos}"))) {
+                                File::delete(public_path("Documentos_Eventos/{$Id_evento_expediente}/desencriptado_{$NombreDocumentos}"));
+                            }
 
                         }else{
                             // Agregar al ZIP con un nombre basado en el índice y que NO se va a Folear
