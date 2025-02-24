@@ -2569,23 +2569,26 @@ $(document).ready(function(){
 
         var bandera_descarga = 'IconoDescarga';
         if(this.getAttribute('agregar_copia')){
-            if(this.getAttribute('agregar_copia').includes("Afiliado")){
+            
+            const agregarCopiaValores = this.getAttribute('agregar_copia').split(',').map(v => v.trim());
+
+            if (agregarCopiaValores.includes("Afiliado")) {
                 edit_copia_afiliado = true;
             }
-            if(this.getAttribute('agregar_copia').includes("Empleador")){
+            if (agregarCopiaValores.includes("Empleador")) {
                 edit_copia_empleador = true;
             }
-            if(this.getAttribute('agregar_copia').includes("EPS")){
+            if (agregarCopiaValores.includes("EPS")) {
                 edit_copia_eps = true;
             }
-            if(this.getAttribute('agregar_copia').includes("AFP")){
+            if (agregarCopiaValores.includes("AFP")) {
                 edit_copia_afp = true;
             }
-            if(this.getAttribute('agregar_copia').includes("ARL")){
-                edit_copia_arl = true;
-            }
-            if (this.getAttribute('agregar_copia').includes("AFP_Conocimiento")) {
+            if (agregarCopiaValores.includes("AFP_Conocimiento")) {
                 edit_copia_entidad_conocimiento = true;
+            }
+            if (agregarCopiaValores.includes("ARL")) {
+                edit_copia_arl = true;
             }
         }
         if(this.getAttribute('destinatario_principal') != "Otro"){
@@ -3480,12 +3483,15 @@ $(document).ready(function(){
         if (firmar_comunicado == 'firmar comunicado') {
             $('#firmarcomunicado_editar').prop('checked', true);  
         }
+
         //Valida si tiene alguna copia
         $("input[id^='edit_copia_']").each(function() {
             const checkboxValue = $(this).val();
-            // console.log(checkboxValue);
             
-            if (agregar_copia.includes(checkboxValue)) {
+            // Convertir agregar_copia en array asegurando que se separa correctamente
+            const listaValores = agregar_copia.split(',').map(v => v.trim());
+
+            if (listaValores.includes(checkboxValue)) {
                 $(this).prop('checked', true);
             }else{
                 $(this).prop('checked', false);
