@@ -450,11 +450,11 @@ class CalificacionJuntasController extends Controller
         }
         // Listado Junta Pagos Honorarios
         if($parametro == 'lista_juntas_pago'){
-            $listado_pagos_juntas = sigmel_lista_parametros::on('sigmel_gestiones')
-            ->select('Id_Parametro', 'Nombre_parametro')
+            $listado_pagos_juntas = sigmel_informacion_entidades::on('sigmel_gestiones')
+            ->select('Id_Entidad as Id_Parametro', 'Nombre_entidad as Nombre_parametro')
             ->where([
-                ['Tipo_lista', '=', 'Jrci Invalidez'],
-                ['Estado', '=', 'activo']
+                ['IdTipo_entidad', '4'],
+                ['Estado_entidad', 'activo']
             ])
             ->get();
 
