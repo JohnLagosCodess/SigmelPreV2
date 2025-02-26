@@ -748,14 +748,8 @@ class DeterminacionOrigenATEL extends Controller
             ];
         }
 
-        //Copias y destinatario de un dictamen segun la ficha PBS054
-        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($request->ID_Evento);
-        if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-            $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL, AFP_Conocimiento";
-        }
-        else{
-            $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL";
-        }
+        //Copias y destinatario de un dictamen segun la ficha PBS092, la copia de Entidad conocimiento se gestiona desde el oficio
+        $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL";
         $Destinatario = 'Afp';
 
         $Id_Dto_ATEL = $request->Id_Dto_ATEL;
@@ -1092,7 +1086,6 @@ class DeterminacionOrigenATEL extends Controller
         }
         $jnci = $request->jnci;
         // $agregar_copias_comu = $empleador.','.$eps.','.$afp.','.$arl.','.$jrci.','.$jnci;
-
         $variables_llenas = array();
 
         if (!empty($beneficiario)) {
@@ -1114,20 +1107,10 @@ class DeterminacionOrigenATEL extends Controller
 
             // $variables_llenas[] = $afp_conocimiento;
 
-            // consultamos cuantas entidades hay en total para el evento en cuestion $Id_Evento_dto_atel
-            $cantidad_entidades = $this->globalService->retornarcuentaConAfpConocimiento($Id_Evento_dto_atel);
-
-            $string_entidades = $cantidad_entidades[0]->Id_afp_entidad_conocimiento.",".$cantidad_entidades[0]->Otras_entidades_conocimiento;
-            $array_string_entidades = array_map('trim', explode(',', $string_entidades));
-
-            $entidades_concatenadas = [];
-            for ($i=1; $i < count($array_string_entidades); $i++) { 
-                $AFP_Conocimiento = 'AFP_Conocimiento' . ($i + 1);
-                $entidades_concatenadas[] = $AFP_Conocimiento;
-            }
-
-            $entidades_concatenadas = implode(', ', $entidades_concatenadas);
-            $variables_llenas[] = $afp_conocimiento.", ".$entidades_concatenadas;
+            // traemos la informacion de las copias dependiendo de cuantas entidades de conocimiento hay
+            $str_entidades = $this->globalService->retornarStringCopiasEntidadConocimiento($Id_Evento_dto_atel);
+           
+            $variables_llenas[] = $str_entidades;
         }
         if (!empty($jrci)) {
             $variables_llenas[] = $jrci;
@@ -1288,10 +1271,7 @@ class DeterminacionOrigenATEL extends Controller
                 "parametro" => 'insertar_correspondencia',
                 'Id_Comunicado' => $id_comunicado ? $id_comunicado : null,
                 "mensaje" => 'Correspondencia guardada satisfactoriamente.'
-            );
-    
-            return json_decode(json_encode($mensajes, true));
-            
+            );  
         } 
         elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
             $datos_correspondencia = [
@@ -1402,10 +1382,10 @@ class DeterminacionOrigenATEL extends Controller
                 "mensaje" => 'Correspondencia actualizada satisfactoriamente.'
             );
     
-            return json_decode(json_encode($mensajes, true));
         }
-        
-
+        //Se actualizan las copias de entidad conocimiento del dictamen, PBS092
+        $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_Evento_dto_atel,$Id_Asignacion_dto_atel,$Id_Proceso_dto_atel,$agregar_copias_comu);
+        return json_decode(json_encode($mensajes, true));
     }
     
     // Descargar proforma DML ORIGEN PREVISIONAL (DICTAMEN)

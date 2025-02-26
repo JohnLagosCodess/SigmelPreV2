@@ -1404,8 +1404,8 @@
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <div class="custom-control custom-checkbox">
-                                                            <input class="custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento">                                                    
-                                                            <label for="afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
+                                                            <input class="custom-control-input" type="checkbox" id="copia_afp_conocimiento" name="copia_afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                                            <label for="copia_afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1857,8 +1857,8 @@
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <div class="custom-control custom-checkbox">
-                                                            <input class="custom-control-input" type="checkbox" id="edit_afp_conocimiento" name="edit_afp_conocimiento" value="AFP_Conocimiento">                                                    
-                                                            <label for="edit_afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
+                                                        <input class="custom-control-input" type="checkbox" id="edit_copia_afp_conocimiento" name="edit_copia_afp_conocimiento" value="AFP_Conocimiento">                                                    
+                                                        <label for="edit_copia_afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
                                                     </div>
                                                 </div>
                                             </div>

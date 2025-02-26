@@ -35,6 +35,8 @@ use App\Http\Controllers\Administrador\ReporteFacturacionPclController;
 use App\Http\Controllers\Administrador\ReporteFacturacionJuntasController;
 use Illuminate\Support\Facades\Route;
 
+use App\Services\GlobalService;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -922,6 +924,11 @@ Route::post('/consultaReporteFactuJuntas', [ReporteFacturacionJuntasController::
 // 18-06-2024
 // Validación creación de un nuevo servicio de Adición Dx, Calificacion técnica, Reacalificación y Revisión Pensión desde la modal Nuevo Proceso
 Route::post('/ValidarNuevosServiciosNuevoProceso', [BuscarEventoController::class, 'ValidarNuevosServiciosNuevoProceso']);
+
+// llamado del servicio global retornarStringCopiasEntidadConocimiento para retornar el string de las entidades (se usa solamente en los módulos principales)
+Route::post('/string_entidades_conocimiento', function (Request $request) {
+    return app()->make(GlobalService::class)->retornarStringCopiasEntidadConocimiento($request->id_evento);
+});
 
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 

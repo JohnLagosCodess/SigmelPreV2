@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\sigmel_consecutivos_destinatarios;
+use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
 use App\Models\sigmel_informacion_comunicado_eventos;
@@ -9,6 +10,7 @@ use App\Models\sigmel_informacion_documentos_solicitados_eventos;
 use App\Models\sigmel_informacion_eventos;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class GlobalService
 {
@@ -89,7 +91,7 @@ class GlobalService
         ,'pr.Id_tipo_pronunciamiento','p.Nombre_parametro as Tpronuncia','pr.Id_tipo_evento','ti.Nombre_evento','pr.Id_tipo_origen','or.Nombre_parametro as T_origen'
         ,'pr.Fecha_evento','pr.Dictamen_calificador','pr.Fecha_calificador','pr.N_siniestro','pr.Fecha_estruturacion','pr.Porcentaje_pcl','pr.Rango_pcl'
         ,'pr.Decision','pr.Fecha_pronuncia','pr.Asunto_cali','pr.Sustenta_cali','pr.Destinatario_principal','pr.Tipo_entidad','pr.Nombre_entidad as Nombre_entidad_correspon',
-        'pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps','pr.Copia_afp','pr.Copia_arl','pr.Copia_junta_regional','pr.Copia_junta_nacional','pr.Junta_regional_cual',
+        'pr.Copia_afiliado','pr.copia_empleador','pr.Copia_eps','pr.Copia_afp','pr.Copia_arl','pr.Copia_Afp_Conocimiento','pr.Copia_junta_regional','pr.Copia_junta_nacional','pr.Junta_regional_cual',
         'sie.Nombre_entidad as Ciudad_Junta','pr.N_anexos','pr.Elaboro_pronuncia','pr.Reviso_Pronuncia','pr.Ciudad_correspon','pr.N_radicado','pr.Firmar','pr.Fecha_correspondencia'
         ,'pr.Archivo_pronuncia')
         ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as c', 'c.Id_Entidad', '=', 'pr.Id_primer_calificador')
@@ -194,23 +196,23 @@ class GlobalService
         // print_r($array_datos_entidades_conocimiento);
         // echo "</pre>";
 
-        if ($tipo_proforma == 'pdf') {
-            $string_entidades = '';
-            for ($i=0; $i < count($array_datos_entidades_conocimiento); $i++) {
-                $tipo_entidad = $array_datos_entidades_conocimiento[$i]->Tipo_Entidad;
-                $nombre_entidad = $array_datos_entidades_conocimiento[$i]->Nombre_entidad;
-                $direccion_entidad = $array_datos_entidades_conocimiento[$i]->Direccion;
-                $email_entidad = $array_datos_entidades_conocimiento[$i]->Email;
-                $telefono_entidad = $array_datos_entidades_conocimiento[$i]->Telefonos;
-                $ciudad_entidad = $array_datos_entidades_conocimiento[$i]->Ciudad;
-                $departamento_entidad = $array_datos_entidades_conocimiento[$i]->Departamento;
-    
-                $string_entidades .= "<tr><td class='copias'><span class='negrita'>{$tipo_entidad}: </span>{$nombre_entidad} - {$direccion_entidad}; {$email_entidad}; {$telefono_entidad}; {$ciudad_entidad}; {$departamento_entidad}</td></tr>";
-            }
-            return $string_entidades;
-        }elseif ($tipo_proforma == 'word') {
+        $string_entidades = '';
+        for ($i=0; $i < count($array_datos_entidades_conocimiento); $i++) {
+            $tipo_entidad = $array_datos_entidades_conocimiento[$i]->Tipo_Entidad;
+            $nombre_entidad = $array_datos_entidades_conocimiento[$i]->Nombre_entidad;
+            $direccion_entidad = $array_datos_entidades_conocimiento[$i]->Direccion;
+            $email_entidad = $array_datos_entidades_conocimiento[$i]->Email;
+            $telefono_entidad = $array_datos_entidades_conocimiento[$i]->Telefonos;
+            $ciudad_entidad = $array_datos_entidades_conocimiento[$i]->Ciudad;
+            $departamento_entidad = $array_datos_entidades_conocimiento[$i]->Departamento;
             
+            if ($tipo_proforma == 'pdf') {
+                $string_entidades .= "<tr><td class='copias'><span class='negrita'>{$tipo_entidad}: </span>{$nombre_entidad} - {$direccion_entidad}; {$email_entidad}; {$telefono_entidad}; {$ciudad_entidad}; {$departamento_entidad}</td></tr>";
+            }elseif ($tipo_proforma == 'word') {
+                $string_entidades .= "<tr><td style='border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;'><span style='font-weight:bold;'>{$tipo_entidad}: </span>{$nombre_entidad} - {$direccion_entidad}; {$email_entidad}; {$telefono_entidad}; {$ciudad_entidad}; {$departamento_entidad}</td></tr>";
+            }
         }
+        return $string_entidades;
     }
 
     /**
@@ -600,5 +602,72 @@ class GlobalService
             ['Id_Asignacion',$id_asignacion]
          ])
         ->get();
+    }
+    //Retorna el string de copias de entidad de conocimiento
+    public function retornarStringCopiasEntidadConocimiento($id_evento){
+        $entidades_conocimiento = $this->retornarcuentaConAfpConocimiento($id_evento);
+        if($entidades_conocimiento){
+            $afp_principal = $entidades_conocimiento[0]->Id_afp_entidad_conocimiento;
+            $entidades_concatenadas[] = 'AFP_Conocimiento';   
+            if($entidades_conocimiento[0]->Otras_entidades_conocimiento){
+                $entidades = $afp_principal.','.$entidades_conocimiento[0]->Otras_entidades_conocimiento;
+                $array_entidades = array_map('trim', explode(',',$entidades));
+                for ($i=1; $i < count($array_entidades); $i++) { 
+                    $AFP_Conocimiento = 'AFP_Conocimiento' . ($i + 1);
+                    $entidades_concatenadas[] = $AFP_Conocimiento;                
+                }
+            }
+            return $entidades_concatenadas = implode(', ', $entidades_concatenadas);
+        }
+        return null;
+    }
+    /**
+        * Query para agregar o quitar la copia de entidad conocimiento al dictamen PBS092.
+        * 
+        * @param string $id_evento Necesario para identificar el evento al cual se le necesita hacer el ajuste.
+        *
+        * @param string $id_asignacion Necesario para identificar la asignación dada en el evento.
+        *
+        * @param string $id_proceso Necesario para conocer el proceso del servicio
+        *
+    */
+    public function AgregaroQuitarCopiaEntidadConocimientoDictamen($id_evento,$id_asignacion,$id_proceso,$copias_oficio){
+        $copias_entidad_conocimiento = $this->retornarStringCopiasEntidadConocimiento($id_evento);
+        //Copias actuales del dictamen
+        $dictamen = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento',$id_evento],
+            ['Id_Asignacion',$id_asignacion],
+            ['Id_proceso',$id_proceso],
+            ['Tipo_descarga','Dictamen'],
+        ])->get();
+
+        if($dictamen){
+            //Copias del dictamen
+            $copias_dictamen = $dictamen[0]->Agregar_copia;
+            dump('Copias inicial dictamen : ',$copias_dictamen);
+            if($copias_dictamen){
+                // Expresión regular para eliminar "AFP_Conocimiento" con o sin número
+                $cadena_limpia = preg_replace('/,?\s*AFP_Conocimiento\d*/', '', $copias_dictamen);
+                // Eliminar espacios en blanco innecesarios y posibles comas dobles
+                $copias_dictamen = trim(preg_replace('/,\s*,/', ',', $cadena_limpia), ', ');
+            }
+            if(str_contains($copias_oficio, "AFP_Conocimiento")){
+                if($copias_dictamen){
+                    $copias_dictamen .= ', '.$copias_entidad_conocimiento;
+                }else{
+                    $copias_dictamen = $copias_entidad_conocimiento;
+                }
+            }
+            dump('Copias finales dictamen : ',$copias_dictamen);
+            $actualización_dictamen = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+            ->where([
+                ['ID_evento',$id_evento],
+                ['Id_Asignacion',$id_asignacion],
+                ['Id_proceso',$id_proceso],
+                ['Tipo_descarga','Dictamen'],
+            ])->update(['Agregar_copia' => $copias_dictamen]);
+            return $actualización_dictamen;
+        }
     }
 }

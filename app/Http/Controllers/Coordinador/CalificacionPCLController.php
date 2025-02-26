@@ -3120,6 +3120,7 @@ class CalificacionPCLController extends Controller
                 $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
                 $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
                 $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                $final_copia_afp_conocimiento =  isset($request->edit_copia_entidad_conocimiento) ? 'AFP_Conocimiento' : '';
     
                 $total_copias = array_filter(array(
                     'copia_afiliado' => $final_copia_afiliado,
@@ -3127,6 +3128,7 @@ class CalificacionPCLController extends Controller
                     'copia_eps' => $final_copia_eps,
                     'copia_afp' => $final_copia_afp,
                     'copia_arl' => $final_copia_arl,
+                    'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
                 )); 
     
                 sleep(2);
@@ -3139,7 +3141,7 @@ class CalificacionPCLController extends Controller
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
 
                 $copiaComunicadosOrigen = $request->agregar_copia_editar;
-                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
+                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl', 'AFP_Conocimiento' => 'copia_afp_conocimiento'];
 
                 if ($copiaComunicadosOrigen > 0) {
                     
@@ -3268,6 +3270,11 @@ class CalificacionPCLController extends Controller
                 $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
                 $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+            }
+
+            if (isset($copia_afp_conocimiento)) {
+                $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_evento, 'pdf');
+                $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
             }
 
             /* Extraer el id del cliente */
@@ -8615,10 +8622,7 @@ class CalificacionPCLController extends Controller
                 "mensaje" => 'Correspondencia guardada satisfactoriamente.',
                 "Id_Comunicado" => $Id_Comunicado,
                 "Bandera_boton_guardar_oficio" => 'boton_oficio'
-            );
-    
-            return json_decode(json_encode($mensajes, true));
-            
+            );            
         } 
         elseif($bandera_correspondecia_guardar_actualizar == 'Actualizar') {
             $datos_correspondencia = [
@@ -8725,10 +8729,12 @@ class CalificacionPCLController extends Controller
                 "mensaje" => 'Correspondencia actualizada satisfactoriamente.',
                 "Id_Comunicado" => $Id_Comunicado,
                 "Bandera_boton_guardar_oficio" => 'boton_oficio'
-            );
-    
-            return json_decode(json_encode($mensajes, true));
+            );    
         }
+        if($oficiopcl == 'Si' || $oficioinca == 'Si'){
+            $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$agregar_copias_comu);
+        }
+        return json_decode(json_encode($mensajes, true));
     }
 
     // Dictame Pericial
@@ -8814,13 +8820,8 @@ class CalificacionPCLController extends Controller
                 Se marcará como destinatario principal al Afiliado y a la EPS y ARL como copia.
             2. DML PCL 1507 / DML 1507 CERO / DML PCL 917: Adicionar las siguientes validaciones para la marcación automática de las copias:
         */
-        $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_EventoDecreto);
-        if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si"){
-            $agregar_copias_dml = "EPS, ARL, AFP_Conocimiento";
-        }
-        else{
-            $agregar_copias_dml = "EPS, ARL";
-        }
+        //Copias y destinatario de un dictamen segun la ficha PBS092, la copia de Entidad conocimiento se gestiona desde el oficio
+        $agregar_copias_dml = "EPS, ARL";
         $Destinatario = 'Afiliado';
 
         if ($bandera_dictamen_pericial == 'Guardar') { 
