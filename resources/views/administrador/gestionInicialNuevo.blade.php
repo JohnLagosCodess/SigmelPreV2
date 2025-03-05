@@ -1035,6 +1035,9 @@
         $("#fecha_ingreso").on("change", function() {
             var fechaEvento = $(this).val();
             $("#fecha_retiro").val('').attr("min", fechaEvento);
+            if($(this).val() < '1900-01-01'){
+                $(this).val('1900-01-01');
+            }
         });
 
         $(document).on('keyup change', '#fecha_retiro', function(event){
@@ -1082,10 +1085,13 @@
                 $(`#${this.id}_alerta`).text("La fecha ingresada no es válida. Por favor valide la fecha ingresada")
                     .removeClass("d-none");
                 $('#Edicion_editar').addClass('d-none');
+                this.value = "";
                 setTimeout(() => {
                     $(`#${this.id}_alerta`).addClass('d-none');
                 }, 2000);
                 return;
+            }else{
+                    $(`#${this.id}_alerta`).text('').addClass("d-none");
             }
             // Validar que la fecha no sea mayor a la fecha actual
             if ((inputValue > today) && this.id != 'fecha_alerta') {
