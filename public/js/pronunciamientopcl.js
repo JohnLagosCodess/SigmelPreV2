@@ -388,33 +388,27 @@ $(document).ready(function(){
     }
 
     /* VALIDACIÓN MOSTRAR RANGO PCL */
-    $("#porcentaje_pcl").on("input", function(){
-        opt_rango_pcl = $(this).val();
-        //console.log(opt_rango_pcl);
-        //$("#porcentaje_pcl").val(opt_rango_pcl);
-        iniciarIntervalo_rangoPcl();
-    });
-    function iniciarIntervalo_rangoPcl() {
-        var resul_rango=0;
-        //clearInterval(intervaloRango);
-        intervaloRango = setInterval(() => {
-            if(opt_rango_pcl=='isNaN'){
-                resul_rango = '0';
-            }else if(opt_rango_pcl < "14,99"){
-                resul_rango = 'Entre 1 y 14,99%';
-            } else if (opt_rango_pcl >= "14,99" && opt_rango_pcl < "29,99"){
-                resul_rango = 'Entre 15 y 29,99%';
-            } else if (opt_rango_pcl >= "29,99" && opt_rango_pcl < "49,99"){
-                resul_rango = 'Entre 30 y 49,99%';
-            } else if (opt_rango_pcl >= "49,99"){
-                resul_rango = 'Mayor o igual 50%';
-            }else{
-                resul_rango = '0';
+    var opt_rango_pcl = $('#porcentaje_pcl');
+
+    $('#porcentaje_pcl').focus(function() {
+        $("#porcentaje_pcl").on("input", function() {
+            opt_rango_pcl = $(this).val();
+            var porcentajePcl = parseFloat(opt_rango_pcl);
+            if (isNaN(porcentajePcl)) $('#rango_pcl').val(''); 
+
+            if(porcentajePcl === 0){                
+                $('#rango_pcl').val('PCL 0');
+            }else if(porcentajePcl > 0 && porcentajePcl < 14.99){                
+                $('#rango_pcl').val('Entre 1 y 14,99%');
+            } else if (porcentajePcl >= 14.99 && porcentajePcl < 29.99){                
+                $('#rango_pcl').val('Entre 15 y 29,99%');
+            } else if (porcentajePcl >= 29.99 && porcentajePcl < 49.99){               
+                $('#rango_pcl').val('Entre 30 y 49,99%');
+            } else if (porcentajePcl >= 49.99){                
+                $('#rango_pcl').val('Mayor o igual 50%');
             }
-            
-            $('#rango_pcl').val(resul_rango); //Coloca resultado Rango PCL
-        }, 500);
-    }
+        });
+    });
     
     /* VALIDACIÓN MOSTRAR ITEM DE CORRESPONDECIA */
     var opt_correspondencia;
