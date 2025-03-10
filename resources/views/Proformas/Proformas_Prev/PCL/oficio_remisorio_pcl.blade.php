@@ -293,7 +293,7 @@
         <br>
         <section class="fuente_todo_texto">
             <table class="tabla1" style="text-align: justify;">                               
-                @if (empty($Copia_afiliado_correspondecia) && empty($Copia_empleador_correspondecia) && empty($Copia_eps_correspondecia) && empty($Copia_afp_correspondecia) && empty($Copia_arl_correspondecia))
+                @if (empty($Copia_afiliado_correspondencia) && empty($Copia_empleador_correspondecia) && empty($Copia_eps_correspondecia) && empty($Copia_afp_correspondecia) && empty($Copia_arl_correspondecia) && empty($Copia_afp_conocimiento_correspondencia))
                     <tr>
                         <td class="copias"><span class="negrita">Copia: </span>No se registran copias</td>                                                                                
                     </tr>
@@ -302,10 +302,10 @@
                         <td class="justificado copias"><span class="negrita">Copia:</span></td>                            
                     </tr> 
                     <?php 
-                        if (!empty($Copia_afiliado_correspondecia)) { ?>
+                        if (!empty($Copia_afiliado_correspondencia)) { ?>
                             <tr>
                                 <td class="copias">
-                                    <span class="negrita">Afiliado: </span><?php echo $copia_nombreAfiliado.' - '.$copia_direccionAfiliado.'; '.$copia_emailAfiliado.'; '.$copia_telefonoAfiliado.'; '.$copia_ciudadAfiliado.' - '.$copia_departamentoAfiliado;?>
+                                    <span class="negrita">Afiliado: </span><?php echo $Nombre_afiliado_copia.' - '.$Direccion_afiliado_copia.'; '.$Copia_afiliado_correo.'; '.$Telefono_afiliado_copia.'; '.$Ciudad_departamento_afiliado_copia;?>
                                 </td>
                             </tr>
                         <?php       
@@ -340,17 +340,7 @@
                             </tr>
                         <?php       
                         }
-                    ?>
-                    <?php 
-                        if (!empty($Copia_afp_conocimiento_correspondencia)) { ?>
-                            <tr>
-                                <td class="copias">
-                                    <span class="negrita">AFP Conocimiento: </span><?php echo $Nombre_afp_conocimiento.' - '.$Direccion_afp_conocimiento.'; '.$Email_afp_conocimiento.'; '.$Telefonos_afp_conocimiento.'; '.$Ciudad_departamento_afp_conocimiento;?>
-                                </td>
-                            </tr>
-                        <?php       
-                        }
-                    ?>
+                    ?>                    
                     <?php 
                         if (!empty($Copia_arl_correspondecia)) { ?>
                             <tr>
@@ -360,7 +350,16 @@
                             </tr>
                         <?php       
                         }
-                    ?>                    
+                    ?>
+                    <?php                     
+                    $AFP_Conocimiento = 'AFP_Conocimiento';
+                    if (!empty($Copia_afp_conocimiento_correspondencia)) {                         
+                        if (isset($Agregar_copia[$AFP_Conocimiento])) { ?>
+                            <?=$Agregar_copia['AFP_Conocimiento'];?>
+                        <?php       
+                        }  
+                    }                    
+                ?>                    
                 @endif
             </table>
         </section>   

@@ -162,12 +162,13 @@ class GlobalService
         $string_entidades = $entidades_conocimiento[0]->Id_afp_entidad_conocimiento.",".$entidades_conocimiento[0]->Otras_entidades_conocimiento;
         $array_string_entidades = array_map('trim', explode(',', $string_entidades));
         
-        // echo "<pre>";
-        // print_r($array_string_entidades);
-        // echo "</pre>";
-
-        // echo implode(',', $array_string_entidades);
-
+        //Validar si el array viene con dos posiciones y la 1 viene vacia
+        if (count($array_string_entidades) == 2 && $array_string_entidades[1] === "") {
+            unset($array_string_entidades[1]);
+            $array_string_entidades = array_values($array_string_entidades);
+        }
+        
+        // dd($array_string_entidades);
         $datos_entidades_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
         ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as sle', 'sie.IdTipo_entidad', '=', 'sle.Id_Entidad')
         // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
@@ -645,7 +646,6 @@ class GlobalService
         if($dictamen){
             //Copias del dictamen
             $copias_dictamen = $dictamen[0]->Agregar_copia;
-            dump('Copias inicial dictamen : ',$copias_dictamen);
             if($copias_dictamen){
                 // Expresión regular para eliminar "AFP_Conocimiento" con o sin número
                 $cadena_limpia = preg_replace('/,?\s*AFP_Conocimiento\d*/', '', $copias_dictamen);
@@ -659,7 +659,6 @@ class GlobalService
                     $copias_dictamen = $copias_entidad_conocimiento;
                 }
             }
-            dump('Copias finales dictamen : ',$copias_dictamen);
             $actualización_dictamen = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
             ->where([
                 ['ID_evento',$id_evento],

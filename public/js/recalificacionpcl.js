@@ -2782,46 +2782,24 @@ $(document).ready(function(){
 
     });
 
-    $('form[name="ver_dictamenPcl"]').on('submit', function(event) {
-        let form = $(this);
+    $(document).on('submit',"form[id^='verNotiPcl']",function (e){        
+        e.preventDefault();
         var infoComunicado = $(this).data("archivo");
-
-        if(form.attr('action') != undefined && form.attr('action') != null){
-            if(infoComunicado.Nombre_documento == null){
-                $.ajax({
-                    url: form.attr('action'),
-                    method: form.attr('method')
-                })
-                .always(function() {
-                    setTimeout(function() {
-                        location.reload();
-                    },1000)
-                });
-            }
-        }
+        if(infoComunicado.Nombre_documento){
+            var nombre_doc = infoComunicado.Nombre_documento;
+            var idEvento = infoComunicado.ID_evento;
+            var enlaceDescarga = document.createElement('a');
+            enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+            enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+            enlaceDescarga.style.display = 'none';
+            document.body.appendChild(enlaceDescarga);
+            enlaceDescarga.click();
+            setTimeout(function() {
+                document.body.removeChild(enlaceDescarga);
+            }, 1000);    
+        }      
+        
     });
-    $('form[name="ver_notificacionPcl"]').on('submit', function(event) {
-        let form = $(this);
-        var infoComunicado = $(this).data("archivo");
-
-        if(form.attr('action') != undefined && form.attr('action') != null){
-            if(infoComunicado.Nombre_documento == null){
-                
-                    $.ajax({
-                        url: form.attr('action'),
-                        method: form.attr('method')
-                    })
-                    .always(function() {
-                        setTimeout(function() {
-                            location.reload();
-                        },1000)
-                    });
-                
-            }
-        }
-    });
-
-
     
     //Formulario para guardar el decreto
     $('#form_RecaliDecreto').submit(function (e){
@@ -4248,7 +4226,7 @@ $(document).ready(function(){
     //Captura Formulario Comite Interdisciplinario
     $('#form_comite_interdisciplinario').submit(function (e){
         e.preventDefault();              
-       
+        $('#GuardarComiteInter').prop('disabled', true);       
         var Id_EventoDecreto = $('#Id_Evento_decreto').val();
         var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
         var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
@@ -4271,8 +4249,7 @@ $(document).ready(function(){
             url:'/guardarcomitesinterdisciplinarioRe',
             data: datos_comiteInterdisciplianario,
             success: function(response){
-                if (response.parametro == 'insertar_comite_interdisciplinario') {
-                    $('#GuardarComiteInter').prop('disabled', true);
+                if (response.parametro == 'insertar_comite_interdisciplinario') {                    
                     $('#div_alerta_comiteInter').removeClass('d-none');
                     $('.alerta_comiteInter').append('<strong>'+response.mensaje+'</strong>');                                            
                     $('#form_correspondencia_pcl').trigger('submit'); 
@@ -4696,6 +4673,16 @@ $(document).ready(function(){
     $('#form_correspondencia_pcl').submit(function (e){
         e.preventDefault();              
        
+        var GuardarCorrespondencia = $('#GuardarCorrespondencia');
+        var ActualizarCorrespondencia = $('#ActualizarCorrespondencia');
+
+        if (GuardarCorrespondencia.length > 0) {
+            document.querySelector('#GuardarCorrespondencia').disabled=true;            
+        }
+        if (ActualizarCorrespondencia.length > 0) {
+            document.querySelector('#ActualizarCorrespondencia').disabled=true;
+        }
+
         var Id_EventoDecreto = $('#Id_Evento_decreto').val();
         var Id_ProcesoDecreto = $('#Id_Proceso_decreto').val();
         var Id_Asignacion_Dcreto  = $('#Id_Asignacion_decreto').val();
@@ -4851,8 +4838,7 @@ $(document).ready(function(){
             url:'/guardarcorrespondenciasRe',
             data: datos_correspondecia,
             success: function(response){
-                if (response.parametro == 'insertar_correspondencia') {
-                    $('#GuardarCorrespondencia').prop('disabled', true);
+                if (response.parametro == 'insertar_correspondencia') {                    
                     $('#div_alerta_Correspondencia').removeClass('d-none');
                     $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');
                     $('.alerta_comiteInter').empty();
@@ -4889,8 +4875,7 @@ $(document).ready(function(){
                         $('.alerta_Correspondencia').empty();   
                         location.reload();
                     }, 3000);   
-                }else if(response.parametro == 'actualizar_correspondencia'){
-                    $('#ActualizarCorrespondencia').prop('disabled', true);
+                }else if(response.parametro == 'actualizar_correspondencia'){                    
                     $('#div_alerta_Correspondencia').removeClass('d-none');
                     $('.alerta_Correspondencia').append('<strong>'+response.mensaje+'</strong>');
                     let Id_Comunicado = response.Id_Comunicado;
@@ -5196,10 +5181,11 @@ $(document).ready(function(){
             $("#btn_insertar_Origen").prop('disabled', false);
 
             // Selección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#afiliado").prop('checked', false);
             $("#empleador").prop('checked', true);
             $("#eps").prop('checked', true);
             $("#arl").prop('checked', true);
-            $("#afp").prop('checked', true);
+            $("#afp").prop('checked', false);
             
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -5225,6 +5211,7 @@ $(document).ready(function(){
             $("#btn_insertar_Origen").prop('disabled', true);
 
             // Deselección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#afiliado").prop('checked', false);
             $("#empleador").prop('checked', false);
             $("#eps").prop('checked', false);
             $("#arl").prop('checked', false);
@@ -5283,10 +5270,11 @@ $(document).ready(function(){
             $("#btn_insertar_Origen").prop('disabled', false);
 
             // Selección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#afiliado").prop('checked', false);
             $("#empleador").prop('checked', true);
             $("#eps").prop('checked', true);
             $("#arl").prop('checked', true);
-            $("#afp").prop('checked', true);
+            $("#afp").prop('checked', false);
             
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -5312,6 +5300,7 @@ $(document).ready(function(){
             $("#btn_insertar_Origen").prop('disabled', true);
 
             // Deselección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#afiliado").prop('checked', false);
             $("#empleador").prop('checked', false);
             $("#eps").prop('checked', false);
             $("#arl").prop('checked', false);
@@ -5418,10 +5407,11 @@ $(document).ready(function(){
             $("#btn_insertar_Origen").prop('disabled', false);
 
             // Selección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#afiliado").prop('checked', false);
             $("#empleador").prop('checked', true);
             $("#eps").prop('checked', true);
             $("#arl").prop('checked', true);
-            $("#afp").prop('checked', true);
+            $("#afp").prop('checked', false);
             
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -5450,6 +5440,7 @@ $(document).ready(function(){
             $("#btn_insertar_Origen").prop('disabled', true);
 
             // Deselección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#afiliado").prop('checked', false);
             $("#empleador").prop('checked', false);
             $("#eps").prop('checked', false);
             $("#arl").prop('checked', false);
@@ -5512,10 +5503,11 @@ $(document).ready(function(){
             $("#btn_insertar_Origen").prop('disabled', false);
 
             // Selección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#afiliado").prop('checked', false);
             $("#empleador").prop('checked', true);
             $("#eps").prop('checked', true);
             $("#arl").prop('checked', true);
-            $("#afp").prop('checked', true);
+            $("#afp").prop('checked', false);
             
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
@@ -5544,6 +5536,7 @@ $(document).ready(function(){
             $("#btn_insertar_Origen").prop('disabled', true);
 
             // Deselección automática de las copias a partes interesadas: Empleador, Eps, Arl, Afp, Afp conocimiento
+            $("#afiliado").prop('checked', false);
             $("#empleador").prop('checked', false);
             $("#eps").prop('checked', false);
             $("#arl").prop('checked', false);
@@ -5625,6 +5618,14 @@ $(document).ready(function(){
             $('#btn_insertar_Origen').removeClass('d-none') 
             $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
+            //Seteo de copias 
+            $("#afiliado").prop('checked', false);
+            $("#empleador").prop('checked', false);
+            $("#eps").prop('checked', false);
+            $("#arl").prop('checked', false);
+            $("#afp").prop('checked', false);
+            $("#afp_conocimiento").prop('checked', false);
+
             // Seteo automático del nro de anexos:
             var seteo_nro_anexos = 1;
             $("#anexos").val(seteo_nro_anexos);
@@ -5639,6 +5640,14 @@ $(document).ready(function(){
             $('#btn_insertar_F_estructuracion').addClass('d-none')
             $('#btn_insertar_Origen').addClass('d-none') 
             $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+
+            //Seteo de copias 
+            $("#afiliado").prop('checked', false);
+            $("#empleador").prop('checked', false);
+            $("#eps").prop('checked', false);
+            $("#arl").prop('checked', false);
+            $("#afp").prop('checked', false);
+            $("#afp_conocimiento").prop('checked', false);
 
             // Seteo automático del nro de anexos:
             var seteo_nro_anexos = 0;
@@ -5696,6 +5705,14 @@ $(document).ready(function(){
             $('#btn_insertar_Origen').removeClass('d-none');
             $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
+            //Seteo de copias 
+            $("#afiliado").prop('checked', false);
+            $("#empleador").prop('checked', false);
+            $("#eps").prop('checked', false);
+            $("#arl").prop('checked', false);
+            $("#afp").prop('checked', false);
+            $("#afp_conocimiento").prop('checked', false);
+
             // Seteo automático del nro de anexos:
             var seteo_nro_anexos = 1;
             $("#anexos").val(seteo_nro_anexos);
@@ -5708,6 +5725,14 @@ $(document).ready(function(){
             var texto_insertar = "";
             $('#cuerpo_comunicado_formatos_pension').summernote('code', texto_insertar);
             $('#btn_insertar_Detalle_calificacion').addClass('d-none');
+
+            //Seteo de copias 
+            $("#afiliado").prop('checked', false);
+            $("#empleador").prop('checked', false);
+            $("#eps").prop('checked', false);
+            $("#arl").prop('checked', false);
+            $("#afp").prop('checked', false);
+            $("#afp_conocimiento").prop('checked', false);
 
             // Seteo automático del nro de anexos:
             var seteo_nro_anexos = 0;
@@ -5739,9 +5764,11 @@ $(document).ready(function(){
             $('#btn_insertar_Detalle_calificacion').removeClass('d-none');
 
             // Selección automática de las copias a partes interesadas: Empleador, Eps, Arl
+            $("#afiliado").prop('checked', false);
             $("#empleador").prop('checked', true);
             $("#eps").prop('checked', true);
             $("#arl").prop('checked', true);
+            $("#afp").prop('checked', false);
             // Se valida si han marcado como si la opcion de la entidad de conocimiento (afp)
             if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
                 $("#afp_conocimiento").prop('checked', true);
@@ -5764,9 +5791,12 @@ $(document).ready(function(){
             $('#btn_insertar_Detalle_calificacion').addClass('d-none');
 
             // Deselección automática de las copias a partes interesadas: Empleador, Eps, Arl
+            $("#afiliado").prop('checked', false);
             $("#empleador").prop('checked', false);
             $("#eps").prop('checked', false);
             $("#arl").prop('checked', false);
+            $("#afp").prop('checked', false);
+            $("#afp_conocimiento").prop('checked', false);
 
             // Seteo automático del nro de anexos:
             var seteo_nro_anexos = 0;

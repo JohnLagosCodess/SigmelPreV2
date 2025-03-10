@@ -2696,70 +2696,84 @@ $(document).ready(function(){
                 document.body.removeChild(enlaceDescarga);
             }, 1000);
         }else{
-            $.ajax({    
-                type:'POST',
-                url:'/generarPdf',
-                data: datos_comunicado,
-                // xhrFields: {
-                //     responseType: 'blob' // Indica que la respuesta es un blob
-                // },
-                beforeSend:  function() {
-                    verDocumento.addClass("descarga-deshabilitada");
-                },
-                success: function (response, status, xhr) {
-                    
-                    // Obtener el contenido codificado en base64 del PDF desde la respuesta
-                    var base64Pdf = response.pdf;
-
-                    // Decodificar base64 en un array de bytes
-                    var binaryString = atob(base64Pdf);
-                    var len = binaryString.length;
-                    var bytes = new Uint8Array(len);
-
-                    for (var i = 0; i < len; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
-
-                    // Crear un Blob a partir del array de bytes
-                    var blob = new Blob([bytes], { type: 'application/pdf' });
-
-                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-                    
-                    var indicativo = response.indicativo;
-
-                    if(TipoDescarga != 'Otro_Documento'){
-                        // var nombre_pdf = "ORI_SOL_DOC_"+Id_Asignacion+"_"+num_identificacion+".pdf";
-                        var nombre_pdf = "ORI_SOL_DOC_"+Id_Asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
-                    }
-                    else{
-                        // var nombre_pdf = "Comunicado_"+Nradicado+".pdf";
-                        var nombre_pdf = "Comunicado_"+Nradicado+"_"+indicativo+".pdf";
-                    }
-
-                    // Crear un enlace de descarga similar al ejemplo anterior
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
-            
-                    // Adjuntar el enlace al documento y activar el evento de clic
-                    document.body.appendChild(link);
-                    link.click();
-            
-                    // Eliminar el enlace del documento
-                    document.body.removeChild(link);
-                },
-                error: function (error) {
-                    // Manejar casos de error
-                    console.error('Error al descargar el PDF:', error);
-                },
-                complete: function(){
-                    verDocumento.removeClass("descarga-deshabilitada");
-                    if(nombreDocumento == null || nombreDocumento == "null"){
-                        localStorage.setItem("#Generar_comunicados", true);
-                        location.reload();
-                    }
-                }     
-            });
+            if (this.getAttribute('nombre_documento')) {
+                var nombre_doc = this.getAttribute('nombre_documento');
+                var idEvento = this.getAttribute('id_evento');
+                var enlaceDescarga = document.createElement('a');
+                enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+                enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+                enlaceDescarga.style.display = 'none';
+                document.body.appendChild(enlaceDescarga);
+                enlaceDescarga.click();
+                setTimeout(function() {
+                    document.body.removeChild(enlaceDescarga);
+                }, 1000);
+            } else {
+                $.ajax({    
+                    type:'POST',
+                    url:'/generarPdf',
+                    data: datos_comunicado,
+                    // xhrFields: {
+                    //     responseType: 'blob' // Indica que la respuesta es un blob
+                    // },
+                    beforeSend:  function() {
+                        verDocumento.addClass("descarga-deshabilitada");
+                    },
+                    success: function (response, status, xhr) {
+                        
+                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                        var base64Pdf = response.pdf;
+    
+                        // Decodificar base64 en un array de bytes
+                        var binaryString = atob(base64Pdf);
+                        var len = binaryString.length;
+                        var bytes = new Uint8Array(len);
+    
+                        for (var i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+    
+                        // Crear un Blob a partir del array de bytes
+                        var blob = new Blob([bytes], { type: 'application/pdf' });
+    
+                        // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+                        
+                        var indicativo = response.indicativo;
+    
+                        if(TipoDescarga != 'Otro_Documento'){
+                            // var nombre_pdf = "ORI_SOL_DOC_"+Id_Asignacion+"_"+num_identificacion+".pdf";
+                            var nombre_pdf = "ORI_SOL_DOC_"+Id_Asignacion+"_"+num_identificacion+"_"+indicativo+".pdf";
+                        }
+                        else{
+                            // var nombre_pdf = "Comunicado_"+Nradicado+".pdf";
+                            var nombre_pdf = "Comunicado_"+Nradicado+"_"+indicativo+".pdf";
+                        }
+    
+                        // Crear un enlace de descarga similar al ejemplo anterior
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = nombre_pdf;  // Reemplaza con el nombre deseado para el archivo PDF
+                
+                        // Adjuntar el enlace al documento y activar el evento de clic
+                        document.body.appendChild(link);
+                        link.click();
+                
+                        // Eliminar el enlace del documento
+                        document.body.removeChild(link);
+                    },
+                    error: function (error) {
+                        // Manejar casos de error
+                        console.error('Error al descargar el PDF:', error);
+                    },
+                    complete: function(){
+                        verDocumento.removeClass("descarga-deshabilitada");
+                        if(nombreDocumento == null || nombreDocumento == "null"){
+                            localStorage.setItem("#Generar_comunicados", true);
+                            location.reload();
+                        }
+                    }     
+                });                
+            }
         }
     }); 
 
