@@ -9,6 +9,7 @@
         "barryvdh/laravel-dompdf": "^2.0",
         "html2text/html2text": "^4.3",
         "http-interop/http-factory-guzzle": "^1.2",
+        "ilovepdf/ilovepdf-php": "^1.2",
         "jeroennoten/laravel-adminlte": "^3.9",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2",
@@ -24,6 +25,7 @@
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",
         "simplesoftwareio/simple-qrcode": "^4.2",
+        "smalot/pdfparser": "^2.11",
         "tecnickcom/tcpdf": "^6.7"
     },
     "require-dev": {

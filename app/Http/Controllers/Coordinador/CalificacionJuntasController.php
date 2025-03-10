@@ -56,18 +56,9 @@ use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
 use PhpOffice\PhpWord\Style\Image;
 use PhpParser\Node\Stmt\TryCatch;
-// use TCPDF;
-// use setasign\Fpdi\Tcpdf\Fpdi;
-// use setasign\FpdiPdfParser\PdfParser; 
+use Smalot\PdfParser\Parser;
+use Ilovepdf\CompressTask;
 use setasign\Fpdi\Fpdi;
-// use setasign\Fpdi\PdfReader;
-// use SetaPDF\Parser\PdfParser\PdfParser;
-// require_once base_path('vendor/setasign/FpdiPdfParser/src/PdfParser/PdfParser.php');
-// use setasign\Fpdi\PdfParser\PdfParser;
-// use setasign\FpdiPdfParser\PdfParser\PdfParser;
-
-// use Mpdf\Mpdf;
-// use Mpdf\Output\Destination;
 use mikehaertl\pdftk\Pdf;
 use ZipArchive;
 
@@ -450,11 +441,11 @@ class CalificacionJuntasController extends Controller
         }
         // Listado Junta Pagos Honorarios
         if($parametro == 'lista_juntas_pago'){
-            $listado_pagos_juntas = sigmel_lista_parametros::on('sigmel_gestiones')
-            ->select('Id_Parametro', 'Nombre_parametro')
+            $listado_pagos_juntas = sigmel_informacion_entidades::on('sigmel_gestiones')
+            ->select('Id_Entidad as Id_Parametro', 'Nombre_entidad as Nombre_parametro')
             ->where([
-                ['Tipo_lista', '=', 'Jrci Invalidez'],
-                ['Estado', '=', 'activo']
+                ['IdTipo_entidad', '4'],
+                ['Estado_entidad', 'activo']
             ])
             ->get();
 
@@ -7666,32 +7657,51 @@ class CalificacionJuntasController extends Controller
                             ['Folear', 'Si']
                         ])->get();
                         if (count($consultarfoleoDoc) > 0) {
-                            // Crear instancia de FPDI
-                            $pdf_Folear_doc = new Fpdi(); 
-                            // buscamos el documento donde se encuentra guardado
-                            $Foleo_Doc = public_path("Documentos_Eventos/{$Id_evento_expediente}/{$NombreDocumentos}");
-                            // Obtener el número de páginas del PDF
-                            $Contar_paginas_Foleo_Doc = $pdf_Folear_doc->setSourceFile($Foleo_Doc);
-                            // dd($Contar_paginas_Foleo_Doc);
-                            // Fuente para la numeración
-                            $pdf_Folear_doc->SetFont('Arial', 'B', 14);
-                            // dd($Foleo_Doc);
-                            // Recorrer todas las páginas del PDF original e importarlas para su edición
-                            for ($i = 1; $i <= $Contar_paginas_Foleo_Doc; $i++) {
-                                $tplId = $pdf_Folear_doc->importPage($i); // Importar cada página
-                                // Usar la misma página sin agregar una nueva
-                                $pdf_Folear_doc->AddPage();
-                                $pdf_Folear_doc->useTemplate($tplId, 0, 0, 210, 297); // Tamaño A4
-                                // Agregar número de página en la esquina superior derecha
-                                $pdf_Folear_doc->SetXY(185, 2); // Posición en la esquina superior derecha
-                                $pdf_Folear_doc->Cell(20, 10, "$consecutivoFoleo", 0, 0, 'R');
-                                $consecutivoFoleo++;
-                            }                           
-                            // Guardar el PDF en memoria (no en el servidor)
-                            $pdfData = $pdf_Folear_doc->Output('S'); 
-                            // Agregar el archivo directamente al ZIP desde la memoria
-                            $zip->addFromString($nombre_carpeta . '/' . $nombreEnZip, $pdfData);
-                            // Agregar al ZIP con un nombre basado en el índice y que SI se va a Folear
+                            // Rutas de los archivos
+                            $archivoOriginal = public_path("Documentos_Eventos/{$Id_evento_expediente}/{$NombreDocumentos}");
+                            $archivoDesencriptado = public_path("Documentos_Eventos/{$Id_evento_expediente}/desencriptado_{$NombreDocumentos}");
+
+                            // Intentar desencriptar el PDF con QPDF
+                            exec("qpdf --decrypt {$archivoOriginal} {$archivoDesencriptado}", $output, $return_var);
+
+                            // Si no hubo error, trabajamos con el PDF desencriptado, si no, con el original
+                            $archivoProcesar = ($return_var === 0) ? $archivoDesencriptado : $archivoOriginal;
+                            // Validamos si la variable esta definida
+                            if (isset($archivoProcesar)) {
+                                // Crear instancia de FPDI
+                                $pdf_Folear_doc = new Fpdi(); 
+                                // buscamos el documento donde se encuentra guardado
+                                // $Foleo_Doc = public_path("Documentos_Eventos/{$Id_evento_expediente}/{$NombreDocumentos}");
+                                // Obtener el número de páginas del PDF
+                                // $Contar_paginas_Foleo_Doc = $pdf_Folear_doc->setSourceFile($Foleo_Doc);
+                                $Contar_paginas_Foleo_Doc = $pdf_Folear_doc->setSourceFile($archivoProcesar);
+                                // dd($Contar_paginas_Foleo_Doc);
+                                // Fuente para la numeración
+                                $pdf_Folear_doc->SetFont('Arial', 'B', 14);
+                                // dd($Foleo_Doc);
+                                // Recorrer todas las páginas del PDF original e importarlas para su edición
+                                for ($i = 1; $i <= $Contar_paginas_Foleo_Doc; $i++) {
+                                    $tplId = $pdf_Folear_doc->importPage($i); // Importar cada página
+                                    // Usar la misma página sin agregar una nueva
+                                    $pdf_Folear_doc->AddPage();
+                                    $pdf_Folear_doc->useTemplate($tplId, 0, 0, 210, 297); // Tamaño A4
+                                    // Agregar número de página en la esquina superior derecha
+                                    $pdf_Folear_doc->SetXY(185, 2); // Posición en la esquina superior derecha
+                                    $pdf_Folear_doc->Cell(20, 10, "$consecutivoFoleo", 0, 0, 'R');
+                                    $consecutivoFoleo++;
+                                }                           
+                                // Guardar el PDF en memoria (no en el servidor)
+                                $pdfData = $pdf_Folear_doc->Output('S'); 
+                                // Agregar el archivo directamente al ZIP desde la memoria
+                                $zip->addFromString($nombre_carpeta . '/' . $nombreEnZip, $pdfData);
+                                // Agregar al ZIP con un nombre basado en el índice y que SI se va a Folear
+                            }        
+
+                            // Eliminar el documento que se desencripto
+                            if (File::exists(public_path("Documentos_Eventos/{$Id_evento_expediente}/desencriptado_{$NombreDocumentos}"))) {
+                                File::delete(public_path("Documentos_Eventos/{$Id_evento_expediente}/desencriptado_{$NombreDocumentos}"));
+                            }
+
                         }else{
                             // Agregar al ZIP con un nombre basado en el índice y que NO se va a Folear
                             $zip->addFile($archivo_expediente, $nombre_carpeta . '/' .$nombreEnZip);
