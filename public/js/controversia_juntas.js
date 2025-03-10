@@ -3127,7 +3127,7 @@ $(document).ready(function(){
         $("#cuerpo_comunicado").summernote('editor.insertText', etiqueta_sustentacion_jrci);
     });
 
-    var tabla_comunicados_juntas = $('#tabla_comunicados_juntas').DataTable({
+    var tabla_comunicados_juntas = $('#listado_comunicados_controversia').DataTable({
         "orderCellsTop": true,
         "destroy": true,
         "autoWidth": false,
@@ -3219,7 +3219,7 @@ $(document).ready(function(){
     });
     
     //Accion editar comunicado
-    $("#tabla_comunicados_juntas").on("click",'#editar_comunicado',function(){
+    $("#listado_comunicados_controversia").on("click",'#editar_comunicado',function(){
             let radicado = $(this).data('radicado');
             let datos_comunicados_actualizar = {
                 '_token' : token,
@@ -3487,6 +3487,12 @@ $(document).ready(function(){
                     $('#cual').prop('required', false);
                 }
 
+                if(data_correspondencia["checkeado_afp_conocimiento"] == "Si"){
+                    $("#afp_conocimiento").prop("checked", true);
+                }else{
+                    $("#afp_conocimiento").prop("checked", false);
+                }
+
                 //Listado juntas regional Correspondencia
                 $('#cual').empty();
                 let datos_lista_regional_junta = {
@@ -3602,6 +3608,155 @@ $(document).ready(function(){
 
     });
 
+    function dataCreacionProformaDesacuerdo(id_comunicado, id_comite, nro_radicado){
+        var token = $('input[name=_token]').val();
+        var id_comite_inter = id_comite;
+        var id_cliente = $("#id_cliente").val();
+        var id_asignacion = $("#newId_asignacion").val();
+        var id_proceso = $("#Id_proceso").val();
+        var id_servicio = $("#id_servicio").val();
+        var nro_radicado = nro_radicado;
+        var nombre_afiliado = $("#nombre_afiliado").val();
+        var tipo_identificacion = $("#tipo_documento").val();
+        var num_identificacion = $("#identificacion").val();
+        var id_evento = $("#newId_evento").val();
+        var id_Jrci_califi_invalidez = $("#id_Jrci_califi_invalidez").val();
+        var nombre_junta_regional = $("#jrci_califi_invalidez").val();
+        var f_dictamen_jrci_emitido = $("#f_dictamen_jrci_emitido").val();
+        var sustentacion_concepto_jrci = $("#sustentacion_concepto_jrci").val();
+        var sustentacion_concepto_jrci1 = $("#sustentacion_concepto_repo_jrci").val();
+        var copia_afiliado = $('#afiliado').filter(":checked").val();
+        var copia_empleador = $('#empleador').filter(":checked").val();
+        var copia_eps = $('#eps').filter(":checked").val();
+        var copia_afp = $('#afp').filter(":checked").val();
+        var copia_arl = $('#arl').filter(":checked").val();
+        var asunto = $("#Asunto").val();
+        var cuerpo = $("#cuerpo_comunicado").summernote('code');
+        var firmar = $('#firmar').filter(":checked").val();
+        var N_siniestro = $('#n_siniestro').val();
+        var porcentaje_pcl_jrci_emitido = $("#porcentaje_pcl_jrci_emitido").val();
+        var f_estructuracion_contro_jrci_emitido = $("#f_estructuracion_contro_jrci_emitido").val();
+        var jrci_elegida = $('#jrci_copia').val();
+        var copia_jrci = $('#jrci').filter(":checked").val();
+        var copia_jnci = $('#jnci').filter(":checked").val();
+
+        var entidad_conocimiento = $("#entidad_conocimiento").val();
+        var copia_afp_conocimiento = '';
+        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+            copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
+        }
+
+        return datos_proforma_desacuerdo = {
+            '_token': token,
+            'id_comite_inter': id_comite_inter,
+            'id_cliente': id_cliente,
+            'id_asignacion': id_asignacion,
+            'id_proceso': id_proceso,
+            'id_servicio': id_servicio,
+            'nro_radicado': nro_radicado,
+            'nombre_afiliado': nombre_afiliado,
+            'tipo_identificacion': tipo_identificacion,
+            'num_identificacion': num_identificacion,
+            'id_evento': id_evento,
+            'id_Jrci_califi_invalidez': id_Jrci_califi_invalidez,
+            'nombre_junta_regional': nombre_junta_regional,
+            'f_dictamen_jrci_emitido': f_dictamen_jrci_emitido,
+            'sustentacion_concepto_jrci': sustentacion_concepto_jrci,
+            'sustentacion_concepto_jrci1': sustentacion_concepto_jrci1,
+            'copia_afiliado': copia_afiliado,
+            'copia_empleador': copia_empleador,
+            'copia_eps': copia_eps,
+            'copia_afp': copia_afp,
+            'copia_arl': copia_arl,
+            'copia_jrci': copia_jrci,
+            'copia_jnci': copia_jnci,
+            'copia_afp_conocimiento': copia_afp_conocimiento,
+            'jrci_elegida': jrci_elegida,
+            'asunto': asunto,
+            'cuerpo': cuerpo,
+            'firmar': firmar,
+            'id_comunicado': id_comunicado,
+            'N_siniestro' : N_siniestro,
+            'porcentaje_pcl_jrci_emitido': porcentaje_pcl_jrci_emitido,
+            'f_estructuracion_contro_jrci_emitido': f_estructuracion_contro_jrci_emitido
+        };
+    };
+
+    function dataCreacionProformaAcuerdo (id_comunicado, id_comite, nro_radicado){
+        var token = $('input[name=_token]').val();
+        var id_comite_inter = id_comite;
+        var id_cliente = $("#id_cliente").val();
+        var id_asignacion = $("#newId_asignacion").val();
+        var id_proceso = $("#Id_proceso").val();
+        var id_servicio = $("#id_servicio").val();
+        var nro_radicado = nro_radicado;
+        var tipo_identificacion = $("#tipo_documento").val();
+        var num_identificacion = $("#identificacion").val();
+        var id_evento = $("#newId_evento").val();
+        var id_Jrci_califi_invalidez = $("#id_Jrci_califi_invalidez").val();
+        var nombre_junta_regional = $("#jrci_califi_invalidez").val();
+        var nro_dictamen = $("#n_dictamen_jrci_emitido").val();
+        var nombre_afiliado = $("#nombre_afiliado").val();
+        var f_dictamen_jrci_emitido = $("#f_dictamen_jrci_emitido").val();
+        var porcentaje_pcl_jrci_emitido = $("#porcentaje_pcl_jrci_emitido").val();
+        var origen_jrci_emitido = $("#origen_jrci_emitido option:selected").text();
+        var f_estructuracion_contro_jrci_emitido = $("#f_estructuracion_contro_jrci_emitido").val();
+        var manual_de_califi_jrci_emitido = $("#manual_de_califi_jrci_emitido option:selected").text();
+        var sustentacion_concepto_jrci = $("#sustentacion_concepto_jrci").val();
+        var sustentacion_concepto_jrci1 = $("#sustentacion_concepto_repo_jrci").val();
+        var copia_afiliado = $('#afiliado').filter(":checked").val();
+        var copia_empleador = $('#empleador').filter(":checked").val();
+        var copia_eps = $('#eps').filter(":checked").val();
+        var copia_afp = $('#afp').filter(":checked").val();
+        var copia_arl = $('#arl').filter(":checked").val();
+
+        var entidad_conocimiento = $("#entidad_conocimiento").val();
+        var copia_afp_conocimiento = '';
+        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+            copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
+        }
+
+        var asunto = $("#Asunto").val();
+        var cuerpo = $("#cuerpo_comunicado").summernote('code');
+        var firmar = $('#firmar').filter(":checked").val();
+        var N_siniestro = $('#n_siniestro').val();
+
+        return datos_proforma_acuerdo = {
+            '_token': token,
+            'id_comite_inter': id_comite_inter,
+            'id_cliente': id_cliente,
+            'id_asignacion': id_asignacion,
+            'id_proceso': id_proceso,
+            'id_servicio': id_servicio,
+            'nro_radicado': nro_radicado,
+            'tipo_identificacion': tipo_identificacion,
+            'num_identificacion': num_identificacion,
+            'id_evento': id_evento,
+            'id_Jrci_califi_invalidez': id_Jrci_califi_invalidez,
+            'nombre_junta_regional': nombre_junta_regional,
+            'nro_dictamen': nro_dictamen,
+            'nombre_afiliado': nombre_afiliado,
+            'f_dictamen_jrci_emitido': f_dictamen_jrci_emitido,
+            'porcentaje_pcl_jrci_emitido': porcentaje_pcl_jrci_emitido,
+            'origen_jrci_emitido': origen_jrci_emitido,
+            'f_estructuracion_contro_jrci_emitido': f_estructuracion_contro_jrci_emitido,
+            'manual_de_califi_jrci_emitido': manual_de_califi_jrci_emitido,
+            'sustentacion_concepto_jrci': sustentacion_concepto_jrci,
+            'sustentacion_concepto_jrci1': sustentacion_concepto_jrci1,
+            'copia_afiliado': copia_afiliado,
+            'copia_empleador': copia_empleador,
+            'copia_eps': copia_eps,
+            'copia_afp': copia_afp,
+            'copia_arl': copia_arl,
+            'copia_afp_conocimiento': copia_afp_conocimiento,
+            'asunto': asunto,
+            'cuerpo': cuerpo,
+            'firmar': firmar,
+            'id_comunicado': id_comunicado,
+            'N_siniestro': N_siniestro
+        }
+    };
+
     //Captura Formulario Correspondencia
     $('#form_correspondencia_juntas').submit(function (e){
         e.preventDefault();              
@@ -3671,6 +3826,7 @@ $(document).ready(function(){
         }
 
         var jnci = $('input[name="jnci"]:checked').val();
+        var afp_conocimiento = $('input[name="afp_conocimiento"]:checked').val();
         var anexos = $('#anexos').val();
         var elaboro = $('#elaboro').val();
         var reviso = $('#reviso').val();
@@ -3708,6 +3864,7 @@ $(document).ready(function(){
             'jrci':jrci,
             'cual':cual,
             'jnci':jnci,
+            'afp_conocimiento':afp_conocimiento,
             'anexos':anexos,
             'elaboro':elaboro,
             'reviso':reviso,
@@ -3734,12 +3891,44 @@ $(document).ready(function(){
             'sustentacion_concepto_jrci1':  $("#sustentacion_concepto_repo_jrci").val(),
             'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar
         }
-
+        
         $.ajax({    
             type:'POST',
             url:'/guardarcorrespondenciasJuntas',
             data: datos_correspondecia,
             success: function(response){
+                if (response.Id_Comunicado) {
+                    var id_comite_interdisciplinario = $("a[id^='editar_correspondencia_']").data('id_comite_inter');
+                    var nro_radicado = $("a[id^='editar_correspondencia_']").data('tupla_nro_radicado');
+                    if(decision_dictamen == 'Desacuerdo'){
+                        var datos_proforma_desa = dataCreacionProformaDesacuerdo(response.Id_Comunicado, id_comite_interdisciplinario, nro_radicado);
+                        $.ajax({    
+                            type:'POST',
+                            url:'/DescargarProformaRecursoReposicion',
+                            data: datos_proforma_desa,
+                            success: function (response, status, xhr) {
+                            },
+                            error: function (error) {
+                                // Manejar casos de error
+                                console.error('Error al descargar el word:', error);
+                            }       
+                        });
+                    }else if (decision_dictamen == 'Acuerdo') {
+                        var datos_proforma_acuerdo = dataCreacionProformaAcuerdo(response.Id_Comunicado, id_comite_interdisciplinario, nro_radicado);
+                        $.ajax({    
+                            type:'POST',
+                            url:'/DescargarProformaPronunDictaAcuerdo',
+                            data: datos_proforma_acuerdo,
+                            success: function (response, status, xhr) {
+                            },
+                            error: function (error) {
+                                // Manejar casos de error
+                                console.error('Error al descargar el pdf:', error);
+                            }       
+                        });
+                    }
+                    
+                }
                 if (response.parametro == 'insertar_correspondencia') {
                     $('#GuardarCorrespondencia').prop('disabled', true);
                     $('#div_alerta_Correspondencia').removeClass('d-none');
@@ -3767,332 +3956,11 @@ $(document).ready(function(){
         });
     });
 
-    function cleanModalCorrespondencia(){
-        $("#btn_guardar_actualizar_correspondencia").val('Guardar');
-        $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
-
-        correspondencia_array = [];
-        $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);
-        $("#modalCorrespondencia #check_copia").prop('checked', false).prop('disabled', false).prop('required', true);
-        $('#state_notificacion').val('').trigger('change');
-        $("#modalCorrespondencia #tipo_correspondencia").val('');
-        $("#modalCorrespondencia #n_orden").val('');
-        $("#modalCorrespondencia #nombre_destinatario").val('');
-        $("#modalCorrespondencia #direccion").val('');
-        $("#modalCorrespondencia #departamento").val('');
-        $("#modalCorrespondencia #ciudad").val('');
-        $("#modalCorrespondencia #telefono").val('');
-        $("#modalCorrespondencia #email").val('');
-        $("#modalCorrespondencia #m_notificacion").val('');
-        $("#modalCorrespondencia #folios").val('');
-        $("#modalCorrespondencia #n_guia").val('');
-        $("#modalCorrespondencia #f_envio").val('');
-        $("#modalCorrespondencia #f_notificacion").val('');
-        $("#modalCorrespondencia #state_notificacion").val('');
-        $("#modalCorrespondencia #id_correspondencia").val('');
-        $("#modalCorrespondencia #id_asignacion").val('');
-        $("#modalCorrespondencia #id_proceso").val('');
-        $("#modalCorrespondencia #id_comunicado").val('');
-        $("#modalCorrespondencia #id_destinatario").val('');
-        
-    }
-    
-    function cargarSelectorModalCorrespondencia(){
-        //Listado de opciones de estado de notificación Correspondencia
-        let selectores_notificacion_correspondencia = {
-            '_token': $('input[name=_token]').val(),
-            'parametro': 'EstadosNotificacionCorrespondencia'
-        }
-        $.ajax({
-            type: 'POST',
-            url: '/selectoresJuntas',
-            data: selectores_notificacion_correspondencia,
-            beforeSend:  function() {
-                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
-            },
-            success: function (data) {
-                let optionSelected = data.find(finder => finder.Id_Parametro === 362);
-                $("#modalCorrespondencia #state_notificacion").val(optionSelected?.Id_Parametro);
-                $('#state_notificacion').empty();
-                $('#state_notificacion').append('<option value="'+optionSelected?.Id_Parametro+'" selected>'+optionSelected?.Nombre_parametro+'</option>');
-                let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
-                let formaenviogenerarcomunicado = Object.keys(data);
-                for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
-                    if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != SelectorModalCorrespondencia) {
-                        $('#state_notificacion').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
-                    }                
-                }                                     
-            },
-            complete: function(){
-                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
-            }
-        });
-    }
-    
-    let correspondencia_array = [];
-    $("#tabla_comunicados_juntas").on('click', "#CorrespondenciaNotificacion", async function() {
-        //Reestablecer modal
-        cleanModalCorrespondencia();
-        //Cargar selectores modal con Pendiente como valor por defecto
-        cargarSelectorModalCorrespondencia();
+    $("#listado_comunicados_controversia").on('click', "#CorrespondenciaNotificacion", async function() {
         //Capturar información
         let id = $(this);
-        
         let token = $('input[name=_token]').val(); 
         let tipo_correspondencia = $(id).data('tipo_correspondencia');
-        let idComunicado = $(id).data('id_comunicado');
-        let N_radicado = $(id).data('n_radicado');
-        let destinatarioPrincipal = $(id).data("destinatario_principal");
-        let copias = $(id).data("copias");
-        let id_evento = $(id).data('id_evento');
-        let id_proceso = $(id).data('id_proceso');
-        let id_asignacion = $(id).data('id_asignacion');
-        let anexos = $(id).data('anexos');
-        let correspondencia = $(id).data('correspondencia');
-        //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
-        let tipo_descarga = $(id).data('tipo_descarga');
-        let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
-        //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
-        let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
-        //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
-        copias = copias ? copias.split(',').map(copia => copia.trim()) : copias;
-        //Desactiva el formulario en caso de que la correspodencia este inactiva.
-        if($(id).data("estado_correspondencia") != 1){
-            $("#btn_guardar_actualizar_correspondencia").remove();
-            $("#form_correspondencia *").prop('disabled',true);
-            $("#cerar_modalCorrespondencia").prop('disabled',false);
-        }
-
-        let estado_general = $("#status_notificacion_" + N_radicado).find(":selected").text();
-        if((estado_general == 'Notificado efectivamente' || estado_general == 'Devuelto' || estado_general == 'No notificar') 
-            && ($(id).data("estado_correspondencia") == 0 || $(id).data("estado_correspondencia") == 1 )){
-
-            $(".alerta_advertencia").removeClass('d-none');
-            $(".alerta_advertencia").empty();
-            $(".alerta_advertencia").append(`La correspondencia no se puede guardar y/o actualizar ya que el estado del comunicado es <strong>${estado_general}</strong>,por favor cambielo para pode editar la correspondencia.`)
-            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
-        
-         setTimeout(function(){
-            $(".alerta_advertencia").addClass('d-none');
-            $(".alerta_advertencia").empty();
-        },3000); 
-        }else{
-             $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
-             $(".alerta_advertencia").empty();
-             $(".alerta_advertencia").addClass('d-none');
-         }
-         
-        //Información superior del modal 
-        if(tipo_descarga === 'Manual' || tipo_descarga === 'Dictamen'){
-            $("#modalCorrespondencia #nombre_afiliado").val($("#nombre_afiliado").val());
-            $("#modalCorrespondencia #n_identificacion").val($("#identificacion").val());
-        }
-        else{
-            $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
-            $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
-        }
-        $("#modalCorrespondencia #id_destinatario").val(id_destinatario);
-        $("#modalCorrespondencia #id_evento").val($(id).data('id_evento'));
-        $("#modalCorrespondencia #enlace_ed_evento").text($(id).data('id_evento'));
-       // console.log(tipo_correspondencia);
-        if(tipo_descarga === 'Manual'){
-            $("#modalCorrespondencia #check_principal").prop('checked', false);
-            $("#modalCorrespondencia #check_principal").prop('disabled', false);
-            $("#modalCorrespondencia #check_copia").prop('disabled', false);
-            $("#modalCorrespondencia #check_copia").prop('checked', false);
-        } 
-        if(correspondencia && correspondencia.length >0){
-            array_temp = correspondencia.split(",").map(item => item.trim());
-            correspondencia_array = array_temp;
-        }
-        $("#modalCorrespondencia #tipo_correspondencia").val(tipo_correspondencia);
-        $("#modalCorrespondencia #id_asignacion").val(id_asignacion);
-        $("#modalCorrespondencia #id_proceso").val(id_proceso);
-        $("#modalCorrespondencia #id_comunicado").val(idComunicado);
-
-        if(correspondencia_array?.includes(tipo_correspondencia) || correspondencias_guardadas === tipo_correspondencia){
-            data_comunicado = {
-                _token: token,
-                id_comunicado: idComunicado,
-                id_evento: id_evento,
-                id_asignacion: id_asignacion,
-                id_proceso: id_proceso,
-                tipo_correspondencia: tipo_correspondencia,
-                previous_saved: true 
-            }
-            
-            $.ajax({
-                type:'POST',
-                url:'/getInformacionCorrespondencia',
-                data: data_comunicado,
-                beforeSend:  function() {
-                    showLoading();
-                },
-                success: function(response){
-                    if(response && response[0]){
-                        $("#btn_guardar_actualizar_correspondencia").val('Actualizar');
-
-                        $("#modalCorrespondencia #n_orden").val(response[0]?.N_orden);
-                        $("#modalCorrespondencia #nombre_destinatario").val(response[0]?.Nombre_destinatario);
-                        $("#modalCorrespondencia #direccion").val(response[0]?.Direccion_destinatario);
-                        $("#modalCorrespondencia #departamento").val(response[0]?.Departamento);
-                        $("#modalCorrespondencia #ciudad").val(response[0]?.Ciudad);
-                        $("#modalCorrespondencia #telefono").val(response[0]?.Telefono_destinatario);
-                        $("#modalCorrespondencia #email").val(response[0]?.Email_destinatario);
-                        $("#modalCorrespondencia #m_notificacion").val(response[0]?.Medio_notificacion);
-                        $("#modalCorrespondencia #folios").val(response[0]?.Folios);
-                        $("#modalCorrespondencia #radicado").val(response[0]?.N_radicado);
-                        $("#modalCorrespondencia .modal-title").text('Correspondencia ' + response[0]?.Tipo_correspondencia);
-                        $("#modalCorrespondencia #n_guia").val(response[0]?.N_guia);
-                        $("#modalCorrespondencia #f_envio").val(response[0]?.F_envio);
-                        $("#modalCorrespondencia #f_notificacion").val(response[0]?.F_notificacion);
-                        $("#modalCorrespondencia #state_notificacion").val(response[0]?.Id_Estado_corresp);
-                        $("#modalCorrespondencia #id_correspondencia").val(response[0]?.Id_Correspondencia);
-                        
-                        if(response[0]?.Tipo_destinatario){
-                            if(response[0]?.Tipo_destinatario === $('#modalCorrespondencia #check_principal').val()){
-                                if(tipo_descarga != 'Manual'){
-                                    $("#modalCorrespondencia #check_principal").prop('checked', true);
-                                    $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                                    $("#modalCorrespondencia #check_copia").prop('required', false);
-                                }
-                                else{
-                                    $("#modalCorrespondencia #check_principal").prop('checked', true);
-                                    $("#modalCorrespondencia #check_principal").prop('disabled', false);
-                                    $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                                    $("#modalCorrespondencia #check_copia").prop('required', false);
-                                }
-                                
-                            }
-                            else if(response[0]?.Tipo_destinatario === $('#modalCorrespondencia #check_copia').val()){
-                                
-                                if(tipo_descarga != 'Manual'){
-                                    $("#modalCorrespondencia #check_copia").prop('checked', true);
-                                    $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                                    $("#modalCorrespondencia #check_principal").prop('required', false);
-                                }
-                                else{
-                                    $("#modalCorrespondencia #check_copia").prop('checked', true);
-                                    $("#modalCorrespondencia #check_principal").prop('disabled', true);
-                                    $("#modalCorrespondencia #check_principal").prop('required', false);
-                                    $("#modalCorrespondencia #check_copia").prop('disabled', false);
-                                }
-                            } 
-                        }
-                        let selectores_notificacion_correspondencia = {
-                            '_token': $('input[name=_token]').val(),
-                            'parametro': 'EstadosNotificacionCorrespondencia'
-                        }
-                        $.ajax({
-                            type: 'POST',
-                            url: '/selectoresJuntas',
-                            data: selectores_notificacion_correspondencia,
-                            beforeSend:  function() {
-                                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
-                            },
-                            success: function (data) {
-                                let optionSelected = data.find(finder => finder.Id_Parametro === response[0]?.Id_Estado_corresp);
-                                $('#state_notificacion').empty();
-                                $('#state_notificacion').append('<option value="'+response[0]?.Id_Estado_corresp+'" selected>'+optionSelected?.Nombre_parametro+'</option>');
-                                let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
-                                let formaenviogenerarcomunicado = Object.keys(data);
-                                for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
-                                    if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != SelectorModalCorrespondencia) {
-                                        $('#state_notificacion').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
-                                    }                
-                                }
-                            },
-                            complete: function(){
-                                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
-                            }
-                        });
-                    }
-                },
-                error: function (error) {
-                    console.error('Ha ocurrido un error:', error);
-                },
-                complete: function(){
-                    hideLoading();
-                }
-            });
-        }
-        else{
-            data_comunicado = {
-                _token: token,
-                id_comunicado: idComunicado,
-                id_evento: id_evento,
-                id_asignacion: id_asignacion,
-                id_proceso: id_proceso,
-                tipo_correspondencia: tipo_correspondencia,
-                previous_saved: false
-            }
-            
-            $.ajax({
-                type:'POST',
-                url:'/getInformacionCorrespondencia',
-                data: data_comunicado,
-                beforeSend:  function() {
-                    showLoading();
-                },
-                success: function(response){
-                    
-                    if(response && response.datos){
-                        $("#modalCorrespondencia #n_orden").val(response?.nro_orden);
-                        $("#modalCorrespondencia #nombre_destinatario").val(response?.datos?.Nombre_destinatario);
-                        $("#modalCorrespondencia #direccion").val(response?.datos?.Direccion_destinatario);
-                        $("#modalCorrespondencia #departamento").val(response?.datos?.Departamento_destinatario);
-                        $("#modalCorrespondencia #ciudad").val(response?.datos?.Ciudad_destinatario);
-                        $("#modalCorrespondencia #telefono").val(response?.datos?.Telefono_destinatario);
-                        $("#modalCorrespondencia #email").val(response?.datos?.Email_destinatario);
-                        $("#modalCorrespondencia #m_notificacion").val(response?.datos?.Medio_notificacion_destinatario);
-                        $("#modalCorrespondencia #folios").val(anexos);
-                        $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
-                        $("#modalCorrespondencia #radicado").val(N_radicado);
-                        console.log(tipo_correspondencia, destinatarioPrincipal)
-                        if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
-                            $("#modalCorrespondencia #check_principal").prop('checked', true);
-                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                            $("#modalCorrespondencia #check_copia").prop('required', false);
-                        }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && Array.isArray(copias) && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
-                            $("#modalCorrespondencia #check_copia").prop('checked', true);
-                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                            $("#modalCorrespondencia #check_principal").prop('required', false);
-                        }
-                    }
-                },
-                error: function (error) {
-                    console.error('Ha ocurrido un error:', error);
-                },
-                complete: function(){
-                    hideLoading();
-                }
-            });
-        }
-        // Mostrar la modal
-        $("#modalCorrespondencia").show();
-
-        //Eventos checkbox principal
-        $("#check_principal").change(function() {
-            if ($(this).is(':checked')) {
-                $("#check_copia").prop('disabled', true).prop('required', false);
-            } else {
-                $("#check_copia").prop('disabled', false).prop('required', true);
-            }
-        });
-        //Eventos checkbox copia
-        $("#check_copia").change(function() {
-            if ($(this).is(':checked')) {
-                $("#check_principal").prop('disabled', true).prop('required', false);
-            } 
-            else if(tipo_descarga == 'Manual') {
-                $("#check_principal").prop('disabled', false).prop('required', true);
-            }
-            else{
-                $("#check_principal").prop('disabled', true).prop('required', true);
-            }
-        });
-
         /* Aqui se programará algunas cosas de la ficha PBS 082 */
 
         // 1. motrar el botón de que tipo de guia es
@@ -4155,101 +4023,6 @@ $(document).ready(function(){
             }
         });
     });
-
-    
-    $('#form_correspondencia').submit(function (e) {
-        e.preventDefault();
-        let token = $('input[name=_token]').val(); 
-        let tipo_correspondencia = $('#modalCorrespondencia #tipo_correspondencia').val();
-        if (!correspondencia_array?.includes(tipo_correspondencia)) {
-            correspondencia_array.push(tipo_correspondencia);
-        }
-        tipoDestinatario = null;
-        if($('#check_principal').is(':checked')){
-            tipoDestinatario = $('#modalCorrespondencia #check_principal').val();
-            $("#modalCorrespondencia #check_principal").prop('required', false);
-        }
-        else if($('#check_copia').is(':checked')){
-            tipoDestinatario = $('#modalCorrespondencia #check_copia').val();
-        }
-        else{
-            tipoDestinatario = null;
-        }
-        datos_correspondencia = {
-            '_token': token,
-            'correspondencia': correspondencia_array,
-            'nombre_afiliado': $('#modalCorrespondencia #nombre_afiliado').val(),
-            'n_identificacion_afiliado': $('#modalCorrespondencia #n_identificacion').val(),
-            'id_asignacion': $('#modalCorrespondencia #id_asignacion').val(),
-            'id_proceso': $('#modalCorrespondencia #id_proceso').val(),
-            'id_evento': $('#modalCorrespondencia #id_evento').val(),
-            'id_comunicado': $('#modalCorrespondencia #id_comunicado').val(),
-            'id_destinatario': $('#modalCorrespondencia #id_destinatario').val(),
-            'n_radicado': $('#modalCorrespondencia #radicado').val(),
-            'n_orden': $('#modalCorrespondencia #n_orden').val(),
-            'tipo_destinatario': tipoDestinatario,
-            'nombre_destinatario': $('#modalCorrespondencia #nombre_destinatario').val(),
-            'direccion_destinatario': $('#modalCorrespondencia #direccion').val(),
-            'departamento_destinatario': $('#modalCorrespondencia #departamento').val(),
-            'ciudad_destinatario': $('#modalCorrespondencia #ciudad').val(),
-            'telefono_destinatario': $('#modalCorrespondencia #telefono').val(),
-            'email_destinatario': $('#modalCorrespondencia #email').val(),
-            'medio_notificacion_destinatario': $('#modalCorrespondencia #m_notificacion').val(),
-            'n_guia': $('#modalCorrespondencia #n_guia').val(),
-            'folios': $('#modalCorrespondencia #folios').val(),
-            'fecha_envio': $('#modalCorrespondencia #f_envio').val(),
-            'fecha_notificacion': $('#modalCorrespondencia #f_notificacion').val(),
-            'estado_notificacion': $('#modalCorrespondencia #state_notificacion').val(),
-            'tipo_correspondencia': tipo_correspondencia,
-            'id_correspondencia': $('#modalCorrespondencia #id_correspondencia').val(),
-            'id_destinatario':$("#modalCorrespondencia #id_destinatario").val(),
-            'accion': $('#btn_guardar_actualizar_correspondencia').val()
-        };
-        $.ajax({    
-            type:'POST',
-            url:'/guardarInformacionCorrespondencia',
-            data: datos_correspondencia,
-            beforeSend:  function() {
-                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
-                showLoading();
-            },
-            success: function(response){
-                if (response.parametro == 'agregar_correspondencia') {
-                    $('.alerta_correspondencia').removeClass('d-none');
-                    $('.alerta_correspondencia').append('<strong>'+response.mensaje+'</strong>');
-                    setTimeout(function(){
-                        $('.alerta_correspondencia').addClass('d-none');
-                        $('.alerta_correspondencia').empty();
-                        localStorage.setItem("#Generar_comunicados", true);
-                        location.reload();
-                    }, 3000);
-                }
-            },
-            error: function (error) {
-                $('.alerta_error').removeClass('d-none');
-                $('.alerta_error').append('<strong> Ha ocurrido un error al momento de guardar la correspondencia.</strong>');
-                setTimeout(function(){
-                    $('.alerta_error').addClass('d-none');
-                    $('.alerta_error').empty();
-                }, 3000);
-            },
-            complete: function(){
-                // $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
-                hideLoading();
-            }
-        });
-    });
-
-    function showLoading() {
-        $('#loading').addClass('loading');
-        $('#loading-content').addClass('loading-content');
-    }
-    function hideLoading() {
-        $('#loading').removeClass('loading');
-        $('#loading-content').removeClass('loading-content');
-        
-    }
-
     /* Generacion de Proforma en PDF para decisión ACUERDO en la sección Revisión ante concepto de la Junta Regional */
 
     // llenado de datos con el hover para el ojito
@@ -4472,6 +4245,12 @@ $(document).ready(function(){
                     $('#cual').prop('required', false);
                 }
 
+                if(data_correspondencia["checkeado_afp_conocimiento"] == "Si"){
+                    $("#afp_conocimiento").prop("checked", true);
+                }else{
+                    $("#afp_conocimiento").prop("checked", false);
+                }
+
                 //Listado juntas regional Correspondencia
                 $('#cual').empty();
                 let datos_lista_regional_junta = {
@@ -4619,6 +4398,13 @@ $(document).ready(function(){
         var copia_eps = $('#eps').filter(":checked").val();
         var copia_afp = $('#afp').filter(":checked").val();
         var copia_arl = $('#arl').filter(":checked").val();
+
+        var entidad_conocimiento = $("#entidad_conocimiento").val();
+        var copia_afp_conocimiento = '';
+        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+            copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
+        }
+
         var asunto = $("#Asunto").val();
         var cuerpo = $("#cuerpo_comunicado").summernote('code');
         var firmar = $('#firmar').filter(":checked").val();
@@ -4651,6 +4437,7 @@ $(document).ready(function(){
             'copia_eps': copia_eps,
             'copia_afp': copia_afp,
             'copia_arl': copia_arl,
+            'copia_afp_conocimiento': copia_afp_conocimiento,
             'asunto': asunto,
             'cuerpo': cuerpo,
             'firmar': firmar,
@@ -4671,42 +4458,56 @@ $(document).ready(function(){
                 document.body.removeChild(enlaceDescarga);
             }, 1000);
         }else{
-            setTimeout(() => {
-                $.ajax({    
-                    type:'POST',
-                    url:'/DescargarProformaPronunDictaAcuerdo',
-                    data: datos_proforma_acuerdo,
-                    xhrFields: {
-                        responseType: 'blob' // Indica que la respuesta es un blob
-                    },
-                    success: function (response, status, xhr) {
-                        var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-                
-                        // Crear un enlace de descarga similar al ejemplo anterior
-                        
-                        var nombre_documento = "JUN_ACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".pdf";                    
-                        var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
-                
-                        // Adjuntar el enlace al documento y activar el evento de clic
-                        document.body.appendChild(link);
-                        link.click();
-                
-                        // Eliminar el enlace del documento
-                        document.body.removeChild(link);
-                    },
-                    error: function (error) {
-                        // Manejar casos de error
-                        console.error('Error al descargar el word:', error);
-                    },
-                    complete: function(){
-                        if(infoComunicado.Nombre_documento == null){
-                            // location.reload();
-                        }
-                    }       
-                });
-            }, 2000);
+            if (infoComunicado.Nombre_documento) {
+                var nombre_doc = infoComunicado.Nombre_documento;
+                var idEvento = infoComunicado.ID_evento;
+                var enlaceDescarga = document.createElement('a');
+                enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+                enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+                enlaceDescarga.style.display = 'none';
+                document.body.appendChild(enlaceDescarga);
+                enlaceDescarga.click();
+                setTimeout(function() {
+                    document.body.removeChild(enlaceDescarga);
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    $.ajax({    
+                        type:'POST',
+                        url:'/DescargarProformaPronunDictaAcuerdo',
+                        data: datos_proforma_acuerdo,
+                        xhrFields: {
+                            responseType: 'blob' // Indica que la respuesta es un blob
+                        },
+                        success: function (response, status, xhr) {
+                            var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+                    
+                            // Crear un enlace de descarga similar al ejemplo anterior
+                            
+                            var nombre_documento = "JUN_ACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".pdf";                    
+                            var link = document.createElement('a');
+                            link.href = window.URL.createObjectURL(blob);
+                            link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+                    
+                            // Adjuntar el enlace al documento y activar el evento de clic
+                            document.body.appendChild(link);
+                            link.click();
+                    
+                            // Eliminar el enlace del documento
+                            document.body.removeChild(link);
+                        },
+                        error: function (error) {
+                            // Manejar casos de error
+                            console.error('Error al descargar el word:', error);
+                        },
+                        complete: function(){
+                            if(infoComunicado.Nombre_documento == null){
+                                // location.reload();
+                            }
+                        }       
+                    });
+                }, 2000);
+            }
         }
 
     });
@@ -4934,6 +4735,12 @@ $(document).ready(function(){
                     $('#cual').prop('required', false);
                 }
 
+                if(data_correspondencia["checkeado_afp_conocimiento"] == "Si"){
+                    $("#afp_conocimiento").prop("checked", true);
+                }else{
+                    $("#afp_conocimiento").prop("checked", false);
+                }
+
                 //Listado juntas regional Correspondencia
                 $('#cual').empty();
                 let datos_lista_regional_junta = {
@@ -5086,6 +4893,12 @@ $(document).ready(function(){
         var copia_jrci = $('#jrci').filter(":checked").val();
         var copia_jnci = $('#jnci').filter(":checked").val();
 
+        var entidad_conocimiento = $("#entidad_conocimiento").val();
+        var copia_afp_conocimiento = '';
+        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+            copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
+        }
+
         var datos_proforma_desacuerdo = {
             '_token': token,
             'id_comite_inter': id_comite_inter,
@@ -5110,6 +4923,7 @@ $(document).ready(function(){
             'copia_arl': copia_arl,
             'copia_jrci': copia_jrci,
             'copia_jnci': copia_jnci,
+            'copia_afp_conocimiento': copia_afp_conocimiento,
             'jrci_elegida': jrci_elegida,
             'asunto': asunto,
             'cuerpo': cuerpo,
@@ -5132,37 +4946,51 @@ $(document).ready(function(){
                 document.body.removeChild(enlaceDescarga);
             }, 1000);
         }else{
-            setTimeout(() => {
-                $.ajax({    
-                    type:'POST',
-                    url:'/DescargarProformaRecursoReposicion',
-                    data: datos_proforma_desacuerdo,
-                    xhrFields: {
-                        responseType: 'blob' // Indica que la respuesta es un blob
-                    },
-                    success: function (response, status, xhr) {
-                        var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-                
-                        // Crear un enlace de descarga similar al ejemplo anterior
-                        
-                        var nombre_documento = "JUN_DESACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".docx";                    
-                        var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
-                
-                        // Adjuntar el enlace al documento y activar el evento de clic
-                        document.body.appendChild(link);
-                        link.click();
-                
-                        // Eliminar el enlace del documento
-                        document.body.removeChild(link);
-                    },
-                    error: function (error) {
-                        // Manejar casos de error
-                        console.error('Error al descargar el word:', error);
-                    }       
-                });
-            }, 2000);
+            if (infoComunicado.Nombre_documento) {
+                var nombre_doc = infoComunicado.Nombre_documento;
+                var idEvento = infoComunicado.ID_evento;
+                var enlaceDescarga = document.createElement('a');
+                enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+                enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+                enlaceDescarga.style.display = 'none';
+                document.body.appendChild(enlaceDescarga);
+                enlaceDescarga.click();
+                setTimeout(function() {
+                    document.body.removeChild(enlaceDescarga);
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    $.ajax({    
+                        type:'POST',
+                        url:'/DescargarProformaRecursoReposicion',
+                        data: datos_proforma_desacuerdo,
+                        xhrFields: {
+                            responseType: 'blob' // Indica que la respuesta es un blob
+                        },
+                        success: function (response, status, xhr) {
+                            var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+                    
+                            // Crear un enlace de descarga similar al ejemplo anterior
+                            
+                            var nombre_documento = "JUN_DESACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".docx";                    
+                            var link = document.createElement('a');
+                            link.href = window.URL.createObjectURL(blob);
+                            link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+                    
+                            // Adjuntar el enlace al documento y activar el evento de clic
+                            document.body.appendChild(link);
+                            link.click();
+                    
+                            // Eliminar el enlace del documento
+                            document.body.removeChild(link);
+                        },
+                        error: function (error) {
+                            // Manejar casos de error
+                            console.error('Error al descargar el word:', error);
+                        }       
+                    });
+                }, 2000);
+            }
         }
     });
 
@@ -5223,7 +5051,7 @@ $(document).ready(function(){
 
     //Valida si hay radicados duplicados
     setTimeout(function() {
-        radicados_duplicados('tabla_comunicados_juntas');
+        radicados_duplicados('listado_comunicados_controversia');
 
         $("#guardar_datos_revision_jrci").focus(function() {
             procesar_alertas_gestion("#guardar_datos_revision_jrci", "#form_guardarRevisionjrci","juntas","alerta");

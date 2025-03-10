@@ -1249,7 +1249,6 @@ $(document).ready(function(){
             btn_guardar_diagnosticos_mot_cali = 1;
         }
     });
-
     //Cargar comunicado
     $('#cargarComunicado').click(function(){
         if(!$('#cargue_comunicados')[0].files[0]){
@@ -1314,333 +1313,13 @@ $(document).ready(function(){
             }
         });  
     });
-
-    function cleanModalCorrespondencia(){
-        $("#btn_guardar_actualizar_correspondencia").val('Guardar');
-        $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
-
-        correspondencia_array = [];
-        $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);
-        $("#modalCorrespondencia #check_copia").prop('checked', false).prop('disabled', false).prop('required', true);
-        $('#state_notificacion').val('').trigger('change');
-        $("#modalCorrespondencia #tipo_correspondencia").val('');
-        $("#modalCorrespondencia #n_orden").val('');
-        $("#modalCorrespondencia #nombre_destinatario").val('');
-        $("#modalCorrespondencia #direccion").val('');
-        $("#modalCorrespondencia #departamento").val('');
-        $("#modalCorrespondencia #ciudad").val('');
-        $("#modalCorrespondencia #telefono").val('');
-        $("#modalCorrespondencia #email").val('');
-        $("#modalCorrespondencia #m_notificacion").val('');
-        $("#modalCorrespondencia #folios").val('');
-        $("#modalCorrespondencia #n_guia").val('');
-        $("#modalCorrespondencia #f_envio").val('');
-        $("#modalCorrespondencia #f_notificacion").val('');
-        $("#modalCorrespondencia #state_notificacion").val('');
-        $("#modalCorrespondencia #id_correspondencia").val('');
-        $("#modalCorrespondencia #id_asignacion").val('');
-        $("#modalCorrespondencia #id_proceso").val('');
-        $("#modalCorrespondencia #id_comunicado").val('');
-        $("#modalCorrespondencia #id_destinatario").val('');
-    }
-
-    function cargarSelectorModalCorrespondencia(){
-        //Listado de opciones de estado de notificación Correspondencia
-        let selectores_notificacion_correspondencia = {
-            '_token': $('input[name=_token]').val(),
-            'parametro': 'EstadosNotificacionCorrespondencia'
-        }
-        $.ajax({
-            type: 'POST',
-            url: '/selectoresJuntas',
-            data: selectores_notificacion_correspondencia,
-            beforeSend:  function() {
-                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
-            },
-            success: function (data) {
-                let optionSelected = data.find(finder => finder.Id_Parametro === 362);
-                $("#modalCorrespondencia #state_notificacion").val(optionSelected?.Id_Parametro);
-                $('#state_notificacion').empty();
-                $('#state_notificacion').append('<option value="'+optionSelected?.Id_Parametro+'" selected>'+optionSelected?.Nombre_parametro+'</option>');
-                let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
-                let formaenviogenerarcomunicado = Object.keys(data);
-                for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
-                    if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != SelectorModalCorrespondencia) {
-                        $('#state_notificacion').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
-                    }                
-                }                                     
-            },
-            complete: function(){
-                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
-            }
-        });
-    }
     
-    let correspondencia_array = [];
+    // let correspondencia_array = [];
     $("#listado_comunicados_dto").on('click', "#CorrespondenciaNotificacion", async function() {
-        //Reestablecer modal
-        cleanModalCorrespondencia();
-        //Cargar selectores modal con Pendiente como valor por defecto
-        cargarSelectorModalCorrespondencia();
         //Capturar información
-        let id = $(this);
-        
+        let id = $(this);  
         let token = $('input[name=_token]').val(); 
         let tipo_correspondencia = $(id).data('tipo_correspondencia');
-        let idComunicado = $(id).data('id_comunicado');
-        let N_radicado = $(id).data('n_radicado');
-        let destinatarioPrincipal = $(id).data("destinatario_principal");
-        let copias = $(id).data("copias");
-        let id_evento = $(id).data('id_evento');
-        let id_proceso = $(id).data('id_proceso');
-        let id_asignacion = $(id).data('id_asignacion');
-        let anexos = $(id).data('anexos');
-        let correspondencia = $(id).data('correspondencia');
-        //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
-        let tipo_descarga = $(id).data('tipo_descarga');
-        let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
-        //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
-        let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
-        //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
-        copias = copias ? copias.split(',').map(copia => copia.trim()) : copias;
-        //Desactiva el formulario en caso de que la correspodencia este inactiva.
-        if($(id).data("estado_correspondencia") != 1){
-            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
-            $("#form_correspondencia *").prop('disabled',true);
-            $("#cerar_modalCorrespondencia").prop('disabled',false);
-        }else{
-            $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
-        }
-
-        let estado_general = $("#status_notificacion_" + N_radicado).find(":selected").text();
-        if((estado_general == 'Notificado efectivamente' || estado_general == 'Devuelto' || estado_general == 'No notificar') 
-            && ($(id).data("estado_correspondencia") == 0 || $(id).data("estado_correspondencia") == 1 )){
-
-            $(".alerta_advertencia").removeClass('d-none');
-            $(".alerta_advertencia").empty();
-            $(".alerta_advertencia").append(`La correspondencia no se puede guardar y/o actualizar ya que el estado del comunicado es <strong>${estado_general}</strong>,por favor cambielo para pode editar la correspondencia.`)
-            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
-        
-         setTimeout(function(){
-            $(".alerta_advertencia").addClass('d-none');
-            $(".alerta_advertencia").empty();
-        },3000); 
-        }else{
-             $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
-             $(".alerta_advertencia").empty();
-             $(".alerta_advertencia").addClass('d-none');
-         }
-
-        //Información superior del modal 
-        if(tipo_descarga === 'Manual' || tipo_descarga === 'Dictamen'){
-            $("#modalCorrespondencia #nombre_afiliado").val($("#nombre_afiliado").val());
-            $("#modalCorrespondencia #n_identificacion").val($("#nro_identificacion").val());
-        }
-        else{
-            $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
-            $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
-        }
-        
-        $("#modalCorrespondencia #id_destinatario").val(id_destinatario);
-        $("#modalCorrespondencia #id_evento").val($(id).data('id_evento'));
-        $("#modalCorrespondencia #enlace_ed_evento").text($(id).data('id_evento'));
-        
-        if(tipo_descarga === 'Manual'){
-            $("#modalCorrespondencia #check_principal").prop('checked', false);
-            $("#modalCorrespondencia #check_principal").prop('disabled', false);
-            $("#modalCorrespondencia #check_copia").prop('disabled', false);
-            $("#modalCorrespondencia #check_copia").prop('checked', false);
-        }
-        if(correspondencia && correspondencia.length >0){
-            array_temp = correspondencia.split(",").map(item => item.trim());
-            correspondencia_array = array_temp;
-        }
-        $("#modalCorrespondencia #tipo_correspondencia").val(tipo_correspondencia);
-        $("#modalCorrespondencia #id_asignacion").val(id_asignacion);
-        $("#modalCorrespondencia #id_proceso").val(id_proceso);
-        $("#modalCorrespondencia #id_comunicado").val(idComunicado);
-        if(correspondencia_array.includes(tipo_correspondencia) || correspondencias_guardadas === tipo_correspondencia){
-            data_comunicado = {
-                _token: token,
-                id_comunicado: idComunicado,
-                id_evento: id_evento,
-                id_asignacion: id_asignacion,
-                id_proceso: id_proceso,
-                tipo_correspondencia: tipo_correspondencia,
-                previous_saved: true 
-            }
-            
-            $.ajax({
-                type:'POST',
-                url:'/getInformacionCorrespondencia',
-                data: data_comunicado,
-                beforeSend:  function() {
-                    showLoading();
-                },
-                success: function(response){
-                    if(response && response[0]){
-                        $("#btn_guardar_actualizar_correspondencia").val('Actualizar');
-
-                        $("#modalCorrespondencia #n_orden").val(response[0]?.N_orden);
-                        $("#modalCorrespondencia #nombre_destinatario").val(response[0]?.Nombre_destinatario);
-                        $("#modalCorrespondencia #direccion").val(response[0]?.Direccion_destinatario);
-                        $("#modalCorrespondencia #departamento").val(response[0]?.Departamento);
-                        $("#modalCorrespondencia #ciudad").val(response[0]?.Ciudad);
-                        $("#modalCorrespondencia #telefono").val(response[0]?.Telefono_destinatario);
-                        $("#modalCorrespondencia #email").val(response[0]?.Email_destinatario);
-                        $("#modalCorrespondencia #m_notificacion").val(response[0]?.Medio_notificacion);
-                        $("#modalCorrespondencia #folios").val(response[0]?.Folios);
-                        $("#modalCorrespondencia #radicado").val(response[0]?.N_radicado);
-                        $("#modalCorrespondencia .modal-title").text('Correspondencia ' + response[0]?.Tipo_correspondencia);
-                        $("#modalCorrespondencia #n_guia").val(response[0]?.N_guia);
-                        $("#modalCorrespondencia #f_envio").val(response[0]?.F_envio);
-                        $("#modalCorrespondencia #f_notificacion").val(response[0]?.F_notificacion);
-                        $("#modalCorrespondencia #state_notificacion").val(response[0]?.Id_Estado_corresp);
-                        $("#modalCorrespondencia #id_correspondencia").val(response[0]?.Id_Correspondencia);
-                        
-                        if(response[0]?.Tipo_destinatario){
-                            if(response[0]?.Tipo_destinatario === $('#modalCorrespondencia #check_principal').val()){
-                                if(tipo_descarga != 'Manual'){
-                                    $("#modalCorrespondencia #check_principal").prop('checked', true);
-                                    $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                                    $("#modalCorrespondencia #check_copia").prop('required', false);
-                                }
-                                else{
-                                    $("#modalCorrespondencia #check_principal").prop('checked', true);
-                                    $("#modalCorrespondencia #check_principal").prop('disabled', false);
-                                    $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                                    $("#modalCorrespondencia #check_copia").prop('required', false);
-                                }
-                                
-                            }
-                            else if(response[0]?.Tipo_destinatario === $('#modalCorrespondencia #check_copia').val()){
-                                
-                                if(tipo_descarga != 'Manual'){
-                                    $("#modalCorrespondencia #check_copia").prop('checked', true);
-                                    $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                                    $("#modalCorrespondencia #check_principal").prop('required', false);
-                                }
-                                else{
-                                    $("#modalCorrespondencia #check_copia").prop('checked', true);
-                                    $("#modalCorrespondencia #check_principal").prop('disabled', true);
-                                    $("#modalCorrespondencia #check_principal").prop('required', false);
-                                    $("#modalCorrespondencia #check_copia").prop('disabled', false);
-                                }
-                            } 
-                        }
-                        let selectores_notificacion_correspondencia = {
-                            '_token': $('input[name=_token]').val(),
-                            'parametro': 'EstadosNotificacionCorrespondencia'
-                        }
-                        $.ajax({
-                            type: 'POST',
-                            url: '/selectoresJuntas',
-                            data: selectores_notificacion_correspondencia,
-                            beforeSend:  function() {
-                                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
-                            },
-                            success: function (data) {
-                                let optionSelected = data.find(finder => finder.Id_Parametro === response[0]?.Id_Estado_corresp);
-                                $('#state_notificacion').empty();
-                                $('#state_notificacion').append('<option value="'+response[0]?.Id_Estado_corresp+'" selected>'+optionSelected?.Nombre_parametro+'</option>');
-                                let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
-                                let formaenviogenerarcomunicado = Object.keys(data);
-                                for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
-                                    if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != SelectorModalCorrespondencia) {
-                                        $('#state_notificacion').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
-                                    }                
-                                }
-                            },
-                            complete: function(){
-                                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
-                            }
-                        });
-                    }
-                },
-                error: function (error) {
-                    console.error('Ha ocurrido un error:', error);
-                },
-                complete: function(){
-                    hideLoading();
-                }
-            });
-        }
-        else{
-            data_comunicado = {
-                _token: token,
-                id_comunicado: idComunicado,
-                id_evento: id_evento,
-                id_asignacion: id_asignacion,
-                id_proceso: id_proceso,
-                tipo_correspondencia: tipo_correspondencia,
-                previous_saved: false
-            }
-            
-            $.ajax({
-                type:'POST',
-                url:'/getInformacionCorrespondencia',
-                data: data_comunicado,
-                beforeSend:  function() {
-                    showLoading();
-                },
-                success: function(response){
-                    if(response && response.datos){
-                        $("#modalCorrespondencia #n_orden").val(response?.nro_orden);
-                        $("#modalCorrespondencia #nombre_destinatario").val(response?.datos?.Nombre_destinatario);
-                        $("#modalCorrespondencia #direccion").val(response?.datos?.Direccion_destinatario);
-                        $("#modalCorrespondencia #departamento").val(response?.datos?.Departamento_destinatario);
-                        $("#modalCorrespondencia #ciudad").val(response?.datos?.Ciudad_destinatario);
-                        $("#modalCorrespondencia #telefono").val(response?.datos?.Telefono_destinatario);
-                        $("#modalCorrespondencia #email").val(response?.datos?.Email_destinatario);
-                        $("#modalCorrespondencia #m_notificacion").val(response?.datos?.Medio_notificacion_destinatario);
-                        $("#modalCorrespondencia #folios").val(anexos);
-                        $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
-                        $("#modalCorrespondencia #radicado").val(N_radicado);
-                        
-                        if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
-                            $("#modalCorrespondencia #check_principal").prop('checked', true);
-                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                            $("#modalCorrespondencia #check_copia").prop('required', false);
-                        }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && Array.isArray(copias) && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
-                            $("#modalCorrespondencia #check_copia").prop('checked', true);
-                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                            $("#modalCorrespondencia #check_principal").prop('required', false);
-                        }
-                    }
-                },
-                error: function (error) {
-                    console.error('Ha ocurrido un error:', error);
-                },
-                complete: function(){
-                    hideLoading();
-                }
-            });
-        }
-        // Mostrar la modal
-        $("#modalCorrespondencia").show();
-
-        //Eventos checkbox principal
-        $("#check_principal").change(function() {
-            if ($(this).is(':checked')) {
-                $("#check_copia").prop('disabled', true).prop('required', false);
-            } else {
-                $("#check_copia").prop('disabled', false).prop('required', true);
-            }
-        });
-        //Eventos checkbox copia
-        $("#check_copia").change(function() {
-            if ($(this).is(':checked')) {
-                $("#check_principal").prop('disabled', true).prop('required', false);
-            } 
-            else if(tipo_descarga == 'Manual') {
-                $("#check_principal").prop('disabled', false).prop('required', true);
-            }
-            else{
-                $("#check_principal").prop('disabled', true).prop('required', true);
-            }
-        });
-
         /* Aqui se programará algunas cosas de la ficha PBS 082 */
 
         // 1. motrar el botón de que tipo de guia es
@@ -1650,6 +1329,7 @@ $(document).ready(function(){
         $('#listado_documentos_ed tr[id^="fila_doc_"]').removeClass('d-none');
         $("#collapseGuia").removeClass('show');
         $("#doc_subir_guias").val('');
+        console.log(' TC ',tipo_correspondencia)
         switch (tipo_correspondencia) {
             case 'Afiliado':
                 $("#tipo_guia").text('Afiliado');
@@ -1748,90 +1428,6 @@ $(document).ready(function(){
         });
     });
 
-    
-    $('#form_correspondencia').submit(function (e) {
-        e.preventDefault();
-        let token = $('input[name=_token]').val(); 
-        let tipo_correspondencia = $('#modalCorrespondencia #tipo_correspondencia').val();
-        if (!correspondencia_array.includes(tipo_correspondencia)) {
-            correspondencia_array.push(tipo_correspondencia);
-        }
-        tipoDestinatario = null;
-        if($('#check_principal').is(':checked')){
-            tipoDestinatario = $('#modalCorrespondencia #check_principal').val();
-            $("#modalCorrespondencia #check_principal").prop('required', false);
-        }
-        else if($('#check_copia').is(':checked')){
-            tipoDestinatario = $('#modalCorrespondencia #check_copia').val();
-        }
-        else{
-            tipoDestinatario = null;
-        }
-        datos_correspondencia = {
-            '_token': token,
-            'correspondencia': correspondencia_array,
-            'nombre_afiliado': $('#modalCorrespondencia #nombre_afiliado').val(),
-            'n_identificacion_afiliado': $('#modalCorrespondencia #n_identificacion').val(),
-            'id_asignacion': $('#modalCorrespondencia #id_asignacion').val(),
-            'id_proceso': $('#modalCorrespondencia #id_proceso').val(),
-            'id_evento': $('#modalCorrespondencia #id_evento').val(),
-            'id_comunicado': $('#modalCorrespondencia #id_comunicado').val(),
-            'id_destinatario': $('#modalCorrespondencia #id_destinatario').val(),
-            'n_radicado': $('#modalCorrespondencia #radicado').val(),
-            'n_orden': $('#modalCorrespondencia #n_orden').val(),
-            'tipo_destinatario': tipoDestinatario,
-            'nombre_destinatario': $('#modalCorrespondencia #nombre_destinatario').val(),
-            'direccion_destinatario': $('#modalCorrespondencia #direccion').val(),
-            'departamento_destinatario': $('#modalCorrespondencia #departamento').val(),
-            'ciudad_destinatario': $('#modalCorrespondencia #ciudad').val(),
-            'telefono_destinatario': $('#modalCorrespondencia #telefono').val(),
-            'email_destinatario': $('#modalCorrespondencia #email').val(),
-            'medio_notificacion_destinatario': $('#modalCorrespondencia #m_notificacion').val(),
-            'n_guia': $('#modalCorrespondencia #n_guia').val(),
-            'folios': $('#modalCorrespondencia #folios').val(),
-            'fecha_envio': $('#modalCorrespondencia #f_envio').val(),
-            'fecha_notificacion': $('#modalCorrespondencia #f_notificacion').val(),
-            'estado_notificacion': $('#modalCorrespondencia #state_notificacion').val(),
-            'tipo_correspondencia': tipo_correspondencia,
-            'id_correspondencia': $('#modalCorrespondencia #id_correspondencia').val(),
-            'id_destinatario':$("#modalCorrespondencia #id_destinatario").val(),
-            'accion': $('#btn_guardar_actualizar_correspondencia').val()
-        };
-        $.ajax({    
-            type:'POST',
-            url:'/guardarInformacionCorrespondencia',
-            data: datos_correspondencia,
-            beforeSend:  function() {
-                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
-                showLoading();
-            },
-            success: function(response){
-                if (response.parametro == 'agregar_correspondencia') {
-                    $('.alerta_correspondencia').removeClass('d-none');
-                    $('.alerta_correspondencia').append('<strong>'+response.mensaje+'</strong>');
-                    setTimeout(function(){
-                        $('.alerta_correspondencia').addClass('d-none');
-                        $('.alerta_correspondencia').empty();
-                        localStorage.setItem("#Generar_comunicados", true);
-                        location.reload();
-                    }, 3000);
-                }
-            },
-            error: function (error) {
-                $('.alerta_error').removeClass('d-none');
-                $('.alerta_error').append('<strong> Ha ocurrido un error al momento de guardar la correspondencia.</strong>');
-                setTimeout(function(){
-                    $('.alerta_error').addClass('d-none');
-                    $('.alerta_error').empty();
-                }, 3000);
-            },
-            complete: function(){
-                // $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
-                hideLoading();
-            }
-        });
-    });
-
     function showLoading() {
         $('#loading').addClass('loading');
         $('#loading-content').addClass('loading-content');
@@ -1910,8 +1506,7 @@ $(document).ready(function(){
                     }
                 }).val(opocionSeleccionada);
 
-                $selector.trigger('change');
-
+                $selector.trigger('change');   
             },
         });
     }); 
@@ -3335,7 +2930,23 @@ $(document).ready(function(){
     $("form[id^='Form_noti_dml_previsional_']").submit(function (e){
         e.preventDefault();
         var Id_Evento = $('#Id_Evento_dto_atel').val();
+        var Id_Asignacion = $('#Id_Asignacion_dto_atel').val();
+        var Id_Proceso = $('#Id_Proceso_dto_atel').val();
         var informacion_comunicado = $(this).data("info_comunicado");
+
+        // Actualizamos la columna Agregar_copia de la tabla de comunicados para mantener siempre las entidades actualizadas
+        // $.ajax({
+        //     url: '/actualizar_copias_comunicado',
+        //     method: 'POST',
+        //     data: {
+        //         _token: $('input[name=_token]').val(),
+        //         id_evento: Id_Evento,
+        //         id_comunicado : informacion_comunicado.Id_Comunicado,
+        //         id_asignacion : Id_Asignacion,
+        //         id_proceso : Id_Proceso
+        //     }
+        // });
+
         if(informacion_comunicado.Reemplazado == 1){
             var nombre_doc = informacion_comunicado.Nombre_documento;
             var enlaceDescarga = document.createElement('a');

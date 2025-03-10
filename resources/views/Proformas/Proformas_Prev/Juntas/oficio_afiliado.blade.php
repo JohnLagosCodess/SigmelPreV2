@@ -251,8 +251,9 @@
             </div>
         </section>
         <br>
-        {{-- <section class="fuente_todo_texto">
-            <span class="negrita">Elboró:</span> {{$nombre_usuario}}
+        
+        <section class="fuente_todo_texto">
+            {{-- <span class="negrita">Elboró:</span> {{$nombre_usuario}} --}}
             <table style="text-align: justify; width:100%; margin-left: -3px;">
                 @if (count($Agregar_copia) == 0)
                     <tr>
@@ -270,6 +271,7 @@
                         $ARL = 'ARL';
                         $JRCI = 'JRCI';
                         $JNCI = 'JNCI';
+                        $AFP_Conocimiento = 'AFP_Conocimiento';
                     ?>
                     <?php 
                     if (isset($Agregar_copia[$Afiliado])) { ?>
@@ -341,9 +343,15 @@
                         <?php       
                         }
                     ?>
+                    <?php 
+                        if (isset($Agregar_copia[$AFP_Conocimiento])) { ?>
+                                <?=$Agregar_copia['AFP_Conocimiento'];?>
+                            <?php       
+                        }
+                    ?>
                 @endif
             </table>
-        </section> --}}
+        </section>
         <br>
         <div class="cuadro fuente_cuadro_inferior" style="margin: 0 auto">
             <span class="fuente_cuadro_inferior"><span class="negrita">Nro. Radicado: <br>{{$nro_radicado}}</span></span><br>

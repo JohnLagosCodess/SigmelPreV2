@@ -388,33 +388,27 @@ $(document).ready(function(){
     }
 
     /* VALIDACIÓN MOSTRAR RANGO PCL */
-    $("#porcentaje_pcl").on("input", function(){
-        opt_rango_pcl = $(this).val();
-        //console.log(opt_rango_pcl);
-        //$("#porcentaje_pcl").val(opt_rango_pcl);
-        iniciarIntervalo_rangoPcl();
-    });
-    function iniciarIntervalo_rangoPcl() {
-        var resul_rango=0;
-        //clearInterval(intervaloRango);
-        intervaloRango = setInterval(() => {
-            if(opt_rango_pcl=='isNaN'){
-                resul_rango = '0';
-            }else if(opt_rango_pcl < "14,99"){
-                resul_rango = 'Entre 1 y 14,99%';
-            } else if (opt_rango_pcl >= "14,99" && opt_rango_pcl < "29,99"){
-                resul_rango = 'Entre 15 y 29,99%';
-            } else if (opt_rango_pcl >= "29,99" && opt_rango_pcl < "49,99"){
-                resul_rango = 'Entre 30 y 49,99%';
-            } else if (opt_rango_pcl >= "49,99"){
-                resul_rango = 'Mayor o igual 50%';
-            }else{
-                resul_rango = '0';
+    var opt_rango_pcl = $('#porcentaje_pcl');
+
+    $('#porcentaje_pcl').focus(function() {
+        $("#porcentaje_pcl").on("input", function() {
+            opt_rango_pcl = $(this).val();
+            var porcentajePcl = parseFloat(opt_rango_pcl);
+            if (isNaN(porcentajePcl)) $('#rango_pcl').val(''); 
+
+            if(porcentajePcl === 0){                
+                $('#rango_pcl').val('PCL 0');
+            }else if(porcentajePcl > 0 && porcentajePcl < 14.99){                
+                $('#rango_pcl').val('Entre 1 y 14,99%');
+            } else if (porcentajePcl >= 14.99 && porcentajePcl < 29.99){                
+                $('#rango_pcl').val('Entre 15 y 29,99%');
+            } else if (porcentajePcl >= 29.99 && porcentajePcl < 49.99){               
+                $('#rango_pcl').val('Entre 30 y 49,99%');
+            } else if (porcentajePcl >= 49.99){                
+                $('#rango_pcl').val('Mayor o igual 50%');
             }
-            
-            $('#rango_pcl').val(resul_rango); //Coloca resultado Rango PCL
-        }, 500);
-    }
+        });
+    });    
     
     /* VALIDACIÓN MOSTRAR ITEM DE CORRESPONDECIA */
     var opt_correspondencia;
@@ -759,16 +753,16 @@ $(document).ready(function(){
     }); 
 
     //pbs014
-    $("#listado_agregar_comunicados").on('click', '#CorrespondenciaNotificacion', function() {
-        let id = $(this);
-        let destinatario = $(id).data('destinatario');
+    // $("#listado_agregar_comunicados").on('click', '#CorrespondenciaNotificacion', function() {
+    //     let id = $(this);
+    //     let destinatario = $(id).data('destinatario');
         
-        // Modificar el título de la modal
-        $("#modalCorrespondencia").attr('title', 'Correspondencia ' + destinatario);
+    //     // Modificar el título de la modal
+    //     $("#modalCorrespondencia").attr('title', 'Correspondencia ' + destinatario);
         
-        // Mostrar la modal
-        $("#modalCorrespondencia").show();
-    });
+    //     // Mostrar la modal
+    //     $("#modalCorrespondencia").show();
+    // });
 
     let selectores_notificacion = {
         '_token': $('input[name=_token]').val(),
@@ -991,7 +985,7 @@ $(document).ready(function(){
      // Funcionalidad para el llenado del asunto y habilitar boton PDF para descarga 
 
     $("[name='decision_pr']").on("change", function(){
-    var opc_seleccionada = $(this).val();
+        var opc_seleccionada = $(this).val();
 
         if (opc_seleccionada == 'Acuerdo' && $("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?') {
             $('#asunto_cali').val('CONCEPTO MÉDICO DE DICTAMEN PÉRDIDA DE CAPACIDAD LABORAL');
@@ -1011,6 +1005,7 @@ $(document).ready(function(){
 
             // Deselección automática de las copias a partes interesadas: Afiliado
             $("#copia_afiliado").prop('checked', true);
+            $("#afp_conocimiento").prop('checked', false);
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', true);
@@ -1051,6 +1046,7 @@ $(document).ready(function(){
 
             // Selección automática de las copias a partes interesadas: Afiliado
             $("#copia_afiliado").prop('checked', true);
+            $("#afp_conocimiento").prop('checked', false);
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
@@ -1071,6 +1067,7 @@ $(document).ready(function(){
 
             // Deselección automática de las copias a partes interesadas: Afiliado
             $("#copia_afiliado").prop('checked', false);
+            $("#afp_conocimiento").prop('checked', false);
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
@@ -1185,6 +1182,7 @@ $(document).ready(function(){
         formData.append('copia_eps', $('#copia_eps').filter(":checked").val() || '');
         formData.append('copia_afp', $('#copia_afp').filter(":checked").val() || '');
         formData.append('copia_arl', $('#copia_arl').filter(":checked").val() || '');
+        formData.append('copia_afp_conocimiento', $('#afp_conocimiento').filter(":checked").val() || '');
         formData.append('junta_regional', $('#junta_regional').filter(":checked").val() || '');
         formData.append('junta_nacional', $('#junta_nacional').filter(":checked").val() || '');
         formData.append('junta_regional_cual', $('#junta_regional_cual').val() || '');
@@ -1221,6 +1219,7 @@ $(document).ready(function(){
         var copia_eps = $('#copia_eps').filter(":checked").val();
         var copia_afp = $('#copia_afp').filter(":checked").val();
         var copia_arl = $('#copia_arl').filter(":checked").val();
+        var copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
         var firmar = $('#firmar').filter(":checked").val();
         var desicion_proforma_pro = $("[id^='di_']").filter(":checked").val();
         if (desicion_proforma_pro == 'Acuerdo') {
@@ -1271,6 +1270,7 @@ $(document).ready(function(){
                             'copia_eps':copia_eps,
                             'copia_afp':copia_afp,
                             'copia_arl':copia_arl,
+                            'copia_afp_conocimiento': copia_afp_conocimiento,
                             'Firma_corre':firmar,
                             'desicion_proforma':desicion_proforma,
                             'id_comunicado': Id_Comunicado,
@@ -1321,6 +1321,7 @@ $(document).ready(function(){
                             'copia_eps':copia_eps,
                             'copia_afp':copia_afp,
                             'copia_arl':copia_arl,
+                            'copia_afp_conocimiento': copia_afp_conocimiento,
                             'Firma_corre':firmar,
                             'desicion_proforma':desicion_proforma,
                             'id_comunicado': Id_Comunicado,
@@ -1406,6 +1407,7 @@ $(document).ready(function(){
         var copia_eps = $('#copia_eps').filter(":checked").val();
         var copia_afp = $('#copia_afp').filter(":checked").val();
         var copia_arl = $('#copia_arl').filter(":checked").val();
+        var copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
         var firmar = $('#firmar').filter(":checked").val();
         Sustenta_cali = Sustenta_cali ? Sustenta_cali.replace(/"/g, "'") : '';
         var N_siniestro = $('#n_siniestro').val();
@@ -1426,6 +1428,7 @@ $(document).ready(function(){
             'copia_eps':copia_eps,
             'copia_afp':copia_afp,
             'copia_arl':copia_arl,
+            'copia_afp_conocimiento': copia_afp_conocimiento,
             'Firma_corre':firmar,
             'desicion_proforma':desicion_proforma,
             'id_comunicado': comunicado.Id_Comunicado,
@@ -1446,82 +1449,97 @@ $(document).ready(function(){
                 document.body.removeChild(enlaceDescarga);
             }, 1000);
         }else{
-            $.ajax({
-                type:'POST',
-                url:'/generarPdfProformaspro',
-                data:datos_proforma_pro,
-                // xhrFields: {
-                //     responseType: 'blob' // Indica que la respuesta es un blob
-                // },
-                beforeSend:  function() {
-                    $("#btn_generar_proforma").addClass("descarga-deshabilitada");
-                },
-                success: function (response, status, xhr) {
-                    
-                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-            
-                    var indicativo = response.indicativo;
-
-                    // Crear un enlace de descarga similar al ejemplo anterior
-                    if (desicion_proforma == "proforma_acuerdo") {
-
-                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
-                        var base64Pdf = response.pdf;
-
-                        // Decodificar base64 en un array de bytes
-                        var binaryString = atob(base64Pdf);
-                        var len = binaryString.length;
-                        var bytes = new Uint8Array(len);
-
-                        for (var i = 0; i < len; i++) {
-                            bytes[i] = binaryString.charCodeAt(i);
-                        }
-
-                        // Crear un Blob a partir del array de bytes
-                        var blob = new Blob([bytes], { type: 'application/pdf' });
-                    
-                        // var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".pdf";
-                        var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+"_"+indicativo+".pdf";
-
-                    }else{
-
-                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
-                        var base64Word = response.word;
+            if (comunicado.Nombre_documento) {
+                var nombre_doc = comunicado.Nombre_documento;
+                var idEvento = comunicado.ID_evento;
+                var enlaceDescarga = document.createElement('a');
+                enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+                enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+                enlaceDescarga.style.display = 'none';
+                document.body.appendChild(enlaceDescarga);
+                enlaceDescarga.click();
+                setTimeout(function() {
+                    document.body.removeChild(enlaceDescarga);
+                }, 1000);
+            }
+            else{
+                $.ajax({
+                    type:'POST',
+                    url:'/generarPdfProformaspro',
+                    data:datos_proforma_pro,
+                    // xhrFields: {
+                    //     responseType: 'blob' // Indica que la respuesta es un blob
+                    // },
+                    beforeSend:  function() {
+                        $("#btn_generar_proforma").addClass("descarga-deshabilitada");
+                    },
+                    success: function (response, status, xhr) {
+                        
+                        // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
                 
-                        // Decodificar base64 en un array de bytes
-                        var binaryString = atob(base64Word);
-                        var len = binaryString.length;
-                        var bytes = new Uint8Array(len);
-                
-                        for (var i = 0; i < len; i++) {
-                            bytes[i] = binaryString.charCodeAt(i);
+                        var indicativo = response.indicativo;
+    
+                        // Crear un enlace de descarga similar al ejemplo anterior
+                        if (desicion_proforma == "proforma_acuerdo") {
+    
+                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                            var base64Pdf = response.pdf;
+    
+                            // Decodificar base64 en un array de bytes
+                            var binaryString = atob(base64Pdf);
+                            var len = binaryString.length;
+                            var bytes = new Uint8Array(len);
+    
+                            for (var i = 0; i < len; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+    
+                            // Crear un Blob a partir del array de bytes
+                            var blob = new Blob([bytes], { type: 'application/pdf' });
+                        
+                            // var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".pdf";
+                            var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+"_"+indicativo+".pdf";
+    
+                        }else{
+    
+                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                            var base64Word = response.word;
+                    
+                            // Decodificar base64 en un array de bytes
+                            var binaryString = atob(base64Word);
+                            var len = binaryString.length;
+                            var bytes = new Uint8Array(len);
+                    
+                            for (var i = 0; i < len; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+    
+                            var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    
+                            // var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".docx";
+                            var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+"_"+indicativo+".docx";
                         }
-
-                        var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-
-                        // var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".docx";
-                        var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+"_"+indicativo+".docx";
-                    }
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
-            
-                    // Adjuntar el enlace al documento y activar el evento de clic
-                    document.body.appendChild(link);
-                    link.click();
-            
-                    // Eliminar el enlace del documento
-                    document.body.removeChild(link);
-                },
-                error: function (error) {
-                    // Manejar casos de error
-                    console.error('Error al descargar el PDF:', error);
-                },
-                complete: function(){
-                    $("#btn_generar_proforma").removeClass("descarga-deshabilitada");
-                    // location.reload();
-                }  
-            });
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+                
+                        // Adjuntar el enlace al documento y activar el evento de clic
+                        document.body.appendChild(link);
+                        link.click();
+                
+                        // Eliminar el enlace del documento
+                        document.body.removeChild(link);
+                    },
+                    error: function (error) {
+                        // Manejar casos de error
+                        console.error('Error al descargar el PDF:', error);
+                    },
+                    complete: function(){
+                        $("#btn_generar_proforma").removeClass("descarga-deshabilitada");
+                        // location.reload();
+                    }  
+                });
+            }
         }
     });
     //Remover CIE10
@@ -1596,296 +1614,11 @@ $(document).ready(function(){
         $("#firmar").prop('disabled', true);
     }
 
-    function cargarSelectorModalCorrespondencia(){
-        //Listado de opciones de estado de notificación Correspondencia
-        let selectores_notificacion_correspondencia = {
-            '_token': $('input[name=_token]').val(),
-            'parametro': 'EstadosNotificacionCorrespondencia'
-        }
-        $.ajax({
-            type: 'POST',
-            url: '/selectoresJuntas',
-            data: selectores_notificacion_correspondencia,
-            beforeSend:  function() {
-                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
-            },
-            success: function (data) {
-                let optionSelected = data.find(finder => finder.Id_Parametro === 362);
-                $("#modalCorrespondencia #state_notificacion").val(optionSelected?.Id_Parametro);
-                $('#state_notificacion').empty();
-                $('#state_notificacion').append('<option value="'+optionSelected?.Id_Parametro+'" selected>'+optionSelected?.Nombre_parametro+'</option>');
-                let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
-                let formaenviogenerarcomunicado = Object.keys(data);
-                for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
-                    if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != SelectorModalCorrespondencia) {
-                        $('#state_notificacion').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
-                    }                
-                }                                     
-            },
-            complete: function(){
-                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
-            }
-        });
-    }
-
-    let correspondencia_array = [];
     $("#listado_comunicados_clpcl").on('click', "#CorrespondenciaNotificacion", async function() {
-        //Reestablecer modal
-        cleanModalCorrespondencia();
-        //Cargar selectores modal con Pendiente como valor por defecto
-        cargarSelectorModalCorrespondencia();
         //Capturar información
         let id = $(this);
-        
         let token = $('input[name=_token]').val(); 
         let tipo_correspondencia = $(id).data('tipo_correspondencia');
-        let idComunicado = $(id).data('id_comunicado');
-        let N_radicado = $(id).data('n_radicado');
-        let destinatarioPrincipal = $(id).data("destinatario_principal");
-        let copias = $(id).data("copias");
-        let id_evento = $(id).data('id_evento');
-        let id_proceso = $(id).data('id_proceso');
-        let id_asignacion = $(id).data('id_asignacion');
-        let anexos = $(id).data('anexos');
-        let correspondencia = $(id).data('correspondencia');
-        let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
-        //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
-        let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
-        //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
-        copias = copias ? copias.split(',').map(copia => copia.trim()) : copias;
-        //Información superior del modal 
-        $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
-        $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
-        $("#modalCorrespondencia #id_evento").val($(id).data('id_evento'));
-        $("#modalCorrespondencia #enlace_ed_evento").text($(id).data('id_evento'));
-        $("#modalCorrespondencia #id_destinatario").val(id_destinatario);
-        //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
-        let tipo_descarga = $(id).data('tipo_descarga');
-
-        //Desactiva el formulario en caso de que la correspodencia este inactiva.
-        if($(id).data("estado_correspondencia") != 1){
-            $("#btn_guardar_actualizar_correspondencia").remove();
-            $("#form_correspondencia *").prop('disabled',true);
-            $("#cerar_modalCorrespondencia").prop('disabled',false);
-        }
-
-        let estado_general = $("#status_notificacion_" + N_radicado).find(":selected").text();
-        if((estado_general == 'Notificado efectivamente' || estado_general == 'Devuelto' || estado_general == 'No notificar') 
-            && ($(id).data("estado_correspondencia") == 0 || $(id).data("estado_correspondencia") == 1 )){
-
-            $(".alerta_advertencia").removeClass('d-none');
-            $(".alerta_advertencia").empty();
-            $(".alerta_advertencia").append(`La correspondencia no se puede guardar y/o actualizar ya que el estado del comunicado es <strong>${estado_general}</strong>,por favor cambielo para pode editar la correspondencia.`)
-            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
-        
-         setTimeout(function(){
-            $(".alerta_advertencia").addClass('d-none');
-            $(".alerta_advertencia").empty();
-        },3000); 
-        }else{
-             $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
-             $(".alerta_advertencia").empty();
-             $(".alerta_advertencia").addClass('d-none');
-         }
-        // console.log(tipo_correspondencia);
-        if(tipo_descarga === 'Manual'){
-            $("#modalCorrespondencia #check_principal").prop('checked', false);
-            $("#modalCorrespondencia #check_principal").prop('disabled', false);
-            $("#modalCorrespondencia #check_copia").prop('disabled', false);
-            $("#modalCorrespondencia #check_copia").prop('checked', false);
-        }
-        if(correspondencia && correspondencia.length >0){
-            array_temp = correspondencia.split(",").map(item => item.trim());
-            correspondencia_array = array_temp;
-        }
-        $("#modalCorrespondencia #tipo_correspondencia").val(tipo_correspondencia);
-        $("#modalCorrespondencia #id_asignacion").val(id_asignacion);
-        $("#modalCorrespondencia #id_proceso").val(id_proceso);
-        $("#modalCorrespondencia #id_comunicado").val(idComunicado);
-
-        if(correspondencia_array?.includes(tipo_correspondencia) || correspondencias_guardadas === tipo_correspondencia){
-            data_comunicado = {
-                _token: token,
-                id_comunicado: idComunicado,
-                id_evento: id_evento,
-                id_asignacion: id_asignacion,
-                id_proceso: id_proceso,
-                tipo_correspondencia: tipo_correspondencia,
-                previous_saved: true 
-            }
-            
-            $.ajax({
-                type:'POST',
-                url:'/getInformacionCorrespondencia',
-                data: data_comunicado,
-                beforeSend:  function() {
-                    showLoading();
-                },
-                success: function(response){
-                    if(response && response[0]){
-                        $("#btn_guardar_actualizar_correspondencia").val('Actualizar');
-
-                        $("#modalCorrespondencia #n_orden").val(response[0]?.N_orden);
-                        $("#modalCorrespondencia #nombre_destinatario").val(response[0]?.Nombre_destinatario);
-                        $("#modalCorrespondencia #direccion").val(response[0]?.Direccion_destinatario);
-                        $("#modalCorrespondencia #departamento").val(response[0]?.Departamento);
-                        $("#modalCorrespondencia #ciudad").val(response[0]?.Ciudad);
-                        $("#modalCorrespondencia #telefono").val(response[0]?.Telefono_destinatario);
-                        $("#modalCorrespondencia #email").val(response[0]?.Email_destinatario);
-                        $("#modalCorrespondencia #m_notificacion").val(response[0]?.Medio_notificacion);
-                        $("#modalCorrespondencia #folios").val(response[0]?.Folios);
-                        $("#modalCorrespondencia #radicado").val(response[0]?.N_radicado);
-                        $("#modalCorrespondencia .modal-title").text('Correspondencia ' + response[0]?.Tipo_correspondencia);
-                        $("#modalCorrespondencia #n_guia").val(response[0]?.N_guia);
-                        $("#modalCorrespondencia #f_envio").val(response[0]?.F_envio);
-                        $("#modalCorrespondencia #f_notificacion").val(response[0]?.F_notificacion);
-                        $("#modalCorrespondencia #state_notificacion").val(response[0]?.Id_Estado_corresp);
-                        $("#modalCorrespondencia #id_correspondencia").val(response[0]?.Id_Correspondencia);
-                        
-                        if(response[0]?.Tipo_destinatario){
-                            if(response[0]?.Tipo_destinatario === $('#modalCorrespondencia #check_principal').val()){
-                                if(tipo_descarga != 'Manual'){
-                                    $("#modalCorrespondencia #check_principal").prop('checked', true);
-                                    $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                                    $("#modalCorrespondencia #check_copia").prop('required', false);
-                                }
-                                else{
-                                    $("#modalCorrespondencia #check_principal").prop('checked', true);
-                                    $("#modalCorrespondencia #check_principal").prop('disabled', false);
-                                    $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                                    $("#modalCorrespondencia #check_copia").prop('required', false);
-                                }
-                                
-                            }
-                            else if(response[0]?.Tipo_destinatario === $('#modalCorrespondencia #check_copia').val()){
-                                
-                                if(tipo_descarga != 'Manual'){
-                                    $("#modalCorrespondencia #check_copia").prop('checked', true);
-                                    $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                                    $("#modalCorrespondencia #check_principal").prop('required', false);
-                                }
-                                else{
-                                    $("#modalCorrespondencia #check_copia").prop('checked', true);
-                                    $("#modalCorrespondencia #check_principal").prop('disabled', true);
-                                    $("#modalCorrespondencia #check_principal").prop('required', false);
-                                    $("#modalCorrespondencia #check_copia").prop('disabled', false);
-                                }
-                            } 
-                        }
-                        let selectores_notificacion_correspondencia = {
-                            '_token': $('input[name=_token]').val(),
-                            'parametro': 'EstadosNotificacionCorrespondencia'
-                        }
-                        $.ajax({
-                            type: 'POST',
-                            url: '/selectoresJuntas',
-                            data: selectores_notificacion_correspondencia,
-                            beforeSend:  function() {
-                                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
-                            },
-                            success: function (data) {
-                                let optionSelected = data.find(finder => finder.Id_Parametro === response[0]?.Id_Estado_corresp);
-                                $('#state_notificacion').empty();
-                                $('#state_notificacion').append('<option value="'+response[0]?.Id_Estado_corresp+'" selected>'+optionSelected?.Nombre_parametro+'</option>');
-                                let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
-                                let formaenviogenerarcomunicado = Object.keys(data);
-                                for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
-                                    if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != SelectorModalCorrespondencia) {
-                                        $('#state_notificacion').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
-                                    }                
-                                }
-                            },
-                            complete: function(){
-                                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
-                            }
-                        });
-                    }
-                },
-                error: function (error) {
-                    console.error('Ha ocurrido un error:', error);
-                },
-                complete: function(){
-                    hideLoading();
-                }
-            });
-        }
-        else{
-            data_comunicado = {
-                _token: token,
-                id_comunicado: idComunicado,
-                id_evento: id_evento,
-                id_asignacion: id_asignacion,
-                id_proceso: id_proceso,
-                tipo_correspondencia: tipo_correspondencia,
-                previous_saved: false
-            }
-            
-            $.ajax({
-                type:'POST',
-                url:'/getInformacionCorrespondencia',
-                data: data_comunicado,
-                beforeSend:  function() {
-                    showLoading();
-                },
-                success: function(response){
-                    
-                    if(response && response.datos){
-                        $("#modalCorrespondencia #n_orden").val(response?.nro_orden);
-                        $("#modalCorrespondencia #nombre_destinatario").val(response?.datos?.Nombre_destinatario);
-                        $("#modalCorrespondencia #direccion").val(response?.datos?.Direccion_destinatario);
-                        $("#modalCorrespondencia #departamento").val(response?.datos?.Departamento_destinatario);
-                        $("#modalCorrespondencia #ciudad").val(response?.datos?.Ciudad_destinatario);
-                        $("#modalCorrespondencia #telefono").val(response?.datos?.Telefono_destinatario);
-                        $("#modalCorrespondencia #email").val(response?.datos?.Email_destinatario);
-                        $("#modalCorrespondencia #m_notificacion").val(response?.datos?.Medio_notificacion_destinatario);
-                        $("#modalCorrespondencia #folios").val(anexos);
-                        $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
-                        $("#modalCorrespondencia #radicado").val(N_radicado);
-                        
-                        if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
-                            $("#modalCorrespondencia #check_principal").prop('checked', true);
-                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                            $("#modalCorrespondencia #check_copia").prop('required', false);
-                        }
-                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && Array.isArray(copias) && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
-                            $("#modalCorrespondencia #check_copia").prop('checked', true);
-                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
-                            $("#modalCorrespondencia #check_principal").prop('required', false);
-                        }
-                    }
-                },
-                error: function (error) {
-                    console.error('Ha ocurrido un error:', error);
-                },
-                complete: function(){
-                    hideLoading();
-                }
-            });
-        }
-        // Mostrar la modal
-        $("#modalCorrespondencia").show();
-
-        //Eventos checkbox principal
-        $("#check_principal").change(function() {
-            if ($(this).is(':checked')) {
-                $("#check_copia").prop('disabled', true).prop('required', false);
-            } else {
-                $("#check_copia").prop('disabled', false).prop('required', true);
-            }
-        });
-        //Eventos checkbox copia
-        $("#check_copia").change(function() {
-            if ($(this).is(':checked')) {
-                $("#check_principal").prop('disabled', true).prop('required', false);
-            } 
-            else if(tipo_descarga == 'Manual') {
-                $("#check_principal").prop('disabled', false).prop('required', true);
-            }
-            else{
-                $("#check_principal").prop('disabled', true).prop('required', true);
-            }
-        });
-
         /* Aqui se programará algunas cosas de la ficha PBS 082 */
 
         // 1. motrar el botón de que tipo de guia es
@@ -1989,90 +1722,6 @@ $(document).ready(function(){
                 for (let i = 0; i < tiposdoc.length; i++) {
                     $('#listado_tipos_documentos_guias').append('<option value="'+data[tiposdoc[i]]["Nro_documento"]+'">'+data[tiposdoc[i]]["Nro_documento"]+' - '+data[tiposdoc[i]]["Nombre_documento"]+'</option>');
                 }
-            }
-        });
-    });
-
-    
-    $('#form_correspondencia').submit(function (e) {
-        e.preventDefault();
-        let token = $('input[name=_token]').val(); 
-        let tipo_correspondencia = $('#modalCorrespondencia #tipo_correspondencia').val();
-        if (!correspondencia_array?.includes(tipo_correspondencia)) {
-            correspondencia_array.push(tipo_correspondencia);
-        }
-        tipoDestinatario = null;
-        if($('#check_principal').is(':checked')){
-            tipoDestinatario = $('#modalCorrespondencia #check_principal').val();
-            $("#modalCorrespondencia #check_principal").prop('required', false);
-        }
-        else if($('#check_copia').is(':checked')){
-            tipoDestinatario = $('#modalCorrespondencia #check_copia').val();
-        }
-        else{
-            tipoDestinatario = null;
-        }
-        datos_correspondencia = {
-            '_token': token,
-            'correspondencia': correspondencia_array,
-            'nombre_afiliado': $('#modalCorrespondencia #nombre_afiliado').val(),
-            'n_identificacion_afiliado': $('#modalCorrespondencia #n_identificacion').val(),
-            'id_asignacion': $('#modalCorrespondencia #id_asignacion').val(),
-            'id_proceso': $('#modalCorrespondencia #id_proceso').val(),
-            'id_evento': $('#modalCorrespondencia #id_evento').val(),
-            'id_comunicado': $('#modalCorrespondencia #id_comunicado').val(),
-            'id_destinatario': $('#modalCorrespondencia #id_destinatario').val(),
-            'n_radicado': $('#modalCorrespondencia #radicado').val(),
-            'n_orden': $('#modalCorrespondencia #n_orden').val(),
-            'tipo_destinatario': tipoDestinatario,
-            'nombre_destinatario': $('#modalCorrespondencia #nombre_destinatario').val(),
-            'direccion_destinatario': $('#modalCorrespondencia #direccion').val(),
-            'departamento_destinatario': $('#modalCorrespondencia #departamento').val(),
-            'ciudad_destinatario': $('#modalCorrespondencia #ciudad').val(),
-            'telefono_destinatario': $('#modalCorrespondencia #telefono').val(),
-            'email_destinatario': $('#modalCorrespondencia #email').val(),
-            'medio_notificacion_destinatario': $('#modalCorrespondencia #m_notificacion').val(),
-            'n_guia': $('#modalCorrespondencia #n_guia').val(),
-            'folios': $('#modalCorrespondencia #folios').val(),
-            'fecha_envio': $('#modalCorrespondencia #f_envio').val(),
-            'fecha_notificacion': $('#modalCorrespondencia #f_notificacion').val(),
-            'estado_notificacion': $('#modalCorrespondencia #state_notificacion').val(),
-            'tipo_correspondencia': tipo_correspondencia,
-            'id_correspondencia': $('#modalCorrespondencia #id_correspondencia').val(),
-            'id_destinatario':$("#modalCorrespondencia #id_destinatario").val(),
-            'accion': $('#btn_guardar_actualizar_correspondencia').val()
-        };
-        $.ajax({    
-            type:'POST',
-            url:'/guardarInformacionCorrespondencia',
-            data: datos_correspondencia,
-            beforeSend:  function() {
-                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
-                showLoading();
-            },
-            success: function(response){
-                if (response.parametro == 'agregar_correspondencia') {
-                    $('.alerta_correspondencia').removeClass('d-none');
-                    $('.alerta_correspondencia').append('<strong>'+response.mensaje+'</strong>');
-                    setTimeout(function(){
-                        $('.alerta_correspondencia').addClass('d-none');
-                        $('.alerta_correspondencia').empty();
-                        localStorage.setItem("#Generar_comunicados", true);
-                        location.reload();
-                    }, 3000);
-                }
-            },
-            error: function (error) {
-                $('.alerta_error').removeClass('d-none');
-                $('.alerta_error').append('<strong> Ha ocurrido un error al momento de guardar la correspondencia.</strong>');
-                setTimeout(function(){
-                    $('.alerta_error').addClass('d-none');
-                    $('.alerta_error').empty();
-                }, 3000);
-            },
-            complete: function(){
-                // $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
-                hideLoading();
             }
         });
     });
@@ -2421,35 +2070,6 @@ function funciones_elementos_fila_diagnosticos(num_consecutivo) {
             }
         });
     });
-}
-
-function cleanModalCorrespondencia(){
-    $("#btn_guardar_actualizar_correspondencia").val('Guardar');
-    $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
-
-    correspondencia_array = [];
-    $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);
-    $("#modalCorrespondencia #check_copia").prop('checked', false).prop('disabled', false).prop('required', true);
-    $('#state_notificacion').val('').trigger('change');
-    $("#modalCorrespondencia #tipo_correspondencia").val('');
-    $("#modalCorrespondencia #n_orden").val('');
-    $("#modalCorrespondencia #nombre_destinatario").val('');
-    $("#modalCorrespondencia #direccion").val('');
-    $("#modalCorrespondencia #departamento").val('');
-    $("#modalCorrespondencia #ciudad").val('');
-    $("#modalCorrespondencia #telefono").val('');
-    $("#modalCorrespondencia #email").val('');
-    $("#modalCorrespondencia #m_notificacion").val('');
-    $("#modalCorrespondencia #folios").val('');
-    $("#modalCorrespondencia #n_guia").val('');
-    $("#modalCorrespondencia #f_envio").val('');
-    $("#modalCorrespondencia #f_notificacion").val('');
-    $("#modalCorrespondencia #state_notificacion").val('');
-    $("#modalCorrespondencia #id_correspondencia").val('');
-    $("#modalCorrespondencia #id_asignacion").val('');
-    $("#modalCorrespondencia #id_proceso").val('');
-    $("#modalCorrespondencia #id_comunicado").val('');
-    $("#modalCorrespondencia #id_destinatario").val('');
 }
 
 function showLoading() {

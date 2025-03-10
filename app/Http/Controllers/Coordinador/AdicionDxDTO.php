@@ -908,12 +908,14 @@ class AdicionDxDTO extends Controller
         $Id_Asignacion = $Id_asignacion_actual;
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento,$Id_servicio,$Id_asignacion_actual));
 
+        $entidades_conocimiento = $this->globalService->getAFPConocimientosParaCorrespondencia($Id_evento,$Id_asignacion_actual);
+
         return view('coordinador.adicionDxDtoOrigen', compact('user', 'Id_asignacion_actual', 'datos_bd_DTO_ATEL', 'bandera_hay_dto', 'array_datos_calificacion_origen', 
             'bandera_tipo_evento', 'nombre_del_evento_guardado', 'numero_consecutivo', 'motivo_solicitud_actual',
             'datos_apoderado_actual', 'array_datos_info_laboral','listado_documentos_solicitados', 'dato_articulo_12', 'array_datos_examenes_interconsultas',
             'array_datos_diagnostico_motcalifi', 'info_adicion_dx', 'array_datos_diagnostico_adicionales','array_comite_interdisciplinario', 'consecutivo', 
             'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento', 'caso_notificado', 'N_siniestro_evento','info_evento', 
-            'arraylistado_documentos', 'Id_servicio', 'Id_Asignacion')
+            'arraylistado_documentos', 'Id_servicio', 'Id_Asignacion','entidades_conocimiento')
         );
         
     }
@@ -1918,12 +1920,6 @@ class AdicionDxDTO extends Controller
         if (!empty($afp)) {
             $variables_llenas[] = $afp;
         }
-        if (!empty($afp_conocimiento)) {
-            // traemos la informacion de las copias dependiendo de cuantas entidades de conocimiento hay
-            $str_entidades = $this->globalService->retornarStringCopiasEntidadConocimiento($Id_Evento);
-           
-            $variables_llenas[] = $str_entidades;
-        }
         if (!empty($arl)) {
             $variables_llenas[] = $arl;
         }
@@ -1932,6 +1928,12 @@ class AdicionDxDTO extends Controller
         }
         if (!empty($jnci)) {
             $variables_llenas[] = $jnci;
+        }
+        if (!empty($afp_conocimiento)) {
+            // traemos la informacion de las copias dependiendo de cuantas entidades de conocimiento hay
+            $str_entidades = $this->globalService->retornarStringCopiasEntidadConocimiento($Id_Evento);
+           
+            $variables_llenas[] = $str_entidades;
         }
 
         if(count($variables_llenas) > 0){

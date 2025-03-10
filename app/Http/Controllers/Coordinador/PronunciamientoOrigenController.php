@@ -125,11 +125,13 @@ class PronunciamientoOrigenController extends Controller
         $Id_Asignacion = $Id_asignacion_calitec;
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento_calitec,$Id_servicio,$Id_asignacion_calitec));
 
+        $entidades_conocimiento = $this->globalService->getAFPConocimientosParaCorrespondencia($Id_evento_calitec,$Id_asignacion_calitec);
+
         /* Traer datos de la AFP de Conocimiento */
         $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($Id_evento_calitec);
 
         return view('coordinador.pronunciamientoOrigenATEL', compact('user','array_datos_pronunciamientoOrigen','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo',
-        'array_comunicados', 'caso_notificado','N_siniestro_evento', 'arraylistado_documentos', 'Id_servicio', 'Id_Asignacion', 'info_afp_conocimiento'));
+        'array_comunicados', 'caso_notificado','N_siniestro_evento', 'arraylistado_documentos', 'Id_servicio', 'Id_Asignacion','entidades_conocimiento', 'info_afp_conocimiento'));
     }
 
     //Cargar Selectores pronunciamiento
@@ -465,16 +467,6 @@ class PronunciamientoOrigenController extends Controller
             $copia_arl = $request->copia_arl;
         }
         // dd($request->copia_afp_conocimiento, $request->copia_arl);
-        if (empty($request->copia_afp_conocimiento)) {
-            $copia_afp_conocimiento = null;                        
-            $copy_afp_conocimiento = null;
-        } else {      
-            // traemos la informacion de las copias dependiendo de cuantas entidades de conocimiento hay
-            $copy_afp_conocimiento = 'AFP_Conocimiento';
-            $str_entidades = $this->globalService->retornarStringCopiasEntidadConocimiento($Id_EventoPronuncia);
-            $copia_afp_conocimiento = $str_entidades;
-
-        }
         if (empty($request->junta_regional)) {
             $junta_regional = null;                        
         } else {         
@@ -489,6 +481,15 @@ class PronunciamientoOrigenController extends Controller
             $junta_nacional = null;                        
         } else {         
             $junta_nacional = $request->junta_nacional;
+        }
+        if (empty($request->copia_afp_conocimiento)) {
+            $copia_afp_conocimiento = null;                        
+            $copy_afp_conocimiento = null;
+        } else {      
+            // traemos la informacion de las copias dependiendo de cuantas entidades de conocimiento hay
+            $copy_afp_conocimiento = 'AFP_Conocimiento';
+            $str_entidades = $this->globalService->retornarStringCopiasEntidadConocimiento($Id_EventoPronuncia);
+            $copia_afp_conocimiento = $str_entidades;
         }
 
         // Agrupa las variables en un array

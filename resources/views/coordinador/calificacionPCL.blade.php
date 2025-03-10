@@ -556,7 +556,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table id="listado_agregar_comunicados" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
+                                    <table id="listado_comunicados_pcl" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
                                         <thead>
                                             <tr class="bg-info">
                                                 <th>N° Radicado</th>
@@ -1573,6 +1573,7 @@
     </script>
 
     <script type="text/javascript">
+        let entidades_conocimiento = @json($entidades_conocimiento);
         document.getElementById('botonVerEdicionEvento').addEventListener('click', function(event) {
             event.preventDefault();
             // Realizar las acciones que quieres al hacer clic en el botón

@@ -930,6 +930,11 @@ Route::post('/string_entidades_conocimiento', function (Request $request) {
     return app()->make(GlobalService::class)->retornarStringCopiasEntidadConocimiento($request->id_evento);
 });
 
+// llamado del servicio global actualizarCopiasEntidadesComunicado
+Route::post('/actualizar_copias_comunicado', function (Request $request) {
+    return app()->make(GlobalService::class)->actualizarCopiasEntidadesComunicado($request->id_evento, $request->id_comunicado, $request->id_asignacion, $request->id_proceso);
+});
+
 /* FIN SECCION: AQUI SE RENDERIZARÁN LAS RUTAS DE LOS DEMÁS ROLES: */
 
 
