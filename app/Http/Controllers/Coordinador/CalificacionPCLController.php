@@ -3122,7 +3122,7 @@ class CalificacionPCLController extends Controller
                 $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
                 $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
                 $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
-                $final_copia_afp_conocimiento =  isset($request->edit_copia_entidad_conocimiento) ? 'AFP_Conocimiento' : '';
+                // $final_copia_afp_conocimiento =  isset($request->edit_copia_entidad_conocimiento) ? 'AFP_Conocimiento' : '';
     
                 $total_copias = array_filter(array(
                     'copia_afiliado' => $final_copia_afiliado,
@@ -3130,7 +3130,7 @@ class CalificacionPCLController extends Controller
                     'copia_eps' => $final_copia_eps,
                     'copia_afp' => $final_copia_afp,
                     'copia_arl' => $final_copia_arl,
-                    'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
+                    // 'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
                 )); 
     
                 sleep(2);
@@ -3141,8 +3141,15 @@ class CalificacionPCLController extends Controller
             } 
             // La descarga se hace desde que se guarda el comunicado
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
-
                 $copiaComunicadosOrigen = $request->agregar_copia_editar;
+                // Recorremos el array y se identifica si AFP_Conocimiento esta presente en alguan posicion
+                foreach ($copiaComunicadosOrigen as $ComunicadosOrigen => $valor) {
+                    // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
+                    if (strpos($valor, "AFP_Conocimiento") !== false) {
+                        $copiaComunicadosOrigen[$ComunicadosOrigen] = "AFP_Conocimiento";
+                    }
+                }
+                // Se crea array para compararlo con el que viene del formulario
                 $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl', 'AFP_Conocimiento' => 'copia_afp_conocimiento'];
 
                 if ($copiaComunicadosOrigen > 0) {
@@ -3498,6 +3505,7 @@ class CalificacionPCLController extends Controller
                 $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
                 $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
                 $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                // $final_copia_afp_conocimiento =  isset($request->edit_copia_entidad_conocimiento) ? 'AFP_Conocimiento' : '';
     
                 $total_copias = array_filter(array(
                     'copia_afiliado' => $final_copia_afiliado,
@@ -3505,10 +3513,11 @@ class CalificacionPCLController extends Controller
                     'copia_eps' => $final_copia_eps,
                     'copia_afp' => $final_copia_afp,
                     'copia_arl' => $final_copia_arl,
+                    // 'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
                 )); 
     
                 sleep(2);
-                
+
                 // Conversión de las key en variables con sus respectivos datos
                 extract($total_copias);
 
@@ -3516,7 +3525,15 @@ class CalificacionPCLController extends Controller
             // La descarga se hace desde que se guarda el comunicado
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
-                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
+                // Recorremos el array y se identifica si AFP_Conocimiento esta presente en alguan posicion
+                foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
+                    // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
+                    if (strpos($valor, "AFP_Conocimiento") !== false) {
+                        $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                    }
+                }
+                // Se crea array para compararlo con el que viene del formulario
+                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl', 'AFP_Conocimiento' => 'copia_afp_conocimiento'];
                 
                 if ($copiaComunicadosPcl > 0) {
                     // Inicializar el array con todas las claves con valores vacíos
@@ -3530,8 +3547,7 @@ class CalificacionPCLController extends Controller
                     }
     
                     // Filtrar las claves que tienen valores vacíos
-                    $total_copias = array_filter($total_copias);
-    
+                    $total_copias = array_filter($total_copias);                    
                     // Convertir las claves en variables con sus respectivos valores
                     extract($total_copias);
                     
@@ -3645,6 +3661,11 @@ class CalificacionPCLController extends Controller
                 $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
                 $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+            }
+
+            if (isset($copia_afp_conocimiento)) {
+                $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_evento, 'pdf');
+                $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
             }
 
             /* Extraer el id del cliente */
@@ -3867,6 +3888,7 @@ class CalificacionPCLController extends Controller
                 $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
                 $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
                 $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                // $final_copia_afp_conocimiento =  isset($request->edit_copia_entidad_conocimiento) ? 'AFP_Conocimiento' : '';
     
                 $total_copias = array_filter(array(
                     'copia_afiliado' => $final_copia_afiliado,
@@ -3874,6 +3896,7 @@ class CalificacionPCLController extends Controller
                     'copia_eps' => $final_copia_eps,
                     'copia_afp' => $final_copia_afp,
                     'copia_arl' => $final_copia_arl,
+                    // 'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
                 )); 
     
                 sleep(2);
@@ -3885,7 +3908,15 @@ class CalificacionPCLController extends Controller
             // La descarga se hace desde que se guarda el comunicado
             elseif($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
-                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
+                // Recorremos el array y se identifica si AFP_Conocimiento esta presente en alguan posicion
+                foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
+                    // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
+                    if (strpos($valor, "AFP_Conocimiento") !== false) {
+                        $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                    }
+                }
+                // Se crea array para compararlo con el que viene del formulario
+                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl', 'AFP_Conocimiento' => 'copia_afp_conocimiento'];
                 
                 if ($copiaComunicadosPcl > 0) {
                     // Inicializar el array con todas las claves con valores vacíos
@@ -4009,6 +4040,11 @@ class CalificacionPCLController extends Controller
                 $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
                 $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+            }
+
+            if (isset($copia_afp_conocimiento)) {
+                $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_evento, 'pdf');
+                $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
             }
 
             /* Extraer el id del cliente */
@@ -4218,6 +4254,7 @@ class CalificacionPCLController extends Controller
                 $final_copia_eps = isset($request->edit_copia_eps) ? 'EPS' : '';
                 $final_copia_afp = isset($request->edit_copia_afp) ? 'AFP' : '';
                 $final_copia_arl = isset($request->edit_copia_arl) ? 'ARL' : '';
+                // $final_copia_afp_conocimiento =  isset($request->edit_copia_entidad_conocimiento) ? 'AFP_Conocimiento' : '';
     
                 $total_copias = array_filter(array(
                     'copia_afiliado' => $final_copia_afiliado,
@@ -4225,6 +4262,7 @@ class CalificacionPCLController extends Controller
                     'copia_eps' => $final_copia_eps,
                     'copia_afp' => $final_copia_afp,
                     'copia_arl' => $final_copia_arl,
+                    // 'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
                 )); 
     
                 sleep(2);
@@ -4236,7 +4274,15 @@ class CalificacionPCLController extends Controller
             // La descarga se hace desde que se guarda el comunicado
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
-                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
+                // Recorremos el array y se identifica si AFP_Conocimiento esta presente en alguan posicion
+                foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
+                    // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
+                    if (strpos($valor, "AFP_Conocimiento") !== false) {
+                        $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                    }
+                }
+                // Se crea array para compararlo con el que viene del formulario
+                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl', 'AFP_Conocimiento' => 'copia_afp_conocimiento'];
                 
                 if ($copiaComunicadosPcl > 0) {
                     // Inicializar el array con todas las claves con valores vacíos
@@ -4383,6 +4429,11 @@ class CalificacionPCLController extends Controller
                 $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
                 $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+            }
+
+            if (isset($copia_afp_conocimiento)) {
+                $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_evento, 'pdf');
+                $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
             }
 
             /* Extraer el id del cliente */
@@ -4608,7 +4659,15 @@ class CalificacionPCLController extends Controller
             // La descarga se hace desde que se guarda el comunicado
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado'){
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
-                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
+                // Recorremos el array y se identifica si AFP_Conocimiento esta presente en alguan posicion
+                foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
+                    // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
+                    if (strpos($valor, "AFP_Conocimiento") !== false) {
+                        $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                    }
+                }
+                // Se crea array para compararlo con el que viene del formulario
+                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl', 'AFP_Conocimiento' => 'copia_afp_conocimiento'];
 
                 if ($copiaComunicadosPcl > 0) {                    
                     // Inicializar el array con todas las claves con valores vacíos
@@ -4736,6 +4795,11 @@ class CalificacionPCLController extends Controller
                 $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
                 $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+            }
+
+            if (isset($copia_afp_conocimiento)) {
+                $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_evento, 'pdf');
+                $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
             }
 
             /* Extraer el id del cliente */
@@ -4980,7 +5044,8 @@ class CalificacionPCLController extends Controller
             
             return response()->json($datos);
 
-        }elseif($request->tipo_documento_descarga_califi_editar == "Documento_calificacion_tecnica"){
+        }
+        elseif($request->tipo_documento_descarga_califi_editar == "Documento_calificacion_tecnica"){
             $dato_fecha_evento = sigmel_informacion_eventos::on('sigmel_gestiones')
             ->select('F_evento')
             ->where([['ID_evento', $ID_evento]])
@@ -5016,7 +5081,15 @@ class CalificacionPCLController extends Controller
             // La descarga se hace desde que se guarda el comunicado
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado'){
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
-                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl'];
+                // Recorremos el array y se identifica si AFP_Conocimiento esta presente en alguan posicion
+                foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
+                    // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
+                    if (strpos($valor, "AFP_Conocimiento") !== false) {
+                        $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                    }
+                }
+                // Se crea array para compararlo con el que viene del formulario
+                $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl', 'AFP_Conocimiento' => 'copia_afp_conocimiento'];
 
                 if ($copiaComunicadosPcl > 0) {                    
                     // Inicializar el array con todas las claves con valores vacíos
@@ -5144,6 +5217,11 @@ class CalificacionPCLController extends Controller
                 $minucipio_arl = $datos_arl[0]->Nombre_municipio;
 
                 $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$email_arl."; ".$telefonos_arl."; ".$ciudad_arl."; ".$minucipio_arl;
+            }
+
+            if (isset($copia_afp_conocimiento)) {
+                $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_evento, 'pdf');
+                $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
             }
 
             /* Extraer el id del cliente */
@@ -10470,8 +10548,6 @@ class CalificacionPCLController extends Controller
         $Copia_arl_correspondecia = $array_datos_comite_inter[0]->Copia_arl;
         $Oficio_pcl = $array_datos_comite_inter[0]->Oficio_pcl;
 
-        // echo $Cuerpo_comunicado_correspondencia;
-
         //Captura de datos del afiliado 
 
         $array_datos_info_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
@@ -10537,12 +10613,12 @@ class CalificacionPCLController extends Controller
         //     $Email_afiliado_noti = '';
         // }
 
-        if (!empty($Copia_afiliado_correspondencia) && $Copia_afiliado_correspondencia == 'Afiliado') {
+        if (!empty($Copia_afiliado_correspondencia) && $Copia_afiliado_correspondencia == 'Afiliado') {            
             $Nombre_afiliado = $array_datos_info_afiliado[0]->Nombre_afiliado;
             $Direccion_afiliado = $array_datos_info_afiliado[0]->Direccion;
             $Telefono_afiliado = $array_datos_info_afiliado[0]->Telefono_contacto;
             $Email_afiliado = $array_datos_info_afiliado[0]->Email;
-            $Ciudad_departamento_afiliado = $array_datos_info_afiliado[0]->Nombre_municipio.'-'.$array_datos_info_afiliado[0]->Nombre_departamento;
+            $Ciudad_departamento_afiliado = $array_datos_info_afiliado[0]->Nombre_municipio.'-'.$array_datos_info_afiliado[0]->Nombre_departamento;            
         } else {
             $Nombre_afiliado = '';
             $Direccion_afiliado = '';
@@ -10578,8 +10654,9 @@ class CalificacionPCLController extends Controller
             $Email_afp = '';
             $Ciudad_departamento_afp = '';
         }
+        $Agregar_copias = [];
+        if (!empty($Copia_afp_conocimiento_correspondencia) && $Copia_afp_conocimiento_correspondencia == "AFP_Conocimiento") {            
 
-        if (!empty($Copia_afp_conocimiento_correspondencia) && $Copia_afp_conocimiento_correspondencia == "AFP_Conocimiento") {
             $dato_id_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
             ->select('siae.Entidad_conocimiento','siae.Id_afp_entidad_conocimiento')
             ->where([['siae.ID_evento', $ID_Evento_comuni_comite]])
@@ -10589,33 +10666,14 @@ class CalificacionPCLController extends Controller
             $id_afp_conocimiento = $dato_id_afp_conocimiento[0]->Id_afp_entidad_conocimiento;
 
             if ($si_entidad_conocimiento == "Si") {
-                $datos_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
-                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
-                ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sie.Emails as Email','sie.Otros_Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
-                ->where([['sie.Id_Entidad', $id_afp_conocimiento]])
-                ->get();
-                $Nombre_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_entidad;
-                $Direccion_afp_conocimiento = $datos_afp_conocimiento[0]->Direccion;
-                $Telefonos_afp_conocimiento = $datos_afp_conocimiento[0]->Telefonos;
-                $Email_afp_conocimiento = $datos_afp_conocimiento[0]->Email;
-                $Ciudad_departamento_afp_conocimiento = $datos_afp_conocimiento[0]->Nombre_ciudad.'-'.$datos_afp_conocimiento[0]->Nombre_departamento;
+                $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_Evento_comuni_comite, 'pdf');
+                $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;                
             } else {
                 $Copia_afp_conocimiento_correspondencia = '';
-
-                $Nombre_afp_conocimiento = '';
-                $Direccion_afp_conocimiento = '';
-                $Telefonos_afp_conocimiento = '';
-                $Email_afp_conocimiento = '';
-                $Ciudad_departamento_afp_conocimiento = '';
             }
 
         } else {
-            $Nombre_afp_conocimiento = '';
-            $Direccion_afp_conocimiento = '';
-            $Telefonos_afp_conocimiento = '';
-            $Email_afp_conocimiento = '';
-            $Ciudad_departamento_afp_conocimiento = '';
+            $Copia_afp_conocimiento_correspondencia = '';
         }
         
 
@@ -10916,18 +10974,14 @@ class CalificacionPCLController extends Controller
                 'Telefono_afp' => $Telefono_afp,
                 'Email_afp' => $Email_afp,
                 'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
-                'Nombre_afp_conocimiento' => $Nombre_afp_conocimiento,
-                'Direccion_afp_conocimiento' => $Direccion_afp_conocimiento,
-                'Telefonos_afp_conocimiento' => $Telefonos_afp_conocimiento,
-                'Ciudad_departamento_afp_conocimiento' => $Ciudad_departamento_afp_conocimiento,
+                'Agregar_copia' => $Agregar_copias,
                 'Nombre_arl' => $Nombre_arl,
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
                 'Ciudad_departamento_arl' => $Ciudad_departamento_arl,
                 'Email_arl' => $Email_arl,
                 'footer' => $footer,
-                'N_siniestro' => $N_siniestro,
-                'Email_afp_conocimiento' => $Email_afp_conocimiento
+                'N_siniestro' => $N_siniestro
             ];
             
             // Crear una instancia de Dompdf
@@ -11086,10 +11140,7 @@ class CalificacionPCLController extends Controller
                 'Direccion_afp' => $Direccion_afp,
                 'Telefono_afp' => $Telefono_afp,
                 'Ciudad_departamento_afp' => $Ciudad_departamento_afp,
-                'Nombre_afp_conocimiento' => $Nombre_afp_conocimiento,
-                'Direccion_afp_conocimiento' => $Direccion_afp_conocimiento,
-                'Telefonos_afp_conocimiento' => $Telefonos_afp_conocimiento,
-                'Ciudad_departamento_afp_conocimiento' => $Ciudad_departamento_afp_conocimiento,
+                'Agregar_copia' => $Agregar_copias,
                 'Nombre_arl' => $Nombre_arl,
                 'Direccion_arl' => $Direccion_arl,
                 'Telefono_arl' => $Telefono_arl,
@@ -11098,8 +11149,7 @@ class CalificacionPCLController extends Controller
                 'N_siniestro' => $N_siniestro,
                 'Email_eps' => $Email_eps,
                 'Email_afp' => $Email_afp,
-                'Email_arl' => $Email_arl,
-                'Email_afp_conocimiento' => $Email_afp_conocimiento
+                'Email_arl' => $Email_arl
                 // 'footer_dato_1' => $footer_dato_1,
                 // 'footer_dato_2' => $footer_dato_2,
                 // 'footer_dato_3' => $footer_dato_3,

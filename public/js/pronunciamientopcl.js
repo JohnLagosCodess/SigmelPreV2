@@ -388,33 +388,27 @@ $(document).ready(function(){
     }
 
     /* VALIDACIÓN MOSTRAR RANGO PCL */
-    $("#porcentaje_pcl").on("input", function(){
-        opt_rango_pcl = $(this).val();
-        //console.log(opt_rango_pcl);
-        //$("#porcentaje_pcl").val(opt_rango_pcl);
-        iniciarIntervalo_rangoPcl();
-    });
-    function iniciarIntervalo_rangoPcl() {
-        var resul_rango=0;
-        //clearInterval(intervaloRango);
-        intervaloRango = setInterval(() => {
-            if(opt_rango_pcl=='isNaN'){
-                resul_rango = '0';
-            }else if(opt_rango_pcl < "14,99"){
-                resul_rango = 'Entre 1 y 14,99%';
-            } else if (opt_rango_pcl >= "14,99" && opt_rango_pcl < "29,99"){
-                resul_rango = 'Entre 15 y 29,99%';
-            } else if (opt_rango_pcl >= "29,99" && opt_rango_pcl < "49,99"){
-                resul_rango = 'Entre 30 y 49,99%';
-            } else if (opt_rango_pcl >= "49,99"){
-                resul_rango = 'Mayor o igual 50%';
-            }else{
-                resul_rango = '0';
+    var opt_rango_pcl = $('#porcentaje_pcl');
+
+    $('#porcentaje_pcl').focus(function() {
+        $("#porcentaje_pcl").on("input", function() {
+            opt_rango_pcl = $(this).val();
+            var porcentajePcl = parseFloat(opt_rango_pcl);
+            if (isNaN(porcentajePcl)) $('#rango_pcl').val(''); 
+
+            if(porcentajePcl === 0){                
+                $('#rango_pcl').val('PCL 0');
+            }else if(porcentajePcl > 0 && porcentajePcl < 14.99){                
+                $('#rango_pcl').val('Entre 1 y 14,99%');
+            } else if (porcentajePcl >= 14.99 && porcentajePcl < 29.99){                
+                $('#rango_pcl').val('Entre 15 y 29,99%');
+            } else if (porcentajePcl >= 29.99 && porcentajePcl < 49.99){               
+                $('#rango_pcl').val('Entre 30 y 49,99%');
+            } else if (porcentajePcl >= 49.99){                
+                $('#rango_pcl').val('Mayor o igual 50%');
             }
-            
-            $('#rango_pcl').val(resul_rango); //Coloca resultado Rango PCL
-        }, 500);
-    }
+        });
+    });    
     
     /* VALIDACIÓN MOSTRAR ITEM DE CORRESPONDECIA */
     var opt_correspondencia;
@@ -991,7 +985,7 @@ $(document).ready(function(){
      // Funcionalidad para el llenado del asunto y habilitar boton PDF para descarga 
 
     $("[name='decision_pr']").on("change", function(){
-    var opc_seleccionada = $(this).val();
+        var opc_seleccionada = $(this).val();
 
         if (opc_seleccionada == 'Acuerdo' && $("#primer_calificador").find('option:selected').text() != 'Otro/¿Cual?') {
             $('#asunto_cali').val('CONCEPTO MÉDICO DE DICTAMEN PÉRDIDA DE CAPACIDAD LABORAL');
@@ -1011,6 +1005,7 @@ $(document).ready(function(){
 
             // Deselección automática de las copias a partes interesadas: Afiliado
             $("#copia_afiliado").prop('checked', true);
+            $("#afp_conocimiento").prop('checked', false);
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', true);
@@ -1051,6 +1046,7 @@ $(document).ready(function(){
 
             // Selección automática de las copias a partes interesadas: Afiliado
             $("#copia_afiliado").prop('checked', true);
+            $("#afp_conocimiento").prop('checked', false);
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
@@ -1071,6 +1067,7 @@ $(document).ready(function(){
 
             // Deselección automática de las copias a partes interesadas: Afiliado
             $("#copia_afiliado").prop('checked', false);
+            $("#afp_conocimiento").prop('checked', false);
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', false);
@@ -1185,6 +1182,7 @@ $(document).ready(function(){
         formData.append('copia_eps', $('#copia_eps').filter(":checked").val() || '');
         formData.append('copia_afp', $('#copia_afp').filter(":checked").val() || '');
         formData.append('copia_arl', $('#copia_arl').filter(":checked").val() || '');
+        formData.append('copia_afp_conocimiento', $('#afp_conocimiento').filter(":checked").val() || '');
         formData.append('junta_regional', $('#junta_regional').filter(":checked").val() || '');
         formData.append('junta_nacional', $('#junta_nacional').filter(":checked").val() || '');
         formData.append('junta_regional_cual', $('#junta_regional_cual').val() || '');
@@ -1221,6 +1219,7 @@ $(document).ready(function(){
         var copia_eps = $('#copia_eps').filter(":checked").val();
         var copia_afp = $('#copia_afp').filter(":checked").val();
         var copia_arl = $('#copia_arl').filter(":checked").val();
+        var copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
         var firmar = $('#firmar').filter(":checked").val();
         var desicion_proforma_pro = $("[id^='di_']").filter(":checked").val();
         if (desicion_proforma_pro == 'Acuerdo') {
@@ -1271,6 +1270,7 @@ $(document).ready(function(){
                             'copia_eps':copia_eps,
                             'copia_afp':copia_afp,
                             'copia_arl':copia_arl,
+                            'copia_afp_conocimiento': copia_afp_conocimiento,
                             'Firma_corre':firmar,
                             'desicion_proforma':desicion_proforma,
                             'id_comunicado': Id_Comunicado,
@@ -1321,6 +1321,7 @@ $(document).ready(function(){
                             'copia_eps':copia_eps,
                             'copia_afp':copia_afp,
                             'copia_arl':copia_arl,
+                            'copia_afp_conocimiento': copia_afp_conocimiento,
                             'Firma_corre':firmar,
                             'desicion_proforma':desicion_proforma,
                             'id_comunicado': Id_Comunicado,
@@ -1406,6 +1407,7 @@ $(document).ready(function(){
         var copia_eps = $('#copia_eps').filter(":checked").val();
         var copia_afp = $('#copia_afp').filter(":checked").val();
         var copia_arl = $('#copia_arl').filter(":checked").val();
+        var copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
         var firmar = $('#firmar').filter(":checked").val();
         Sustenta_cali = Sustenta_cali ? Sustenta_cali.replace(/"/g, "'") : '';
         var N_siniestro = $('#n_siniestro').val();
@@ -1426,6 +1428,7 @@ $(document).ready(function(){
             'copia_eps':copia_eps,
             'copia_afp':copia_afp,
             'copia_arl':copia_arl,
+            'copia_afp_conocimiento': copia_afp_conocimiento,
             'Firma_corre':firmar,
             'desicion_proforma':desicion_proforma,
             'id_comunicado': comunicado.Id_Comunicado,
@@ -1446,82 +1449,97 @@ $(document).ready(function(){
                 document.body.removeChild(enlaceDescarga);
             }, 1000);
         }else{
-            $.ajax({
-                type:'POST',
-                url:'/generarPdfProformaspro',
-                data:datos_proforma_pro,
-                // xhrFields: {
-                //     responseType: 'blob' // Indica que la respuesta es un blob
-                // },
-                beforeSend:  function() {
-                    $("#btn_generar_proforma").addClass("descarga-deshabilitada");
-                },
-                success: function (response, status, xhr) {
-                    
-                    // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-            
-                    var indicativo = response.indicativo;
-
-                    // Crear un enlace de descarga similar al ejemplo anterior
-                    if (desicion_proforma == "proforma_acuerdo") {
-
-                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
-                        var base64Pdf = response.pdf;
-
-                        // Decodificar base64 en un array de bytes
-                        var binaryString = atob(base64Pdf);
-                        var len = binaryString.length;
-                        var bytes = new Uint8Array(len);
-
-                        for (var i = 0; i < len; i++) {
-                            bytes[i] = binaryString.charCodeAt(i);
-                        }
-
-                        // Crear un Blob a partir del array de bytes
-                        var blob = new Blob([bytes], { type: 'application/pdf' });
-                    
-                        // var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".pdf";
-                        var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+"_"+indicativo+".pdf";
-
-                    }else{
-
-                        // Obtener el contenido codificado en base64 del PDF desde la respuesta
-                        var base64Word = response.word;
+            if (comunicado.Nombre_documento) {
+                var nombre_doc = comunicado.Nombre_documento;
+                var idEvento = comunicado.ID_evento;
+                var enlaceDescarga = document.createElement('a');
+                enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+                enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+                enlaceDescarga.style.display = 'none';
+                document.body.appendChild(enlaceDescarga);
+                enlaceDescarga.click();
+                setTimeout(function() {
+                    document.body.removeChild(enlaceDescarga);
+                }, 1000);
+            }
+            else{
+                $.ajax({
+                    type:'POST',
+                    url:'/generarPdfProformaspro',
+                    data:datos_proforma_pro,
+                    // xhrFields: {
+                    //     responseType: 'blob' // Indica que la respuesta es un blob
+                    // },
+                    beforeSend:  function() {
+                        $("#btn_generar_proforma").addClass("descarga-deshabilitada");
+                    },
+                    success: function (response, status, xhr) {
+                        
+                        // var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
                 
-                        // Decodificar base64 en un array de bytes
-                        var binaryString = atob(base64Word);
-                        var len = binaryString.length;
-                        var bytes = new Uint8Array(len);
-                
-                        for (var i = 0; i < len; i++) {
-                            bytes[i] = binaryString.charCodeAt(i);
+                        var indicativo = response.indicativo;
+    
+                        // Crear un enlace de descarga similar al ejemplo anterior
+                        if (desicion_proforma == "proforma_acuerdo") {
+    
+                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                            var base64Pdf = response.pdf;
+    
+                            // Decodificar base64 en un array de bytes
+                            var binaryString = atob(base64Pdf);
+                            var len = binaryString.length;
+                            var bytes = new Uint8Array(len);
+    
+                            for (var i = 0; i < len; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+    
+                            // Crear un Blob a partir del array de bytes
+                            var blob = new Blob([bytes], { type: 'application/pdf' });
+                        
+                            // var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".pdf";
+                            var nombre_documento = "PCL_ACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+"_"+indicativo+".pdf";
+    
+                        }else{
+    
+                            // Obtener el contenido codificado en base64 del PDF desde la respuesta
+                            var base64Word = response.word;
+                    
+                            // Decodificar base64 en un array de bytes
+                            var binaryString = atob(base64Word);
+                            var len = binaryString.length;
+                            var bytes = new Uint8Array(len);
+                    
+                            for (var i = 0; i < len; i++) {
+                                bytes[i] = binaryString.charCodeAt(i);
+                            }
+    
+                            var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+    
+                            // var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".docx";
+                            var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+"_"+indicativo+".docx";
                         }
-
-                        var blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-
-                        // var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+".docx";
-                        var nombre_documento = "PCL_DESACUERDO_"+Asignacion_Pronuncia_corre+"_"+Iden_afiliado_corre+"_"+indicativo+".docx";
-                    }
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
-            
-                    // Adjuntar el enlace al documento y activar el evento de clic
-                    document.body.appendChild(link);
-                    link.click();
-            
-                    // Eliminar el enlace del documento
-                    document.body.removeChild(link);
-                },
-                error: function (error) {
-                    // Manejar casos de error
-                    console.error('Error al descargar el PDF:', error);
-                },
-                complete: function(){
-                    $("#btn_generar_proforma").removeClass("descarga-deshabilitada");
-                    // location.reload();
-                }  
-            });
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+                
+                        // Adjuntar el enlace al documento y activar el evento de clic
+                        document.body.appendChild(link);
+                        link.click();
+                
+                        // Eliminar el enlace del documento
+                        document.body.removeChild(link);
+                    },
+                    error: function (error) {
+                        // Manejar casos de error
+                        console.error('Error al descargar el PDF:', error);
+                    },
+                    complete: function(){
+                        $("#btn_generar_proforma").removeClass("descarga-deshabilitada");
+                        // location.reload();
+                    }  
+                });
+            }
         }
     });
     //Remover CIE10

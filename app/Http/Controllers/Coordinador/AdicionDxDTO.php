@@ -1920,12 +1920,6 @@ class AdicionDxDTO extends Controller
         if (!empty($afp)) {
             $variables_llenas[] = $afp;
         }
-        if (!empty($afp_conocimiento)) {
-            // traemos la informacion de las copias dependiendo de cuantas entidades de conocimiento hay
-            $str_entidades = $this->globalService->retornarStringCopiasEntidadConocimiento($Id_Evento);
-           
-            $variables_llenas[] = $str_entidades;
-        }
         if (!empty($arl)) {
             $variables_llenas[] = $arl;
         }
@@ -1934,6 +1928,12 @@ class AdicionDxDTO extends Controller
         }
         if (!empty($jnci)) {
             $variables_llenas[] = $jnci;
+        }
+        if (!empty($afp_conocimiento)) {
+            // traemos la informacion de las copias dependiendo de cuantas entidades de conocimiento hay
+            $str_entidades = $this->globalService->retornarStringCopiasEntidadConocimiento($Id_Evento);
+           
+            $variables_llenas[] = $str_entidades;
         }
 
         if(count($variables_llenas) > 0){

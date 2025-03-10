@@ -441,7 +441,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-3">
+                                    <div class="col-2">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                     <input class="custom-control-input" type="checkbox" id="copia_afiliado" name="copia_afiliado" value="Afiliado" @if (!empty($info_pronuncia[0]->Copia_afiliado) && $info_pronuncia[0]->Copia_afiliado=='Afiliado') checked @endif>
@@ -449,7 +449,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-3">
+                                    <div class="col-2">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">
                                                     <input class="custom-control-input" type="checkbox" id="copia_empleador" name="copia_empleador" value="Empleador" @if (!empty($info_pronuncia[0]->copia_empleador) && $info_pronuncia[0]->copia_empleador=='Empleador') checked @endif>
@@ -481,6 +481,17 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <input type="hidden" name="entidad_conocimiento" id="entidad_conocimiento" value="<?php if(!empty($info_afp_conocimiento[0]->Entidad_conocimiento)){echo $info_afp_conocimiento[0]->Entidad_conocimiento;}?>">
+                                    @if (!empty($info_afp_conocimiento[0]->Entidad_conocimiento) && $info_afp_conocimiento[0]->Entidad_conocimiento == "Si")
+                                        <div class="col-2">
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="dependencia_justificacion custom-control-input" type="checkbox" id="afp_conocimiento" name="afp_conocimiento" value="AFP_Conocimiento" @if (!empty($info_pronuncia[0]->Copia_Afp_Conocimiento) && $info_pronuncia[0]->Copia_Afp_Conocimiento =='AFP_Conocimiento') checked @endif>
+                                                    <label for="afp_conocimiento" class="custom-control-label">Entidad conocimiento</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                     <div class="col-4 d-none">
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox">

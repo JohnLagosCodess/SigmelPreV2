@@ -56,18 +56,9 @@ use PhpOffice\PhpWord\Writer\Word2007;
 use PhpOffice\PhpWord\Shared\Html;
 use PhpOffice\PhpWord\Style\Image;
 use PhpParser\Node\Stmt\TryCatch;
-// use TCPDF;
-// use setasign\Fpdi\Tcpdf\Fpdi;
-// use setasign\FpdiPdfParser\PdfParser; 
+use Smalot\PdfParser\Parser;
+use Ilovepdf\CompressTask;
 use setasign\Fpdi\Fpdi;
-// use setasign\Fpdi\PdfReader;
-// use SetaPDF\Parser\PdfParser\PdfParser;
-// require_once base_path('vendor/setasign/FpdiPdfParser/src/PdfParser/PdfParser.php');
-// use setasign\Fpdi\PdfParser\PdfParser;
-// use setasign\FpdiPdfParser\PdfParser\PdfParser;
-
-// use Mpdf\Mpdf;
-// use Mpdf\Output\Destination;
 use mikehaertl\pdftk\Pdf;
 use ZipArchive;
 
@@ -452,11 +443,11 @@ class CalificacionJuntasController extends Controller
         }
         // Listado Junta Pagos Honorarios
         if($parametro == 'lista_juntas_pago'){
-            $listado_pagos_juntas = sigmel_lista_parametros::on('sigmel_gestiones')
-            ->select('Id_Parametro', 'Nombre_parametro')
+            $listado_pagos_juntas = sigmel_informacion_entidades::on('sigmel_gestiones')
+            ->select('Id_Entidad as Id_Parametro', 'Nombre_entidad as Nombre_parametro')
             ->where([
-                ['Tipo_lista', '=', 'Jrci Invalidez'],
-                ['Estado', '=', 'activo']
+                ['IdTipo_entidad', '4'],
+                ['Estado_entidad', 'activo']
             ])
             ->get();
 
@@ -3206,14 +3197,14 @@ class CalificacionJuntasController extends Controller
 
         $mensajes = array(
             "parametro" => 'agregar_comunicado',
-            'status_pdf' => isset($id_comunicado) ? $this->generarPDF($request, $id_comunicado,$principalDestinatario($entidades,$destinatario ?? null),'guardar') : '',
+            'status_pdf' => isset($id_comunicado) ? $this->generarPDF($request, $id_comunicado,$principalDestinatario($entidades,$destinatario ?? null),$total_copia_comunicado,'guardar') : '',
             "mensaje" => 'Comunicado generado satisfactoriamente.'
         );
 
         return json_decode(json_encode($mensajes, true));
 
     }
-    public function generarPDF($data_comunicado,$id_comunicado,$principalDestinatario,$tipo_proceso){
+    public function generarPDF($data_comunicado,$id_comunicado,$principalDestinatario,$total_copia_comunicado,$tipo_proceso){
         
         //Dado que los procesos de guardar y actualizar estan separados, y las clave-valor no son los mismos,
         //se utiliza params para homolarlo en uno solo.
@@ -3266,7 +3257,7 @@ class CalificacionJuntasController extends Controller
                 'p45' => 'F_radicacion_contro_pri_cali_act',
                 'p46' => 'F_notifi_afiliado_act',
                 'p47' => 'Id_junta_act',
-                'p48' => 'tipo_de_preforma_editar',
+                'p48' => 'tipo_de_preforma_editar'
             ],
             'actualizar' => [
                 'p1' => '_token',
@@ -3316,7 +3307,7 @@ class CalificacionJuntasController extends Controller
                 'p45' => 'F_radicacion_contro_pri_cali_act',
                 'p46' => 'F_notifi_afiliado_act',
                 'p47' => 'Id_junta_act',
-                'p48' => 'tipo_de_preforma_editar',
+                'p48' => 'tipo_de_preforma_editar'
             ]
         ];
 
@@ -3359,6 +3350,7 @@ class CalificacionJuntasController extends Controller
             'edit_copia_arl' => ($data_comunicado->{$params[$tipo_proceso]['p36']} == 'true'),
             'edit_copia_jrci' => ($data_comunicado->{$params[$tipo_proceso]['p37']} == 'true'),
             'edit_copia_jnci' => ($data_comunicado->{$params[$tipo_proceso]['p38']} == 'true'),
+            'edit_copia_entidad_conocimiento' => $total_copia_comunicado,
             'n_siniestro_proforma_editar' => $data_comunicado->{$params[$tipo_proceso]['p39']},
             'Nombre_junta_act' => $data_comunicado->{$params[$tipo_proceso]['p40']},
             'F_estructuracion_act' => $data_comunicado->{$params[$tipo_proceso]['p41']},
@@ -3498,8 +3490,9 @@ class CalificacionJuntasController extends Controller
         $radioafp_comunicado_editar = $request->radioafp_comunicado_editar;
         $radioarl_comunicado_editar = $request->radioarl_comunicado_editar;
         $radioOtro_editar = $request->radioOtro_editar;
-        $copiaComunicadoTotal = $request->agregar_copia_editar;
         $otro_destinatario_jrci = is_numeric($request->JRCI_Destinatario_editar) ? 1 : 0;
+
+        $copiaComunicadoTotal = $request->agregar_copia_editar;
         if (!empty($copiaComunicadoTotal)) {
             $total_copia_comunicado = implode(", ", $copiaComunicadoTotal);                
         }else{
@@ -3609,7 +3602,7 @@ class CalificacionJuntasController extends Controller
         
         $mensajes = array(
             "parametro" => 'actualizar_comunicado',
-            'status_pdf' => $this->generarPDF($request, $Id_comunicado_editar,$principalDestinatario($entidades,$destinatario),'actualizar'),
+            'status_pdf' => $this->generarPDF($request, $Id_comunicado_editar,$principalDestinatario($entidades,$destinatario),$total_copia_comunicado,'actualizar'),
             "mensaje" => 'Comunicado actualizado satisfactoriamente.'
         );
 
@@ -3751,6 +3744,8 @@ class CalificacionJuntasController extends Controller
                 $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
                 $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
                 $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
+                $final_copia_afp_conocimiento =  isset($request->edit_copia_entidad_conocimiento) ? 'AFP_Conocimiento' : '';
+
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
                     'edit_copia_empleador' => $edit_copias_empleador,
@@ -3759,6 +3754,7 @@ class CalificacionJuntasController extends Controller
                     'edit_copia_arl' => $edit_copias_arl,
                     'edit_copia_jrci' => $edit_copias_jrci,
                     'edit_copia_jnci' => $edit_copias_jnci,
+                    'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
                 ));   
                 sleep(2);
 
@@ -3969,6 +3965,12 @@ class CalificacionJuntasController extends Controller
 
                     $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
     
+                }
+
+                if (isset($copia_afp_conocimiento)) {
+                    $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_evento, 'pdf');
+                    $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
+                    
                 }
 
                 // validamos si el checkbox de la firma esta marcado
@@ -4335,6 +4337,245 @@ class CalificacionJuntasController extends Controller
                     $parte_controvierte_califi = "";
                 }
 
+                /* COPIAS A PARTES INTERESADAS (INCLUYENDO LAS ENTIDADES DE CONOCIMIENTO) */
+                // Validamos si los checkbox esta marcados
+                $edit_copias_afiliado = $request->edit_copia_afiliado ? 'Afiliado' : '';
+                $edit_copias_empleador = $request->edit_copia_empleador ? 'Empleador' : '';
+                $edit_copias_eps = $request->edit_copia_eps ? 'EPS' : '';
+                $edit_copias_afp = $request->edit_copia_afp ? 'AFP' : '';
+                $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
+                $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
+                $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
+                $final_copia_afp_conocimiento =  isset($request->edit_copia_entidad_conocimiento) ? 'AFP_Conocimiento' : '';
+
+                $total_copias = array_filter(array(
+                    'edit_copia_afiliado' => $edit_copias_afiliado,
+                    'edit_copia_empleador' => $edit_copias_empleador,
+                    'edit_copia_eps' => $edit_copias_eps,
+                    'edit_copia_afp' => $edit_copias_afp,
+                    'edit_copia_arl' => $edit_copias_arl,
+                    'edit_copia_jrci' => $edit_copias_jrci,
+                    'edit_copia_jnci' => $edit_copias_jnci,
+                    'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
+                ));   
+                sleep(2);
+
+                // Filtramos las llaves del array
+                extract($total_copias);
+
+                // Creamos array para empezar a llenarlos con las copias
+                $Agregar_copias = [];
+                if (isset($edit_copia_afiliado)) {
+                    $AfiliadoData = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                    ->select('siae.Nombre_afiliado', 'siae.Direccion', 'siae.Telefono_contacto', 'sldm.Nombre_departamento as Nombre_ciudad', 'sldm2.Nombre_municipio', 'siae.Email')
+                    ->where([['siae.Nro_identificacion', $N_identificacion],['siae.ID_evento', $ID_evento]])
+                    ->get();
+                    $nombreAfiliado = $AfiliadoData[0]->Nombre_afiliado;
+                    $direccionAfiliado = $AfiliadoData[0]->Direccion;
+                    $telefonoAfiliado = $AfiliadoData[0]->Telefono_contacto;
+                    $ciudadAfiliado = $AfiliadoData[0]->Nombre_ciudad;
+                    $municipioAfiliado = $AfiliadoData[0]->Nombre_municipio;
+                    $emailAfiliado = $AfiliadoData[0]->Email;            
+                    $Agregar_copias['Afiliado'] = $nombreAfiliado."; ".$direccionAfiliado."; ".$emailAfiliado."; ".$telefonoAfiliado."; ".$ciudadAfiliado."; ".$municipioAfiliado.".";
+                } 
+                
+                if(isset($edit_copia_empleador)) {            
+                    $datos_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_municipio', '=', 'sldm2.Id_municipios')
+                    ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                    ->where([['sile.Nro_identificacion', $N_identificacion],['sile.ID_evento', $ID_evento]])
+                    ->get();
+
+                    $nombre_empleador = $datos_empleador[0]->Empresa;
+                    $direccion_empleador = $datos_empleador[0]->Direccion;
+                    $telefono_empleador = $datos_empleador[0]->Telefono_empresa;
+                    $ciudad_empleador = $datos_empleador[0]->Nombre_ciudad;
+                    $departamento_empleador = $datos_empleador[0]->Nombre_departamento;
+
+                    $Agregar_copias['Empleador'] = $nombre_empleador."; ".$direccion_empleador."; ".$telefono_empleador."; ".$ciudad_empleador." - ".$departamento_empleador.".";
+                }
+
+                if (isset($edit_copia_eps)) {
+                    $datos_eps = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                    ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_eps', '=', 'sie.Id_Entidad')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                    ->select('sie.Nombre_entidad as Nombre_eps', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos', 
+                    'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                    ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                    ->get();
+
+                    $nombre_eps = $datos_eps[0]->Nombre_eps;
+                    $direccion_eps = $datos_eps[0]->Direccion;
+                    if ($datos_eps[0]->Otros_Telefonos != "") {
+                        $telefonos_eps = $datos_eps[0]->Telefonos.",".$datos_eps[0]->Otros_Telefonos;
+                    } else {
+                        $telefonos_eps = $datos_eps[0]->Telefonos;
+                    }
+                    $ciudad_eps = $datos_eps[0]->Nombre_ciudad;
+                    $departamento_eps = $datos_eps[0]->Nombre_departamento;
+
+                    $Agregar_copias['EPS'] = $nombre_eps."; ".$direccion_eps."; ".$telefonos_eps."; ".$ciudad_eps." - ".$departamento_eps;
+                }
+
+                if (isset($edit_copia_afp)) {
+                    $datos_afp = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                    ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp', '=', 'sie.Id_Entidad')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                    ->select('sie.Nombre_entidad as Nombre_afp', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+                    'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                    ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                    ->get();
+
+                    $nombre_afp = $datos_afp[0]->Nombre_afp;
+                    $direccion_afp = $datos_afp[0]->Direccion;
+                    if ($datos_afp[0]->Otros_Telefonos != "") {
+                        $telefonos_afp = $datos_afp[0]->Telefonos.",".$datos_afp[0]->Otros_Telefonos;
+                    } else {
+                        $telefonos_afp = $datos_afp[0]->Telefonos;
+                    }
+                    $ciudad_afp = $datos_afp[0]->Nombre_ciudad;
+                    $departamento_afp = $datos_afp[0]->Nombre_departamento;
+
+                    $Agregar_copias['AFP'] = $nombre_afp."; ".$direccion_afp."; ".$telefonos_afp."; ".$ciudad_afp." - ".$departamento_afp;
+                }
+
+                if (isset($edit_copia_arl)) {
+                    $datos_arl = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                    ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_arl', '=', 'sie.Id_Entidad')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                    ->select('sie.Nombre_entidad as Nombre_arl', 'sie.Direccion', 'sie.Telefonos', 'sie.Otros_Telefonos',
+                    'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                    ->where([['Nro_identificacion', $N_identificacion],['ID_evento', $ID_evento]])
+                    ->get();
+
+                    $nombre_arl = $datos_arl[0]->Nombre_arl;
+                    $direccion_arl = $datos_arl[0]->Direccion;
+                    if ($datos_arl[0]->Otros_Telefonos != "") {
+                        $telefonos_arl = $datos_arl[0]->Telefonos.",".$datos_arl[0]->Otros_Telefonos;
+                    } else {
+                        $telefonos_arl = $datos_arl[0]->Telefonos;
+                    }
+                    
+                    $ciudad_arl = $datos_arl[0]->Nombre_ciudad;
+                    $departamento_arl = $datos_arl[0]->Nombre_departamento;
+
+                    $Agregar_copias['ARL'] = $nombre_arl."; ".$direccion_arl."; ".$telefonos_arl."; ".$ciudad_arl." - ".$departamento_arl;
+                };
+
+                if(isset($edit_copia_jrci)){
+                    if(!empty($request->input_jrci_seleccionado_copia_editar)){
+                        $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                        ->select('sie.Nombre_entidad', 
+                            'sie.Nit_entidad', 
+                            'sie.Direccion', 
+                            'sie.Telefonos',
+                            'sie.Otros_Telefonos',
+                            'sie.Emails',
+                            'sldm.Id_departamento',
+                            'sldm.Nombre_departamento',
+                            'sldm1.Id_municipios',
+                            'sldm1.Nombre_municipio as Nombre_ciudad'
+                        )->where([
+                            ['sie.Id_Entidad', $request->id_jrci_del_input]
+                        ])->get();
+    
+                        $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+                        $direccion_jrci = $datos_jrci[0]->Direccion;
+
+                        if ($datos_jrci[0]->Otros_Telefonos != "") {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos.",".$datos_jrci[0]->Otros_Telefonos;
+                        } else {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos;
+                        }
+
+                        $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
+                        $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
+    
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+    
+                    }else{
+    
+                        $datos_jrci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                        ->select('sie.Nombre_entidad', 
+                            'sie.Nit_entidad', 
+                            'sie.Direccion', 
+                            'sie.Telefonos',
+                            'sie.Otros_Telefonos',
+                            'sie.Emails',
+                            'sldm.Id_departamento',
+                            'sldm.Nombre_departamento',
+                            'sldm1.Id_municipios',
+                            'sldm1.Nombre_municipio as Nombre_ciudad'
+                        )->where([
+                            ['sie.Id_Entidad', $request->jrci_califi_invalidez_copia_editar]
+                        ])->get();
+    
+                        $nombre_jrci = $datos_jrci[0]->Nombre_entidad;
+                        $direccion_jrci = $datos_jrci[0]->Direccion;
+
+                        if ($datos_jrci[0]->Otros_Telefonos != "") {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos.",".$datos_jrci[0]->Otros_Telefonos;
+                        } else {
+                            $telefonos_jrci = $datos_jrci[0]->Telefonos;
+                        }
+
+                        $ciudad_jrci = $datos_jrci[0]->Nombre_ciudad;
+                        $departamento_jrci = $datos_jrci[0]->Nombre_departamento;
+    
+                        $Agregar_copias['JRCI'] = $nombre_jrci."; ".$direccion_jrci."; ".$telefonos_jrci."; ".$ciudad_jrci." - ".$departamento_jrci;
+                    }
+                }
+                
+                if(isset($edit_copia_jnci)){
+                    $datos_jnci = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm1', 'sie.Id_Ciudad', '=', 'sldm1.Id_municipios')
+                    ->select('sie.Nombre_entidad', 
+                        'sie.Nit_entidad', 
+                        'sie.Direccion', 
+                        'sie.Telefonos',
+                        'sie.Otros_Telefonos',
+                        'sie.Emails',
+                        'sldm.Id_departamento',
+                        'sldm.Nombre_departamento',
+                        'sldm1.Id_municipios',
+                        'sldm1.Nombre_municipio as Nombre_ciudad'
+                    )->where([
+                        ['sie.IdTipo_entidad', 5]
+                    ])->limit(1)->get();
+    
+                    $nombre_jnci = $datos_jnci[0]->Nombre_entidad;
+                    $direccion_jnci = $datos_jnci[0]->Direccion;
+
+                    if ($datos_jnci[0]->Otros_Telefonos != "") {
+                        $telefonos_jnci = $datos_jnci[0]->Telefonos.",".$datos_jnci[0]->Otros_Telefonos;
+                    } else {
+                        $telefonos_jnci = $datos_jnci[0]->Telefonos;
+                    }
+
+                    $ciudad_jnci = $datos_jnci[0]->Nombre_ciudad;
+                    $departamento_jnci = $datos_jnci[0]->Nombre_departamento;
+
+                    $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
+    
+                }
+
+                // if (isset($copia_afp_conocimiento)) {
+                //     $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_evento, 'otra_forma');
+                //     $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
+                    
+                // }
+
                 /* datos del logo que va en el header */
                 $dato_logo_header = sigmel_clientes::on('sigmel_gestiones')
                 ->select('Logo_cliente')
@@ -4410,6 +4651,7 @@ class CalificacionJuntasController extends Controller
                     'nombre_usuario' => $nombre_usuario,
                     'cargo_usuario' => $cargo_usuario,
                     'N_siniestro' => $request->n_siniestro_proforma_editar,
+                    // 'Agregar_copia' => $Agregar_copias,
                 ];
 
                 $extension_proforma = "pdf";
@@ -4736,6 +4978,7 @@ class CalificacionJuntasController extends Controller
                 $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
                 $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
                 $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
+                $final_copia_afp_conocimiento =  isset($request->edit_copia_entidad_conocimiento) ? 'AFP_Conocimiento' : '';
 
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
@@ -4745,6 +4988,7 @@ class CalificacionJuntasController extends Controller
                     'edit_copia_arl' => $edit_copias_arl,
                     'edit_copia_jrci' => $edit_copias_jrci,
                     'edit_copia_jnci' => $edit_copias_jnci,
+                    'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
                 ));   
                 sleep(2);
 
@@ -4956,6 +5200,12 @@ class CalificacionJuntasController extends Controller
 
                     $Agregar_copias['JNCI'] = $nombre_jnci."; ".$direccion_jnci."; ".$telefonos_jnci."; ".$ciudad_jnci." - ".$departamento_jnci;
     
+                }
+
+                if (isset($copia_afp_conocimiento)) {
+                    $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_evento, 'pdf');
+                    $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
+                    
                 }
 
                 // validamos si el checkbox de la firma esta marcado
@@ -5292,6 +5542,7 @@ class CalificacionJuntasController extends Controller
                 $edit_copias_arl = $request->edit_copia_arl ? 'ARL' : '';
                 $edit_copias_jrci = $request->edit_copia_jrci ? 'JRCI': '';
                 $edit_copias_jnci = $request->edit_copia_jnci ? 'JNCI': '';
+                $final_copia_afp_conocimiento =  isset($request->edit_copia_entidad_conocimiento) ? 'AFP_Conocimiento' : '';
 
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
@@ -5301,6 +5552,7 @@ class CalificacionJuntasController extends Controller
                     'edit_copia_arl' => $edit_copias_arl,
                     'edit_copia_jrci' => $edit_copias_jrci,
                     'edit_copia_jnci' => $edit_copias_jnci,
+                    'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
                 ));   
                 sleep(2);
 
@@ -5513,6 +5765,12 @@ class CalificacionJuntasController extends Controller
     
                 }
 
+                if (isset($copia_afp_conocimiento)) {
+                    $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_evento, 'word');
+                    $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
+                    
+                }
+
                 // validamos si el checkbox de la firma esta marcado
                 $validarFirma = isset($request->firmarcomunicado_editar) ? 'firmar comunicado' : 'No lleva firma';
                                         
@@ -5708,6 +5966,65 @@ class CalificacionJuntasController extends Controller
                     Html::addHtml($section, $cuerpo, false, false);
                     $section->addTextBreak();
                     $section->addText('Cordialmente,');
+                    $section->addTextBreak();
+
+                    // Configuramos la tabla de copias a partes interesadas
+                    $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
+                    if (count($Agregar_copias) == 0) {
+                        $htmltabla2 .= '
+                            <tr>
+                                <td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>
+                            </tr>';
+                    } else {
+                        $htmltabla2 .= '
+                            <tr>
+                                <td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Copia:</span></td>
+                            </tr>';
+
+                        $Afiliado = 'Afiliado';
+                        $Empleador = 'Empleador';
+                        $EPS = 'EPS';
+                        $AFP = 'AFP';
+                        $ARL = 'ARL';
+                        $JRCI = 'JRCI';
+                        $JNCI = 'JNCI';
+                        $AFP_Conocimiento = 'AFP_Conocimiento';
+
+                        if (isset($Agregar_copias[$Afiliado])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$Empleador])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$EPS])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$AFP])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$ARL])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$JRCI])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$JNCI])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
+                        }
+
+                        if(isset($Agregar_copias[$AFP_Conocimiento])){
+                            $htmltabla2.= $Agregar_copias['AFP_Conocimiento'];
+                        }
+                    }
+                    $htmltabla2 .= '</table>';
+                    Html::addHtml($section, $htmltabla2, false, true);
+                    $section->addTextBreak();
                     $section->addTextBreak();
 
                     if($Firma_cliente != "No firma"){
@@ -6019,6 +6336,7 @@ class CalificacionJuntasController extends Controller
                 $edit_copias_arl = $request->edit_copi ? 'ARL' : '';
                 $edit_copias_jrci = $request->edit_copia ? 'JRCI': '';
                 $edit_copias_jnci = $request->edit_copia ? 'JNCI': '';
+                $final_copia_afp_conocimiento =  isset($request->edit_copia_entidad_conocimiento) ? 'AFP_Conocimiento' : '';
 
                 $total_copias = array_filter(array(
                     'edit_copia_afiliado' => $edit_copias_afiliado,
@@ -6028,6 +6346,7 @@ class CalificacionJuntasController extends Controller
                     'edit_copia_arl' => $edit_copias_arl,
                     'edit_copia_jrci' => $edit_copias_jrci,
                     'edit_copia_jnci' => $edit_copias_jnci,
+                    'copia_afp_conocimiento' => $final_copia_afp_conocimiento,
                 ));   
                 sleep(2);
 
@@ -6250,6 +6569,12 @@ class CalificacionJuntasController extends Controller
     
                 }
 
+                if (isset($copia_afp_conocimiento)) {
+                    $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($ID_evento, 'word');
+                    $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
+                    
+                }
+
                 // validamos si el checkbox de la firma esta marcado
                 $validarFirma = isset($request->firmarcomunicado_editar) ? 'firmar comunicado' : 'No lleva firma';
                                         
@@ -6460,6 +6785,65 @@ class CalificacionJuntasController extends Controller
                     $section->addText('Atentamente,');
                     $section->addTextBreak();
 
+                    // Configuramos la tabla de copias a partes interesadas
+                    $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
+                    if (count($Agregar_copias) == 0) {
+                        $htmltabla2 .= '
+                            <tr>
+                                <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
+                            </tr>';
+                    } else {
+                        $htmltabla2 .= '
+                            <tr>
+                                <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
+                            </tr>';
+
+                        $Afiliado = 'Afiliado';
+                        $Empleador = 'Empleador';
+                        $EPS = 'EPS';
+                        $AFP = 'AFP';
+                        $ARL = 'ARL';
+                        $JRCI = 'JRCI';
+                        $JNCI = 'JNCI';
+                        $AFP_Conocimiento = 'AFP_Conocimiento';
+
+                        if (isset($Agregar_copias[$Afiliado])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$Empleador])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$EPS])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$AFP])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$ARL])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$JRCI])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$JNCI])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
+                        }
+
+                        if(isset($Agregar_copias[$AFP_Conocimiento])){
+                            $htmltabla2.= $Agregar_copias['AFP_Conocimiento'];
+                        }
+                    }
+
+                    $htmltabla2 .= '</table>';
+                    Html::addHtml($section, $htmltabla2, false, true);
+                    $section->addTextBreak();
+
                     if($Firma_cliente != "No firma"){
                         // Agregar </img> en la imagen de la firma
                         $patronetiqueta = '/<img(.*?)>/';
@@ -6505,60 +6889,6 @@ class CalificacionJuntasController extends Controller
                     $nestedTextRun->addText('Siniestro: ' . $request->n_siniestro_proforma_editar, array('bold' => true));
                     
                     // $section->addText('Elaboró: '.$nombre_usuario, array('bold' => true));
-                    // $section->addTextBreak();
-
-                    // // Configuramos la tabla de copias a partes interesadas
-                    // $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
-                    // if (count($Agregar_copias) == 0) {
-                    //     $htmltabla2 .= '
-                    //         <tr>
-                    //             <td style="border: 1px solid #000; padding: 5px;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>                                                                                
-                    //         </tr>';
-                    // } else {
-                    //     $htmltabla2 .= '
-                    //         <tr>
-                    //             <td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Copia:</span></td>                            
-                    //         </tr>';
-
-                    //     $Afiliado = 'Afiliado';
-                    //     $Empleador = 'Empleador';
-                    //     $EPS = 'EPS';
-                    //     $AFP = 'AFP';
-                    //     $ARL = 'ARL';
-                    //     $JRCI = 'JRCI';
-                    //     $JNCI = 'JNCI';
-
-                    //     if (isset($Agregar_copias[$Afiliado])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
-                    //     }
-
-                    //     if (isset($Agregar_copias[$Empleador])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
-                    //     }
-
-                    //     if (isset($Agregar_copias[$EPS])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
-                    //     }
-
-                    //     if (isset($Agregar_copias[$AFP])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
-                    //     }
-
-                    //     if (isset($Agregar_copias[$ARL])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
-                    //     }
-
-                    //     if (isset($Agregar_copias[$JRCI])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
-                    //     }
-
-                    //     if (isset($Agregar_copias[$JNCI])) {
-                    //         $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
-                    //     }
-                    // }
-
-                    // $htmltabla2 .= '</table>';
-                    // Html::addHtml($section, $htmltabla2, false, true);
                     // $section->addTextBreak();
 
                     // Configuramos el footer
@@ -7383,32 +7713,51 @@ class CalificacionJuntasController extends Controller
                             ['Folear', 'Si']
                         ])->get();
                         if (count($consultarfoleoDoc) > 0) {
-                            // Crear instancia de FPDI
-                            $pdf_Folear_doc = new Fpdi(); 
-                            // buscamos el documento donde se encuentra guardado
-                            $Foleo_Doc = public_path("Documentos_Eventos/{$Id_evento_expediente}/{$NombreDocumentos}");
-                            // Obtener el número de páginas del PDF
-                            $Contar_paginas_Foleo_Doc = $pdf_Folear_doc->setSourceFile($Foleo_Doc);
-                            // dd($Contar_paginas_Foleo_Doc);
-                            // Fuente para la numeración
-                            $pdf_Folear_doc->SetFont('Arial', 'B', 14);
-                            // dd($Foleo_Doc);
-                            // Recorrer todas las páginas del PDF original e importarlas para su edición
-                            for ($i = 1; $i <= $Contar_paginas_Foleo_Doc; $i++) {
-                                $tplId = $pdf_Folear_doc->importPage($i); // Importar cada página
-                                // Usar la misma página sin agregar una nueva
-                                $pdf_Folear_doc->AddPage();
-                                $pdf_Folear_doc->useTemplate($tplId, 0, 0, 210, 297); // Tamaño A4
-                                // Agregar número de página en la esquina superior derecha
-                                $pdf_Folear_doc->SetXY(185, 2); // Posición en la esquina superior derecha
-                                $pdf_Folear_doc->Cell(20, 10, "$consecutivoFoleo", 0, 0, 'R');
-                                $consecutivoFoleo++;
-                            }                           
-                            // Guardar el PDF en memoria (no en el servidor)
-                            $pdfData = $pdf_Folear_doc->Output('S'); 
-                            // Agregar el archivo directamente al ZIP desde la memoria
-                            $zip->addFromString($nombre_carpeta . '/' . $nombreEnZip, $pdfData);
-                            // Agregar al ZIP con un nombre basado en el índice y que SI se va a Folear
+                            // Rutas de los archivos
+                            $archivoOriginal = public_path("Documentos_Eventos/{$Id_evento_expediente}/{$NombreDocumentos}");
+                            $archivoDesencriptado = public_path("Documentos_Eventos/{$Id_evento_expediente}/desencriptado_{$NombreDocumentos}");
+
+                            // Intentar desencriptar el PDF con QPDF
+                            exec("qpdf --decrypt {$archivoOriginal} {$archivoDesencriptado}", $output, $return_var);
+
+                            // Si no hubo error, trabajamos con el PDF desencriptado, si no, con el original
+                            $archivoProcesar = ($return_var === 0) ? $archivoDesencriptado : $archivoOriginal;
+                            // Validamos si la variable esta definida
+                            if (isset($archivoProcesar)) {
+                                // Crear instancia de FPDI
+                                $pdf_Folear_doc = new Fpdi(); 
+                                // buscamos el documento donde se encuentra guardado
+                                // $Foleo_Doc = public_path("Documentos_Eventos/{$Id_evento_expediente}/{$NombreDocumentos}");
+                                // Obtener el número de páginas del PDF
+                                // $Contar_paginas_Foleo_Doc = $pdf_Folear_doc->setSourceFile($Foleo_Doc);
+                                $Contar_paginas_Foleo_Doc = $pdf_Folear_doc->setSourceFile($archivoProcesar);
+                                // dd($Contar_paginas_Foleo_Doc);
+                                // Fuente para la numeración
+                                $pdf_Folear_doc->SetFont('Arial', 'B', 14);
+                                // dd($Foleo_Doc);
+                                // Recorrer todas las páginas del PDF original e importarlas para su edición
+                                for ($i = 1; $i <= $Contar_paginas_Foleo_Doc; $i++) {
+                                    $tplId = $pdf_Folear_doc->importPage($i); // Importar cada página
+                                    // Usar la misma página sin agregar una nueva
+                                    $pdf_Folear_doc->AddPage();
+                                    $pdf_Folear_doc->useTemplate($tplId, 0, 0, 210, 297); // Tamaño A4
+                                    // Agregar número de página en la esquina superior derecha
+                                    $pdf_Folear_doc->SetXY(185, 2); // Posición en la esquina superior derecha
+                                    $pdf_Folear_doc->Cell(20, 10, "$consecutivoFoleo", 0, 0, 'R');
+                                    $consecutivoFoleo++;
+                                }                           
+                                // Guardar el PDF en memoria (no en el servidor)
+                                $pdfData = $pdf_Folear_doc->Output('S'); 
+                                // Agregar el archivo directamente al ZIP desde la memoria
+                                $zip->addFromString($nombre_carpeta . '/' . $nombreEnZip, $pdfData);
+                                // Agregar al ZIP con un nombre basado en el índice y que SI se va a Folear
+                            }        
+
+                            // Eliminar el documento que se desencripto
+                            if (File::exists(public_path("Documentos_Eventos/{$Id_evento_expediente}/desencriptado_{$NombreDocumentos}"))) {
+                                File::delete(public_path("Documentos_Eventos/{$Id_evento_expediente}/desencriptado_{$NombreDocumentos}"));
+                            }
+
                         }else{
                             // Agregar al ZIP con un nombre basado en el índice y que NO se va a Folear
                             $zip->addFile($archivo_expediente, $nombre_carpeta . '/' .$nombreEnZip);

@@ -326,6 +326,7 @@
                         $ARL = 'ARL';
                         $JRCI = 'JRCI';
                         $JNCI = 'JNCI';
+                        $AFP_Conocimiento = 'AFP_Conocimiento';
                     ?>
                     <?php
                     if (isset($Agregar_copia[$Afiliado])) { ?>
@@ -397,7 +398,12 @@
                         <?php       
                         }
                     ?>
-                    
+                    <?php 
+                        if (isset($Agregar_copia[$AFP_Conocimiento])) { ?>
+                            <?=$Agregar_copia['AFP_Conocimiento'];?>
+                        <?php       
+                        }
+                    ?>
                 @endif
             </table>
         </section>

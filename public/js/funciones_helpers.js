@@ -859,8 +859,18 @@ function filtrar_comunicados(){
         //Contenedor de filtros
         const $filtroCheckbox = $("#filtrar_comunicados");
         const $contenedorFiltros = $("#contenedor_filtros_comunicados");
+        let repeticiones = 0; // Contador de repeticiones
+        let maxRepeticiones = 5; // Número máximo de repeticiones
+        let timeout;
 
-        //ocultar las filas que sean "No notificar"
+        // Función para ejecutar la acción de filtrar
+        const ejecutarFiltro = () => {
+            match_tablas.forEach(({ id, target }) => {
+                ocultarFilas(id, target);
+            });
+        };
+
+        // Función que oculta las filas
         const ocultarFilas = (tablaId, target) => {
             $(`#${tablaId} tbody tr`).each(function() {
                 const $campo = $(this).find('td').eq(target);
@@ -886,14 +896,25 @@ function filtrar_comunicados(){
             }
         };
 
-        //Espera un tiempo a que la tabla se cargue dentro el modulo en el que se encuentre
-        setTimeout(() => {
-            match_tablas.forEach(({ id, target }) => {
-                ocultarFilas(id, target);
-            });
-        }, 3000);
-    
-        //Dependiendo del checkbox se muestran u ocultan las filas
+        // control de repeticiones
+        const intentarFiltrar = () => {
+            ejecutarFiltro();
+            if ($contenedorFiltros.hasClass("d-none") && repeticiones < maxRepeticiones) {
+                // Si aún tiene la clase d-none, reintentamos
+                repeticiones++;
+                console.log(`Repetición ${repeticiones}`);
+                clearTimeout(timeout);
+                timeout = setTimeout(intentarFiltrar, 3000); // Reintentar en 3 segundos
+            } else if (repeticiones < maxRepeticiones) {
+                // Si ya no tiene la clase d-none o hemos alcanzado el límite de repeticiones, filtramos
+                ejecutarFiltro();
+            }
+        };
+
+        // Ejecutar el intento de filtrar después de 3 segundos
+        intentarFiltrar();
+
+        // Dependiendo del checkbox, mostrar u ocultar las filas
         $filtroCheckbox.on("change", function() {
             match_tablas.forEach(({ id, target }) => {
                 if ($(this).is(":checked")) {
@@ -904,7 +925,6 @@ function filtrar_comunicados(){
             });
         });
     });
-    
 }
 
 /**
