@@ -274,10 +274,12 @@ class CalificacionOrigenController extends Controller
 
         $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($newIdEvento);
 
+        $entidades_conocimiento = $this->globalService->getAFPConocimientosParaCorrespondencia($newIdEvento,$newIdAsignacion);
+
         return view('coordinador.calificacionOrigen', compact('user','nombre_usuario','array_datos_calificacionOrigen','arraylistado_documentos', 'cantidad_documentos_cargados',
         'arraycampa_documento_solicitado','SubModulo','Fnuevo','listado_documentos_solicitados','dato_validacion_no_aporta_docs','dato_ultimo_grupo_doc',
         'dato_doc_sugeridos','dato_articulo_12','consecutivo','primer_seguimiento','segundo_seguimiento','tercer_seguimiento','listado_seguimiento_solicitados',
-        'cali_profe_comite', 'Id_servicio', 'newIdAsignacion', 'enviar_notificaciones','N_siniestro_evento', 'Id_Asignacion','info_afp_conocimiento'));
+        'cali_profe_comite', 'Id_servicio', 'newIdAsignacion', 'enviar_notificaciones','N_siniestro_evento', 'Id_Asignacion','info_afp_conocimiento','entidades_conocimiento'));
     }
 
     //Guardar informacion del modulo de Origen ATEL

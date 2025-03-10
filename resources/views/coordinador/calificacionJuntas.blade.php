@@ -983,7 +983,7 @@
                                     </div>
                                 </div>
                                 <div class="table-responsive">
-                                    <table id="listado_agregar_comunicados" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
+                                    <table id="listado_comunicados_juntas" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
                                         <thead>
                                             <tr class="bg-info">
                                                 <th>N° Radicado</th>
@@ -2048,6 +2048,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript" src="/js/funciones_helpers.js"></script>
     <script>
+        let entidades_conocimiento = @json($entidades_conocimiento);
         //funcion para habilitar el historial de acciones
         function historialDeAcciones() {
             var div = document.getElementById("historialAcciones");

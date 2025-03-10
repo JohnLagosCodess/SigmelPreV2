@@ -274,6 +274,8 @@ class DeterminacionOrigenATEL extends Controller
         $Id_Asignacion = $Id_asignacion_dto_atel;
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento_dto_atel,$Id_servicio,$Id_asignacion_dto_atel));
 
+        $entidades_conocimiento = $this->globalService->getAFPConocimientosParaCorrespondencia($Id_evento_dto_atel,$Id_asignacion_dto_atel);
+
         return view('coordinador.determinacionOrigenATEL', compact('user', 'array_datos_calificacion_origen', 
         'motivo_solicitud_actual', 'datos_apoderado_actual', 
         'array_datos_info_laboral', 'listado_documentos_solicitados', 
@@ -281,7 +283,7 @@ class DeterminacionOrigenATEL extends Controller
         'array_datos_examenes_interconsultas', 'array_datos_historico_laboral', 'datos_bd_DTO_ATEL', 
         'nombre_del_evento_guardado','array_comite_interdisciplinario', 'consecutivo', 
         'array_comunicados_correspondencia', 'afp_afiliado', 'info_afp_conocimiento', 'caso_notificado', 'N_siniestro_evento',
-        'arraylistado_documentos', 'Id_servicio', 'Id_Asignacion'));
+        'arraylistado_documentos', 'Id_servicio', 'Id_Asignacion','entidades_conocimiento'));
 
     }
 

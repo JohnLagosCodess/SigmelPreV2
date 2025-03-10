@@ -356,6 +356,7 @@
                         $EPS = 'EPS';
                         $AFP = 'AFP';
                         $ARL = 'ARL';
+                        $AFP_Conocimiento = 'AFP_Conocimiento';
                     ?>
                     <?php
                     if (isset($Agregar_copia[$Afiliado])) { ?>
@@ -404,6 +405,12 @@
                                     <span class="negrita">ARL: </span><?=$Agregar_copia['ARL'];?>
                                 </td>
                             </tr>
+                        <?php       
+                        }
+                    ?>
+                    <?php 
+                        if (isset($Agregar_copia[$AFP_Conocimiento])) { ?>
+                            <?=$Agregar_copia['AFP_Conocimiento'];?>
                         <?php       
                         }
                     ?>

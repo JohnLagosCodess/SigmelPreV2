@@ -116,6 +116,11 @@
             float:right;
         }
 
+        .fuente_todo_texto{
+            font-family: sans-serif; 
+            font-size: 12px;
+        }
+
         /* .hijo{
             width: 2cm;
             height: 1cm;
@@ -316,6 +321,65 @@
                     <td colspan="6" class="titulo_labels">Controversia {{$parte_controvierte_califi}}</td>
                 </tr>
                 <br>
+                {{-- <tr>
+                    <td colspan="8" class="titulo_tablas">5. COPIAS PARTES INTERESADAS</td>
+                </tr>
+                <br>
+                @if (count($Agregar_copia) == 0)
+                    <tr class="fuente_todo_texto">
+                        <td colspan="8">No se registran copias</td>
+                    </tr>
+                @else
+                    <?php 
+                        $Afiliado = 'Afiliado';
+                        $Empleador = 'Empleador';
+                        $EPS = 'EPS';
+                        $AFP = 'AFP';
+                        $ARL = 'ARL';
+                        $JRCI = 'JRCI';
+                        $JNCI = 'JNCI';
+                        $AFP_Conocimiento = 'AFP_Conocimiento';
+                    ?>
+                    @if (isset($Agregar_copia[$Afiliado]))
+                        <tr class="fuente_todo_texto">
+                            <td colspan="8"><span class="negrita">Afiliado: </span><?=$Agregar_copia['Afiliado'];?></td>
+                        </tr>
+                    @endif
+                    @if (isset($Agregar_copia[$Empleador]))
+                    <tr class="fuente_todo_texto">
+                        <td colspan="8"><span class="negrita">Empleador: </span><?=$Agregar_copia['Empleador'];?></td>
+                    </tr>
+                    @endif
+                    @if (isset($Agregar_copia[$EPS]))
+                        <tr class="fuente_todo_texto">
+                            <td colspan="8"><span class="negrita">EPS: </span><?=$Agregar_copia['EPS'];?></td>
+                        </tr>
+                    @endif
+                    @if (isset($Agregar_copia[$AFP]))
+                        <tr class="fuente_todo_texto">
+                            <td colspan="8"><span class="negrita">AFP: </span><?=$Agregar_copia['AFP'];?></td>
+                        </tr>
+                    @endif
+                    @if (isset($Agregar_copia[$ARL]))
+                        <tr class="fuente_todo_texto">
+                            <td colspan="8"><span class="negrita">ARL: </span><?=$Agregar_copia['ARL'];?></td>
+                        </tr>
+                    @endif
+                    @if (isset($Agregar_copia[$JRCI]))
+                        <tr class="fuente_todo_texto">
+                            <td colspan="8"><span class="negrita">JRCI: </span><?=$Agregar_copia['JRCI'];?></td>
+                        </tr>
+                    @endif
+                    @if (isset($Agregar_copia[$JNCI]))
+                        <tr class="fuente_todo_texto">
+                            <td colspan="8"><span class="negrita">JNCI: </span><?=$Agregar_copia['JNCI'];?></td>
+                        </tr>
+                    @endif
+                    @if (isset($Agregar_copia[$AFP_Conocimiento]))
+                        <?=$Agregar_copia['AFP_Conocimiento'];?>
+                    @endif
+                @endif
+                <br> --}}
                 <tr>
                     <td colspan="8" class="titulo_tablas">5. RESPONSABLE DE LA REMISIÓN</td>
                 </tr>
