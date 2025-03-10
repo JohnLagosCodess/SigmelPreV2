@@ -8140,7 +8140,7 @@
 
 @section('js')
 <script type="text/javascript">
-
+    let entidades_conocimiento = @json($entidades_conocimiento);
     document.getElementById('botonEnvioVista').addEventListener('click', function(event) {
         event.preventDefault();
         // Realizar las acciones que quieres al hacer clic en el botón

@@ -212,6 +212,8 @@ class RecalificacionPCLController extends Controller
         ->where([['siae.ID_evento', $Id_evento_recali]])
         ->get();
 
+        $entidades_conocimiento = $this->globalService->getAFPConocimientosParaCorrespondencia($Id_evento_recali,$Id_asignacion_recali);
+
         // Condicional IF para Recalificacion sobre Recalificacion y Else para Recalifacion sobre Calificacion tecnica
 
         if ($eventoAsigancionMin_Recalifi != $Id_asignacion_recali && !empty($eventoAsigancionMin_Recalifi)) {             
@@ -953,6 +955,7 @@ class RecalificacionPCLController extends Controller
                 $Id_Asignacion = $Id_asignacion_recali;
                 $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento_recali,$Id_servicio,$Id_asignacion_recali));
                 
+                
                 return view('coordinador.recalificacionPCL', compact('user','array_datos_RecalificacionPcl', 'eventoAsigancion_Recalifi', 'eventoAsigancion_Recalifi_estadoDecreto', 
                 'validar_estado_decreto', 'eventoAsigancion_RecalifiPCL', 'datos_decreto', 'datos_decretore', 'validar_evento_CalifiTecnica', 'numero_consecutivo', 'array_info_decreto_evento', 
                 'array_info_decreto_evento_re', 'array_datos_relacion_documentos', 'motivo_solicitud_actual', 'datos_apoderado_actual', 'array_datos_examenes_interconsultas', 
@@ -960,7 +963,7 @@ class RecalificacionPCLController extends Controller
                 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 
                 'array_laboralmente_Activore', 'array_rol_ocupacional', 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento',
                 'array_comite_interdisciplinariore', 'consecutivore', 'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 
-                'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado','Modalidad_calificacion', 'Id_servicio', 'arraylistado_documentos', 'Id_Asignacion'));
+                'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado','Modalidad_calificacion', 'Id_servicio', 'arraylistado_documentos', 'Id_Asignacion','entidades_conocimiento'));
                 
             }                        
         } 
@@ -1572,7 +1575,7 @@ class RecalificacionPCLController extends Controller
                 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditivare', 'hay_agudeza_visualre', 'array_laboralmente_Activore', 
                 'array_rol_ocupacionalre', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinariore', 'consecutivore', 
                 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado','Modalidad_calificacion', 
-                'Id_servicio', 'arraylistado_documentos', 'Id_Asignacion'));
+                'Id_servicio', 'arraylistado_documentos', 'Id_Asignacion','entidades_conocimiento'));
             }            
             elseif (!empty($validar_evento_CalifiTecnica[0]->Id_servicio)) { 
                 
@@ -2403,7 +2406,8 @@ class RecalificacionPCLController extends Controller
                 'array_datos_diagnostico_motcalifire', 'array_datos_deficiencias_alteraciones', 'array_datos_deficiencias_alteracionesre', 'array_agudeza_Auditiva', 
                 'array_agudeza_Auditivare', 'hay_agudeza_visual', 'hay_agudeza_visualre', 'array_laboralmente_Activo', 'array_laboralmente_Activore', 'array_rol_ocupacional', 
                 'array_rol_ocupacionalre', 'array_libros_2_3', 'array_libros_2_3re', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinariore', 'consecutivore', 
-                'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado', 'Modalidad_calificacion', 'Id_servicio', 'arraylistado_documentos', 'Id_Asignacion'));
+                'array_dictamen_pericial', 'array_dictamen_pericialre', 'array_comunicados_correspondenciare', 'array_comunicados_comite_interre', 'info_afp_conocimiento',
+                'N_siniestro_evento', 'edad_afiliado', 'Modalidad_calificacion', 'Id_servicio', 'arraylistado_documentos', 'Id_Asignacion','entidades_conocimiento'));
                 
             }
         }
@@ -5157,7 +5161,6 @@ class RecalificacionPCLController extends Controller
                 $test = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
                     ->where([['Id_Comunicado',$id_comunicado_dictamen]])
                     ->update($data_edit_dictamen);
-                dump($test);
             }
             //En los demás casos C y D no se marcara ninguna copia.
             else{
@@ -5517,9 +5520,7 @@ class RecalificacionPCLController extends Controller
         //Se actualizan las copias de entidad conocimiento del dictamen, PBS092 pero solo para cuando eligen formato E
         if($id_servicio === 8){
             if($formatoe == 'Si'){
-                dump($agregar_copias_comu);
-                $test2 = $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$agregar_copias_comu);
-                dump($test2);
+                $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$agregar_copias_comu);
             }
         }else if($id_servicio === 7){
             if($oficiopcl == 'Si' || $oficioinca == 'Si'){

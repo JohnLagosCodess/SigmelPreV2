@@ -61,6 +61,11 @@
     height: max-content; 
     color: black;
 }
+.correspondencia_destinatarios{
+    white-space: normal;  /* Permite saltos de línea */
+    max-width: 60%; /* Ajusta según el ancho deseado */
+    overflow-wrap: break-word;
+}
 
 .button-doc-select{
     padding-block: inherit;

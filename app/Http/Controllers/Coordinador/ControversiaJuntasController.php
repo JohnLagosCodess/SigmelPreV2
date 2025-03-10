@@ -247,13 +247,16 @@ class ControversiaJuntasController extends Controller
         }
 
         //Traer el N_siniestro del evento
-        $N_siniestro_evento = $this->globalService->retornarNumeroSiniestro($Id_evento_juntas);     
+        $N_siniestro_evento = $this->globalService->retornarNumeroSiniestro($Id_evento_juntas);  
+        
+        $entidades_conocimiento = $this->globalService->getAFPConocimientosParaCorrespondencia($Id_evento_juntas,$Id_asignacion_juntas);
         //dd($arrayinfo_controvertido);
         return view('coordinador.controversiaJuntas', compact('user','array_datos_controversiaJuntas','arrayinfo_controvertido',
         'array_datos_diagnostico_motcalifi_contro','array_datos_diagnostico_motcalifi_emitido_jrci',
         'array_datos_diagnostico_reposi_dictamen_jrci',
         'array_datos_diagnostico_motcalifi_emitido_jnci','arraylistado_documentos', 
-        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado','N_siniestro_evento', 'cantidad_documentos_cargados', 'Id_Asignacion'));
+        'array_comite_interdisciplinario', 'consecutivo', 'array_comunicados_correspondencia', 'Id_servicio','array_control', 'bandera_manual_calificacion', 'caso_notificado','N_siniestro_evento',
+        'cantidad_documentos_cargados', 'Id_Asignacion','entidades_conocimiento'));
     
     }
 

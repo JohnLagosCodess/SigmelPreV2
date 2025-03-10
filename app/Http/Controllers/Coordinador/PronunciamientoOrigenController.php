@@ -125,8 +125,10 @@ class PronunciamientoOrigenController extends Controller
         $Id_Asignacion = $Id_asignacion_calitec;
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento_calitec,$Id_servicio,$Id_asignacion_calitec));
 
+        $entidades_conocimiento = $this->globalService->getAFPConocimientosParaCorrespondencia($Id_evento_calitec,$Id_asignacion_calitec);
+
         return view('coordinador.pronunciamientoOrigenATEL', compact('user','array_datos_pronunciamientoOrigen','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo',
-        'array_comunicados', 'caso_notificado','N_siniestro_evento', 'arraylistado_documentos', 'Id_servicio', 'Id_Asignacion'));
+        'array_comunicados', 'caso_notificado','N_siniestro_evento', 'arraylistado_documentos', 'Id_servicio', 'Id_Asignacion','entidades_conocimiento'));
     }
 
     //Cargar Selectores pronunciamiento

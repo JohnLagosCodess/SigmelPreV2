@@ -315,11 +315,13 @@ class CalificacionJuntasController extends Controller
 
         $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($newIdEvento);
 
+        $entidades_conocimiento = $this->globalService->getAFPConocimientosParaCorrespondencia($newIdEvento,$newIdAsignacion);
+
         // dd($archivo_noencontrado, $archivo_encontrado);
         return view('coordinador.calificacionJuntas', compact('user','array_datos_calificacionJuntas','arraylistado_documentos', 'cantidad_documentos_cargados', 'arrayinfo_afiliado',
         'arrayinfo_controvertido','arrayinfo_pagos','listado_documentos_solicitados','dato_validacion_no_aporta_docs','arraycampa_documento_solicitado','consecutivo','hitorialAgregarSeguimiento',
         'SubModulo', 'Id_servicio', 'newIdAsignacion', 'enviar_notificaciones', 'N_siniestro_evento', 'info_evento', 'validar_lista_chequeo', 'info_cuadros_expedientes', 'IdExpediente_estado', 
-        'posicionExpediente', 'archivo_noencontrado', 'archivo_encontrado', 'Id_Asignacion','info_afp_conocimiento'));
+        'posicionExpediente', 'archivo_noencontrado', 'archivo_encontrado', 'Id_Asignacion','info_afp_conocimiento','entidades_conocimiento'));
     }
     //Cargar Selectores Juntas
     public function cargueListadoSelectoresJuntas(Request $request){
@@ -5731,6 +5733,60 @@ class CalificacionJuntasController extends Controller
                     
                     $section->addText('Departamento de medicina laboral', array('bold' => true));
                     $section->addText('Convenio Codess - Seguros de Vida Alfa S.A', array('bold' => true));
+                    $section->addTextBreak();
+
+                    // Configuramos la tabla de copias a partes interesadas
+                    $htmltabla2 = '<table style="text-align: justify; width:100%; border-collapse: collapse; margin-left: auto; margin-right: auto;">';
+                    if (count($Agregar_copias) == 0) {
+                        $htmltabla2 .= '
+                            <tr>
+                                <td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Copia: </span>No se registran copias</td>
+                            </tr>';
+                    } else {
+                        $htmltabla2 .= '
+                            <tr>
+                                <td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Copia:</span></td>
+                            </tr>';
+
+                        $Afiliado = 'Afiliado';
+                        $Empleador = 'Empleador';
+                        $EPS = 'EPS';
+                        $AFP = 'AFP';
+                        $ARL = 'ARL';
+                        $JRCI = 'JRCI';
+                        $JNCI = 'JNCI';
+
+                        if (isset($Agregar_copias[$Afiliado])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Afiliado: </span>' . $Agregar_copias['Afiliado'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$Empleador])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">Empleador: </span>' . $Agregar_copias['Empleador'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$EPS])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">EPS: </span>' . $Agregar_copias['EPS'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$AFP])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">AFP: </span>' . $Agregar_copias['AFP'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$ARL])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">ARL: </span>' . $Agregar_copias['ARL'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$JRCI])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">JRCI: </span>' . $Agregar_copias['JRCI'] . '</td></tr>';
+                        }
+
+                        if (isset($Agregar_copias[$JNCI])) {
+                            $htmltabla2 .= '<tr><td style="border: 1px solid #000; padding: 5px; text-align: justify; font-family: Verdana; font-size: 8pt; font-style: italic;"><span style="font-weight:bold;">JNCI: </span>' . $Agregar_copias['JNCI'] . '</td></tr>';
+                        }
+                    }
+                    $htmltabla2 .= '</table>';
+                    Html::addHtml($section, $htmltabla2, false, true);
+                    $section->addTextBreak();
                     $section->addTextBreak();
                     //Cuadro con la información del siniestro
                     $tableCuadro = $section->addTable();

@@ -1991,3 +1991,567 @@ function calc_antiguedad_empresa(){
         $("#antiguedad_empresa").val(antiguedad);
     }
 }
+
+    /**
+     * Funcion construir los elementos a las columnas de notificacion a las tablas de comunicados
+     * @param {string} n_radicado #Radicado asociado al comunicado
+     * @param {string} nota Opcional Nota del comunicado
+     * @param {object} status_notificacion corresponde a las opciones disponibles que se incluiran en el selector del estado general de notificaciones
+     * @returns {Array} correspondiente a las columnas asociadas a notificacion (Destinatarios','Estado_general','Nota')
+     */
+    function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comunicado,entidades_conocimiento,juntas=false,submodulo=false) {
+        let Destinatario = data_comunicado['Destinatario'];
+        let Copias = data_comunicado['Agregar_copia'];
+        let Correspondencia = data_comunicado['Correspondencia'];
+        data_comunicado['Estado_correspondencia'] = data_comunicado['Estado_correspondencia'] == null ||  data_comunicado['Estado_correspondencia'] == '1' ? '1' : '0';
+        //Bandera que controla si se debe o no mostrar los vinculos de entidad conocimiento, cuando el comunicado es manual siempre va a mostrar los vinculos
+        let flagEntidades = data_comunicado['Tipo_descarga']?.toLowerCase() === 'manual' ? true : false;
+        if(Copias){
+            Copias = Copias.split(',').map(copia => copia.trim().toLowerCase());
+            if(Copias.includes('afp_conocimiento')){
+                flagEntidades = true;
+            }
+        }
+        if(Correspondencia){
+            Correspondencia = Correspondencia.split(',').map(correspondencia => correspondencia.trim().toLowerCase());
+        }
+        //Función para agregar el subrayado al destinatario principal y aquellos que hayan sido seleccionados como copia
+        function getUnderlineStyle(entity) {
+            //Se hace un casteo a string debido a que en la implementación de la PBS092 ahora las entidades de conocimiento llegan como un id de tipo number, entonces para no afectar la implenetación realizada en el PBS054 se opta por esto.
+            string_entity = entity.toString();
+            let negrita = (Correspondencia && Correspondencia.includes(string_entity)) ? 'font-weight:700;' : '';
+            //Validamos si la entidad es un afp conocimiento deberia venir un id de entidad, entonces para no afectar validaciones anteriores de las PBS054 asumimos un valor temporal de afp_conocimiento PBS092
+            if(typeof(entity) == 'number'){
+                entity = 'afp_conocimiento';
+            }
+            let underline = (Destinatario.toLowerCase() === entity || (Copias && Copias.includes(entity))) ? 'text-decoration-line: underline;' : '';
+            return negrita + underline;
+        }
+
+        let info_destinatarios = `<a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Afiliado" \
+                data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                data-ids_destinatario="${data_comunicado['Id_Destinatarios']}" style="${getUnderlineStyle('afiliado')}">Afiliado</a>
+            <a href="javascript:void(0);" label="Open Modal" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Empleador" \
+                data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                data-ids_destinatario="${data_comunicado['Id_Destinatarios']}" style="${getUnderlineStyle('empleador')}">Empleador</a>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="eps" \
+                data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                data-ids_destinatario="${data_comunicado['Id_Destinatarios']}" style="${getUnderlineStyle('eps')}">EPS</a>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp" \
+                data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                data-ids_destinatario="${data_comunicado['Id_Destinatarios']}" style="${getUnderlineStyle('afp')}">AFP</a>
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="arl" \ 
+                data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                data-ids_destinatario="${data_comunicado['Id_Destinatarios']}" style="${getUnderlineStyle('arl')}">ARL</a>`;
+        
+            if(flagEntidades && (entidades_conocimiento != null && entidades_conocimiento.length > 0)){
+                entidades_conocimiento.forEach(element => {
+                    info_destinatarios += `<a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp_conocimiento" \
+                        data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                        data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                        data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                        data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" data-id_entidad_conocimiento="${element['Id_Entidad']}" data-tipo_entidad_conocimiento="${element['Tipo_Entidad']}" \  
+                        data-ids_destinatario="${data_comunicado['Id_Destinatarios']}" style="${getUnderlineStyle(element['Id_Entidad'])}"> ${element['Tipo_Entidad']} - ${element['Nombre_entidad']}</a>`;
+                });
+            }
+            if (juntas) {
+                info_destinatarios += `
+                    <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jrci" \
+                        data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                        data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                        data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                        data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                        data-ids_destinatario="${data_comunicado['Id_Destinatarios']}" style="${getUnderlineStyle('jrci')}">JRCI
+                    </a>
+                    <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="jnci" \
+                        data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
+                        data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
+                        data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
+                        data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" \ 
+                        data-ids_destinatario="${data_comunicado['Id_Destinatarios']}" style="${getUnderlineStyle('jnci')}">JNCI
+                    </a>
+                `;
+            }
+        if(submodulo){
+            return info_destinatarios;
+        }
+        let info_notificacion = {
+            'Destinatarios': info_destinatarios,
+            'Nota_Comunicados': `<textarea class="form-control nota-col" name="nota_comunicado_${n_radicado}" id="nota_comunicado_${n_radicado}" cols="70" rows="5" style="resize:none; width:200px;">${nota == null ? "" : nota}</textarea>`,
+        };
+        //Opciones a incluir en el selector del estado general de la notificacion
+        let opciones_Notificacion = '';
+        $.each(status_notificacion,function(item,index){
+            opciones_Notificacion += index.opciones;
+        });
+
+        info_notificacion['Estado_General'] =`<select class="custom-select" id="status_notificacion_${n_radicado}" style="width:100%;">${opciones_Notificacion}</select>`;
+
+        return info_notificacion;
+    }
+
+    function cleanModalCorrespondencia(){
+        console.log('Test function')
+        $("#btn_guardar_actualizar_correspondencia").val('Guardar');
+        $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
+
+        correspondencia_array = [];
+        $("#modalCorrespondencia #check_principal").prop('checked', false).prop('disabled', true).prop('required', true);
+        $("#modalCorrespondencia #check_copia").prop('checked', false).prop('disabled', false).prop('required', true);
+        $('#state_notificacion').val('').trigger('change');
+        $("#modalCorrespondencia #tipo_correspondencia").val('');
+        $("#modalCorrespondencia #n_orden").val('');
+        $("#modalCorrespondencia #nombre_destinatario").val('');
+        $("#modalCorrespondencia #direccion").val('');
+        $("#modalCorrespondencia #departamento").val('');
+        $("#modalCorrespondencia #ciudad").val('');
+        $("#modalCorrespondencia #telefono").val('');
+        $("#modalCorrespondencia #email").val('');
+        $("#modalCorrespondencia #m_notificacion").val('');
+        $("#modalCorrespondencia #folios").val('');
+        $("#modalCorrespondencia #n_guia").val('');
+        $("#modalCorrespondencia #f_envio").val('');
+        $("#modalCorrespondencia #f_notificacion").val('');
+        $("#modalCorrespondencia #state_notificacion").val('');
+        $("#modalCorrespondencia #id_correspondencia").val('');
+        $("#modalCorrespondencia #id_asignacion").val('');
+        $("#modalCorrespondencia #id_proceso").val('');
+        $("#modalCorrespondencia #id_comunicado").val('');
+        $("#modalCorrespondencia #id_destinatario").val('');
+    }
+    
+    function cargarSelectorModalCorrespondencia(){
+        //Listado de opciones de estado de notificación Correspondencia
+        let selectores_notificacion_correspondencia = {
+            '_token': $('input[name=_token]').val(),
+            'parametro': 'EstadosNotificacionCorrespondencia'
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/selectoresJuntas',
+            data: selectores_notificacion_correspondencia,
+            beforeSend:  function() {
+                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
+            },
+            success: function (data) {
+                let optionSelected = data.find(finder => finder.Id_Parametro === 362);
+                $("#modalCorrespondencia #state_notificacion").val(optionSelected?.Id_Parametro);
+                $('#state_notificacion').empty();
+                $('#state_notificacion').append('<option value="'+optionSelected?.Id_Parametro+'" selected>'+optionSelected?.Nombre_parametro+'</option>');
+                let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
+                let formaenviogenerarcomunicado = Object.keys(data);
+                for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
+                    if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != SelectorModalCorrespondencia) {
+                        $('#state_notificacion').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
+                    }                
+                }                                     
+            },
+            complete: function(){
+                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
+            }
+        });
+    }
+
+    let correspondencia_array = [];
+    // $('[id^="listado_comunicados_"]').on
+    $(document).on('click', "#CorrespondenciaNotificacion", async function() {
+        //Reestablecer modal
+        cleanModalCorrespondencia();
+        //Cargar selectores modal con Pendiente como valor por defecto
+        cargarSelectorModalCorrespondencia();
+        //Capturar información
+        let id = $(this);
+        let token = $('input[name=_token]').val(); 
+        let tipo_correspondencia = $(id).data('tipo_correspondencia');
+        let idComunicado = $(id).data('id_comunicado');
+        let N_radicado = $(id).data('n_radicado');
+        let destinatarioPrincipal = $(id).data("destinatario_principal");
+        let copias = $(id).data("copias");
+        let id_evento = $(id).data('id_evento');
+        let id_proceso = $(id).data('id_proceso');
+        let id_asignacion = $(id).data('id_asignacion');
+        let anexos = $(id).data('anexos');
+        let correspondencia = $(id).data('correspondencia');
+        let id_entidad_conocimiento = $(id).data('id_entidad_conocimiento');
+        let tipo_entidad_conocimiento = $(id).data('tipo_entidad_conocimiento');
+        // Debido a los ajustes en la PBS092 es necesario castear la variable de correspondencia a tipo string siempre y cuando esta tenga algun valor
+        correspondencia = correspondencia?.toString()
+        //Si existe el id_entidad_conocimiento se castea a string ya que la mayoria de validaciones estan sobre una cadena de tipo string 
+        id_entidad_conocimiento = id_entidad_conocimiento?.toString();
+        //Tipo de comunicado si fue cargado manualmente o es generado por Sigmel
+        let tipo_descarga = $(id).data('tipo_descarga');
+        let id_destinatario = retornarIdDestinatario($(id).data('ids_destinatario'),tipo_correspondencia);
+        //Se consultan las correspondencias que fueron guardadas como no notificados por medio de cargue masivo, los cuales deben salir en negrilla
+        let correspondencias_guardadas = await consultarRegistroPorIdDestinatario(id_destinatario);
+        //Ya que en un principio las copias llegan en un string se separan por , y se les elimina los espacios en blancos para poder comparar 
+        copias = copias ? copias.split(',').map(copia => copia.trim()) : copias;
+        //Desactiva el formulario en caso de que la correspodencia este inactiva.
+        if($(id).data("estado_correspondencia") != 1){
+            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
+            $("#form_correspondencia *").prop('disabled',true);
+            $("#cerar_modalCorrespondencia").prop('disabled',false);
+        }else{
+            $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
+        }
+
+        let estado_general = $("#status_notificacion_" + N_radicado).find(":selected").text();
+        if((estado_general == 'Notificado efectivamente' || estado_general == 'Devuelto' || estado_general == 'No notificar') 
+            && ($(id).data("estado_correspondencia") == 0 || $(id).data("estado_correspondencia") == 1 )){
+
+            $(".alerta_advertencia").removeClass('d-none');
+            $(".alerta_advertencia").empty();
+            $(".alerta_advertencia").append(`La correspondencia no se puede guardar y/o actualizar ya que el estado del comunicado es <strong>${estado_general}</strong>,por favor cambielo para poder editar la correspondencia.`)
+            $("#btn_guardar_actualizar_correspondencia").addClass('d-none');
+        
+         setTimeout(function(){
+            $(".alerta_advertencia").addClass('d-none');
+            $(".alerta_advertencia").empty();
+        },3000); 
+        }else{
+             $("#btn_guardar_actualizar_correspondencia").removeClass('d-none');
+             $(".alerta_advertencia").empty();
+             $(".alerta_advertencia").addClass('d-none');
+         }
+
+        //Información superior del modal 
+        if(tipo_descarga === 'Manual' || tipo_descarga === 'Dictamen'){
+            $("#modalCorrespondencia #nombre_afiliado").val($("#nombre_afiliado").val());
+            $("#modalCorrespondencia #n_identificacion").val($("#nro_identificacion").val());
+        }
+        else{
+            $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
+            $("#modalCorrespondencia #n_identificacion").val($(id).data('numero_identificacion'));
+        }
+        
+        $("#modalCorrespondencia #id_destinatario").val(id_destinatario);
+        $("#modalCorrespondencia #id_evento").val($(id).data('id_evento'));
+        $("#modalCorrespondencia #enlace_ed_evento").text($(id).data('id_evento'));
+        
+        if(tipo_descarga === 'Manual'){
+            $("#modalCorrespondencia #check_principal").prop('checked', false);
+            $("#modalCorrespondencia #check_principal").prop('disabled', false);
+            $("#modalCorrespondencia #check_copia").prop('disabled', false);
+            $("#modalCorrespondencia #check_copia").prop('checked', false);
+        }
+        if(correspondencia && correspondencia.length >0){
+            array_temp = correspondencia.split(",").map(item => item.trim().toString());
+            correspondencia_array = array_temp;
+        }
+        $("#modalCorrespondencia #tipo_correspondencia").val(tipo_correspondencia);
+        $("#modalCorrespondencia #id_entidad_conocimiento").val(id_entidad_conocimiento);
+        $("#modalCorrespondencia #tipo_entidad_conocimiento").val(tipo_entidad_conocimiento);
+        $("#modalCorrespondencia #id_asignacion").val(id_asignacion);
+        $("#modalCorrespondencia #id_proceso").val(id_proceso);
+        $("#modalCorrespondencia #id_comunicado").val(idComunicado);
+        flag_saved = false;
+        if(correspondencia_array.includes(tipo_correspondencia) || correspondencias_guardadas === tipo_correspondencia){
+            console.log('CA ',correspondencia_array,' TC ',tipo_correspondencia,' CG ',correspondencias_guardadas,' IE ',id_entidad_conocimiento);
+            if(tipo_correspondencia === 'afp_conocimiento'){
+                console.log('Es una afp_conocimiento')
+                if(Array.isArray(correspondencia_array) && correspondencia_array?.some(correspondencia => correspondencia.toLowerCase() === id_entidad_conocimiento)){
+                    console.log('Tiene una correspondencia guardada');
+                    flag_saved = true;
+                }else{
+                    console.log('No tiene una correspondencia guardada');
+                    flag_saved = false;
+                }
+            }else{
+                console.log('No es una afp_conocimiento');
+                flag_saved = true;
+            }
+        }
+        if(flag_saved){
+            data_comunicado = {
+                _token: token,
+                id_comunicado: idComunicado,
+                id_evento: id_evento,
+                id_asignacion: id_asignacion,
+                id_proceso: id_proceso,
+                tipo_correspondencia: tipo_correspondencia,
+                id_entidad_conocimiento: id_entidad_conocimiento,
+                previous_saved: flag_saved 
+            }
+            
+            $.ajax({
+                type:'POST',
+                url:'/getInformacionCorrespondencia',
+                data: data_comunicado,
+                beforeSend:  function() {
+                    showLoading();
+                },
+                success: function(response){
+                    if(response && response[0]){
+                        $("#btn_guardar_actualizar_correspondencia").val('Actualizar');
+
+                        $("#modalCorrespondencia #n_orden").val(response[0]?.N_orden);
+                        $("#modalCorrespondencia #nombre_destinatario").val(response[0]?.Nombre_destinatario);
+                        $("#modalCorrespondencia #direccion").val(response[0]?.Direccion_destinatario);
+                        $("#modalCorrespondencia #departamento").val(response[0]?.Departamento);
+                        $("#modalCorrespondencia #ciudad").val(response[0]?.Ciudad);
+                        $("#modalCorrespondencia #telefono").val(response[0]?.Telefono_destinatario);
+                        $("#modalCorrespondencia #email").val(response[0]?.Email_destinatario);
+                        $("#modalCorrespondencia #m_notificacion").val(response[0]?.Medio_notificacion);
+                        $("#modalCorrespondencia #folios").val(response[0]?.Folios);
+                        $("#modalCorrespondencia #radicado").val(response[0]?.N_radicado);
+                        $("#modalCorrespondencia .modal-title").text('Correspondencia ' + response[0]?.Tipo_correspondencia);
+                        $("#modalCorrespondencia #n_guia").val(response[0]?.N_guia);
+                        $("#modalCorrespondencia #f_envio").val(response[0]?.F_envio);
+                        $("#modalCorrespondencia #f_notificacion").val(response[0]?.F_notificacion);
+                        $("#modalCorrespondencia #state_notificacion").val(response[0]?.Id_Estado_corresp);
+                        $("#modalCorrespondencia #id_correspondencia").val(response[0]?.Id_Correspondencia);
+                        
+                        if(response[0]?.Tipo_destinatario){
+                            if(response[0]?.Tipo_destinatario === $('#modalCorrespondencia #check_principal').val()){
+                                if(tipo_descarga != 'Manual'){
+                                    $("#modalCorrespondencia #check_principal").prop('checked', true);
+                                    $("#modalCorrespondencia #check_copia").prop('disabled', true);
+                                    $("#modalCorrespondencia #check_copia").prop('required', false);
+                                }
+                                else{
+                                    $("#modalCorrespondencia #check_principal").prop('checked', true);
+                                    $("#modalCorrespondencia #check_principal").prop('disabled', false);
+                                    $("#modalCorrespondencia #check_copia").prop('disabled', true);
+                                    $("#modalCorrespondencia #check_copia").prop('required', false);
+                                }
+                                
+                            }
+                            else if(response[0]?.Tipo_destinatario === $('#modalCorrespondencia #check_copia').val()){
+                                
+                                if(tipo_descarga != 'Manual'){
+                                    $("#modalCorrespondencia #check_copia").prop('checked', true);
+                                    $("#modalCorrespondencia #check_copia").prop('disabled', true);
+                                    $("#modalCorrespondencia #check_principal").prop('required', false);
+                                }
+                                else{
+                                    $("#modalCorrespondencia #check_copia").prop('checked', true);
+                                    $("#modalCorrespondencia #check_principal").prop('disabled', true);
+                                    $("#modalCorrespondencia #check_principal").prop('required', false);
+                                    $("#modalCorrespondencia #check_copia").prop('disabled', false);
+                                }
+                            } 
+                        }
+                        let selectores_notificacion_correspondencia = {
+                            '_token': $('input[name=_token]').val(),
+                            'parametro': 'EstadosNotificacionCorrespondencia'
+                        }
+                        $.ajax({
+                            type: 'POST',
+                            url: '/selectoresJuntas',
+                            data: selectores_notificacion_correspondencia,
+                            beforeSend:  function() {
+                                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
+                            },
+                            success: function (data) {
+                                let optionSelected = data.find(finder => finder.Id_Parametro === response[0]?.Id_Estado_corresp);
+                                $('#state_notificacion').empty();
+                                $('#state_notificacion').append('<option value="'+response[0]?.Id_Estado_corresp+'" selected>'+optionSelected?.Nombre_parametro+'</option>');
+                                let SelectorModalCorrespondencia = $('select[name=state_notificacion]').val();
+                                let formaenviogenerarcomunicado = Object.keys(data);
+                                for (let i = 0; i < formaenviogenerarcomunicado.length; i++) {
+                                    if (data[formaenviogenerarcomunicado[i]]['Id_Parametro'] != SelectorModalCorrespondencia) {
+                                        $('#state_notificacion').append('<option value="'+data[formaenviogenerarcomunicado[i]]['Id_Parametro']+'">'+data[formaenviogenerarcomunicado[i]]['Nombre_parametro']+'</option>');
+                                    }                
+                                }
+                            },
+                            complete: function(){
+                                // $("#state_notificacion").select2({
+                                //     placeholder: "Selecione una opcion",
+                                //     allowClear: false,
+                                // })
+                                $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
+                            }
+                        });
+                    }
+                },
+                error: function (error) {
+                    console.error('Ha ocurrido un error:', error);
+                },
+                complete: function(){
+                    hideLoading();
+                }
+            });
+        }
+        else{
+            data_comunicado = {
+                _token: token,
+                id_comunicado: idComunicado,
+                id_evento: id_evento,
+                id_asignacion: id_asignacion,
+                id_proceso: id_proceso,
+                tipo_correspondencia: tipo_correspondencia,
+                id_entidad_conocimiento: id_entidad_conocimiento,
+                previous_saved: flag_saved
+            }
+            
+            $.ajax({
+                type:'POST',
+                url:'/getInformacionCorrespondencia',
+                data: data_comunicado,
+                beforeSend:  function() {
+                    showLoading();
+                },
+                success: function(response){
+                    if(response && response.datos){
+                        $("#modalCorrespondencia #n_orden").val(response?.nro_orden);
+                        $("#modalCorrespondencia #nombre_destinatario").val(response?.datos?.Nombre_destinatario);
+                        $("#modalCorrespondencia #direccion").val(response?.datos?.Direccion_destinatario);
+                        $("#modalCorrespondencia #departamento").val(response?.datos?.Departamento_destinatario);
+                        $("#modalCorrespondencia #ciudad").val(response?.datos?.Ciudad_destinatario);
+                        $("#modalCorrespondencia #telefono").val(response?.datos?.Telefono_destinatario);
+                        $("#modalCorrespondencia #email").val(response?.datos?.Email_destinatario);
+                        $("#modalCorrespondencia #m_notificacion").val(response?.datos?.Medio_notificacion_destinatario);
+                        $("#modalCorrespondencia #folios").val(anexos);
+                        $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
+                        $("#modalCorrespondencia #radicado").val(N_radicado);
+                        
+                        if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){
+                            $("#modalCorrespondencia #check_principal").prop('checked', true);
+                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
+                            $("#modalCorrespondencia #check_copia").prop('required', false);
+                        }
+                        else if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() !== destinatarioPrincipal.toLowerCase() && Array.isArray(copias) && copias?.some(copia => copia.toLowerCase() === tipo_correspondencia.toLowerCase())){
+                            $("#modalCorrespondencia #check_copia").prop('checked', true);
+                            $("#modalCorrespondencia #check_copia").prop('disabled', true);
+                            $("#modalCorrespondencia #check_principal").prop('required', false);
+                        }
+                    }
+                },
+                error: function (error) {
+                    console.error('Ha ocurrido un error:', error);
+                },
+                complete: function(){
+                    hideLoading();
+                }
+            });
+        }
+        // Mostrar la modal
+        // $("#modalCorrespondencia").show();
+
+        //Eventos checkbox principal
+        $("#check_principal").change(function() {
+            if ($(this).is(':checked')) {
+                $("#check_copia").prop('disabled', true).prop('required', false);
+            } else {
+                $("#check_copia").prop('disabled', false).prop('required', true);
+            }
+        });
+        //Eventos checkbox copia
+        $("#check_copia").change(function() {
+            if ($(this).is(':checked')) {
+                $("#check_principal").prop('disabled', true).prop('required', false);
+            } 
+            else if(tipo_descarga == 'Manual') {
+                $("#check_principal").prop('disabled', false).prop('required', true);
+            }
+            else{
+                $("#check_principal").prop('disabled', true).prop('required', true);
+            }
+        });
+    });
+
+    $('#form_correspondencia').submit(function (e) {
+        e.preventDefault();
+        let token = $('input[name=_token]').val(); 
+        let tipo_correspondencia = $('#modalCorrespondencia #tipo_correspondencia').val();
+        let id_entidad_conocimiento = $('#modalCorrespondencia #id_entidad_conocimiento').val();
+        if (!correspondencia_array.includes(tipo_correspondencia)) {
+            if(tipo_correspondencia == 'afp_conocimiento'){
+                if(!correspondencia_array.includes(tipo_correspondencia)){
+                    correspondencia_array.push(id_entidad_conocimiento);
+                }
+            }else{
+                correspondencia_array.push(tipo_correspondencia);
+            }
+        }
+        tipoDestinatario = null;
+        if($('#check_principal').is(':checked')){
+            tipoDestinatario = $('#modalCorrespondencia #check_principal').val();
+            $("#modalCorrespondencia #check_principal").prop('required', false);
+        }
+        else if($('#check_copia').is(':checked')){
+            tipoDestinatario = $('#modalCorrespondencia #check_copia').val();
+        }
+        else{
+            tipoDestinatario = null;
+        }
+        datos_correspondencia = {
+            '_token': token,
+            'correspondencia': correspondencia_array,
+            'nombre_afiliado': $('#modalCorrespondencia #nombre_afiliado').val(),
+            'n_identificacion_afiliado': $('#modalCorrespondencia #n_identificacion').val(),
+            'id_asignacion': $('#modalCorrespondencia #id_asignacion').val(),
+            'id_proceso': $('#modalCorrespondencia #id_proceso').val(),
+            'id_evento': $('#modalCorrespondencia #id_evento').val(),
+            'id_comunicado': $('#modalCorrespondencia #id_comunicado').val(),
+            'id_destinatario': $('#modalCorrespondencia #id_destinatario').val(),
+            'n_radicado': $('#modalCorrespondencia #radicado').val(),
+            'n_orden': $('#modalCorrespondencia #n_orden').val(),
+            'tipo_destinatario': tipoDestinatario,
+            'nombre_destinatario': $('#modalCorrespondencia #nombre_destinatario').val(),
+            'direccion_destinatario': $('#modalCorrespondencia #direccion').val(),
+            'departamento_destinatario': $('#modalCorrespondencia #departamento').val(),
+            'ciudad_destinatario': $('#modalCorrespondencia #ciudad').val(),
+            'telefono_destinatario': $('#modalCorrespondencia #telefono').val(),
+            'email_destinatario': $('#modalCorrespondencia #email').val(),
+            'medio_notificacion_destinatario': $('#modalCorrespondencia #m_notificacion').val(),
+            'n_guia': $('#modalCorrespondencia #n_guia').val(),
+            'folios': $('#modalCorrespondencia #folios').val(),
+            'fecha_envio': $('#modalCorrespondencia #f_envio').val(),
+            'fecha_notificacion': $('#modalCorrespondencia #f_notificacion').val(),
+            'estado_notificacion': $('#modalCorrespondencia #state_notificacion').val(),
+            'tipo_correspondencia': tipo_correspondencia,
+            'id_entidad_conocimiento': id_entidad_conocimiento,
+            'tipo_entidad_conocimiento': $("#modalCorrespondencia #tipo_entidad_conocimiento").val(),
+            'id_correspondencia': $('#modalCorrespondencia #id_correspondencia').val(),
+            'id_destinatario':$("#modalCorrespondencia #id_destinatario").val(),
+            'accion': $('#btn_guardar_actualizar_correspondencia').val()
+        };
+        $.ajax({    
+            type:'POST',
+            url:'/guardarInformacionCorrespondencia',
+            data: datos_correspondencia,
+            beforeSend:  function() {
+                $("#btn_guardar_actualizar_correspondencia").addClass("descarga-deshabilitada");
+                showLoading();
+            },
+            success: function(response){
+                if (response.parametro == 'agregar_correspondencia') {
+                    $('.alerta_correspondencia').removeClass('d-none');
+                    $('.alerta_correspondencia').append('<strong>'+response.mensaje+'</strong>');
+                    setTimeout(function(){
+                        $('.alerta_correspondencia').addClass('d-none');
+                        $('.alerta_correspondencia').empty();
+                        localStorage.setItem("#Generar_comunicados", true);
+                        location.reload();
+                    }, 3000);
+                }
+            },
+            error: function (error) {
+                $('.alerta_error').removeClass('d-none');
+                $('.alerta_error').append('<strong> Ha ocurrido un error al momento de guardar la correspondencia.</strong>');
+                setTimeout(function(){
+                    $('.alerta_error').addClass('d-none');
+                    $('.alerta_error').empty();
+                }, 3000);
+            },
+            complete: function(){
+                // $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
+                hideLoading();
+            }
+        });
+    });

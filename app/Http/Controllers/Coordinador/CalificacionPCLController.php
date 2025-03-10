@@ -205,10 +205,12 @@ class CalificacionPCLController extends Controller
         $Id_Asignacion = $newIdAsignacion;
 
         $info_afp_conocimiento = $this->globalService->retornarcuentaConAfpConocimiento($newIdEvento);
+
+        $entidades_conocimiento = $this->globalService->getAFPConocimientosParaCorrespondencia($newIdEvento,$newIdAsignacion);
         
         return view('coordinador.calificacionPCL', compact('user','array_datos_calificacionPcl', 'array_datos_destinatarios', 'listado_documentos_solicitados', 
         'arraylistado_documentos', 'cantidad_documentos_cargados', 'dato_validacion_no_aporta_docs', 'SubModulo','consecutivo','arraycampa_documento_solicitado', 
-        'info_comite_inter', 'Id_servicio', 'newIdAsignacion', 'info_accion_eventos', 'enviar_notificaciones','N_siniestro_evento', 'Id_Asignacion','info_afp_conocimiento'));
+        'info_comite_inter', 'Id_servicio', 'newIdAsignacion', 'info_accion_eventos', 'enviar_notificaciones','N_siniestro_evento', 'Id_Asignacion','info_afp_conocimiento','entidades_conocimiento'));
     }
 
     public function cargueListadoSelectoresModuloCalifcacionPcl(Request $request){
@@ -6276,12 +6278,14 @@ class CalificacionPCLController extends Controller
         $Id_Asignacion = $Id_asignacion_calitec;
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento_calitec,$Id_servicio,$Id_asignacion_calitec));
 
+        $entidades_conocimiento = $this->globalService->getAFPConocimientosParaCorrespondencia($Id_evento_calitec,$Id_asignacion_calitec);
+
         return view('coordinador.calificacionTecnicaPCL', compact('user','array_datos_calificacionPclTecnica','motivo_solicitud_actual','datos_apoderado_actual', 
         'hay_agudeza_visual','datos_demos','array_info_decreto_evento','array_datos_relacion_documentos','array_datos_examenes_interconsultas','numero_consecutivo',
         'array_datos_diagnostico_motcalifi', 'array_agudeza_Auditiva', 'array_datos_deficiencias_alteraciones', 'array_laboralmente_Activo', 'array_rol_ocupacional', 
         'array_libros_2_3', 'deficiencias', 'TotalDeficiencia50', 'array_tipo_fecha_evento', 'array_comite_interdisciplinario', 'consecutivo', 'array_dictamen_pericial', 
         'array_comunicados_correspondencia', 'array_comunicados_comite_inter', 'info_afp_conocimiento','N_siniestro_evento', 'edad_afiliado', 'Modalidad_calificacion',
-        'arraylistado_documentos', 'Id_servicio', 'Id_Asignacion'));
+        'arraylistado_documentos', 'Id_servicio', 'Id_Asignacion','entidades_conocimiento'));
     }
 
     public function cargueListadoSelectoresCalifcacionTecnicaPcl(Request $request){

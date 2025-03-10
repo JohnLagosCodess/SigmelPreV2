@@ -594,7 +594,7 @@
                                 </div>
                             </div>
                             <div class="table-responsive">
-                                <table id="listado_agregar_comunicados" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
+                                <table id="listado_comunicados_origen" class="table table-striped table-bordered" style="width: 100%;  white-space: nowrap;">
                                     <thead>
                                         <tr class="bg-info">
                                             <th>N° Radicado</th>
@@ -1604,6 +1604,7 @@
     <script src="/plugins/summernote/summernote.min.js"></script>
     {{-- Validación de fechas, en las cuales la nueva fecha de radicación no puede ser menor a la fecha inicial de radicación. --}}
     <script>
+        let entidades_conocimiento = @json($entidades_conocimiento);
         document.addEventListener('DOMContentLoaded', function () {
             // Obtener referencias a los campos de fecha y elementos de alerta
             const nuevaFechaRadicación = document.getElementById('nueva_fecha_radicacion');

@@ -65,6 +65,8 @@
                                                 <input class="form-control" type="hidden" name="id_proceso" id="id_proceso">
                                                 <input class="form-control" type="hidden" name="id_comunicado" id="id_comunicado">
                                                 <input class="form-control" type="hidden" name="id_correspondencia" id="id_correspondencia">
+                                                <input class="form-control" type="hidden" name="id_entidad_conocimiento" id="id_entidad_conocimiento">
+                                                <input class="form-control" type="hidden" name="tipo_entidad_conocimiento" id="tipo_entidad_conocimiento">
                                                 <div class="row">
                                                     
                                                     <div class="col-4">

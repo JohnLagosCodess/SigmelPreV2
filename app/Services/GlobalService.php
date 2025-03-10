@@ -645,7 +645,6 @@ class GlobalService
         if($dictamen){
             //Copias del dictamen
             $copias_dictamen = $dictamen[0]->Agregar_copia;
-            dump('Copias inicial dictamen : ',$copias_dictamen);
             if($copias_dictamen){
                 // Expresión regular para eliminar "AFP_Conocimiento" con o sin número
                 $cadena_limpia = preg_replace('/,?\s*AFP_Conocimiento\d*/', '', $copias_dictamen);
@@ -659,7 +658,6 @@ class GlobalService
                     $copias_dictamen = $copias_entidad_conocimiento;
                 }
             }
-            dump('Copias finales dictamen : ',$copias_dictamen);
             $actualización_dictamen = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
             ->where([
                 ['ID_evento',$id_evento],
@@ -670,4 +668,25 @@ class GlobalService
             return $actualización_dictamen;
         }
     }
+    public function getAFPConocimientosParaCorrespondencia($id_evento, $id_asignacion){
+        $entidades_conocimiento = $this->retornarcuentaConAfpConocimiento($id_evento);
+        if($entidades_conocimiento && $entidades_conocimiento[0]->Entidad_conocimiento == 'Si'){
+            $lista_entidades_conocimiento = $entidades_conocimiento[0]->Id_afp_entidad_conocimiento;
+            if($entidades_conocimiento[0]->Otras_entidades_conocimiento && $entidades_conocimiento[0]->Otras_entidades_conocimiento != ''){
+                $lista_entidades_conocimiento .= ','.$entidades_conocimiento[0]->Otras_entidades_conocimiento;
+            }
+            $lista_entidades_conocimiento = array_map('trim', explode(',',$lista_entidades_conocimiento));
+            $entidades = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+            ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as sle', 'sie.IdTipo_entidad', '=', 'sle.Id_Entidad')
+            ->select('sie.Id_Entidad','sle.Tipo_Entidad','sie.Nombre_entidad')
+            ->whereIn('sie.Id_Entidad', $lista_entidades_conocimiento)
+            ->orderByRaw("FIELD(sie.Id_Entidad, " . implode(',', $lista_entidades_conocimiento) . ")")
+            ->get();
+            if($entidades->isEmpty()){
+                return null;
+            }
+            return $entidades;
+        }
+        return null;
+    } 
 }

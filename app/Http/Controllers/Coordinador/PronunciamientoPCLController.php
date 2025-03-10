@@ -149,8 +149,10 @@ class PronunciamientoPCLController extends Controller
         $Id_Asignacion = $Id_asignacion_calitec;
         $arraylistado_documentos = DB::select('CALL psrvistadocumentos(?,?,?)',array($Id_evento_calitec,$Id_servicio,$Id_asignacion_calitec));
 
+        $entidades_conocimiento = $this->globalService->getAFPConocimientosParaCorrespondencia($Id_evento_calitec,$Id_asignacion_calitec);
+
         return view('coordinador.pronunciamientoPCL', compact('user','array_datos_pronunciamientoPcl','info_pronuncia','array_datos_diagnostico_motcalifi','consecutivo', 
-        'array_comunicados','caso_notificado','N_siniestro_evento', 'Id_servicio', 'arraylistado_documentos', 'Id_Asignacion'));
+        'array_comunicados','caso_notificado','N_siniestro_evento', 'Id_servicio', 'arraylistado_documentos', 'Id_Asignacion','entidades_conocimiento'));
     
     }
     //Ver Documento Pronuncia
