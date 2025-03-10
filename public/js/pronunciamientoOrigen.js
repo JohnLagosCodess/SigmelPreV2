@@ -485,7 +485,7 @@ $(document).ready(function(){
 
         // Deselección automática de las copias a partes interesadas: Afiliado
         $("#copia_afiliado").prop('checked', false);
-        $("#afp_conocimiento").prop('checked', false);
+        // $("#afp_conocimiento").prop('checked', false);
 
         // Selección automática del checkbox firmar siempre y cuando el dato sea firmar y no undefined
         if($('#bd_check_firmar').val() == 'firmar'){
@@ -511,7 +511,7 @@ $(document).ready(function(){
 
         // Selección automática de las copias a partes interesadas: Afiliado y entidad conocimiento
         $("#copia_afiliado").prop('checked', true);
-        $("#afp_conocimiento").prop('checked', false);
+        // $("#afp_conocimiento").prop('checked', false);
 
 
         // Selección automática del checkbox firmar siempre y cuando el dato sea firmar y no undefined
@@ -538,7 +538,7 @@ $(document).ready(function(){
 
         // Selección automática de las copias a partes interesadas: Afiliado y entidad conocimiento
         $("#copia_afiliado").prop('checked', false);
-        $("#afp_conocimiento").prop('checked', false);
+        // $("#afp_conocimiento").prop('checked', false);
 
         // Selección automática del checkbox firmar
         $("#firmar").prop('checked', false);
@@ -1597,9 +1597,7 @@ $(document).ready(function(){
         formData.append('copia_eps', $('#copia_eps').filter(":checked").val() || '');
         formData.append('copia_afp', $('#copia_afp').filter(":checked").val() || '');
         formData.append('copia_arl', $('#copia_arl').filter(":checked").val() || '');
-
         formData.append('copia_afp_conocimiento', $('#afp_conocimiento').filter(":checked").val() || '');
-        
         formData.append('junta_regional', $('#junta_regional').filter(":checked").val() || '');
         formData.append('junta_nacional', $('#junta_nacional').filter(":checked").val() || '');
         formData.append('junta_regional_cual', $('#junta_regional_cual').val() || '');

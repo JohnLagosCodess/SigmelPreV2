@@ -465,16 +465,6 @@ class PronunciamientoOrigenController extends Controller
             $copia_arl = $request->copia_arl;
         }
         // dd($request->copia_afp_conocimiento, $request->copia_arl);
-        if (empty($request->copia_afp_conocimiento)) {
-            $copia_afp_conocimiento = null;                        
-            $copy_afp_conocimiento = null;
-        } else {      
-            // traemos la informacion de las copias dependiendo de cuantas entidades de conocimiento hay
-            $copy_afp_conocimiento = 'AFP_Conocimiento';
-            $str_entidades = $this->globalService->retornarStringCopiasEntidadConocimiento($Id_EventoPronuncia);
-            $copia_afp_conocimiento = $str_entidades;
-
-        }
         if (empty($request->junta_regional)) {
             $junta_regional = null;                        
         } else {         
@@ -489,6 +479,15 @@ class PronunciamientoOrigenController extends Controller
             $junta_nacional = null;                        
         } else {         
             $junta_nacional = $request->junta_nacional;
+        }
+        if (empty($request->copia_afp_conocimiento)) {
+            $copia_afp_conocimiento = null;                        
+            $copy_afp_conocimiento = null;
+        } else {      
+            // traemos la informacion de las copias dependiendo de cuantas entidades de conocimiento hay
+            $copy_afp_conocimiento = 'AFP_Conocimiento';
+            $str_entidades = $this->globalService->retornarStringCopiasEntidadConocimiento($Id_EventoPronuncia);
+            $copia_afp_conocimiento = $str_entidades;
         }
 
         // Agrupa las variables en un array

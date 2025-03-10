@@ -3487,6 +3487,12 @@ $(document).ready(function(){
                     $('#cual').prop('required', false);
                 }
 
+                if(data_correspondencia["checkeado_afp_conocimiento"] == "Si"){
+                    $("#afp_conocimiento").prop("checked", true);
+                }else{
+                    $("#afp_conocimiento").prop("checked", false);
+                }
+
                 //Listado juntas regional Correspondencia
                 $('#cual').empty();
                 let datos_lista_regional_junta = {
@@ -3602,6 +3608,155 @@ $(document).ready(function(){
 
     });
 
+    function dataCreacionProformaDesacuerdo(id_comunicado, id_comite, nro_radicado){
+        var token = $('input[name=_token]').val();
+        var id_comite_inter = id_comite;
+        var id_cliente = $("#id_cliente").val();
+        var id_asignacion = $("#newId_asignacion").val();
+        var id_proceso = $("#Id_proceso").val();
+        var id_servicio = $("#id_servicio").val();
+        var nro_radicado = nro_radicado;
+        var nombre_afiliado = $("#nombre_afiliado").val();
+        var tipo_identificacion = $("#tipo_documento").val();
+        var num_identificacion = $("#identificacion").val();
+        var id_evento = $("#newId_evento").val();
+        var id_Jrci_califi_invalidez = $("#id_Jrci_califi_invalidez").val();
+        var nombre_junta_regional = $("#jrci_califi_invalidez").val();
+        var f_dictamen_jrci_emitido = $("#f_dictamen_jrci_emitido").val();
+        var sustentacion_concepto_jrci = $("#sustentacion_concepto_jrci").val();
+        var sustentacion_concepto_jrci1 = $("#sustentacion_concepto_repo_jrci").val();
+        var copia_afiliado = $('#afiliado').filter(":checked").val();
+        var copia_empleador = $('#empleador').filter(":checked").val();
+        var copia_eps = $('#eps').filter(":checked").val();
+        var copia_afp = $('#afp').filter(":checked").val();
+        var copia_arl = $('#arl').filter(":checked").val();
+        var asunto = $("#Asunto").val();
+        var cuerpo = $("#cuerpo_comunicado").summernote('code');
+        var firmar = $('#firmar').filter(":checked").val();
+        var N_siniestro = $('#n_siniestro').val();
+        var porcentaje_pcl_jrci_emitido = $("#porcentaje_pcl_jrci_emitido").val();
+        var f_estructuracion_contro_jrci_emitido = $("#f_estructuracion_contro_jrci_emitido").val();
+        var jrci_elegida = $('#jrci_copia').val();
+        var copia_jrci = $('#jrci').filter(":checked").val();
+        var copia_jnci = $('#jnci').filter(":checked").val();
+
+        var entidad_conocimiento = $("#entidad_conocimiento").val();
+        var copia_afp_conocimiento = '';
+        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+            copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
+        }
+
+        return datos_proforma_desacuerdo = {
+            '_token': token,
+            'id_comite_inter': id_comite_inter,
+            'id_cliente': id_cliente,
+            'id_asignacion': id_asignacion,
+            'id_proceso': id_proceso,
+            'id_servicio': id_servicio,
+            'nro_radicado': nro_radicado,
+            'nombre_afiliado': nombre_afiliado,
+            'tipo_identificacion': tipo_identificacion,
+            'num_identificacion': num_identificacion,
+            'id_evento': id_evento,
+            'id_Jrci_califi_invalidez': id_Jrci_califi_invalidez,
+            'nombre_junta_regional': nombre_junta_regional,
+            'f_dictamen_jrci_emitido': f_dictamen_jrci_emitido,
+            'sustentacion_concepto_jrci': sustentacion_concepto_jrci,
+            'sustentacion_concepto_jrci1': sustentacion_concepto_jrci1,
+            'copia_afiliado': copia_afiliado,
+            'copia_empleador': copia_empleador,
+            'copia_eps': copia_eps,
+            'copia_afp': copia_afp,
+            'copia_arl': copia_arl,
+            'copia_jrci': copia_jrci,
+            'copia_jnci': copia_jnci,
+            'copia_afp_conocimiento': copia_afp_conocimiento,
+            'jrci_elegida': jrci_elegida,
+            'asunto': asunto,
+            'cuerpo': cuerpo,
+            'firmar': firmar,
+            'id_comunicado': id_comunicado,
+            'N_siniestro' : N_siniestro,
+            'porcentaje_pcl_jrci_emitido': porcentaje_pcl_jrci_emitido,
+            'f_estructuracion_contro_jrci_emitido': f_estructuracion_contro_jrci_emitido
+        };
+    };
+
+    function dataCreacionProformaAcuerdo (id_comunicado, id_comite, nro_radicado){
+        var token = $('input[name=_token]').val();
+        var id_comite_inter = id_comite;
+        var id_cliente = $("#id_cliente").val();
+        var id_asignacion = $("#newId_asignacion").val();
+        var id_proceso = $("#Id_proceso").val();
+        var id_servicio = $("#id_servicio").val();
+        var nro_radicado = nro_radicado;
+        var tipo_identificacion = $("#tipo_documento").val();
+        var num_identificacion = $("#identificacion").val();
+        var id_evento = $("#newId_evento").val();
+        var id_Jrci_califi_invalidez = $("#id_Jrci_califi_invalidez").val();
+        var nombre_junta_regional = $("#jrci_califi_invalidez").val();
+        var nro_dictamen = $("#n_dictamen_jrci_emitido").val();
+        var nombre_afiliado = $("#nombre_afiliado").val();
+        var f_dictamen_jrci_emitido = $("#f_dictamen_jrci_emitido").val();
+        var porcentaje_pcl_jrci_emitido = $("#porcentaje_pcl_jrci_emitido").val();
+        var origen_jrci_emitido = $("#origen_jrci_emitido option:selected").text();
+        var f_estructuracion_contro_jrci_emitido = $("#f_estructuracion_contro_jrci_emitido").val();
+        var manual_de_califi_jrci_emitido = $("#manual_de_califi_jrci_emitido option:selected").text();
+        var sustentacion_concepto_jrci = $("#sustentacion_concepto_jrci").val();
+        var sustentacion_concepto_jrci1 = $("#sustentacion_concepto_repo_jrci").val();
+        var copia_afiliado = $('#afiliado').filter(":checked").val();
+        var copia_empleador = $('#empleador').filter(":checked").val();
+        var copia_eps = $('#eps').filter(":checked").val();
+        var copia_afp = $('#afp').filter(":checked").val();
+        var copia_arl = $('#arl').filter(":checked").val();
+
+        var entidad_conocimiento = $("#entidad_conocimiento").val();
+        var copia_afp_conocimiento = '';
+        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+            copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
+        }
+
+        var asunto = $("#Asunto").val();
+        var cuerpo = $("#cuerpo_comunicado").summernote('code');
+        var firmar = $('#firmar').filter(":checked").val();
+        var N_siniestro = $('#n_siniestro').val();
+
+        return datos_proforma_acuerdo = {
+            '_token': token,
+            'id_comite_inter': id_comite_inter,
+            'id_cliente': id_cliente,
+            'id_asignacion': id_asignacion,
+            'id_proceso': id_proceso,
+            'id_servicio': id_servicio,
+            'nro_radicado': nro_radicado,
+            'tipo_identificacion': tipo_identificacion,
+            'num_identificacion': num_identificacion,
+            'id_evento': id_evento,
+            'id_Jrci_califi_invalidez': id_Jrci_califi_invalidez,
+            'nombre_junta_regional': nombre_junta_regional,
+            'nro_dictamen': nro_dictamen,
+            'nombre_afiliado': nombre_afiliado,
+            'f_dictamen_jrci_emitido': f_dictamen_jrci_emitido,
+            'porcentaje_pcl_jrci_emitido': porcentaje_pcl_jrci_emitido,
+            'origen_jrci_emitido': origen_jrci_emitido,
+            'f_estructuracion_contro_jrci_emitido': f_estructuracion_contro_jrci_emitido,
+            'manual_de_califi_jrci_emitido': manual_de_califi_jrci_emitido,
+            'sustentacion_concepto_jrci': sustentacion_concepto_jrci,
+            'sustentacion_concepto_jrci1': sustentacion_concepto_jrci1,
+            'copia_afiliado': copia_afiliado,
+            'copia_empleador': copia_empleador,
+            'copia_eps': copia_eps,
+            'copia_afp': copia_afp,
+            'copia_arl': copia_arl,
+            'copia_afp_conocimiento': copia_afp_conocimiento,
+            'asunto': asunto,
+            'cuerpo': cuerpo,
+            'firmar': firmar,
+            'id_comunicado': id_comunicado,
+            'N_siniestro': N_siniestro
+        }
+    };
+
     //Captura Formulario Correspondencia
     $('#form_correspondencia_juntas').submit(function (e){
         e.preventDefault();              
@@ -3671,6 +3826,7 @@ $(document).ready(function(){
         }
 
         var jnci = $('input[name="jnci"]:checked').val();
+        var afp_conocimiento = $('input[name="afp_conocimiento"]:checked').val();
         var anexos = $('#anexos').val();
         var elaboro = $('#elaboro').val();
         var reviso = $('#reviso').val();
@@ -3708,6 +3864,7 @@ $(document).ready(function(){
             'jrci':jrci,
             'cual':cual,
             'jnci':jnci,
+            'afp_conocimiento':afp_conocimiento,
             'anexos':anexos,
             'elaboro':elaboro,
             'reviso':reviso,
@@ -3734,12 +3891,44 @@ $(document).ready(function(){
             'sustentacion_concepto_jrci1':  $("#sustentacion_concepto_repo_jrci").val(),
             'bandera_correspondecia_guardar_actualizar':bandera_correspondecia_guardar_actualizar
         }
-
+        
         $.ajax({    
             type:'POST',
             url:'/guardarcorrespondenciasJuntas',
             data: datos_correspondecia,
             success: function(response){
+                if (response.Id_Comunicado) {
+                    var id_comite_interdisciplinario = $("a[id^='editar_correspondencia_']").data('id_comite_inter');
+                    var nro_radicado = $("a[id^='editar_correspondencia_']").data('tupla_nro_radicado');
+                    if(decision_dictamen == 'Desacuerdo'){
+                        var datos_proforma_desa = dataCreacionProformaDesacuerdo(response.Id_Comunicado, id_comite_interdisciplinario, nro_radicado);
+                        $.ajax({    
+                            type:'POST',
+                            url:'/DescargarProformaRecursoReposicion',
+                            data: datos_proforma_desa,
+                            success: function (response, status, xhr) {
+                            },
+                            error: function (error) {
+                                // Manejar casos de error
+                                console.error('Error al descargar el word:', error);
+                            }       
+                        });
+                    }else if (decision_dictamen == 'Acuerdo') {
+                        var datos_proforma_acuerdo = dataCreacionProformaAcuerdo(response.Id_Comunicado, id_comite_interdisciplinario, nro_radicado);
+                        $.ajax({    
+                            type:'POST',
+                            url:'/DescargarProformaPronunDictaAcuerdo',
+                            data: datos_proforma_acuerdo,
+                            success: function (response, status, xhr) {
+                            },
+                            error: function (error) {
+                                // Manejar casos de error
+                                console.error('Error al descargar el pdf:', error);
+                            }       
+                        });
+                    }
+                    
+                }
                 if (response.parametro == 'insertar_correspondencia') {
                     $('#GuardarCorrespondencia').prop('disabled', true);
                     $('#div_alerta_Correspondencia').removeClass('d-none');
@@ -4472,6 +4661,12 @@ $(document).ready(function(){
                     $('#cual').prop('required', false);
                 }
 
+                if(data_correspondencia["checkeado_afp_conocimiento"] == "Si"){
+                    $("#afp_conocimiento").prop("checked", true);
+                }else{
+                    $("#afp_conocimiento").prop("checked", false);
+                }
+
                 //Listado juntas regional Correspondencia
                 $('#cual').empty();
                 let datos_lista_regional_junta = {
@@ -4619,6 +4814,13 @@ $(document).ready(function(){
         var copia_eps = $('#eps').filter(":checked").val();
         var copia_afp = $('#afp').filter(":checked").val();
         var copia_arl = $('#arl').filter(":checked").val();
+
+        var entidad_conocimiento = $("#entidad_conocimiento").val();
+        var copia_afp_conocimiento = '';
+        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+            copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
+        }
+
         var asunto = $("#Asunto").val();
         var cuerpo = $("#cuerpo_comunicado").summernote('code');
         var firmar = $('#firmar').filter(":checked").val();
@@ -4651,6 +4853,7 @@ $(document).ready(function(){
             'copia_eps': copia_eps,
             'copia_afp': copia_afp,
             'copia_arl': copia_arl,
+            'copia_afp_conocimiento': copia_afp_conocimiento,
             'asunto': asunto,
             'cuerpo': cuerpo,
             'firmar': firmar,
@@ -4671,42 +4874,56 @@ $(document).ready(function(){
                 document.body.removeChild(enlaceDescarga);
             }, 1000);
         }else{
-            setTimeout(() => {
-                $.ajax({    
-                    type:'POST',
-                    url:'/DescargarProformaPronunDictaAcuerdo',
-                    data: datos_proforma_acuerdo,
-                    xhrFields: {
-                        responseType: 'blob' // Indica que la respuesta es un blob
-                    },
-                    success: function (response, status, xhr) {
-                        var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-                
-                        // Crear un enlace de descarga similar al ejemplo anterior
-                        
-                        var nombre_documento = "JUN_ACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".pdf";                    
-                        var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
-                
-                        // Adjuntar el enlace al documento y activar el evento de clic
-                        document.body.appendChild(link);
-                        link.click();
-                
-                        // Eliminar el enlace del documento
-                        document.body.removeChild(link);
-                    },
-                    error: function (error) {
-                        // Manejar casos de error
-                        console.error('Error al descargar el word:', error);
-                    },
-                    complete: function(){
-                        if(infoComunicado.Nombre_documento == null){
-                            // location.reload();
-                        }
-                    }       
-                });
-            }, 2000);
+            if (infoComunicado.Nombre_documento) {
+                var nombre_doc = infoComunicado.Nombre_documento;
+                var idEvento = infoComunicado.ID_evento;
+                var enlaceDescarga = document.createElement('a');
+                enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+                enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+                enlaceDescarga.style.display = 'none';
+                document.body.appendChild(enlaceDescarga);
+                enlaceDescarga.click();
+                setTimeout(function() {
+                    document.body.removeChild(enlaceDescarga);
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    $.ajax({    
+                        type:'POST',
+                        url:'/DescargarProformaPronunDictaAcuerdo',
+                        data: datos_proforma_acuerdo,
+                        xhrFields: {
+                            responseType: 'blob' // Indica que la respuesta es un blob
+                        },
+                        success: function (response, status, xhr) {
+                            var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+                    
+                            // Crear un enlace de descarga similar al ejemplo anterior
+                            
+                            var nombre_documento = "JUN_ACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".pdf";                    
+                            var link = document.createElement('a');
+                            link.href = window.URL.createObjectURL(blob);
+                            link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+                    
+                            // Adjuntar el enlace al documento y activar el evento de clic
+                            document.body.appendChild(link);
+                            link.click();
+                    
+                            // Eliminar el enlace del documento
+                            document.body.removeChild(link);
+                        },
+                        error: function (error) {
+                            // Manejar casos de error
+                            console.error('Error al descargar el word:', error);
+                        },
+                        complete: function(){
+                            if(infoComunicado.Nombre_documento == null){
+                                // location.reload();
+                            }
+                        }       
+                    });
+                }, 2000);
+            }
         }
 
     });
@@ -4934,6 +5151,12 @@ $(document).ready(function(){
                     $('#cual').prop('required', false);
                 }
 
+                if(data_correspondencia["checkeado_afp_conocimiento"] == "Si"){
+                    $("#afp_conocimiento").prop("checked", true);
+                }else{
+                    $("#afp_conocimiento").prop("checked", false);
+                }
+
                 //Listado juntas regional Correspondencia
                 $('#cual').empty();
                 let datos_lista_regional_junta = {
@@ -5086,6 +5309,12 @@ $(document).ready(function(){
         var copia_jrci = $('#jrci').filter(":checked").val();
         var copia_jnci = $('#jnci').filter(":checked").val();
 
+        var entidad_conocimiento = $("#entidad_conocimiento").val();
+        var copia_afp_conocimiento = '';
+        if (entidad_conocimiento != '' && entidad_conocimiento == "Si") {
+            copia_afp_conocimiento = $('#afp_conocimiento').filter(":checked").val();
+        }
+
         var datos_proforma_desacuerdo = {
             '_token': token,
             'id_comite_inter': id_comite_inter,
@@ -5110,6 +5339,7 @@ $(document).ready(function(){
             'copia_arl': copia_arl,
             'copia_jrci': copia_jrci,
             'copia_jnci': copia_jnci,
+            'copia_afp_conocimiento': copia_afp_conocimiento,
             'jrci_elegida': jrci_elegida,
             'asunto': asunto,
             'cuerpo': cuerpo,
@@ -5132,37 +5362,51 @@ $(document).ready(function(){
                 document.body.removeChild(enlaceDescarga);
             }, 1000);
         }else{
-            setTimeout(() => {
-                $.ajax({    
-                    type:'POST',
-                    url:'/DescargarProformaRecursoReposicion',
-                    data: datos_proforma_desacuerdo,
-                    xhrFields: {
-                        responseType: 'blob' // Indica que la respuesta es un blob
-                    },
-                    success: function (response, status, xhr) {
-                        var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
-                
-                        // Crear un enlace de descarga similar al ejemplo anterior
-                        
-                        var nombre_documento = "JUN_DESACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".docx";                    
-                        var link = document.createElement('a');
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
-                
-                        // Adjuntar el enlace al documento y activar el evento de clic
-                        document.body.appendChild(link);
-                        link.click();
-                
-                        // Eliminar el enlace del documento
-                        document.body.removeChild(link);
-                    },
-                    error: function (error) {
-                        // Manejar casos de error
-                        console.error('Error al descargar el word:', error);
-                    }       
-                });
-            }, 2000);
+            if (infoComunicado.Nombre_documento) {
+                var nombre_doc = infoComunicado.Nombre_documento;
+                var idEvento = infoComunicado.ID_evento;
+                var enlaceDescarga = document.createElement('a');
+                enlaceDescarga.href = '/descargar-archivo/'+nombre_doc+'/'+idEvento;     
+                enlaceDescarga.target = '_self'; // Abrir en una nueva ventana/tab
+                enlaceDescarga.style.display = 'none';
+                document.body.appendChild(enlaceDescarga);
+                enlaceDescarga.click();
+                setTimeout(function() {
+                    document.body.removeChild(enlaceDescarga);
+                }, 1000);
+            } else {
+                setTimeout(() => {
+                    $.ajax({    
+                        type:'POST',
+                        url:'/DescargarProformaRecursoReposicion',
+                        data: datos_proforma_desacuerdo,
+                        xhrFields: {
+                            responseType: 'blob' // Indica que la respuesta es un blob
+                        },
+                        success: function (response, status, xhr) {
+                            var blob = new Blob([response], { type: xhr.getResponseHeader('content-type') });
+                    
+                            // Crear un enlace de descarga similar al ejemplo anterior
+                            
+                            var nombre_documento = "JUN_DESACUERDO_"+id_asignacion+"_"+num_identificacion+"_"+nro_radicado+".docx";                    
+                            var link = document.createElement('a');
+                            link.href = window.URL.createObjectURL(blob);
+                            link.download = nombre_documento;  // Reemplaza con el nombre deseado para el archivo PDF
+                    
+                            // Adjuntar el enlace al documento y activar el evento de clic
+                            document.body.appendChild(link);
+                            link.click();
+                    
+                            // Eliminar el enlace del documento
+                            document.body.removeChild(link);
+                        },
+                        error: function (error) {
+                            // Manejar casos de error
+                            console.error('Error al descargar el word:', error);
+                        }       
+                    });
+                }, 2000);
+            }
         }
     });
 

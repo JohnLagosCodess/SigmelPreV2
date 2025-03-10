@@ -3335,7 +3335,23 @@ $(document).ready(function(){
     $("form[id^='Form_noti_dml_previsional_']").submit(function (e){
         e.preventDefault();
         var Id_Evento = $('#Id_Evento_dto_atel').val();
+        var Id_Asignacion = $('#Id_Asignacion_dto_atel').val();
+        var Id_Proceso = $('#Id_Proceso_dto_atel').val();
         var informacion_comunicado = $(this).data("info_comunicado");
+
+        // Actualizamos la columna Agregar_copia de la tabla de comunicados para mantener siempre las entidades actualizadas
+        // $.ajax({
+        //     url: '/actualizar_copias_comunicado',
+        //     method: 'POST',
+        //     data: {
+        //         _token: $('input[name=_token]').val(),
+        //         id_evento: Id_Evento,
+        //         id_comunicado : informacion_comunicado.Id_Comunicado,
+        //         id_asignacion : Id_Asignacion,
+        //         id_proceso : Id_Proceso
+        //     }
+        // });
+
         if(informacion_comunicado.Reemplazado == 1){
             var nombre_doc = informacion_comunicado.Nombre_documento;
             var enlaceDescarga = document.createElement('a');
