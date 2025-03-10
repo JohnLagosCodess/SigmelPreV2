@@ -847,13 +847,13 @@ function filtrar_comunicados(){
          * @var {Object} match_tablas Contiene las tablas de los comunicados y la fila donde se encuentra el estado del comunicado
          */
         const match_tablas = [
-            { id: "listado_agregar_comunicados", target: 5 },
-            { id: "tabla_comunicados_juntas", target: 5},
-            { id: "listado_comunicados_adx", target: 5},
-            { id: "listado_comunicados_dto", target: 5},
-            { id: "listado_comunicado_pronu_origen", target: 5},
-            { id: "listado_comunicados_clpcl", target: 5},
-            { id: "listado_comunicado_pronu_origen", target: 5},
+            { id: "listado_agregar_comunicados", target: 4 },
+            { id: "tabla_comunicados_juntas", target: 4},
+            { id: "listado_comunicados_adx", target: 4},
+            { id: "listado_comunicados_dto", target: 4},
+            { id: "listado_comunicado_pronu_origen", target: 4},
+            { id: "listado_comunicados_clpcl", target: 4},
+            { id: "listado_comunicado_pronu_origen", target: 4},
         ];
 
         //Contenedor de filtros
@@ -873,9 +873,11 @@ function filtrar_comunicados(){
         // Función que oculta las filas
         const ocultarFilas = (tablaId, target) => {
             $(`#${tablaId} tbody tr`).each(function() {
-                const $campo = $(this).find('td').eq(target);
+                let $campo = $(this).find('td').eq(target);
+                //Si en la columna actual no encuentra la columna del estado general de la notificacion pasa a la siguiente.
+                if ($campo.get(0).querySelector('select') == null) $campo = $(this).find('td').eq(target + 1);
                 const estadoComunicado = $campo.find("option:selected").text();
-    
+
                 //en caso tal, se habilita el checkbox para mostrar u ocultar las filas
                 if (estadoComunicado === "No notificar") {
                     $contenedorFiltros.removeClass('d-none');
