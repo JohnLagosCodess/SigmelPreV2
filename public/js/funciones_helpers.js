@@ -902,7 +902,6 @@ function filtrar_comunicados(){
             if ($contenedorFiltros.hasClass("d-none") && repeticiones < maxRepeticiones) {
                 // Si aún tiene la clase d-none, reintentamos
                 repeticiones++;
-                console.log(`Repetición ${repeticiones}`);
                 clearTimeout(timeout);
                 timeout = setTimeout(intentarFiltrar, 3000); // Reintentar en 3 segundos
             } else if (repeticiones < maxRepeticiones) {

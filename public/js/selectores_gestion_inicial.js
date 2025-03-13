@@ -108,11 +108,10 @@ $(document).ready(function(){
     });
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE Entidad de conocimiento */
-    $(".entidad_conocimiento_multiple").select2({
+    $("[id^=entidad_conocimiento_]").select2({
         width: '100%',
         placeholder: "Seleccione una opción",
-        allowClear: false,
-        multiple: true
+        allowClear: false
     });
 
     /* INICIALIZACIÓN DEL SELECT2 DE LISTADO DE ARL (INFORMACIÓN AFILIADO) */
@@ -599,10 +598,11 @@ $(document).ready(function(){
         data: datos_lista_entidad_conocimiento_multiple,
         success:function(data) {
             // console.log(data);
-            $('#entidad_conocimiento_multiple').empty();
+            $("[id^=entidad_conocimiento_]").empty();
+            $("[id^=entidad_conocimiento_]").append('<option value="0">Ninguna</option>');
             let claves = Object.keys(data);
             for (let i = 0; i < claves.length; i++) {
-                $('#entidad_conocimiento_multiple').append('<option value="'+data[claves[i]]["Id_Entidad"]+'">'+data[claves[i]]["Tipo_Entidad"]+' - '+data[claves[i]]["Nombre_entidad"]+'</option>');
+                $("[id^=entidad_conocimiento_]").append('<option value="'+data[claves[i]]["Id_Entidad"]+'">'+data[claves[i]]["Tipo_Entidad"]+' - '+data[claves[i]]["Nombre_entidad"]+'</option>');
             }
         }
     });
@@ -1322,15 +1322,37 @@ $(document).ready(function(){
         }
     });
 
-    // Validación marcacion checkbox entidad de conocimiento AFP 
+    // Validación marcacion checkbox entidad de conocimiento
     $('#entidad_conocimiento').change(function (){
         if ($(this).prop('checked')) {
-            $('#div_afp_conocimiento').removeClass('d-none');         
+            $("div[class^='entidad_conocimiento_']").removeClass('d-none');
+            $("[id^='alerta_entidad_conocimiento_']").addClass('d-none');
         }else{
-            $('#div_afp_conocimiento').addClass('d-none');
-
-            $("#entidad_conocimiento_multiple").val('').trigger('change');
+            $("div[class^='entidad_conocimiento_']").addClass('d-none');
+            $("[id^=entidad_conocimiento_]").val('0').trigger('change');
+            $("[id^='alerta_entidad_conocimiento_']").addClass('d-none');
         }       
+    });
+
+    /* Funcionalidad para no permitir que se seleccione una misma entidad en alguno de los 8 selectores de entidades */
+    var array_id_entidades_selccionadas = [];
+    $("[id^=entidad_conocimiento_]").change(function () {
+        var id_selector_entidad = $(this).attr('id');
+        var $select = $("#" + id_selector_entidad);
+    
+        // Captura del id de la entidad seleccionada
+        var valor_seleccionado_entidad = $select.val();
+    
+        // Si la entidad ya está seleccionada en otro selector se elimina la opcion seleccionada y arroja una alerta.
+        if (array_id_entidades_selccionadas.includes(valor_seleccionado_entidad)) {
+            $("#alerta_" + id_selector_entidad).removeClass('d-none');
+    
+            $select.val('0').trigger("change.select2");
+            
+        } else {
+            array_id_entidades_selccionadas.push(valor_seleccionado_entidad);
+            $("#alerta_" + id_selector_entidad).addClass('d-none');
+        }
     });
 
     /* Validación opción OTRO/¿Cuál? del selector Tipo ARL (Información Afiliado) */
@@ -1694,31 +1716,6 @@ $(document).ready(function(){
                 } 
             });
         }
-    });
-
-    /* 
-        FUNCIONALIDAES PARA LAS ENTIDADES DE CONOCIMIENTO
-        1. No permitir seleccionar más de 5 entidades.
-        2. Respetar el orden de selección de las entidades.
-    */
-    $(".entidad_conocimiento_multiple").on("select2:select", function (e) {
-        let selectedOptions = $(this).val(); // Obtiene las opciones seleccionadas
-        if (selectedOptions.length > 5) {
-            // Elimina la última opción seleccionada
-            $(this).find(`option[value="${e.params.data.id}"]`).prop("selected", false);
-            $(this).trigger("change"); // Refresca Select2
-            $("#entidad_conocimiento_alerta").removeClass('d-none');
-        }else{
-            $("#entidad_conocimiento_alerta").addClass('d-none');
-        }
-    
-        var elemento = e.params.data.element;
-        var $elemento = $(elemento);
-        
-        $elemento.detach();
-        $(this).append($elemento);
-        $(this).trigger("change");
-            
     });
 
     /* Asignar ruta del formulario de edicion de evento antes de dar clic en el botón Editar */
