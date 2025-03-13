@@ -79,6 +79,13 @@ return [
             'days' => 10,
             'replace_placeholders' => true,
         ],
+        'reportes_facturacion' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/reportes_facturacion.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 10,
+            'replace_placeholders' => true,
+        ],
         'tools' => [
             'driver' => 'daily',
             'path' => storage_path('logs/tools.log'),

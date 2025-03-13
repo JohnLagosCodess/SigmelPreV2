@@ -382,11 +382,62 @@
                                                     <div class="form-group">
                                                         <input class="form-contol scalesR" type="checkbox" id="entidad_conocimiento" name="entidad_conocimiento" value="Si">
                                                         <label for="entidad_conocimiento" class="col-form-label">&nbsp; Entidad de Conocimiento</label>
-                                                        <div id="div_afp_conocimiento" class="d-none">
-                                                            {{-- <select class="afp_conocimiento custom-select" name="afp_conocimiento" id="afp_conocimiento"></select> --}}
-                                                            <select class="entidad_conocimiento_multiple custom-select" name="entidad_conocimiento_multiple[]" id="entidad_conocimiento_multiple" multiple="multiple"></select>
-                                                            <span class="d-none" id="entidad_conocimiento_alerta" style="color: red; font-style: italic;">Solo puede seleccionar 5 entidades.</span>
-                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="entidad_conocimiento_1 d-none col-3">
+                                                    <div class="form-group">
+                                                        <label for="entidad_conocimiento_1" class="col-form-label">&nbsp; Entidad de Conocimiento 1</label>
+                                                        <select class="custom-control" name="entidad_conocimiento_1" id="entidad_conocimiento_1"><option value=""></option></select>
+                                                        <span class="d-none" id="alerta_entidad_conocimiento_1" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="entidad_conocimiento_2 col-3 d-none">
+                                                    <div class="form-group">
+                                                        <label for="entidad_conocimiento_2" class="col-form-label">&nbsp; Entidad de Conocimiento 2</label>
+                                                        <select class="custom-control" name="entidad_conocimiento_2" id="entidad_conocimiento_2"><option value=""></option></select>
+                                                        <span class="d-none" id="alerta_entidad_conocimiento_2" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="entidad_conocimiento_3 col-3 d-none">
+                                                    <div class="form-group">
+                                                        <label for="entidad_conocimiento_3" class="col-form-label">&nbsp; Entidad de Conocimiento 3</label>
+                                                        <select class="custom-control" name="entidad_conocimiento_3" id="entidad_conocimiento_3"><option value=""></option></select>
+                                                        <span class="d-none" id="alerta_entidad_conocimiento_3" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="entidad_conocimiento_4 col-3 d-none">
+                                                    <div class="form-group">
+                                                        <label for="entidad_conocimiento_4" class="col-form-label">&nbsp; Entidad de Conocimiento 4</label>
+                                                        <select class="custom-control" name="entidad_conocimiento_4" id="entidad_conocimiento_4"><option value=""></option></select>
+                                                        <span class="d-none" id="alerta_entidad_conocimiento_4" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="entidad_conocimiento_5 col-3 d-none">
+                                                    <div class="form-group">
+                                                        <label for="entidad_conocimiento_5" class="col-form-label">&nbsp; Entidad de Conocimiento 5</label>
+                                                        <select class="custom-control" name="entidad_conocimiento_5" id="entidad_conocimiento_5"><option value=""></option></select>
+                                                        <span class="d-none" id="alerta_entidad_conocimiento_5" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="entidad_conocimiento_6 col-3 d-none">
+                                                    <div class="form-group">
+                                                        <label for="entidad_conocimiento_6" class="col-form-label">&nbsp; Entidad de Conocimiento 6</label>
+                                                        <select class="custom-control" name="entidad_conocimiento_6" id="entidad_conocimiento_6"><option value=""></option></select>
+                                                        <span class="d-none" id="alerta_entidad_conocimiento_6" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="entidad_conocimiento_7 col-3 d-none">
+                                                    <div class="form-group">
+                                                        <label for="entidad_conocimiento_7" class="col-form-label">&nbsp; Entidad de Conocimiento 7</label>
+                                                        <select class="custom-control" name="entidad_conocimiento_7" id="entidad_conocimiento_7"><option value=""></option></select>
+                                                        <span class="d-none" id="alerta_entidad_conocimiento_7" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
+                                                    </div>
+                                                </div>
+                                                <div class="entidad_conocimiento_8 col-3 d-none">
+                                                    <div class="form-group">
+                                                        <label for="entidad_conocimiento" class="col-form-label">&nbsp; Entidad de Conocimiento 8</label>
+                                                        <select class="custom-control" name="entidad_conocimiento_8" id="entidad_conocimiento_8"><option value=""></option></select>
+                                                        <span class="d-none" id="alerta_entidad_conocimiento_8" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
                                                     </div>
                                                 </div>
                                                 <div class="col-3 columna_identificacion_afi_beni d-none">

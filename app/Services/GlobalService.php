@@ -140,7 +140,8 @@ class GlobalService
     public function retornarcuentaConAfpConocimiento($id_evento){
         $resultado = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
         ->leftJoin('sigmel_gestiones.sigmel_informacion_entidades as sie', 'siae.Id_afp_entidad_conocimiento', '=', 'sie.Id_Entidad')
-        ->select('siae.Entidad_conocimiento', 'siae.Id_afp_entidad_conocimiento', 'siae.Otras_entidades_conocimiento')
+        ->select('siae.Entidad_conocimiento', 'siae.Id_afp_entidad_conocimiento', 'siae.Id_afp_entidad_conocimiento2','siae.Id_afp_entidad_conocimiento3','siae.Id_afp_entidad_conocimiento4',
+        'siae.Id_afp_entidad_conocimiento5','siae.Id_afp_entidad_conocimiento6','siae.Id_afp_entidad_conocimiento7','siae.Id_afp_entidad_conocimiento8', 'siae.Otras_entidades_conocimiento')
         ->where([['siae.ID_evento', $id_evento]])
         ->get();
         if ($resultado->isEmpty()) {
@@ -177,14 +178,21 @@ class GlobalService
     */
     public function asignacionConsecutivoIdDestinatario($is_jrci = false, $is_jnci = false){
         $id_destinatarios = [];
-        //Se establecen los prefijos que va a llevar cada uno de los posibles destinatarios
+        //Se establecen los prefijos que va a llevar cada uno de los posibles destinatarios, En la PBS092 solicitaron agregar 8 Entidades de conocimiento se realizo de forma estatica
         $prefijos = [
             'AFI_',
             'EMP_',
             'EPS_',
             'AFP_',
             'ARL_',
-            'FPC_'
+            'FPC_',
+            'FPC2_',
+            'FPC3_',
+            'FPC4_',
+            'FPC5_',
+            'FPC6_',
+            'FPC7_',
+            'FPC8_'
         ];
         //Si JRCI es visible en los posibles destinatarios se agrega a la lista (solo debe ser visible en modulo de Juntas)
         if($is_jrci){
@@ -544,17 +552,34 @@ class GlobalService
 
         // Obtenemos la o las entidades de conocimiento del evento
         $entidades_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
-        ->select('siae.Id_afp_entidad_conocimiento','siae.Otras_entidades_conocimiento')
+        ->select('siae.Id_afp_entidad_conocimiento', 'siae.Id_afp_entidad_conocimiento2','siae.Id_afp_entidad_conocimiento3','siae.Id_afp_entidad_conocimiento4','siae.Id_afp_entidad_conocimiento5','siae.Id_afp_entidad_conocimiento6','siae.Id_afp_entidad_conocimiento7','siae.Id_afp_entidad_conocimiento8','siae.Otras_entidades_conocimiento')
         ->where([['siae.ID_evento', $id_evento]])
-        ->get();
+        ->first();
 
-        $string_entidades = $entidades_conocimiento[0]->Id_afp_entidad_conocimiento.",".$entidades_conocimiento[0]->Otras_entidades_conocimiento;
-        $array_string_entidades = array_map('trim', explode(',', $string_entidades));
-        
-        //Validar si el array viene con dos posiciones y la 1 viene vacia
-        if (count($array_string_entidades) == 2 && $array_string_entidades[1] === "") {
-            unset($array_string_entidades[1]);
-            $array_string_entidades = array_values($array_string_entidades);
+        if ($entidades_conocimiento) {
+            $entidades = [
+                $entidades_conocimiento->Id_afp_entidad_conocimiento,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento2,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento3,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento4,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento5,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento6,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento7,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento8
+            ];
+
+            $entidades = array_filter($entidades, function ($value) {
+                return $value !== null && $value !== '' && $value !== 0;
+            });
+
+            // Convertimos en string separado por comas
+            $string_entidades = implode(',', $entidades);
+
+            // Convertimos en array para el WHERE IN
+            $array_string_entidades = explode(',', $string_entidades);
+        } else {
+            $string_entidades = '';
+            $array_string_entidades = [];
         }
         
         // dd($array_string_entidades);
@@ -611,21 +636,18 @@ class GlobalService
     public function retornarStringCopiasEntidadConocimiento($id_evento){
         $entidades_conocimiento = $this->retornarcuentaConAfpConocimiento($id_evento);
         if($entidades_conocimiento[0]->Entidad_conocimiento == 'Si'){
-            $afp_principal = $entidades_conocimiento[0]->Id_afp_entidad_conocimiento;
             $entidades_concatenadas[] = 'AFP_Conocimiento';   
-            if($entidades_conocimiento[0]->Otras_entidades_conocimiento){
-                $entidades = $afp_principal.','.$entidades_conocimiento[0]->Otras_entidades_conocimiento;
-                $array_entidades = array_map('trim', explode(',',$entidades));
-                for ($i=1; $i < count($array_entidades); $i++) { 
-                    $AFP_Conocimiento = 'AFP_Conocimiento' . ($i + 1);
-                    $entidades_concatenadas[] = $AFP_Conocimiento;                
-                }
+            // El 8 es la cantidad de entidades conocimiento que puede tener, PBS092 se valido y se decidio dejar de forma estatica 
+            for ($i=1; $i < 8; $i++) { 
+                $AFP_Conocimiento = 'AFP_Conocimiento' . ($i + 1);
+                $entidades_concatenadas[] = $AFP_Conocimiento;                
             }
             return $entidades_concatenadas = implode(', ', $entidades_concatenadas);
         }else{
             return null;
         }
     }
+
     /**
         * Query para agregar o quitar la copia de entidad conocimiento al dictamen PBS092.
         * 
@@ -676,21 +698,23 @@ class GlobalService
     public function getAFPConocimientosParaCorrespondencia($id_evento, $id_asignacion){
         $entidades_conocimiento = $this->retornarcuentaConAfpConocimiento($id_evento);
         if($entidades_conocimiento && $entidades_conocimiento[0]->Entidad_conocimiento == 'Si'){
-            $lista_entidades_conocimiento = $entidades_conocimiento[0]->Id_afp_entidad_conocimiento;
-            if($entidades_conocimiento[0]->Otras_entidades_conocimiento && $entidades_conocimiento[0]->Otras_entidades_conocimiento != ''){
-                $lista_entidades_conocimiento .= ','.$entidades_conocimiento[0]->Otras_entidades_conocimiento;
+            $lista_entidades_conocimiento = [];
+            for($i = 1; $i <= 8; $i++){
+                $campo = ($i == 1) ? 'Id_afp_entidad_conocimiento' : 'Id_afp_entidad_conocimiento' . $i;
+                $tipo_correspondencia = ($i == 1) ? 'afp_conocimiento' : 'afp_conocimiento' . $i;
+                if (!empty($entidades_conocimiento[0]->$campo) && $entidades_conocimiento[0]->$campo != 0) {
+                    $entidades = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as sle', 'sie.IdTipo_entidad', '=', 'sle.Id_Entidad')
+                        ->select('sie.Id_Entidad','sle.Tipo_Entidad','sie.Nombre_entidad')
+                        ->where('sie.Id_Entidad', '=',$entidades_conocimiento[0]->$campo)
+                        ->get();
+                    if($entidades->isEmpty()){
+                        $entidades = null;
+                    }
+                    array_push($lista_entidades_conocimiento,['Entidad'=>$entidades,'tipo_correspondencia'=>$tipo_correspondencia]);
+                }
             }
-            $lista_entidades_conocimiento = array_map('trim', explode(',',$lista_entidades_conocimiento));
-            $entidades = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
-            ->leftJoin('sigmel_gestiones.sigmel_lista_entidades as sle', 'sie.IdTipo_entidad', '=', 'sle.Id_Entidad')
-            ->select('sie.Id_Entidad','sle.Tipo_Entidad','sie.Nombre_entidad')
-            ->whereIn('sie.Id_Entidad', $lista_entidades_conocimiento)
-            ->orderByRaw("FIELD(sie.Id_Entidad, " . implode(',', $lista_entidades_conocimiento) . ")")
-            ->get();
-            if($entidades->isEmpty()){
-                return null;
-            }
-            return $entidades;
+            return $lista_entidades_conocimiento;
         }
         return null;
     } 

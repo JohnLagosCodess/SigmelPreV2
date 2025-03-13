@@ -5,12 +5,39 @@ namespace App\Http\Controllers\Administrador;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Coordinador\CoordinadorController;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\reporte_facturacion_juntas_s;
 
 class ReporteFacturacionJuntasController extends Controller
 {
+
+    /** @var Array Contiene los procesos a ejecutar para los comunicados
+     * La llave siempre debe ser el comunicado sobre el cual se esta procesando.
+     * acciones -> Contiene las acciones disponibles para que el comunicado pueda ser mostrado.
+     * estados -> Contiene los estados (estado general de la notificacion) para mostrar dicho comunicado.
+     * match_correspondencia -> Contiene los destinatarios, en los cuales se obtendra la correspodencia del comunicado consultado.
+     */
+    private $acciones_comunicado = [
+        "Oficio_Afiliado" => [
+            "acciones" => [144, 148, 130, 162, 163, 164],
+            "estados" => [356, 357, 358, 359, 360],
+            "match_correspondencia" => "Afiliado,jrci"
+        ],
+        "ACUERDO JRCI" => [
+            "acciones" => [144, 148, 130, 162, 163, 164],
+            "estados" => [356, 357, 358, 359, 360],
+            "match_correspondencia" => "Afiliado,jrci"
+        ],
+        "RECURSO JRCI" => [
+            "acciones" => [144, 148, 130, 162, 163, 164],
+            "estados" => [356, 357, 358, 359, 360],
+            "match_correspondencia" => "Afiliado,jrci"
+        ],
+    ];
+
     public function show(){
         if(!Auth::check()){
             return redirect('/');
@@ -64,6 +91,9 @@ class ReporteFacturacionJuntasController extends Controller
         else if (!empty($fecha_desde) && !empty($fecha_hasta)){
             $reporte_facturacion_juntas = reporte_facturacion_juntas_s::on('sigmel_gestiones')
             ->select('Nro_Siniestro',
+                'ID_evento',
+                'Id_Asignacion',
+                'Accion_ejecutada',
                 'Tipo_Documento',
                 'Identificacion',
                 'Nombre',
@@ -141,9 +171,67 @@ class ReporteFacturacionJuntasController extends Controller
             )
             ->whereRaw('DATE(F_accion) BETWEEN ? AND ?', [$fecha_desde, $fecha_hasta])
             ->orderBy('F_accion', 'asc')
-            ->get();
-            $array_reporte_facturacion_juntas = json_decode(json_encode($reporte_facturacion_juntas, true)); 
-            return response()->json($array_reporte_facturacion_juntas);
+            ->get()->toArray();
+
+            $reporte_facturacion_juntas = $this->combinar_reporte_correspondencia($reporte_facturacion_juntas);
+
+            //Elimina los elementos para que queden acorde a las columnas del excel
+            $reporte_facturacion_juntas =  array_map(function($element) {
+                unset($element['ID_evento'], $element['Id_Asignacion'], $element['Accion_ejecutada']);
+                return $element;
+            }, $reporte_facturacion_juntas);
+
+            return response()->json($reporte_facturacion_juntas);
         }
     }
+
+    /**
+     * Obtiene las correspodencia por cada registro obtenido en el reporte.
+     * @param Array Reporte generado por {reporte_facturacion_pcls}
+     * @return Array Devuelve el reporte seteado
+     */
+    public function combinar_reporte_correspondencia(Array $reporte){
+
+        /**
+         * @var callable Setea los campos de la correspondencia para las parte de las guias.
+         * @param Array $procesar Corresponde a la correspondencia que se esta evaluando
+         * @param Array $item Corresponde a cada item del reporte de facturacion.
+         */
+        $asignar_guia = function(Array $procesar,$item){
+            foreach($procesar as $correspondencia){
+                $tipo_correspondencia = ucfirst($correspondencia->Tipo_correspondencia);
+                if($correspondencia->Tipo_correspondencia == "jrci"){
+                    $item["Guia_Rta_Junta_Regional"] = $correspondencia->N_guia;
+                }else{
+                    $item["Guia_{$tipo_correspondencia}"] =  $correspondencia->N_guia;
+                }
+            }
+            return $item;
+        };
+        
+        /** @var Array Contiene los datos del reporte de facturacion seteados con los datos de la correspondencia */
+        $correspondencias = [];
+
+        foreach ($reporte as $item) {
+
+            /** Contiene los datos de la correspodencia en funcion del comunicado para el evento que se esta consultando */
+            $comunicados = CoordinadorController::getCorrespondencia_comunicado($item["ID_evento"],$item["Id_Asignacion"],$item["Accion_ejecutada"],$this->acciones_comunicado);
+            Log::channel('reportes_facturacion')->info("Fila reporte",[
+                "evento" => $item["ID_evento"],
+                "id_asignacion" => $item["Id_Asignacion"],
+                "accion_ejecutada" => $item["Accion_ejecutada"],
+                "comunicados" => $comunicados
+            ]);
+
+            if(!empty($comunicados)){
+                foreach ($comunicados as $correspondencia) {
+                    $correspondencias[] = $asignar_guia($correspondencia,$item);
+                }
+            }else{
+                array_push($correspondencias,$item);
+            }
+        }
+        
+        return $correspondencias;
+    } 
 }

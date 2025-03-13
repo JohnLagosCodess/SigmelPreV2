@@ -1487,6 +1487,7 @@ $(document).ready(function(){
                 // Si "enviara" es "Si", significa que la columna Destinatarios fue agregada
                 if (enviara === 'Si') {
                     // La columna de Destinatarios estaría en la posición 4 (después de F_comunicado)
+                    // $(row).find('td').eq(4).attr('colspan', 2);
                     $(row).find('td').eq(4).css('white-space', 'normal');
                 }
             },           
@@ -1506,7 +1507,6 @@ $(document).ready(function(){
                 "infoEmpty": "No se encontró información",
             }
         });
-
         autoAdjustColumns(listadoComunicados);
     }
 
