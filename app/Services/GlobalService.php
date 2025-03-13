@@ -552,17 +552,34 @@ class GlobalService
 
         // Obtenemos la o las entidades de conocimiento del evento
         $entidades_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') .'sigmel_informacion_afiliado_eventos as siae')
-        ->select('siae.Id_afp_entidad_conocimiento','siae.Otras_entidades_conocimiento')
+        ->select('siae.Id_afp_entidad_conocimiento', 'siae.Id_afp_entidad_conocimiento2','siae.Id_afp_entidad_conocimiento3','siae.Id_afp_entidad_conocimiento4','siae.Id_afp_entidad_conocimiento5','siae.Id_afp_entidad_conocimiento6','siae.Id_afp_entidad_conocimiento7','siae.Id_afp_entidad_conocimiento8','siae.Otras_entidades_conocimiento')
         ->where([['siae.ID_evento', $id_evento]])
-        ->get();
+        ->first();
 
-        $string_entidades = $entidades_conocimiento[0]->Id_afp_entidad_conocimiento.",".$entidades_conocimiento[0]->Otras_entidades_conocimiento;
-        $array_string_entidades = array_map('trim', explode(',', $string_entidades));
-        
-        //Validar si el array viene con dos posiciones y la 1 viene vacia
-        if (count($array_string_entidades) == 2 && $array_string_entidades[1] === "") {
-            unset($array_string_entidades[1]);
-            $array_string_entidades = array_values($array_string_entidades);
+        if ($entidades_conocimiento) {
+            $entidades = [
+                $entidades_conocimiento->Id_afp_entidad_conocimiento,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento2,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento3,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento4,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento5,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento6,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento7,
+                $entidades_conocimiento->Id_afp_entidad_conocimiento8
+            ];
+
+            $entidades = array_filter($entidades, function ($value) {
+                return $value !== null && $value !== '' && $value !== 0;
+            });
+
+            // Convertimos en string separado por comas
+            $string_entidades = implode(',', $entidades);
+
+            // Convertimos en array para el WHERE IN
+            $array_string_entidades = explode(',', $string_entidades);
+        } else {
+            $string_entidades = '';
+            $array_string_entidades = [];
         }
         
         // dd($array_string_entidades);
@@ -630,6 +647,7 @@ class GlobalService
             return null;
         }
     }
+
     /**
         * Query para agregar o quitar la copia de entidad conocimiento al dictamen PBS092.
         * 

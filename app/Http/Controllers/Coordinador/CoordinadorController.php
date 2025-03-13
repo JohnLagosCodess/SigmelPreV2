@@ -2293,4 +2293,57 @@ class CoordinadorController extends Controller
         }
         return [false];
     }
+
+    /**
+     *  Consulta los datos de la correspondencia para el evento consultado
+     * @param String $id_evento Evento consultado
+     * @param int $id_asignacion Id de asignacion del evento
+     * @param int $accion_ejecutada Id de la accion ejecutada del evento consultado.
+     * @param Array $acciones_comunicados Contiene las acciones a aplicar sobre los comunicados.
+     * @example Comunicado => [
+     *  "acciones" => [...],
+     *  "estados" => [...],
+     *  "match_correspondencia" => [...].
+     * ]
+     * @return Array
+     */
+    public static function getCorrespondencia_comunicado(string $id_evento, int $id_asignacion, int $accion_ejecutada, array $acciones_comunicados)
+    {
+
+        $response = [];
+        foreach ($acciones_comunicados as $key => $value) {
+            if (in_array($accion_ejecutada, $value["acciones"])) {
+                $tipos_correspondencia = explode(",", $value["match_correspondencia"]);
+
+                // Obtener la fecha más reciente (F_registro) de la tabla 'sice'
+                $fecha_reciente = DB::table(getDatabaseName("sigmel_gestiones") . "sigmel_informacion_comunicado_eventos as sice")
+                    ->where([
+                        ["sice.ID_evento", $id_evento],
+                        ["sice.Id_Asignacion", $id_asignacion],
+                        ["sice.Tipo_descarga", $key]
+                    ])
+                    //->whereIn("sice.Estado_Notificacion", $value["estados"])
+                    ->max("sice.F_registro");
+
+                // Ahora obtener todos los registros de 'sice' y 'sice_cor' con esa fecha reciente
+                $correspondencia = DB::table(getDatabaseName("sigmel_gestiones") . "sigmel_informacion_comunicado_eventos as sice")
+                    ->select("sice_cor.N_guia", "sice.Id_Comunicado", "sice.Tipo_descarga", "sice_cor.Tipo_correspondencia", "sice.Estado_Notificacion", "sice.ID_evento", "sice.F_registro")
+                    ->leftJoin("sigmel_gestiones.sigmel_informacion_correspondencia_eventos as sice_cor", "sice_cor.Id_comunicado", "sice.Id_comunicado")
+                    ->where([
+                        ["sice.ID_evento", $id_evento],
+                        ["sice.Id_Asignacion", $id_asignacion],
+                        ["sice.Tipo_descarga", $key],
+                        ["sice.F_registro", $fecha_reciente]
+                    ])
+                    ->whereIn("sice_cor.Tipo_correspondencia", $tipos_correspondencia)
+                    ->whereIn("sice.Estado_Notificacion", $value["estados"])
+                    ->get()->toArray();
+
+
+                if (!empty($correspondencia)) $response[] = $correspondencia;
+            }
+        }
+
+        return $response;
+    }
 }
