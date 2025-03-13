@@ -39,6 +39,13 @@ return new class extends Migration
             $table->integer('Id_arl')->nullable();
             $table->enum('Entidad_conocimiento', ['Si', 'No'])->nullable();
             $table->integer('Id_afp_entidad_conocimiento')->nullable();
+            $table->integer('Id_afp_entidad_conocimiento2')->nullable();
+            $table->integer('Id_afp_entidad_conocimiento3')->nullable();
+            $table->integer('Id_afp_entidad_conocimiento4')->nullable();
+            $table->integer('Id_afp_entidad_conocimiento5')->nullable();
+            $table->integer('Id_afp_entidad_conocimiento6')->nullable();
+            $table->integer('Id_afp_entidad_conocimiento7')->nullable();
+            $table->integer('Id_afp_entidad_conocimiento8')->nullable();
             $table->enum('Activo', ['Si', 'No']);
             $table->string('Nombre_afiliado_benefi', 100)->nullable();
             $table->integer('Tipo_documento_benefi')->nullable();
