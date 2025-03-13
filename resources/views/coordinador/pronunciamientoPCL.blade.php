@@ -980,7 +980,7 @@
                     true
                 );
     
-                if (destinatarios) {
+                if (document.getElementById("destinatariosContainer_{{ $comunicados->Id_Comunicado }}") && destinatarios) {
                     document.getElementById("destinatariosContainer_{{ $comunicados->Id_Comunicado }}").innerHTML = destinatarios;
                 }
             @endforeach

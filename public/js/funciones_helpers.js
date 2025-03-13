@@ -1656,6 +1656,13 @@ function retornarIdDestinatario(ids_destinatario, destinatario){
                 'afp': 'AFP',
                 'arl': 'ARL',
                 'afp_conocimiento': 'FPC',
+                'afp_conocimiento2': 'FPC2',
+                'afp_conocimiento3': 'FPC3',
+                'afp_conocimiento4': 'FPC4',
+                'afp_conocimiento5': 'FPC5',
+                'afp_conocimiento6': 'FPC6',
+                'afp_conocimiento7': 'FPC7',
+                'afp_conocimiento8': 'FPC8',
                 'jrci': 'JRC',
                 'jnci': 'JNC'
             };
@@ -2037,13 +2044,7 @@ function calc_antiguedad_empresa(){
         }
         //Función para agregar el subrayado al destinatario principal y aquellos que hayan sido seleccionados como copia
         function getUnderlineStyle(entity) {
-            //Se hace un casteo a string debido a que en la implementación de la PBS092 ahora las entidades de conocimiento llegan como un id de tipo number, entonces para no afectar la implenetación realizada en el PBS054 se opta por esto.
-            string_entity = entity.toString();
-            let negrita = (Correspondencia && Correspondencia.includes(string_entity)) ? 'font-weight:700;' : '';
-            //Validamos si la entidad es un afp conocimiento deberia venir un id de entidad, entonces para no afectar validaciones anteriores de las PBS054 asumimos un valor temporal de afp_conocimiento PBS092
-            if(typeof(entity) == 'number'){
-                entity = 'afp_conocimiento';
-            }
+            let negrita = (Correspondencia && Correspondencia.includes(entity)) ? 'font-weight:700;' : '';
             let underline = (Destinatario.toLowerCase() === entity || (Copias && Copias.includes(entity))) ? 'text-decoration-line: underline;' : '';
             return negrita + underline;
         }
@@ -2081,12 +2082,12 @@ function calc_antiguedad_empresa(){
         
             if(flagEntidades && (entidades_conocimiento != null && entidades_conocimiento.length > 0)){
                 entidades_conocimiento.forEach(element => {
-                    info_destinatarios += `<a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="afp_conocimiento" \
+                    info_destinatarios += `<a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="${element['tipo_correspondencia']}" \
                         data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                         data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                         data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
-                        data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" data-id_entidad_conocimiento="${element['Id_Entidad']}" data-tipo_entidad_conocimiento="${element['Tipo_Entidad']}" \  
-                        data-ids_destinatario="${data_comunicado['Id_Destinatarios']}" style="${getUnderlineStyle(element['Id_Entidad'])}"> ${element['Tipo_Entidad']} - ${element['Nombre_entidad']}</a>`;
+                        data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" data-id_entidad_conocimiento="${element['Entidad'][0]['Id_Entidad']}" data-tipo_entidad_conocimiento="${element['Entidad'][0]['Tipo_Entidad']}" \  
+                        data-ids_destinatario="${data_comunicado['Id_Destinatarios']}" style="${getUnderlineStyle(element['tipo_correspondencia'])}"> ${element['Entidad'][0]['Tipo_Entidad']} - ${element['Entidad'][0]['Nombre_entidad']}</a>`;
                 });
             }
             if (juntas) {
@@ -2280,20 +2281,7 @@ function calc_antiguedad_empresa(){
         $("#modalCorrespondencia #id_comunicado").val(idComunicado);
         flag_saved = false;
         if(correspondencia_array.includes(tipo_correspondencia) || correspondencias_guardadas === tipo_correspondencia){
-            console.log('CA ',correspondencia_array,' TC ',tipo_correspondencia,' CG ',correspondencias_guardadas,' IE ',id_entidad_conocimiento);
-            if(tipo_correspondencia === 'afp_conocimiento'){
-                console.log('Es una afp_conocimiento')
-                if(Array.isArray(correspondencia_array) && correspondencia_array?.some(correspondencia => correspondencia.toLowerCase() === id_entidad_conocimiento)){
-                    console.log('Tiene una correspondencia guardada');
-                    flag_saved = true;
-                }else{
-                    console.log('No tiene una correspondencia guardada');
-                    flag_saved = false;
-                }
-            }else{
-                console.log('No es una afp_conocimiento');
-                flag_saved = true;
-            }
+            flag_saved = true;
         }
         if(flag_saved){
             data_comunicado = {
@@ -2490,13 +2478,7 @@ function calc_antiguedad_empresa(){
         let tipo_correspondencia = $('#modalCorrespondencia #tipo_correspondencia').val();
         let id_entidad_conocimiento = $('#modalCorrespondencia #id_entidad_conocimiento').val();
         if (!correspondencia_array.includes(tipo_correspondencia)) {
-            if(tipo_correspondencia == 'afp_conocimiento'){
-                if(!correspondencia_array.includes(tipo_correspondencia)){
-                    correspondencia_array.push(id_entidad_conocimiento);
-                }
-            }else{
                 correspondencia_array.push(tipo_correspondencia);
-            }
         }
         tipoDestinatario = null;
         if($('#check_principal').is(':checked')){

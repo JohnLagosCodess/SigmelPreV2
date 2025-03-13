@@ -1763,7 +1763,7 @@ class CoordinadorController extends Controller
                     ])->limit(1)->get();
                     $response['datos'] = count($datos_jnci) > 0 ? $datos_jnci[0] : null;
                 }
-                else if($Tipo_correspondencia === 'afp_conocimiento' && !empty($infoAfiliado) && $id_entidad_conocimiento){
+                else if(str_starts_with($Tipo_correspondencia,'afp_conocimiento') && !empty($infoAfiliado) && $id_entidad_conocimiento){
                     $datos_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
                     ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')

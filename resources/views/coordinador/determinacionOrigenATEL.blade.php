@@ -1496,7 +1496,7 @@
                                                     <td>{{$comunicados->F_comunicado}}</td>
                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
                                                     @if ($caso_notificado == "Si")
-                                                        <td style="white-space: normal;">
+                                                        <td colspan="2">
                                                             <div id="destinatariosContainer_{{$comunicados->Id_Comunicado}}"></div>
                                                         </td>
                                                     @endif
@@ -1881,7 +1881,7 @@
                     true
                 );
     
-                if (destinatarios) {
+                if (document.getElementById("destinatariosContainer_{{ $comunicados->Id_Comunicado }}") && destinatarios) {
                     document.getElementById("destinatariosContainer_{{ $comunicados->Id_Comunicado }}").innerHTML = destinatarios;
                 }
             @endforeach
