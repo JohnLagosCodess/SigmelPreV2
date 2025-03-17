@@ -666,14 +666,10 @@ class GlobalService
             ['Id_proceso',$id_proceso],
         ])
         ->whereIn('Tipo_descarga',['Oficio','Comunicado'])->first();
-        if($oficio->isEmpty()){
+        if(!$oficio){
             return null;
         }
-        $copias_oficio = $oficio[0]->Agregar_copia;
-        if($copias_oficio){
-            return $copias_oficio;
-        }
-        return null;
+        return $oficio->Agregar_copia ?? null;
     }
     /**
         * Query para agregar o quitar la copia de entidad conocimiento al dictamen PBS092.
