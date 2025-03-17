@@ -1571,7 +1571,7 @@ $(document).ready(function(){
 
     function dataCreacionOficioNotificacionADX(id_comunicado){
         token = $("input[name='_token']").val();
-        console.log('Id_comunicado ', id_comunicado);
+        
         var Id_Evento = $('#Id_Evento').val();
         var Id_Proceso = $('#Id_Proceso_adicion_dx').val();
         var Id_Asignacion = $('#Id_Asignacion_adicion_dx').val();
