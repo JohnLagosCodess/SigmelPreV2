@@ -8540,11 +8540,13 @@ class CalificacionPCLController extends Controller
         if (!empty($afp)) {
             $variables_llenas[] = $afp;
         }
-        if (!empty($afp_conocimiento)) {
-            $variables_llenas[] = $afp_conocimiento;
-        }
         if (!empty($arl)) {
             $variables_llenas[] = $arl;
+        }
+        if (!empty($afp_conocimiento)) {
+            // traemos la informacion de las copias dependiendo de cuantas entidades de conocimiento hay
+            $str_entidades = $this->globalService->retornarStringCopiasEntidadConocimiento($Id_EventoDecreto);           
+            $variables_llenas[] = $str_entidades;
         }
         if (!empty($jrci)) {
             $variables_llenas[] = $jrci;
