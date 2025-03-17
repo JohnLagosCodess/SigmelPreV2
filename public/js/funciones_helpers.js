@@ -2027,7 +2027,7 @@ function calc_antiguedad_empresa(){
      * @param {object} status_notificacion corresponde a las opciones disponibles que se incluiran en el selector del estado general de notificaciones
      * @returns {Array} correspondiente a las columnas asociadas a notificacion (Destinatarios','Estado_general','Nota')
      */
-    function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comunicado,entidades_conocimiento,juntas=false,submodulo=false) {
+    function getHistorialNotificacion(n_radicado, nota,status_notificacion,data_comunicado,entidades_conocimiento,juntas=false,submodulo=false,columna_con_width_modificado=false) {
         let Destinatario = data_comunicado['Destinatario'];
         let Copias = data_comunicado['Agregar_copia'];
         let Correspondencia = data_comunicado['Correspondencia'];
@@ -2049,8 +2049,8 @@ function calc_antiguedad_empresa(){
             let underline = (Destinatario.toLowerCase() === entity || (Copias && Copias.includes(entity))) ? 'text-decoration-line: underline;' : '';
             return negrita + underline;
         }
-
-        let info_destinatarios = `<a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Afiliado" \
+        let info_destinatarios = `<div style="display:flex; flex-wrap: wrap; width:500px; gap:3px;">
+            <a href="javascript:void(0);" data-toggle="modal" data-target="#modalCorrespondencia" id="CorrespondenciaNotificacion" data-tipo_correspondencia="Afiliado" \
                 data-estado_correspondencia="${data_comunicado["Estado_correspondencia"]}" data-id_comunicado="${data_comunicado["Id_Comunicado"]}" data-n_radicado="${n_radicado}" data-copias="${Copias}" data-destinatario_principal="${Destinatario}"\
                 data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                 data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
@@ -2109,6 +2109,7 @@ function calc_antiguedad_empresa(){
                     </a>
                 `;
             }
+            info_destinatarios += '</div>';
         if(submodulo){
             return info_destinatarios;
         }

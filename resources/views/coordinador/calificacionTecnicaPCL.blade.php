@@ -7227,7 +7227,7 @@
                         </form>
                     </div>  
                     <!--  Correspondia -->
-                    <div class="card-info d-none" id="div_correspondecia">
+                    <div class="card-info" id="div_correspondecia">
                         <div class="card-header text-center" style="border: 1.5px solid black;">
                             <h5>Correspondencia</h5>
                         </div>

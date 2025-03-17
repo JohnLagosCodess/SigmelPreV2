@@ -5900,6 +5900,11 @@ class RecalificacionPCLController extends Controller
                     ])
             ->get();
             $Id_Comunicado = $capturar_Id_Comunicado[0]->Id_Comunicado;
+
+            $actualizaOficios = $this->globalService->ValidarExistenciaOficioYCopiasOficio($Id_EventoDecreto, $Id_Asignacion_Dcreto,$Id_ProcesoDecreto);
+            if($actualizaOficios){
+                $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$actualizaOficios);
+            }
             
             $mensajes = array(
                 "parametro" => 'insertar_dictamen_pericial',

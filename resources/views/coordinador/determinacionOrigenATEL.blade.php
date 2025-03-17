@@ -1496,7 +1496,7 @@
                                                     <td>{{$comunicados->F_comunicado}}</td>
                                                     <td><?php if($comunicados->Tipo_descarga == 'Manual'){echo $comunicados->Asunto;}else{echo $comunicados->Tipo_descarga;}?></td>
                                                     @if ($caso_notificado == "Si")
-                                                        <td colspan="2">
+                                                        <td style="white-space: normal;">
                                                             <div id="destinatariosContainer_{{$comunicados->Id_Comunicado}}"></div>
                                                         </td>
                                                     @endif

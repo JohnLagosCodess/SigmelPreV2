@@ -1236,7 +1236,7 @@ $(document).ready(function(){
                 }
 
                 //Obtenemos los datos de los campos 'Destinatarios','Estado_general','Nota' para mostrar en la tabla de comunicados y expedientes
-                let info_notificacion = getHistorialNotificacion(data.hitorialAgregarComunicado[i].N_radicado,data.hitorialAgregarComunicado[i].Nota,opciones_Notificacion,data.hitorialAgregarComunicado[i],entidades_conocimiento);
+                let info_notificacion = getHistorialNotificacion(data.hitorialAgregarComunicado[i].N_radicado,data.hitorialAgregarComunicado[i].Nota,opciones_Notificacion,data.hitorialAgregarComunicado[i],entidades_conocimiento,false,false,true);
                 if (data.enviar_notificacion[0].Notificacion == 'Si') {
                     data.hitorialAgregarComunicado[i].Destinatarios = info_notificacion.Destinatarios;                    
                 }
@@ -1487,7 +1487,6 @@ $(document).ready(function(){
                 // Si "enviara" es "Si", significa que la columna Destinatarios fue agregada
                 if (enviara === 'Si') {
                     // La columna de Destinatarios estaría en la posición 4 (después de F_comunicado)
-                    // $(row).find('td').eq(4).attr('colspan', 2);
                     $(row).find('td').eq(4).css('white-space', 'normal');
                 }
             },           
