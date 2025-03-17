@@ -2269,7 +2269,7 @@ $(document).ready(function(){
                     data.hitorialAgregarComunicado[i].Editarcomunicado = "";
                 }
                 //Obtenemos los datos de los campos 'Destinatarios','Estado_general','Nota' para mostrar en la tabla de comunicados y expedientes
-                let info_notificacion = getHistorialNotificacion(data.hitorialAgregarComunicado[i].N_radicado,data.hitorialAgregarComunicado[i].Nota,opciones_Notificacion,data.hitorialAgregarComunicado[i],entidades_conocimiento);
+                let info_notificacion = getHistorialNotificacion(data.hitorialAgregarComunicado[i].N_radicado,data.hitorialAgregarComunicado[i].Nota,opciones_Notificacion,data.hitorialAgregarComunicado[i],entidades_conocimiento,false,false,true);
                 if (data.enviar_notificacion[0].Notificacion == 'Si') {
                     data.hitorialAgregarComunicado[i].Destinatarios = info_notificacion.Destinatarios;                    
                 }

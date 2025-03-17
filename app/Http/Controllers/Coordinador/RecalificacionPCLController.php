@@ -5235,11 +5235,13 @@ class RecalificacionPCLController extends Controller
         if (!empty($afp)) {
             $variables_llenas[] = $afp;
         }
-        if (!empty($afp_conocimiento)) {
-            $variables_llenas[] = $afp_conocimiento;
-        }
         if (!empty($arl)) {
             $variables_llenas[] = $arl;
+        }
+        if (!empty($afp_conocimiento)) {
+            // traemos la informacion de las copias dependiendo de cuantas entidades de conocimiento hay
+            $str_entidades = $this->globalService->retornarStringCopiasEntidadConocimiento($Id_EventoDecreto);           
+            $variables_llenas[] = $str_entidades;
         }
         if (!empty($jrci)) {
             $variables_llenas[] = $jrci;
@@ -5900,6 +5902,11 @@ class RecalificacionPCLController extends Controller
                     ])
             ->get();
             $Id_Comunicado = $capturar_Id_Comunicado[0]->Id_Comunicado;
+
+            $actualizaOficios = $this->globalService->ValidarExistenciaOficioYCopiasOficio($Id_EventoDecreto, $Id_Asignacion_Dcreto,$Id_ProcesoDecreto);
+            if($actualizaOficios){
+                $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($Id_EventoDecreto,$Id_Asignacion_Dcreto,$Id_ProcesoDecreto,$actualizaOficios);
+            }
             
             $mensajes = array(
                 "parametro" => 'insertar_dictamen_pericial',

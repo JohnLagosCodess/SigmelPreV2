@@ -850,7 +850,6 @@ class DeterminacionOrigenATEL extends Controller
             ->update($comunicado_reemplazado);
         }
         
-        sleep(2);
         $datos_info_accion_evento= [    
             'F_calificacion_servicio' => $datetime
         ];
@@ -866,6 +865,11 @@ class DeterminacionOrigenATEL extends Controller
             ['N_radicado',$request->radicado_dictamen]
             ])
         ->value('Id_Comunicado');
+
+        $actualizaOficios = $this->globalService->ValidarExistenciaOficioYCopiasOficio($request->ID_Evento, $request->Id_Asignacion,$request->Id_proceso);
+        if($actualizaOficios){
+            $this->globalService->AgregaroQuitarCopiaEntidadConocimientoDictamen($request->ID_Evento,$request->Id_Asignacion,$request->Id_proceso,$actualizaOficios);
+        }
         
         $mensajes = array(
             "parametro" => 'agregar_dto_atel',

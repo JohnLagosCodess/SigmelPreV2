@@ -649,6 +649,29 @@ class GlobalService
     }
 
     /**
+        * Valida que el oficio exista y si existe retona las copias del mismo
+        * 
+        * @param string $id_evento Necesario para identificar el evento al cual se le necesita hacer el ajuste.
+        *
+        * @param string $id_asignacion Necesario para identificar la asignación dada en el evento.
+        *
+        * @param string $id_proceso Necesario para conocer el proceso del servicio
+        *
+    */
+    public function ValidarExistenciaOficioYCopiasOficio($id_evento,$id_asignacion,$id_proceso){
+        $oficio = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+        ->where([
+            ['ID_evento',$id_evento],
+            ['Id_Asignacion',$id_asignacion],
+            ['Id_proceso',$id_proceso],
+        ])
+        ->whereIn('Tipo_descarga',['Oficio','Comunicado'])->first();
+        if(!$oficio){
+            return null;
+        }
+        return $oficio->Agregar_copia ?? null;
+    }
+    /**
         * Query para agregar o quitar la copia de entidad conocimiento al dictamen PBS092.
         * 
         * @param string $id_evento Necesario para identificar el evento al cual se le necesita hacer el ajuste.
