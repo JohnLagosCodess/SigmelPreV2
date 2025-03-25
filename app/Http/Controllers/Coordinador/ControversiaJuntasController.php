@@ -2524,114 +2524,163 @@ class ControversiaJuntasController extends Controller
         ->where([['Id_com_inter', $id_comite_inter]])->get();
 
         $array_datos_para_destinatario_principal = json_decode(json_encode($datos_para_destinatario_principal), true);
-        $checkbox_otro_destinatario = $array_datos_para_destinatario_principal[0]["Otro_destinatario"];
-
-        //Fecha de sustentacion antes la JRCI
-        $fecha_sustent_jrci = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
-        ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion]])
-        ->value('F_sustenta_jrci');
-
-        //  Si el checkbox fue marcado entonces se entra a mirar las demás validaciones
-        if ($checkbox_otro_destinatario == "Si") {
-            // 1: ARL; 2: AFP; 3: EPS; 4: AFILIADO; 5:EMPLEADOR; 8: OTRO
-            $tipo_destinatario = $array_datos_para_destinatario_principal[0]["Tipo_destinatario"];
-            switch (true) {
-                // Si escoge alguna opcion de estas: ARL, AFP, EPS se sacan los datos del destinatario principal de la entidad
-                case ($tipo_destinatario == 1 || $tipo_destinatario == 2 || $tipo_destinatario == 3):
-                    $id_entidad = $array_datos_para_destinatario_principal[0]["Nombre_dest_principal"];
-
-                    $datos_entidad = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Departamento', '=', 'sldm2.Id_departamento')
-                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
-                    ->where([
-                        ['sie.Id_Entidad', $id_entidad],
-                        ['sie.IdTipo_entidad', $tipo_destinatario]
-                    ])->get();
-
-                    $nombre_junta = $datos_entidad[0]->Nombre_entidad;
-                    $direccion_junta = $datos_entidad[0]->Direccion;
-                    $telefono_junta = $datos_entidad[0]->Telefonos;
-                    $ciudad_junta = $datos_entidad[0]->Nombre_ciudad;
-                    $departamento_junta = $datos_entidad[0]->Nombre_departamento;
-
-                break;
+        if(isset($array_datos_para_destinatario_principal[0]["Otro_destinatario"])){
+            $checkbox_otro_destinatario = $array_datos_para_destinatario_principal[0]["Otro_destinatario"];
+    
+            //Fecha de sustentacion antes la JRCI
+            $fecha_sustent_jrci = sigmel_informacion_controversia_juntas_eventos::on('sigmel_gestiones')
+            ->where([['ID_evento',$id_evento],['Id_Asignacion',$id_asignacion]])
+            ->value('F_sustenta_jrci');
+    
+            //  Si el checkbox fue marcado entonces se entra a mirar las demás validaciones
+            if ($checkbox_otro_destinatario == "Si") {
+                // 1: ARL; 2: AFP; 3: EPS; 4: AFILIADO; 5:EMPLEADOR; 8: OTRO
+                $tipo_destinatario = $array_datos_para_destinatario_principal[0]["Tipo_destinatario"];
+                switch (true) {
+                    // Si escoge alguna opcion de estas: ARL, AFP, EPS se sacan los datos del destinatario principal de la entidad
+                    case ($tipo_destinatario == 1 || $tipo_destinatario == 2 || $tipo_destinatario == 3):
+                        $id_entidad = $array_datos_para_destinatario_principal[0]["Nombre_dest_principal"];
+    
+                        $datos_entidad = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Departamento', '=', 'sldm2.Id_departamento')
+                        ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
+                        ->where([
+                            ['sie.Id_Entidad', $id_entidad],
+                            ['sie.IdTipo_entidad', $tipo_destinatario]
+                        ])->get();
+    
+                        $nombre_junta = $datos_entidad[0]->Nombre_entidad;
+                        $direccion_junta = $datos_entidad[0]->Direccion;
+                        $telefono_junta = $datos_entidad[0]->Telefonos;
+                        $ciudad_junta = $datos_entidad[0]->Nombre_ciudad;
+                        $departamento_junta = $datos_entidad[0]->Nombre_departamento;
+    
+                    break;
+                    
+                    // Si escoge la opción Afiliado: Se sacan los datos del destinatario principal pero del afiliado
+                    case ($tipo_destinatario == 4):
+                        $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                        ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+                        ->where([['siae.ID_evento','=', $id_evento]])
+                        ->get();
+            
+                        $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
+            
+                        $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
+                        $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
+                        $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
+                        $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+                        $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
+    
+                    break;
+    
+                    // Si escoge la opción Empleador: Se sacan los datos del destinatario principal pero del Empleador
+                    case ($tipo_destinatario == 5):
+                        $datos_entidad_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_municipio', '=', 'sldm.Id_municipios')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_departamento', '=', 'sldm2.Id_departamento')
+                        ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
+                        ->where([['sile.ID_evento', $id_evento]])->get();
+    
+                        $nombre_junta = $datos_entidad_empleador[0]->Empresa;
+                        $direccion_junta = $datos_entidad_empleador[0]->Direccion;
+                        $telefono_junta = $datos_entidad_empleador[0]->Telefono_empresa;
+                        $ciudad_junta = $datos_entidad_empleador[0]->Nombre_ciudad;
+                        $departamento_junta = $datos_entidad_empleador[0]->Nombre_departamento;
+    
+                    break;
+                    
+                    // Si escoge la opción Otro: se sacan los datos del destinatario de la tabla sigmel_informacion_comite_interdisciplinario_eventos
+                    case ($tipo_destinatario == 8):
+                        // aqui validamos si los datos no vienen vacios, debido a que si  vienen vacios, toca marcar ''
+                        if (!empty($array_datos_para_destinatario_principal[0]["Nombre_destinatario"])) {
+                            $nombre_junta = $array_datos_para_destinatario_principal[0]["Nombre_destinatario"];
+                        } else {
+                            $nombre_junta = "";
+                        };
+    
+                        if (!empty($array_datos_para_destinatario_principal[0]["Direccion_destinatario"])) {
+                            $direccion_junta = $array_datos_para_destinatario_principal[0]["Direccion_destinatario"];
+                        } else {
+                            $direccion_junta = "";
+                        };
+    
+                        if (!empty($array_datos_para_destinatario_principal[0]["Telefono_destinatario"])) {
+                            $telefono_junta = $array_datos_para_destinatario_principal[0]["Telefono_destinatario"];
+                        } else {
+                            $telefono_junta = "";
+                        };
+    
+                        if (!empty($array_datos_para_destinatario_principal[0]["Ciudad_destinatario"])) {
+                            $ciudad_junta = $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"];
+                        } else {
+                            $ciudad_junta = "";
+                        };
+    
+                        if (!empty($array_datos_para_destinatario_principal[0]["Departamento_destinatario"])) {
+                            $departamento_junta = $array_datos_para_destinatario_principal[0]["Departamento_destinatario"];
+                        } else {
+                            $departamento_junta = "";
+                        };
+    
+                    break;
+    
+                    default:
+                        # code...
+                    break;
+                }
+            }else{
+                // Datos Junta regional
+                $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                ->where([['sie.Id_Entidad', $id_Jrci_califi_invalidez]])->get();
+    
+                $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
+    
+                if(count($array_datos_junta_regional)>0){
+                    $nombre_junta = $request->nombre_junta_regional;
+                    $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
+                    $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
+                    $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
+                    $ciudad_junta = $array_datos_junta_regional[0]["Nombre_ciudad"];
+                }else {
+                    $nombre_junta = "";
+                    $direccion_junta = "";
+                    $telefono_junta = "";
+                    $ciudad_junta = "";
+                    $departamento_junta = "";
+                }
+    
+                // $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                // ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+                // ->where([['siae.ID_evento','=', $id_evento]])
+                // ->get();
+    
+                // $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
+    
+                // if (count($array_datos_municipio_ciudad_afiliado) > 0) {
+                //     $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
+                //     $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
+                //     $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
+                //     $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+                //     $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
+                // } else {
+                //     $nombre_junta = "";
+                //     $direccion_junta = "";
+                //     $telefono_junta = "";
+                //     $departamento_junta = "";
+                //     $ciudad_junta = "";
+                // }
                 
-                // Si escoge la opción Afiliado: Se sacan los datos del destinatario principal pero del afiliado
-                case ($tipo_destinatario == 4):
-                    $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                    ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
-                    ->where([['siae.ID_evento','=', $id_evento]])
-                    ->get();
-        
-                    $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
-        
-                    $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
-                    $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
-                    $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
-                    $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
-                    $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
-
-                break;
-
-                // Si escoge la opción Empleador: Se sacan los datos del destinatario principal pero del Empleador
-                case ($tipo_destinatario == 5):
-                    $datos_entidad_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_municipio', '=', 'sldm.Id_municipios')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_departamento', '=', 'sldm2.Id_departamento')
-                    ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
-                    ->where([['sile.ID_evento', $id_evento]])->get();
-
-                    $nombre_junta = $datos_entidad_empleador[0]->Empresa;
-                    $direccion_junta = $datos_entidad_empleador[0]->Direccion;
-                    $telefono_junta = $datos_entidad_empleador[0]->Telefono_empresa;
-                    $ciudad_junta = $datos_entidad_empleador[0]->Nombre_ciudad;
-                    $departamento_junta = $datos_entidad_empleador[0]->Nombre_departamento;
-
-                break;
-                
-                // Si escoge la opción Otro: se sacan los datos del destinatario de la tabla sigmel_informacion_comite_interdisciplinario_eventos
-                case ($tipo_destinatario == 8):
-                    // aqui validamos si los datos no vienen vacios, debido a que si  vienen vacios, toca marcar ''
-                    if (!empty($array_datos_para_destinatario_principal[0]["Nombre_destinatario"])) {
-                        $nombre_junta = $array_datos_para_destinatario_principal[0]["Nombre_destinatario"];
-                    } else {
-                        $nombre_junta = "";
-                    };
-
-                    if (!empty($array_datos_para_destinatario_principal[0]["Direccion_destinatario"])) {
-                        $direccion_junta = $array_datos_para_destinatario_principal[0]["Direccion_destinatario"];
-                    } else {
-                        $direccion_junta = "";
-                    };
-
-                    if (!empty($array_datos_para_destinatario_principal[0]["Telefono_destinatario"])) {
-                        $telefono_junta = $array_datos_para_destinatario_principal[0]["Telefono_destinatario"];
-                    } else {
-                        $telefono_junta = "";
-                    };
-
-                    if (!empty($array_datos_para_destinatario_principal[0]["Ciudad_destinatario"])) {
-                        $ciudad_junta = $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"];
-                    } else {
-                        $ciudad_junta = "";
-                    };
-
-                    if (!empty($array_datos_para_destinatario_principal[0]["Departamento_destinatario"])) {
-                        $departamento_junta = $array_datos_para_destinatario_principal[0]["Departamento_destinatario"];
-                    } else {
-                        $departamento_junta = "";
-                    };
-
-                break;
-
-                default:
-                    # code...
-                break;
             }
-        }else{
+        }else {
             // Datos Junta regional
             $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
@@ -2654,30 +2703,6 @@ class ControversiaJuntasController extends Controller
                 $ciudad_junta = "";
                 $departamento_junta = "";
             }
-
-            // $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-            // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-            // ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-            // ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
-            // ->where([['siae.ID_evento','=', $id_evento]])
-            // ->get();
-
-            // $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
-
-            // if (count($array_datos_municipio_ciudad_afiliado) > 0) {
-            //     $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
-            //     $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
-            //     $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
-            //     $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
-            //     $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
-            // } else {
-            //     $nombre_junta = "";
-            //     $direccion_junta = "";
-            //     $telefono_junta = "";
-            //     $departamento_junta = "";
-            //     $ciudad_junta = "";
-            // }
-            
         }
 
         /* Tipos de controversia primera calificación */
@@ -3421,109 +3446,158 @@ class ControversiaJuntasController extends Controller
         ->value('F_sustenta_jrci');
 
         $array_datos_para_destinatario_principal = json_decode(json_encode($datos_para_destinatario_principal), true);
-        $checkbox_otro_destinatario = $array_datos_para_destinatario_principal[0]["Otro_destinatario"];
-
-        //  Si el checkbox fue marcado entonces se entra a mirar las demás validaciones
-        if ($checkbox_otro_destinatario == "Si") {
-            // 1: ARL; 2: AFP; 3: EPS; 4: AFILIADO; 5:EMPLEADOR; 8: OTRO
-            $tipo_destinatario = $array_datos_para_destinatario_principal[0]["Tipo_destinatario"];
-            switch (true) {
-                // Si escoge alguna opcion de estas: ARL, AFP, EPS se sacan los datos del destinatario principal de la entidad
-                case ($tipo_destinatario == 1 || $tipo_destinatario == 2 || $tipo_destinatario == 3):
-                    $id_entidad = $array_datos_para_destinatario_principal[0]["Nombre_dest_principal"];
-
-                    $datos_entidad = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Departamento', '=', 'sldm2.Id_departamento')
-                    ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
-                    ->where([
-                        ['sie.Id_Entidad', $id_entidad],
-                        ['sie.IdTipo_entidad', $tipo_destinatario]
-                    ])->get();
-
-                    $nombre_junta = $datos_entidad[0]->Nombre_entidad;
-                    $direccion_junta = $datos_entidad[0]->Direccion;
-                    $telefono_junta = $datos_entidad[0]->Telefonos;
-                    $ciudad_junta = $datos_entidad[0]->Nombre_ciudad;
-                    $departamento_junta = $datos_entidad[0]->Nombre_ciudad;
-
-                break;
-                
-                // Si escoge la opción Afiliado: Se sacan los datos del destinatario principal pero del afiliado
-                case ($tipo_destinatario == 4):
-                    $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-                    ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
-                    ->where([['siae.ID_evento','=', $id_evento]])
-                    ->get();
-        
-                    $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
-        
-                    $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
-                    $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
-                    $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
-                    $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
-                    $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
-
-                break;
-
-                // Si escoge la opción Empleador: Se sacan los datos del destinatario principal pero del Empleador
-                case ($tipo_destinatario == 5):
-                    $datos_entidad_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_municipio', '=', 'sldm.Id_municipios')
-                    ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_departamento', '=', 'sldm2.Id_departamento')
-                    ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
-                    ->where([['sile.ID_evento', $id_evento]])->get();
-
-                    $nombre_junta = $datos_entidad_empleador[0]->Empresa;
-                    $direccion_junta = $datos_entidad_empleador[0]->Direccion;
-                    $telefono_junta = $datos_entidad_empleador[0]->Telefono_empresa;
-                    $ciudad_junta = $datos_entidad_empleador[0]->Nombre_ciudad;
-                    $departamento_junta = $datos_entidad_empleador[0]->Nombre_departamento;
-
-                break;
-                
-                // Si escoge la opción Otro: se sacan los datos del destinatario de la tabla sigmel_informacion_comite_interdisciplinario_eventos
-                case ($tipo_destinatario == 8):
-                    // aqui validamos si los datos no vienen vacios, debido a que si  vienen vacios, toca marcar ''
-                    if (!empty($array_datos_para_destinatario_principal[0]["Nombre_destinatario"])) {
-                        $nombre_junta = $array_datos_para_destinatario_principal[0]["Nombre_destinatario"];
-                    } else {
+        if (isset($array_datos_para_destinatario_principal[0]["Otro_destinatario"])) {
+            $checkbox_otro_destinatario = $array_datos_para_destinatario_principal[0]["Otro_destinatario"];
+    
+            //  Si el checkbox fue marcado entonces se entra a mirar las demás validaciones
+            if ($checkbox_otro_destinatario == "Si") {
+                // 1: ARL; 2: AFP; 3: EPS; 4: AFILIADO; 5:EMPLEADOR; 8: OTRO
+                $tipo_destinatario = $array_datos_para_destinatario_principal[0]["Tipo_destinatario"];
+                switch (true) {
+                    // Si escoge alguna opcion de estas: ARL, AFP, EPS se sacan los datos del destinatario principal de la entidad
+                    case ($tipo_destinatario == 1 || $tipo_destinatario == 2 || $tipo_destinatario == 3):
+                        $id_entidad = $array_datos_para_destinatario_principal[0]["Nombre_dest_principal"];
+    
+                        $datos_entidad = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_entidades as sie')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Ciudad', '=', 'sldm.Id_municipios')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Departamento', '=', 'sldm2.Id_departamento')
+                        ->select('sie.Nombre_entidad', 'sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
+                        ->where([
+                            ['sie.Id_Entidad', $id_entidad],
+                            ['sie.IdTipo_entidad', $tipo_destinatario]
+                        ])->get();
+    
+                        $nombre_junta = $datos_entidad[0]->Nombre_entidad;
+                        $direccion_junta = $datos_entidad[0]->Direccion;
+                        $telefono_junta = $datos_entidad[0]->Telefonos;
+                        $ciudad_junta = $datos_entidad[0]->Nombre_ciudad;
+                        $departamento_junta = $datos_entidad[0]->Nombre_ciudad;
+    
+                    break;
+                    
+                    // Si escoge la opción Afiliado: Se sacan los datos del destinatario principal pero del afiliado
+                    case ($tipo_destinatario == 4):
+                        $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                        ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+                        ->where([['siae.ID_evento','=', $id_evento]])
+                        ->get();
+            
+                        $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
+            
+                        $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
+                        $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
+                        $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
+                        $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+                        $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
+    
+                    break;
+    
+                    // Si escoge la opción Empleador: Se sacan los datos del destinatario principal pero del Empleador
+                    case ($tipo_destinatario == 5):
+                        $datos_entidad_empleador = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_laboral_eventos as sile')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sile.Id_municipio', '=', 'sldm.Id_municipios')
+                        ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sile.Id_departamento', '=', 'sldm2.Id_departamento')
+                        ->select('sile.Empresa', 'sile.Direccion', 'sile.Telefono_empresa', 'sldm.Nombre_municipio as Nombre_ciudad', 'sldm2.Nombre_departamento')
+                        ->where([['sile.ID_evento', $id_evento]])->get();
+    
+                        $nombre_junta = $datos_entidad_empleador[0]->Empresa;
+                        $direccion_junta = $datos_entidad_empleador[0]->Direccion;
+                        $telefono_junta = $datos_entidad_empleador[0]->Telefono_empresa;
+                        $ciudad_junta = $datos_entidad_empleador[0]->Nombre_ciudad;
+                        $departamento_junta = $datos_entidad_empleador[0]->Nombre_departamento;
+    
+                    break;
+                    
+                    // Si escoge la opción Otro: se sacan los datos del destinatario de la tabla sigmel_informacion_comite_interdisciplinario_eventos
+                    case ($tipo_destinatario == 8):
+                        // aqui validamos si los datos no vienen vacios, debido a que si  vienen vacios, toca marcar ''
+                        if (!empty($array_datos_para_destinatario_principal[0]["Nombre_destinatario"])) {
+                            $nombre_junta = $array_datos_para_destinatario_principal[0]["Nombre_destinatario"];
+                        } else {
+                            $nombre_junta = "";
+                        };
+    
+                        if (!empty($array_datos_para_destinatario_principal[0]["Direccion_destinatario"])) {
+                            $direccion_junta = $array_datos_para_destinatario_principal[0]["Direccion_destinatario"];
+                        } else {
+                            $direccion_junta = "";
+                        };
+    
+                        if (!empty($array_datos_para_destinatario_principal[0]["Telefono_destinatario"])) {
+                            $telefono_junta = $array_datos_para_destinatario_principal[0]["Telefono_destinatario"];
+                        } else {
+                            $telefono_junta = "";
+                        };
+    
+                        if (!empty($array_datos_para_destinatario_principal[0]["Ciudad_destinatario"])) {
+                            $ciudad_junta = $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"];
+                        } else {
+                            $ciudad_junta = "";
+                        };
+    
+                        if (!empty($array_datos_para_destinatario_principal[0]["Departamento_destinatario"])) {
+                            $departamento_junta = $array_datos_para_destinatario_principal[0]["Departamento_destinatario"];
+                        } else {
+                            $departamento_junta = "";
+                        };
+    
+                    break;
+    
+                    default:
+                        # code...
+                    break;
+                }
+            }else{
+                // Datos Junta regional
+                $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
+                ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'sie.Id_Ciudad', '=', 'sldm2.Id_municipios')
+                ->select('sie.Direccion', 'sie.Telefonos', 'sldm.Nombre_departamento', 'sldm2.Nombre_municipio as Nombre_ciudad')
+                ->where([['sie.Id_Entidad', $id_Jrci_califi_invalidez]])->get();
+    
+                $array_datos_junta_regional = json_decode(json_encode($datos_junta_regional), true);
+    
+                if(count($array_datos_junta_regional)>0){
+                    $nombre_junta = $request->nombre_junta_regional;
+                    $direccion_junta = $array_datos_junta_regional[0]["Direccion"];
+                    $telefono_junta = $array_datos_junta_regional[0]["Telefonos"];
+                    $ciudad_junta = $array_datos_junta_regional[0]["Nombre_ciudad"];
+                    $departamento_junta = $array_datos_junta_regional[0]["Nombre_departamento"];
+                }else {
                         $nombre_junta = "";
-                    };
-
-                    if (!empty($array_datos_para_destinatario_principal[0]["Direccion_destinatario"])) {
-                        $direccion_junta = $array_datos_para_destinatario_principal[0]["Direccion_destinatario"];
-                    } else {
                         $direccion_junta = "";
-                    };
-
-                    if (!empty($array_datos_para_destinatario_principal[0]["Telefono_destinatario"])) {
-                        $telefono_junta = $array_datos_para_destinatario_principal[0]["Telefono_destinatario"];
-                    } else {
                         $telefono_junta = "";
-                    };
-
-                    if (!empty($array_datos_para_destinatario_principal[0]["Ciudad_destinatario"])) {
-                        $ciudad_junta = $array_datos_para_destinatario_principal[0]["Ciudad_destinatario"];
-                    } else {
                         $ciudad_junta = "";
-                    };
-
-                    if (!empty($array_datos_para_destinatario_principal[0]["Departamento_destinatario"])) {
-                        $departamento_junta = $array_datos_para_destinatario_principal[0]["Departamento_destinatario"];
-                    } else {
                         $departamento_junta = "";
-                    };
-
-                break;
-
-                default:
-                    # code...
-                break;
+                }
+    
+                // $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+                //         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
+                //         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
+                //         ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
+                //         ->where([['siae.ID_evento','=', $id_evento]])
+                //         ->get();
+            
+                // $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
+    
+                // if (count($array_datos_municipio_ciudad_afiliado) > 0) {
+                //     $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
+                //     $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
+                //     $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
+                //     $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
+                //     $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
+                // } else {
+                //     $nombre_junta = "";
+                //     $direccion_junta = "";
+                //     $telefono_junta = "";
+                //     $ciudad_junta = "";
+                //     $departamento_junta = "";
+                // }
+                
             }
-        }else{
+        }else {
             // Datos Junta regional
             $datos_junta_regional = DB::table(getDatabaseName('sigmel_gestiones').'sigmel_informacion_entidades as sie')
             ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'sie.Id_Departamento', '=', 'sldm.Id_departamento')
@@ -3546,30 +3620,6 @@ class ControversiaJuntasController extends Controller
                     $ciudad_junta = "";
                     $departamento_junta = "";
             }
-
-            // $datos_municipio_ciudad_afiliado = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
-            //         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm', 'siae.Id_departamento', '=', 'sldm.Id_departamento')
-            //         ->leftJoin('sigmel_gestiones.sigmel_lista_departamentos_municipios as sldm2', 'siae.Id_municipio', '=', 'sldm2.Id_municipios')
-            //         ->select('siae.Nombre_afiliado','siae.Direccion','siae.Telefono_contacto','sldm.Nombre_departamento', 'sldm2.Nombre_municipio')
-            //         ->where([['siae.ID_evento','=', $id_evento]])
-            //         ->get();
-        
-            // $array_datos_municipio_ciudad_afiliado = json_decode(json_encode($datos_municipio_ciudad_afiliado), true);
-
-            // if (count($array_datos_municipio_ciudad_afiliado) > 0) {
-            //     $nombre_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_afiliado"];;
-            //     $direccion_junta = $array_datos_municipio_ciudad_afiliado[0]["Direccion"];
-            //     $telefono_junta = $array_datos_municipio_ciudad_afiliado[0]["Telefono_contacto"];
-            //     $ciudad_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_municipio"];
-            //     $departamento_junta = $array_datos_municipio_ciudad_afiliado[0]["Nombre_departamento"];
-            // } else {
-            //     $nombre_junta = "";
-            //     $direccion_junta = "";
-            //     $telefono_junta = "";
-            //     $ciudad_junta = "";
-            //     $departamento_junta = "";
-            // }
-            
         }
 
         // Traer datos CIE10 (Diagnóstico motivo de calificación) jrci

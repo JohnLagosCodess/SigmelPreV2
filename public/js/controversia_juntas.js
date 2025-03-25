@@ -1046,7 +1046,7 @@ $(document).ready(function(){
         var seteo_nro_anexos = 0;
         $("#anexos").val(seteo_nro_anexos);
 
-        // Deselección automática de las copias a partes interesadas: Eps
+        // Deselección automática de las copias a partes interesadas: Afiliado
         $("#afiliado").prop('checked', true);
 
         // Selección automática del checkbox firmar
@@ -1167,6 +1167,9 @@ $(document).ready(function(){
                 $("#btn_insertar_decreto_calificador_jrci").prop("disabled", true);
 
                 var texto_insertar = "<p>Respetados señores</p><p>Con atento saludo les informamos que fuimos notificados del dictamen número {{$nro_dictamen}} de fecha {{$f_dictamen_jrci}}, correspondiente al afiliado {{$nombre_afiliado}}, quien se identifica con la {{$tipo_identificacion_afiliado}} número {{$num_identificacion_afiliado}}, mediante el cual califican las patologías: {{$cie10_nombre_cie10_jrci}}.</p><p>Una vez estudiado el dictamen por parte del equipo interdisciplinario de medicina laboral, esta aseguradora se manifiesta en ACUERDO con la calificación realizada, por cuanto, se ajusta a los fundamentos fácticos evidenciados en las historias clínica y ocupacional y, los fundamentos jurídicos contemplados en el Decreto 1295 de 1994 y la Ley 1562 de 2012.</p><p>Dicho acuerdo se fundamenta en: Una vez revisado el dictamen proferido por la junta, esta aseguradora se manifiesta en ACUERDO con la calificación asignada, {{$sustentacion_jrci}}.</p><p>En caso de que las demás partes interesadas no interpongan el recurso de reposición en subsidio de apelación, amablemente solicitamos nos sea remitida la CONSTANCIA EJECUTORIA del dictamen emitido por su entidad.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+
+                // Deselección automática de las copias a partes interesadas: Afiliado
+                $("#afiliado").prop('checked', false);
             } else {
 
                 $("#btn_insertar_pcl_jrci").prop("disabled", false);
@@ -1175,6 +1178,9 @@ $(document).ready(function(){
                 $("#btn_insertar_decreto_calificador_jrci").prop("disabled", false);
 
                 var texto_insertar = "<p>Respetados señores</p><p>Con atento saludo les informamos que fuimos notificados del dictamen número {{$nro_dictamen}} de fecha {{$f_dictamen_jrci}}, correspondiente al afiliado {{$nombre_afiliado}}, quien se identifica con la {{$tipo_identificacion_afiliado}} número {{$num_identificacion_afiliado}}, mediante el cual califican las patologías: {{$cie10_nombre_cie10_jrci}}, determinando un porcentaje de pérdida de capacidad laboral de {{$pcl_jrci}}%, de origen {{$origen_dx_jrci}} y Fecha de estructuración {{$f_estructuracion_jrci}}.</p><p>Una vez estudiado el dictamen por parte del equipo interdisciplinario de medicina laboral, esta aseguradora se manifiesta en ACUERDO respecto al Porcentaje de PCL, determinado(s) en el dictamen de calificación, toda vez que los elementos determinados se ajustan al Decreto {{$decreto_calificador_jrci}} (Manual Único de Calificación de Invalidez).</p><p>Dicho acuerdo se fundamenta en: Una vez revisado el dictamen proferido por la junta, esta aseguradora se manifiesta en ACUERDO con la calificación asignada, {{$sustentacion_jrci}}.</p><p>En caso de que las demás partes interesadas no interpongan el recurso de reposición en subsidio de apelación, amablemente solicitamos nos sea remitida la CONSTANCIA EJECUTORIA del dictamen emitido por su entidad.</p><p>Cualquier inquietud o consulta al respecto, le invitamos a comunicarse a nuestras líneas de atención al cliente en Bogotá (601) 3 07 70 32 o a la línea nacional gratuita 01 8000 122 532, de lunes a viernes, de 8:00 a. m. a 8:00 p. m. - sábados de 8:00 a.m. a 12 m., o escríbanos a «servicioalcliente@segurosalfa.com.co» o a la dirección Carrera 10 # 18-36 piso 4 Edificio José María Córdoba, Bogotá D.C.</p>";
+
+                // Selección automática de las copias a partes interesadas: Afiliado
+                $("#afiliado").prop('checked', true);
             }
 
             
@@ -1187,9 +1193,6 @@ $(document).ready(function(){
             // Seteo automático del nro de anexos:
             var seteo_nro_anexos = 0;
             $("#anexos").val(seteo_nro_anexos);
-
-            // Deselección automática de las copias a partes interesadas: Eps
-            $("#afiliado").prop('checked', true);
 
             // Selección automática del checkbox firmar
             $("#firmar").prop('checked', true);
