@@ -3144,10 +3144,12 @@ class CalificacionPCLController extends Controller
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosOrigen = $request->agregar_copia_editar;
                 // Recorremos el array y se identifica si AFP_Conocimiento esta presente en alguan posicion
-                foreach ($copiaComunicadosOrigen as $ComunicadosOrigen => $valor) {
-                    // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
-                    if (strpos($valor, "AFP_Conocimiento") !== false) {
-                        $copiaComunicadosOrigen[$ComunicadosOrigen] = "AFP_Conocimiento";
+                if ($copiaComunicadosOrigen > 0) {
+                    foreach ($copiaComunicadosOrigen as $ComunicadosOrigen => $valor) {
+                        // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
+                        if (strpos($valor, "AFP_Conocimiento") !== false) {
+                            $copiaComunicadosOrigen[$ComunicadosOrigen] = "AFP_Conocimiento";
+                        }
                     }
                 }
                 // Se crea array para compararlo con el que viene del formulario
@@ -3527,11 +3529,13 @@ class CalificacionPCLController extends Controller
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 // Recorremos el array y se identifica si AFP_Conocimiento esta presente en alguan posicion
-                foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
-                    // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
-                    if (strpos($valor, "AFP_Conocimiento") !== false) {
-                        $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
-                    }
+                if ($copiaComunicadosPcl > 0) {
+                    foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
+                        // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
+                        if (strpos($valor, "AFP_Conocimiento") !== false) {
+                            $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                        }
+                    }                    
                 }
                 // Se crea array para compararlo con el que viene del formulario
                 $claves_copias = ['Afiliado' => 'copia_afiliado', 'Empleador' => 'copia_empleador', 'EPS' => 'copia_eps', 'AFP' => 'copia_afp', 'ARL' => 'copia_arl', 'AFP_Conocimiento' => 'copia_afp_conocimiento'];
@@ -3910,10 +3914,12 @@ class CalificacionPCLController extends Controller
             elseif($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 // Recorremos el array y se identifica si AFP_Conocimiento esta presente en alguan posicion
-                foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
-                    // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
-                    if (strpos($valor, "AFP_Conocimiento") !== false) {
-                        $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                if ($copiaComunicadosPcl > 0) {
+                    foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
+                        // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
+                        if (strpos($valor, "AFP_Conocimiento") !== false) {
+                            $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                        }
                     }
                 }
                 // Se crea array para compararlo con el que viene del formulario
@@ -4276,10 +4282,12 @@ class CalificacionPCLController extends Controller
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado') {
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 // Recorremos el array y se identifica si AFP_Conocimiento esta presente en alguan posicion
-                foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
-                    // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
-                    if (strpos($valor, "AFP_Conocimiento") !== false) {
-                        $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                if ($copiaComunicadosPcl > 0) {
+                    foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
+                        // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
+                        if (strpos($valor, "AFP_Conocimiento") !== false) {
+                            $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                        }
                     }
                 }
                 // Se crea array para compararlo con el que viene del formulario
@@ -4661,10 +4669,12 @@ class CalificacionPCLController extends Controller
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado'){
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 // Recorremos el array y se identifica si AFP_Conocimiento esta presente en alguan posicion
-                foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
-                    // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
-                    if (strpos($valor, "AFP_Conocimiento") !== false) {
-                        $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                if ($copiaComunicadosPcl > 0) {
+                    foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
+                        // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
+                        if (strpos($valor, "AFP_Conocimiento") !== false) {
+                            $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                        }
                     }
                 }
                 // Se crea array para compararlo con el que viene del formulario
@@ -5083,10 +5093,12 @@ class CalificacionPCLController extends Controller
             elseif ($request->bandera_descarga == 'BotonGuardarComunicado'){
                 $copiaComunicadosPcl = $request->agregar_copia_editar;
                 // Recorremos el array y se identifica si AFP_Conocimiento esta presente en alguan posicion
-                foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
-                    // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
-                    if (strpos($valor, "AFP_Conocimiento") !== false) {
-                        $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                if ($copiaComunicadosPcl > 0) {
+                    foreach ($copiaComunicadosPcl as $ComunicadosPcl => $valor) {
+                        // Si encuentra coincidencia se reempla todo su valor por solo AFP_Conocimiento
+                        if (strpos($valor, "AFP_Conocimiento") !== false) {
+                            $copiaComunicadosPcl[$ComunicadosPcl] = "AFP_Conocimiento";
+                        }
                     }
                 }
                 // Se crea array para compararlo con el que viene del formulario
