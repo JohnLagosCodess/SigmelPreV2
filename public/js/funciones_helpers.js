@@ -1612,9 +1612,9 @@ function ubicacionEvento() {
             dataType: 'json',
             data: data,
             success: function(response) {
-                let status = 'No';
+                let status = false;
                 if(response != '' && response != undefined){
-                    let status = response[0].Notificacion == 'Si'; 
+                    status = response[0].Notificacion == 'Si'; 
                 }
                 
                 resolve(status); //true o false 
