@@ -751,7 +751,7 @@ class DeterminacionOrigenATEL extends Controller
         }
 
         //Copias y destinatario de un dictamen segun la ficha PBS092, la copia de Entidad conocimiento se gestiona desde el oficio
-        $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL";
+        $agregar_copias_dml = "Afiliado, EPS, ARL";
         $Destinatario = 'Afp';
 
         $Id_Dto_ATEL = $request->Id_Dto_ATEL;

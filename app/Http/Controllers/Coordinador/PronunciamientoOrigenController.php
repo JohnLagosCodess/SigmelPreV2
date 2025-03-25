@@ -1611,8 +1611,10 @@ class PronunciamientoOrigenController extends Controller
                 'posVertical' => Image::POSITION_ABSOLUTE, // Centrado verticalmente en la página
             ];
 
-            $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
-
+            // $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
+            // $pathVigilado = realpath(false)."/images/logos_preformas/vigilado.png";
+            $pathVigilado = public_path('/images/logos_preformas/vigilado.png');
+            
             $phpWord = new PhpWord();
             // Configuramos la fuente y el tamaño de letra para todo el documento
             $phpWord->setDefaultFontName('Verdana');

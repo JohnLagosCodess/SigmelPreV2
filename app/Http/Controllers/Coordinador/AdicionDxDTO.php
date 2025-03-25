@@ -1657,7 +1657,7 @@ class AdicionDxDTO extends Controller
         ->where([['ID_evento',$request->ID_Evento], ['Id_Asignacion',$request->Id_Asignacion], ['T_documento','N/A'], ['Modulo_creacion','adicionDxDtoOrigen']])->get();
         
         //Copias y destinatario de un dictamen segun la ficha PBS092, la copia de Entidad conocimiento se gestiona desde el oficio
-        $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL";
+        $agregar_copias_dml = "Afiliado, EPS, ARL";
         $Destinatario = 'Afp';
 
         if ($Id_Adiciones_Dx == "" || count($documentos) == 0) {

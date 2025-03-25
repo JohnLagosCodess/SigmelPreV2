@@ -3961,6 +3961,9 @@ $(document).ready(function(){
         let id = $(this);
         let token = $('input[name=_token]').val(); 
         let tipo_correspondencia = $(id).data('tipo_correspondencia');
+
+        let tipo_entidad_conocimiento = $(id).data('tipo_entidad_conocimiento');
+
         /* Aqui se programará algunas cosas de la ficha PBS 082 */
 
         // 1. motrar el botón de que tipo de guia es
@@ -3986,42 +3989,51 @@ $(document).ready(function(){
             case 'arl':
                 $("#tipo_guia").text('ARL');
                 break;
-            case 'afp_conocimiento':
-                $("#tipo_guia").text('Entidad conocimiento');
-                break;
-            case 'jrci':
-                $("#tipo_guia").text('JRCI');
-                break;
-            case 'jnci':
-                $("#tipo_guia").text('JNCI');
-                break;
             default:
                 break;
         }
 
-        $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_43').addClass('d-none');
+        if (tipo_correspondencia.startsWith('afp_conocimiento')) {
+            var datos_lista_tipos_documentos = guiasEntidadConocimiento (tipo_entidad_conocimiento, $("#newId_evento").val(), $("#id_servicio").val(), token, 'mod_principal');
 
-        var datos_lista_tipos_documentos = {
-            '_token': token,
-            'evento': $("#newId_evento").val(),
-            'servicio': $("#id_servicio").val(),
-            'parametro':"docs_complementarios",
-            'tipo_correspondencia': 43,
-        };
-        
-        $.ajax({
-            type:'POST',
-            url:'/selectoresJuntasControversia',
-            data: datos_lista_tipos_documentos,
-            success:function(data) {
-                $("#listado_tipos_documentos_guias").empty();
-                $("#listado_tipos_documentos_guias").append('<option value="">Seleccione una Opción</option>');
-                let tiposdoc = Object.keys(data);
-                for (let i = 0; i < tiposdoc.length; i++) {
-                    $('#listado_tipos_documentos_guias').append('<option value="'+data[tiposdoc[i]]["Nro_documento"]+'">'+data[tiposdoc[i]]["Nro_documento"]+' - '+data[tiposdoc[i]]["Nombre_documento"]+'</option>');
+            $.ajax({
+                type:'POST',
+                url:'/selectoresJuntasControversia',
+                data: datos_lista_tipos_documentos,
+                success:function(data) {
+                    $("#listado_tipos_documentos_guias").empty();
+                    $("#listado_tipos_documentos_guias").append('<option value="">Seleccione una Opción</option>');
+                    let tiposdoc = Object.keys(data);
+                    for (let i = 0; i < tiposdoc.length; i++) {
+                        $('#listado_tipos_documentos_guias').append('<option value="'+data[tiposdoc[i]]["Nro_documento"]+'">'+data[tiposdoc[i]]["Nro_documento"]+' - '+data[tiposdoc[i]]["Nombre_documento"]+'</option>');
+                    }
                 }
-            }
-        });
+            });
+        }else{
+            $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_43').addClass('d-none');
+    
+            var datos_lista_tipos_documentos = {
+                '_token': token,
+                'evento': $("#newId_evento").val(),
+                'servicio': $("#id_servicio").val(),
+                'parametro':"docs_complementarios",
+                'tipo_correspondencia': 43,
+            };
+            
+            $.ajax({
+                type:'POST',
+                url:'/selectoresJuntasControversia',
+                data: datos_lista_tipos_documentos,
+                success:function(data) {
+                    $("#listado_tipos_documentos_guias").empty();
+                    $("#listado_tipos_documentos_guias").append('<option value="">Seleccione una Opción</option>');
+                    let tiposdoc = Object.keys(data);
+                    for (let i = 0; i < tiposdoc.length; i++) {
+                        $('#listado_tipos_documentos_guias').append('<option value="'+data[tiposdoc[i]]["Nro_documento"]+'">'+data[tiposdoc[i]]["Nro_documento"]+' - '+data[tiposdoc[i]]["Nombre_documento"]+'</option>');
+                    }
+                }
+            });
+        }
     });
     /* Generacion de Proforma en PDF para decisión ACUERDO en la sección Revisión ante concepto de la Junta Regional */
 
