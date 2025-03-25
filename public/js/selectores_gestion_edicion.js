@@ -1683,7 +1683,11 @@ $(document).ready(function(){
     
         // Si la entidad ya está seleccionada en otro selector se elimina la opcion seleccionada y arroja una alerta.
         if (array_id_entidades_selccionadas.includes(valor_seleccionado_entidad)) {
-            $("#alerta_" + id_selector_entidad).removeClass('d-none');
+            if (valor_seleccionado_entidad == 0) {
+                $("#alerta_" + id_selector_entidad).addClass('d-none');
+            } else {
+                $("#alerta_" + id_selector_entidad).removeClass('d-none');
+            }
     
             $select.val('0').trigger("change.select2");
             

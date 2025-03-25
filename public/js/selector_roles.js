@@ -44,4 +44,44 @@ $(document).ready(function(){
         $("input[name='id_usuario']").prop('disabled', false);
         $("input[name='correo_usuario']").prop('disabled', false);
     });
+
+    /* 
+        Funcionalidad para que los usuarios de sigmel (a excepción de los desarrolladores) no puedan abrir la consola del navegador 
+    */
+    let usuariosPermitidos = [
+        'mauro.ramirez@codess.org.co',
+        'carlos.nino@codess.org.co',
+        'john.lagos@codess.org.co',
+        'sebastian.diaz@codess.org.co',
+        'luis.gomez@codess.org.co',
+    ];
+
+    if (!usuariosPermitidos.includes(correo_usuario)) {
+        $(document).ready(function() {
+
+            // Bloqueamos la acción clic derecho
+            $(document).on("contextmenu", function(e) {
+                return false;
+            });
+        
+            /* 
+                Bloqueamos las siguientes teclas de desarrollador: 
+                Tecla F12, 
+                Ctrl+Shift+I (Herramientas de desarrollador), 
+                Ctrl+Shift+J (Consola), 
+                Ctrl+U (Ver código fuente)
+            */
+            $(document).on("keydown", function(e) {
+                if (e.keyCode == 123) {
+                    return false;
+                }
+                if (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) {
+                    return false;
+                }
+                if (e.ctrlKey && e.keyCode == 85) {
+                    return false;
+                }
+            });
+        });
+    }
 })

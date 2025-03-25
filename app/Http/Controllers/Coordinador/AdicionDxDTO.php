@@ -1657,7 +1657,7 @@ class AdicionDxDTO extends Controller
         ->where([['ID_evento',$request->ID_Evento], ['Id_Asignacion',$request->Id_Asignacion], ['T_documento','N/A'], ['Modulo_creacion','adicionDxDtoOrigen']])->get();
         
         //Copias y destinatario de un dictamen segun la ficha PBS092, la copia de Entidad conocimiento se gestiona desde el oficio
-        $agregar_copias_dml = "Afiliado, Empleador, EPS, ARL";
+        $agregar_copias_dml = "Afiliado, EPS, ARL";
         $Destinatario = 'Afp';
 
         if ($Id_Adiciones_Dx == "" || count($documentos) == 0) {
@@ -2888,8 +2888,21 @@ class AdicionDxDTO extends Controller
         }
 
         if (isset($copia_afp_conocimiento)) {
-            $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($Id_Evento, 'pdf');
-            $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
+
+            $dato_id_afp_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+            ->select('siae.Entidad_conocimiento')
+            ->where([['siae.ID_evento', $Id_Evento]])
+            ->get();
+
+            $si_entidad_conocimiento = $dato_id_afp_conocimiento[0]->Entidad_conocimiento;
+
+            if ($si_entidad_conocimiento == "Si") {
+                $datos_entidades_conocimiento = $this->globalService->informacionEntidadesConocimientoEvento($Id_Evento, 'pdf');
+                $Agregar_copias['AFP_Conocimiento'] = $datos_entidades_conocimiento;
+            }else{
+                $Agregar_copias['AFP_Conocimiento'] = '';
+            }
+
         }
 
         /* Validación Firma Cliente */
