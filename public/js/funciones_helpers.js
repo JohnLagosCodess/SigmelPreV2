@@ -2361,9 +2361,15 @@ function calc_antiguedad_empresa(){
          }
 
         //Información superior del modal 
+        console.log(' Tipo descarga : ', tipo_descarga);
         if(tipo_descarga === 'Manual' || tipo_descarga === 'Dictamen'){
             $("#modalCorrespondencia #nombre_afiliado").val($("#nombre_afiliado").val());
-            $("#modalCorrespondencia #n_identificacion").val($("#nro_identificacion").val());
+            if($("#nro_identificacion").val()){
+                $("#modalCorrespondencia #n_identificacion").val($("#nro_identificacion").val());
+            }
+            else if($("#identificacion").val()){
+                $("#modalCorrespondencia #n_identificacion").val($("#identificacion").val());
+            }
         }
         else{
             $("#modalCorrespondencia #nombre_afiliado").val($(id).data('nombre_afiliado'));
