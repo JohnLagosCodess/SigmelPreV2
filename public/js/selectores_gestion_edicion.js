@@ -2314,6 +2314,7 @@ $(document).ready(function(){
         if (idRol != 6 && input.value != 0) {
             $(`#container_entidad_conocimiento_${index+1}`).css({'opacity':'0.5','pointer-events':'none'})
             $(`#entidad_conocimiento`).css({'opacity':'0.5','pointer-events':'none'})
+            $(`#container_checkbox_entidad_conocimiento`).css({'opacity':'0.5','pointer-events':'none'})
         }
     });
 });

@@ -522,7 +522,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-3 mt-4 text-center">
+                                                <div class="col-3 mt-4 text-center" id="container_checkbox_entidad_conocimiento">
                                                     <div class="form-group">
                                                         @if (!empty($array_datos_info_afiliados[0]->Entidad_conocimiento) && $array_datos_info_afiliados[0]->Entidad_conocimiento == 'Si')
                                                             <input class="form-contol scalesR" type="checkbox" id="entidad_conocimiento" name="entidad_conocimiento" value="Si" checked>                                                            
