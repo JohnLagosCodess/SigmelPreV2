@@ -2305,4 +2305,11 @@ $(document).ready(function(){
         $(':input, select, a, button').not('#listado_roles_usuario, #his_servicios, #cargar_historial_acciones, #llenar_tabla_historico_empresas, .btn-danger').prop('disabled', true);
     }
 
+    let inputs = document.querySelectorAll("input[id^='bd_entidad_conocimiento_']");
+    inputs.forEach((input, index) => {
+        if (idRol != 6 && input.value != 0) {
+            $(`#container_entidad_conocimiento_${index+1}`).css({'opacity':'0.5','pointer-events':'none'})
+            $(`#entidad_conocimiento`).css({'opacity':'0.5','pointer-events':'none'})
+        }
+    });
 });

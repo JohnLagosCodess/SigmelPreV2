@@ -1612,9 +1612,9 @@ function ubicacionEvento() {
             dataType: 'json',
             data: data,
             success: function(response) {
-                let status = 'No';
+                let status = false;
                 if(response != '' && response != undefined){
-                    let status = response[0].Notificacion == 'Si'; 
+                    status = response[0].Notificacion == 'Si'; 
                 }
                 
                 resolve(status); //true o false 
@@ -2088,7 +2088,7 @@ function calc_antiguedad_empresa(){
                         data-id_evento="${data_comunicado['ID_evento']}" data-id_asignacion="${data_comunicado['Id_Asignacion']}" data-id_proceso="${data_comunicado['Id_proceso']}" \
                         data-anexos="${data_comunicado['Anexos']}" data-correspondencia="${data_comunicado['Correspondencia']}" data-tipo_descarga="${data_comunicado['Tipo_descarga']}" \
                         data-nombre_afiliado="${data_comunicado["Nombre_afiliado"]}" data-numero_identificacion="${data_comunicado["N_identificacion"]}" data-id_entidad_conocimiento="${element['Entidad'][0]['Id_Entidad']}" data-tipo_entidad_conocimiento="${element['Entidad'][0]['Tipo_Entidad']}" \  
-                        data-ids_destinatario="${data_comunicado['Id_Destinatarios']}" style="${getUnderlineStyle(element['tipo_correspondencia'])}"> ${element['Entidad'][0]['Tipo_Entidad']} - ${element['Entidad'][0]['Nombre_entidad']}</a>`;
+                        data-nombre_entidad_conocimiento="${element['Entidad'][0]['Nombre_entidad']}" data-ids_destinatario="${data_comunicado['Id_Destinatarios']}" style="${getUnderlineStyle(element['tipo_correspondencia'])}"> ${element['Entidad'][0]['Tipo_Entidad']} - ${element['Entidad'][0]['Nombre_entidad']}</a>`;
                 });
             }
             if (juntas) {
@@ -2212,6 +2212,7 @@ function calc_antiguedad_empresa(){
         let correspondencia = $(id).data('correspondencia');
         let id_entidad_conocimiento = $(id).data('id_entidad_conocimiento');
         let tipo_entidad_conocimiento = $(id).data('tipo_entidad_conocimiento');
+        let nombre_entidad_conocimiento = $(id).data('nombre_entidad_conocimiento');
         // Debido a los ajustes en la PBS092 es necesario castear la variable de correspondencia a tipo string siempre y cuando esta tenga algun valor
         correspondencia = correspondencia?.toString()
         //Si existe el id_entidad_conocimiento se castea a string ya que la mayoria de validaciones estan sobre una cadena de tipo string 
@@ -2318,7 +2319,11 @@ function calc_antiguedad_empresa(){
                         $("#modalCorrespondencia #m_notificacion").val(response[0]?.Medio_notificacion);
                         $("#modalCorrespondencia #folios").val(response[0]?.Folios);
                         $("#modalCorrespondencia #radicado").val(response[0]?.N_radicado);
-                        $("#modalCorrespondencia .modal-title").text('Correspondencia ' + response[0]?.Tipo_correspondencia);
+                        if(!response[0]?.Tipo_correspondencia.startsWith('afp_conocimiento')){
+                            $("#modalCorrespondencia .modal-title").text('Correspondencia ' + response[0]?.Tipo_correspondencia);
+                        }else{
+                            $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_entidad_conocimiento+' - '+nombre_entidad_conocimiento);
+                        }
                         $("#modalCorrespondencia #n_guia").val(response[0]?.N_guia);
                         $("#modalCorrespondencia #f_envio").val(response[0]?.F_envio);
                         $("#modalCorrespondencia #f_notificacion").val(response[0]?.F_notificacion);
@@ -2426,7 +2431,11 @@ function calc_antiguedad_empresa(){
                         $("#modalCorrespondencia #email").val(response?.datos?.Email_destinatario);
                         $("#modalCorrespondencia #m_notificacion").val(response?.datos?.Medio_notificacion_destinatario);
                         $("#modalCorrespondencia #folios").val(anexos);
-                        $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
+                        if(!tipo_correspondencia.startsWith('afp_conocimiento')){
+                            $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_correspondencia);
+                        }else{
+                            $("#modalCorrespondencia .modal-title").text('Correspondencia ' + tipo_entidad_conocimiento+' - '+nombre_entidad_conocimiento);
+                        }
                         $("#modalCorrespondencia #radicado").val(N_radicado);
                         
                         if(tipo_descarga != 'Manual' && tipo_correspondencia.toLowerCase() === destinatarioPrincipal.toLowerCase()){

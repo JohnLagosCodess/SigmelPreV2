@@ -84,9 +84,16 @@ use ZipArchive;
 
 use App\Models\sigmel_informacion_comunicado_eventos;
 use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
+use App\Services\GlobalService;
 
 class AdministradorController extends Controller
 {
+    protected $globalService;
+
+    public function __construct(GlobalService $globalService)
+    {
+        $this->globalService = $globalService;
+    }
     
     public function show(){
         if(!Auth::check()){
@@ -4500,7 +4507,6 @@ class AdministradorController extends Controller
     }
 
     public function actualizarGestionInicial(Request $request){
-
         if(!Auth::check()){
             return redirect('/');
         }
@@ -4511,6 +4517,29 @@ class AdministradorController extends Controller
         /** Contiene los cambios realizados en el modulo */
         $bitacora = [];
         
+        //Validamos si antes de la actualización tenia entidades de conocimiento
+        $entidades_conocimiento_actuales = $this->globalService->validarEntidadesConocimientoGuardadas($IdEventoactulizar);
+        if($entidades_conocimiento_actuales){
+            $nuevas_entidades_conocimiento = [
+                $request->entidad_conocimiento_1,$request->entidad_conocimiento_2,$request->entidad_conocimiento_3,
+                $request->entidad_conocimiento_4,$request->entidad_conocimiento_5,$request->entidad_conocimiento_6,$request->entidad_conocimiento_7,
+                $request->entidad_conocimiento_8
+            ];
+            $actuales_entidades_conocimiento = [
+                $entidades_conocimiento_actuales[0]->Id_afp_entidad_conocimiento,$entidades_conocimiento_actuales[0]->Id_afp_entidad_conocimiento2,$entidades_conocimiento_actuales[0]->Id_afp_entidad_conocimiento3,
+                $entidades_conocimiento_actuales[0]->Id_afp_entidad_conocimiento4,$entidades_conocimiento_actuales[0]->Id_afp_entidad_conocimiento5,$entidades_conocimiento_actuales[0]->Id_afp_entidad_conocimiento6,
+                $entidades_conocimiento_actuales[0]->Id_afp_entidad_conocimiento7,$entidades_conocimiento_actuales[0]->Id_afp_entidad_conocimiento8
+            ];
+            Log::info('Actuales entidades de conocimiento ',$actuales_entidades_conocimiento);
+            Log::info('Nuevas entidades de conocimiento ',$nuevas_entidades_conocimiento);
+            foreach ($actuales_entidades_conocimiento as $index => $id) {
+                $flag_cambio = $nuevas_entidades_conocimiento[$index] != $id ? true : false;
+                if($flag_cambio){
+                    $tipo_correspondencia = "afp_conocimiento".($index + 1);
+                    $this->globalService->eliminarCorrespondenciaIdModificado($nuevas_entidades_conocimiento[$index],$id,$IdEventoactulizar,$tipo_correspondencia);
+                }
+            }
+        }
         /* Actualizacion tabla sigmel_informacion_eventos */
 
         //validacion del otro/cual? en el tipo de cliente 

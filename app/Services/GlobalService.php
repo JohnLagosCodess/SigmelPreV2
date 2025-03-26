@@ -6,6 +6,7 @@ use App\Models\sigmel_informacion_afiliado_eventos;
 use App\Models\sigmel_informacion_asignacion_eventos;
 use App\Models\sigmel_informacion_comite_interdisciplinario_eventos;
 use App\Models\sigmel_informacion_comunicado_eventos;
+use App\Models\sigmel_informacion_correspondencia_eventos;
 use App\Models\sigmel_informacion_documentos_solicitados_eventos;
 use App\Models\sigmel_informacion_eventos;
 use Illuminate\Database\Eloquent\Collection;
@@ -799,5 +800,81 @@ class GlobalService
 
         $this->AgregaroQuitarCopiaEntidadConocimientoDictamen($id_evento, $id_asignacion,$id_proceso,$copias_actuales_comunicado_final[0]->Agregar_copia);
         
+    }
+
+    public function validarEntidadesConocimientoGuardadas($id_evento){
+        $entidades_conocimiento = DB::table(getDatabaseName('sigmel_gestiones') . 'sigmel_informacion_afiliado_eventos as siae')
+        ->select(
+            'siae.Entidad_conocimiento',
+            'siae.Id_afp_entidad_conocimiento',
+            'siae.Id_afp_entidad_conocimiento2',
+            'siae.Id_afp_entidad_conocimiento3',
+            'siae.Id_afp_entidad_conocimiento4',
+            'siae.Id_afp_entidad_conocimiento5',
+            'siae.Id_afp_entidad_conocimiento6',
+            'siae.Id_afp_entidad_conocimiento7',
+            'siae.Id_afp_entidad_conocimiento8'
+        )
+        ->where('siae.ID_evento', $id_evento)
+        ->get();
+        if($entidades_conocimiento->isEmpty()){
+            return null;
+        }
+        if($entidades_conocimiento[0]->Entidad_conocimiento == 'No'){
+            return null;
+        }
+        return $entidades_conocimiento;
+    }
+    public function eliminarCorrespondenciaIdModificado($nuevo_id_entidad,$id_entidad_conocimiento, $id_evento, $tipo_correspondencia){
+        try {
+            //Buscamos todos los comunicados del evento y si la columna correspondencia contiene 
+            // el tipo de correspondencia que buscamos se elimina de la cadena
+            $correspondencia_comunicados = sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$id_evento]])
+                ->get();
+            if(count($correspondencia_comunicados) > 0){
+                foreach($correspondencia_comunicados as $i => $corresp){
+                    if($corresp->Correspondencia){
+                        Log::info('Comunicado: ', ['Id_comunicado',$corresp->Id_Comunicado,'Antigua correspondencia ',$corresp->Correspondencia]);
+                        $array_correspondencia = explode(', ',$corresp->Correspondencia);
+                        // Buscar y eliminar el elemento específico
+                        $filter_correspondencia = array_filter($array_correspondencia, function ($item) use ($tipo_correspondencia) {
+                            return trim($item) !== trim($tipo_correspondencia);
+                        });
+                        // Convertir de nuevo el array a cadena
+                        $nueva_correspondencia = implode(", ", $filter_correspondencia);
+                        Log::info('Nueva Correspondencia: ', ['Nueva correspondencia ',$nueva_correspondencia]);
+                        // Actualizar en la base de datos
+                        sigmel_informacion_comunicado_eventos::on('sigmel_gestiones')
+                        ->where('Id_Comunicado','=',$corresp->Id_Comunicado)
+                        ->update(['Correspondencia' => $nueva_correspondencia]);
+                    }
+                }
+            }
+            //Buscamos todas las correspondencias que esten guardadas para dicha entidad conocimiento
+            $correspondencia = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')
+                ->where([['ID_evento',$id_evento],['Id_entidad_conocimiento',$id_entidad_conocimiento]])
+                ->get();
+
+            if($correspondencia->isEmpty()){
+                return null;
+            }
+            Log::info('Evento '.$id_evento.' Se eliminaran las correspondencias de esta entidad '.$id_entidad_conocimiento." El cual fue reemplazado por este id : ".$nuevo_id_entidad);
+            if(count($correspondencia) > 0){
+                foreach($correspondencia as $index => $element){
+                    Log::info('Correspondencias a eliminar: ',['element',$element]);
+                    $eliminación = sigmel_informacion_correspondencia_eventos::on('sigmel_gestiones')
+                        ->where('Id_Correspondencia','=',$element->Id_Correspondencia)
+                        ->delete();
+                    if($eliminación == 1){
+                        Log::info('Correspondencia eliminada correctamente');
+                    }          
+                }
+            }
+        }
+        catch (\Throwable $th) {
+            Log::error('Error al eliminar correspondencias: ' . $th->getMessage(), ['exception' => $th]);
+            return false;
+        }
     }
 }

@@ -532,7 +532,7 @@
                                                         <label for="entidad_conocimiento" class="col-form-label">Entidad de Conocimiento</label>
                                                     </div>
                                                 </div>
-                                                <div class="entidad_conocimiento_1 d-none col-3">
+                                                <div class="entidad_conocimiento_1 d-none col-3" id='container_entidad_conocimiento_1'>
                                                     <div class="form-group">
                                                         <label for="entidad_conocimiento_1" class="col-form-label">&nbsp; Entidad de Conocimiento 1</label>
                                                         <input type="hidden" id="bd_entidad_conocimiento_1" value="{{$array_datos_info_afiliados[0]->Id_afp_entidad_conocimiento}}">
@@ -540,7 +540,7 @@
                                                         <span class="d-none" id="alerta_entidad_conocimiento_1" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
                                                     </div>
                                                 </div>
-                                                <div class="entidad_conocimiento_2 col-3 d-none">
+                                                <div class="entidad_conocimiento_2 col-3 d-none" id='container_entidad_conocimiento_2'>
                                                     <div class="form-group">
                                                         <label for="entidad_conocimiento_2" class="col-form-label">&nbsp; Entidad de Conocimiento 2</label>
                                                         <input type="hidden" id="bd_entidad_conocimiento_2" value="{{$array_datos_info_afiliados[0]->Id_afp_entidad_conocimiento2}}">
@@ -548,7 +548,7 @@
                                                         <span class="d-none" id="alerta_entidad_conocimiento_2" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
                                                     </div>
                                                 </div>
-                                                <div class="entidad_conocimiento_3 col-3 d-none">
+                                                <div class="entidad_conocimiento_3 col-3 d-none" id='container_entidad_conocimiento_3'>
                                                     <div class="form-group">
                                                         <label for="entidad_conocimiento_3" class="col-form-label">&nbsp; Entidad de Conocimiento 3</label>
                                                         <input type="hidden" id="bd_entidad_conocimiento_3" value="{{$array_datos_info_afiliados[0]->Id_afp_entidad_conocimiento3}}">
@@ -556,7 +556,7 @@
                                                         <span class="d-none" id="alerta_entidad_conocimiento_3" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
                                                     </div>
                                                 </div>
-                                                <div class="entidad_conocimiento_4 col-3 d-none">
+                                                <div class="entidad_conocimiento_4 col-3 d-none" id='container_entidad_conocimiento_4'>
                                                     <div class="form-group">
                                                         <label for="entidad_conocimiento_4" class="col-form-label">&nbsp; Entidad de Conocimiento 4</label>
                                                         <input type="hidden" id="bd_entidad_conocimiento_4" value="{{$array_datos_info_afiliados[0]->Id_afp_entidad_conocimiento4}}">
@@ -564,7 +564,7 @@
                                                         <span class="d-none" id="alerta_entidad_conocimiento_4" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
                                                     </div>
                                                 </div>
-                                                <div class="entidad_conocimiento_5 col-3 d-none">
+                                                <div class="entidad_conocimiento_5 col-3 d-none" id='container_entidad_conocimiento_5'>
                                                     <div class="form-group">
                                                         <label for="entidad_conocimiento_5" class="col-form-label">&nbsp; Entidad de Conocimiento 5</label>
                                                         <input type="hidden" id="bd_entidad_conocimiento_5" value="{{$array_datos_info_afiliados[0]->Id_afp_entidad_conocimiento5}}">
@@ -572,7 +572,7 @@
                                                         <span class="d-none" id="alerta_entidad_conocimiento_5" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
                                                     </div>
                                                 </div>
-                                                <div class="entidad_conocimiento_6 col-3 d-none">
+                                                <div class="entidad_conocimiento_6 col-3 d-none" id='container_entidad_conocimiento_6'>
                                                     <div class="form-group">
                                                         <label for="entidad_conocimiento_6" class="col-form-label">&nbsp; Entidad de Conocimiento 6</label>
                                                         <input type="hidden" id="bd_entidad_conocimiento_6" value="{{$array_datos_info_afiliados[0]->Id_afp_entidad_conocimiento6}}">
@@ -580,7 +580,7 @@
                                                         <span class="d-none" id="alerta_entidad_conocimiento_6" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
                                                     </div>
                                                 </div>
-                                                <div class="entidad_conocimiento_7 col-3 d-none">
+                                                <div class="entidad_conocimiento_7 col-3 d-none" id='container_entidad_conocimiento_7'>
                                                     <div class="form-group">
                                                         <label for="entidad_conocimiento_7" class="col-form-label">&nbsp; Entidad de Conocimiento 7</label>
                                                         <input type="hidden" id="bd_entidad_conocimiento_7" value="{{$array_datos_info_afiliados[0]->Id_afp_entidad_conocimiento7}}">
@@ -588,7 +588,7 @@
                                                         <span class="d-none" id="alerta_entidad_conocimiento_7" style="color: red; font-style: italic;">No puede seleccionar una entidad repetida.</span>
                                                     </div>
                                                 </div>
-                                                <div class="entidad_conocimiento_8 col-3 d-none">
+                                                <div class="entidad_conocimiento_8 col-3 d-none" id='container_entidad_conocimiento_8'>
                                                     <div class="form-group">
                                                         <label for="entidad_conocimiento" class="col-form-label">&nbsp; Entidad de Conocimiento 8</label>
                                                         <input type="hidden" id="bd_entidad_conocimiento_8" value="{{$array_datos_info_afiliados[0]->Id_afp_entidad_conocimiento8}}">
