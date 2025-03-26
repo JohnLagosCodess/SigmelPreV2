@@ -3401,6 +3401,8 @@ $(document).ready(function(){
         let id = $(this);
         let token = $('input[name=_token]').val(); 
         let tipo_correspondencia = $(id).data('tipo_correspondencia');
+
+        let tipo_entidad_conocimiento = $(id).data('tipo_entidad_conocimiento');
         /* Aqui se programará algunas cosas de la ficha PBS 082 */
 
         // 1. motrar el botón de que tipo de guia es
@@ -3476,36 +3478,43 @@ $(document).ready(function(){
                 };
 
                 break;
-            case 'afp_conocimiento':
-                $("#tipo_guia").text('Entidad conocimiento');
-                $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_20').addClass('d-none');
-
-                var datos_lista_tipos_documentos = {
-                    '_token': token,
-                    'evento': $("#Id_Evento_decreto").val(),
-                    'servicio': 6,
-                    'parametro':"docs_complementarios",
-                    'tipo_correspondencia': 20,
-                };
-
-                break;
             default:
                 break;
         }
- 
-        $.ajax({
-            type:'POST',
-            url:'/selectoresCalificacionTecnicaPCL',
-            data: datos_lista_tipos_documentos,
-            success:function(data) {
-                $("#listado_tipos_documentos_guias").empty();
-                $("#listado_tipos_documentos_guias").append('<option value="">Seleccione una Opción</option>');
-                let tiposdoc = Object.keys(data);
-                for (let i = 0; i < tiposdoc.length; i++) {
-                    $('#listado_tipos_documentos_guias').append('<option value="'+data[tiposdoc[i]]["Nro_documento"]+'">'+data[tiposdoc[i]]["Nro_documento"]+' - '+data[tiposdoc[i]]["Nombre_documento"]+'</option>');
+
+        if (tipo_correspondencia.startsWith('afp_conocimiento')) {
+            var datos_lista_tipos_documentos = guiasEntidadConocimiento (tipo_entidad_conocimiento, $("#Id_Evento_decreto").val(), 6, token);
+            
+            $.ajax({
+                type:'POST',
+                url:'/selectoresCalificacionTecnicaPCL',
+                data: datos_lista_tipos_documentos,
+                success:function(data) {
+                    $("#listado_tipos_documentos_guias").empty();
+                    $("#listado_tipos_documentos_guias").append('<option value="">Seleccione una Opción</option>');
+                    let tiposdoc = Object.keys(data);
+                    for (let i = 0; i < tiposdoc.length; i++) {
+                        $('#listado_tipos_documentos_guias').append('<option value="'+data[tiposdoc[i]]["Nro_documento"]+'">'+data[tiposdoc[i]]["Nro_documento"]+' - '+data[tiposdoc[i]]["Nombre_documento"]+'</option>');
+                    }
                 }
-            }
-        });
+            });
+        }else{
+            
+            $.ajax({
+                type:'POST',
+                url:'/selectoresCalificacionTecnicaPCL',
+                data: datos_lista_tipos_documentos,
+                success:function(data) {
+                    $("#listado_tipos_documentos_guias").empty();
+                    $("#listado_tipos_documentos_guias").append('<option value="">Seleccione una Opción</option>');
+                    let tiposdoc = Object.keys(data);
+                    for (let i = 0; i < tiposdoc.length; i++) {
+                        $('#listado_tipos_documentos_guias').append('<option value="'+data[tiposdoc[i]]["Nro_documento"]+'">'+data[tiposdoc[i]]["Nro_documento"]+' - '+data[tiposdoc[i]]["Nombre_documento"]+'</option>');
+                    }
+                }
+            });
+
+        }
 
     });
 

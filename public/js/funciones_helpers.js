@@ -2127,9 +2127,117 @@ function calc_antiguedad_empresa(){
 
         return info_notificacion;
     }
+   
+    function guiasEntidadConocimiento (tipo_entidad_conocimiento, id_evento, id_servicio, token, parte) {
+        var tipo_correspondencia;
+        switch (tipo_entidad_conocimiento) {
+            case 'EPS':
+                // $("#tipo_guia").text('EPS');
+                $("#tipo_guia").text('Entidad conocimiento');
+                
+                if(parte == "submodulo"){
+                    $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_21').addClass('d-none');
+                    tipo_correspondencia = 21;
+                }else{
+                    $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_43').addClass('d-none');
+                    tipo_correspondencia = 43;
+                }
+
+                var datos_lista_tipos_documentos = {
+                    '_token': token,
+                    'evento': id_evento,
+                    'servicio': id_servicio,
+                    'parametro':"docs_complementarios",
+                    'tipo_correspondencia': tipo_correspondencia,
+                };
+            break;
+            case 'AFP':
+                // $("#tipo_guia").text('AFP');
+                $("#tipo_guia").text('Entidad conocimiento');
+                if(parte == "submodulo"){
+                    $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_20').addClass('d-none');
+                    tipo_correspondencia = 20;
+                }else{
+                    $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_43').addClass('d-none');
+                    tipo_correspondencia = 43;
+                }
+
+                var datos_lista_tipos_documentos = {
+                    '_token': token,
+                    'evento': id_evento,
+                    'servicio': id_servicio,
+                    'parametro':"docs_complementarios",
+                    'tipo_correspondencia': tipo_correspondencia,
+                };
+            break;
+            case 'ARL':
+                // $("#tipo_guia").text('ARL');
+                $("#tipo_guia").text('Entidad conocimiento');
+
+                if(parte == "submodulo"){
+                    $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_19').addClass('d-none');
+                    tipo_correspondencia = 19;
+                }else{
+                    $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_43').addClass('d-none');
+                    tipo_correspondencia = 43;
+                }
+
+                var datos_lista_tipos_documentos = {
+                    '_token': token,
+                    'evento': id_evento,
+                    'servicio': id_servicio,
+                    'parametro':"docs_complementarios",
+                    'tipo_correspondencia': tipo_correspondencia,
+                };
+            break;
+            case 'JRCI':
+                // $("#tipo_guia").text('JRCI');
+                $("#tipo_guia").text('Entidad conocimiento');
+                $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_43').addClass('d-none');
+
+                var datos_lista_tipos_documentos = {
+                    '_token': token,
+                    'evento': id_evento,
+                    'servicio': id_servicio,
+                    'parametro':"docs_complementarios",
+                    'tipo_correspondencia': 43,
+                };
+            break;
+            case 'JNCI':
+                // $("#tipo_guia").text('JNCI');
+                $("#tipo_guia").text('Entidad conocimiento');
+                $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_43').addClass('d-none');
+
+                var datos_lista_tipos_documentos = {
+                    '_token': token,
+                    'evento': id_evento,
+                    'servicio': id_servicio,
+                    'parametro':"docs_complementarios",
+                    'tipo_correspondencia': 43,
+                };
+            break;
+            case 'Otro/¿Cual?':
+                // $("#tipo_guia").text('Otro/¿Cual?');
+                $("#tipo_guia").text('Entidad conocimiento');
+                $('#listado_documentos_ed tr[id^="fila_doc_"]').not('#fila_doc_43').addClass('d-none');
+
+                var datos_lista_tipos_documentos = {
+                    '_token': token,
+                    'evento': id_evento,
+                    'servicio': id_servicio,
+                    'parametro':"docs_complementarios",
+                    'tipo_correspondencia': 43,
+                };
+            break;
+            default:
+            break;
+        }
+
+        return datos_lista_tipos_documentos;
+    }
 
     function cleanModalCorrespondencia(){
-        console.log('Test function')
+        
         $("#btn_guardar_actualizar_correspondencia").val('Guardar');
         $("#btn_guardar_actualizar_correspondencia").removeClass("descarga-deshabilitada");
 

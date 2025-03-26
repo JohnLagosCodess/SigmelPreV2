@@ -6656,7 +6656,8 @@ class CalificacionJuntasController extends Controller
                     'posVertical' => Image::POSITION_ABSOLUTE, // Centrado verticalmente en la página
                 ];
 
-                $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
+                // $pathVigilado = "/var/www/html/Sigmel/public/images/logos_preformas/vigilado.png";
+                $pathVigilado = realpath(false)."/images/logos_preformas/vigilado.png";
 
                 /* Construcción proforma en formato docx (word) */
                 $phpWord = new PhpWord();
