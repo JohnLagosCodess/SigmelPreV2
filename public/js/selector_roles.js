@@ -84,4 +84,18 @@ $(document).ready(function(){
             });
         });
     }
+
+    //Mantiene el foco dentro del modal, principalmente para que sea compatible con select2
+    $.fn.modal.Constructor.prototype._enforceFocus = function () {
+        var that = this;
+        $(document).on('focusin.modal', function (e) {
+        if ($(e.target).hasClass('select2-input')) {
+        return true;
+        }
+
+        if (that && that.$element && that && that.$element && that.$element[0] !== e.target && !that.$element.has(e.target).length){
+            that.$element.focus();
+        }
+        });
+    };
 })
